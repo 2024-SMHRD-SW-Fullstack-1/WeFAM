@@ -1,9 +1,9 @@
 // 타임트리 젤 위의 헤더 부분입니다.
 import React from "react";
-import styles from "../css/Navbar.module.css";
+import styles from "../css/Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
 
-const Navbar = () => {
+const Header = () => {
   return (
     <div>
       <nav>
@@ -58,4 +58,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;
