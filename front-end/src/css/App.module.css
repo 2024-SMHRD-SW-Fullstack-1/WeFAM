@@ -60,7 +60,7 @@
   --animation-duration: 150ms;
 
   /* fullCallendar*/
-  --fc-small-font-size: .8em;
+  --fc-small-font-size: 0.8em;
   --fc-page-bg-color: #fff;
   --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
   --fc-neutral-text-color: #501818;
@@ -92,10 +92,10 @@
   --fc-highlight-color: rgba(188, 232, 241, 0.3);
   --fc-today-bg-color: rgba(255, 220, 40, 0.15);
   --fc-now-indicator-color: red;
-  
 }
 
 /* Universal tags */
+
 * {
   box-sizing: border-box;
 }
@@ -156,6 +156,7 @@ p {
   margin: 4px 0;
 }
 
+/* fullCalendar tags */
 .fc {
   background-color: var(--calendar-bg-color);
   color: var(--calendar-text-color);
