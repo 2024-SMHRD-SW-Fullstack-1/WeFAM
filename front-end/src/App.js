@@ -1,15 +1,20 @@
-import Navbar from "./components/Header";
+import Header from "./components/Header.jsx";
+import RightSidebar from "./components/RightSidebar.jsx";
+import LeftSidebar from "./components/LeftSidebar.jsx";
+import main from "./components/Main.jsx"
 import "./css/App.module.css";
 import "./css/Test.css";
+import Calendar from "./components/calendar/Calendar.jsx"
 
 function App() {
   return (
     <div className="App">
-      <Header></Header>
-      <LeftSidebar></LeftSidebar>
-      <Main></Main>
-      <RightSidebar></RightSidebar>
-      <div className="color-box color-coral">Coral</div>
+      {/* <Header></Header> */}
+      <Calendar/>
+      {/* <LeftSidebar/> */}
+      {/* <Main/> */}
+      {/* <RightSideBar/> */}
+      {/* <div className="color-box color-coral">Coral</div>
       <div className="color-box color-peach">Peach</div>
       <div className="color-box color-maize">Maize</div>
       <div className="color-box color-turquoise-green">Turquoise Green</div>
@@ -21,7 +26,7 @@ function App() {
       <p class="font-xl">This is font-xl (1.25rem)</p>
       <p class="font-2xl">This is font-2xl (1.375rem)</p>
       <p class="font-3xl">This is font-3xl (1.5rem)</p>
-      <p class="font-4xl">This is font-4xl (2.0rem)</p>
+      <p class="font-4xl">This is font-4xl (2.0rem)</p> */}
     </div>
   );
 }
