@@ -21,13 +21,14 @@ const Calendar = () => {
               solYear: year,
               numOfRows: 100, // 최대 100개의 공휴일 데이터를 가져옴
               _type: "json",
-              ServiceKey: "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
+              ServiceKey:
+                "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
             },
           }
         );
 
         const items = response?.data?.response?.body?.items?.item || [];
-        
+
         // 공휴일 데이터를 'items'에서 가져와 그룹화 처리 후 holidays 상태에 저장
         const groupByDateName = (items) => {
           return items.reduce((acc, item) => {
@@ -35,27 +36,27 @@ const Calendar = () => {
             const year = locDateString.slice(0, 4);
             const month = locDateString.slice(4, 6);
             const day = locDateString.slice(6, 8);
-  
+
             const formattedDate = `${year}-${month}-${day}`; // YYYY-MM-DD 형식으로 변환
-  
+
             if (!acc[item.dateName]) {
               acc[item.dateName] = [];
             }
-  
+
             acc[item.dateName].push(formattedDate);
             return acc;
           }, {});
         };
-  
+
         const holidaysData = Object.entries(groupByDateName(items)).map(
           ([dateName, dates]) => {
             // 날짜 배열을 오름차순으로 정렬하여 시작일과 종료일을 구합니다.
             dates.sort();
-    
+
             const start = dates[0]; // 가장 빠른 날짜가 시작일
             const endDate = new Date(dates[dates.length - 1]); // 가장 늦은 날짜가 종료일
             endDate.setDate(endDate.getDate() + 1); // 종료일을 다음 날로 설정
-    
+
             return {
               title: dateName,
               start: start, // 시작 날짜
@@ -65,7 +66,7 @@ const Calendar = () => {
             };
           }
         );
-        
+
         // 상태 업데이트
         setHolidays(holidaysData);
       } catch (error) {
@@ -97,8 +98,7 @@ const Calendar = () => {
   };
 
   return (
-    <div>
-      
+    <div className="main">
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
@@ -115,23 +115,20 @@ const Calendar = () => {
           month: "월간",
           week: "주간",
           day: "일간",
-          allday:"하루종일",
+          allday: "하루종일",
         }}
         height="90vh"
         // dayHeaderContent={renderDayHeaderContent} // 요일 헤더 커스터마이징
         dayCellContent={renderDayCellContent}
         events={[
           ...holidays, // 공휴일 데이터를 FullCalendar에 전달
-        {
-          title: '확인용',
-  start: '2024-08-22T00:00:00',
-  end: '2024-08-28T00:00:00' // 시간 정보 추가
-        },
-        
+          {
+            title: "확인용",
+            start: "2024-08-22T00:00:00",
+            end: "2024-08-28T00:00:00", // 시간 정보 추가
+          },
         ]}
-        
       />
-      
     </div>
   );
 };

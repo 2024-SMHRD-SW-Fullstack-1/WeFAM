@@ -1,6 +1,6 @@
 // 타임트리 젤 위의 헤더 부분입니다.
 import React from "react";
-import styles from "../css/Header.module.css";
+import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
 
 const Header = () => {

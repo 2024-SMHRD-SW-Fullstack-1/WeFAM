@@ -1,17 +1,28 @@
-import Header from "./components/Header";
-import LeftSidebar from "./components/LeftSidebar";
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
 import Main from "./components/Main";
-import RightSidebar from "./components/RightSidebar";
+import Calendar from "./components/calendar/Calendar";
+import Memo from "./components/memo/Memo";
+import Todo from "./components/todo/Todo";
+import Recipe from "./components/recipe/Recipe";
+import Galary from "./components/galary/Galary";
+
 import "./css/App.module.css";
 import "./css/Test.css";
 
 function App() {
   return (
     <div className="App">
-      <Header></Header>
-      <LeftSidebar></LeftSidebar>
-      <Main></Main>
-      <RightSidebar></RightSidebar>
+      <Routes>
+        <Route path="/" element={<Home />}>
+          <Route index element={<Main />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="memo" element={<Memo />} />
+          <Route path="todo" element={<Todo />} />
+          <Route path="recipe" element={<Recipe />} />
+          <Route path="galary" element={<Galary />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
