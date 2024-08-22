@@ -1,6 +1,14 @@
 /* Global */
 
 :root {
+  /* Header */
+  --header-height: 72px;
+  /* LeftSidebar */
+  --leftSidebar-width: 230px;
+  --leftSidebarSmall-width: 60px;
+  /* RightSidebar */
+  --rightSidebar-width: 300px;
+
   /* Color */
   --color-coral: #e1888b;
   --color-peach: #f0b49c;
