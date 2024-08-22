@@ -30,7 +30,6 @@ const LeftSidebar = () => {
       </div>
 
       {/* 카테고리 */}
-
       <div className={styles.category}>
         {/* 메뉴 */}
         <ul className={styles.menu}>
