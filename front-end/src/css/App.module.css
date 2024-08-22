@@ -50,6 +50,41 @@
 
   /* Animation */
   --animation-duration: 150ms;
+
+  /* fullCallendar*/
+  --fc-small-font-size: .8em;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+  --fc-neutral-text-color: #501818;
+  --fc-border-color: #ddd;
+
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: var(--color-coral);
+  --fc-button-border-color: none;
+  --fc-button-hover-bg-color: #da696d;
+  --fc-button-hover-border-color: none;
+  --fc-button-active-bg-color: #d85156;
+  --fc-button-active-border-color: none;
+
+  --fc-event-bg-color: var(--color-pale-blue);
+  --fc-event-border-color: none;
+  --fc-event-text-color: #fff;
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+
+  --fc-more-link-bg-color: #d0d0d0;
+  --fc-more-link-text-color: inherit;
+
+  --fc-event-resizer-thickness: 8px;
+  --fc-event-resizer-dot-total-width: 8px;
+  --fc-event-resizer-dot-border-width: 1px;
+
+  --fc-non-business-color: rgba(215, 215, 215, 0.3);
+  --fc-bg-event-color: rgb(143, 223, 130);
+  --fc-bg-event-opacity: 0.5;
+  --fc-highlight-color: rgba(188, 232, 241, 0.3);
+  --fc-today-bg-color: rgba(255, 220, 40, 0.15);
+  --fc-now-indicator-color: red;
+  
 }
 
 /* Universal tags */
@@ -111,4 +146,26 @@ p {
   font-weight: var(--weight-regular);
   color: var(--color-black);
   margin: 4px 0;
+}
+
+.fc {
+  background-color: var(--calendar-bg-color);
+  color: var(--calendar-text-color);
+}
+
+.fc .fc-daygrid-day-number {
+  color: var(--primary-color); /* 날짜 숫자 색상 */
+}
+
+.fc .fc-toolbar-title {
+  color: var(--secondary-color); /* 제목 색상 */
+}
+
+.fc .fc-button {
+  background-color: var(--primary-color); /* 버튼 배경 색상 */
+  color: #fff;
+}
+
+.fc .fc-button:hover {
+  background-color: var(--secondary-color); /* 버튼 hover 색상 */
 }
