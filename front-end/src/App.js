@@ -1,6 +1,9 @@
-import Navbar from "./components/Header";
+import Header from "./components/Header";
 import "./css/App.module.css";
 import "./css/Test.css";
+import LeftSidebar from "./components/LeftSidebar";
+import RightSidebar from "./components/RightSidebar";
+import Main from "./components/Main";
 
 function App() {
   return (
