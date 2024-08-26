@@ -13,7 +13,6 @@ import "./css/App.css";
 import "./css/Test.css";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
-
 function App() {
   return (
     <div className="App">
