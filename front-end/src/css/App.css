@@ -104,6 +104,11 @@ body {
   font-family: "Open Sans", sans-serif;
   margin: 0;
   padding: 0;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 a {
@@ -154,6 +159,30 @@ p {
   font-weight: var(--weight-regular);
   color: var(--color-black);
   margin: 4px 0;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background-color: #f0f0f0;
+}
+
+.saveButton {
+  background-color: #ff4d4d;
+  color: white;
 }
 
 /* fullCalendar tags */

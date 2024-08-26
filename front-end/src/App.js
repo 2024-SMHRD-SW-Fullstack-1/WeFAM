@@ -7,9 +7,12 @@ import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
 import Gallery from "./components/gallery/Gallery";
 import GalleryFolder from "./components/gallery/GalleryFolder";
+import LogIn from "./components/login/LogIn";
 
-import "./css/App.module.css";
+import "./css/App.css";
 import "./css/Test.css";
+import LeftSidebar from "./components/LeftSidebar";
+import RightSidebar from "./components/RightSidebar";
 
 function App() {
   return (
@@ -24,6 +27,7 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="gallery/:name" element={<GalleryFolder />} /> {/* 동적 경로 추가 */}
         </Route>
+        <Route path="login" element={<LogIn />} />
       </Routes>
     </div>
   );
