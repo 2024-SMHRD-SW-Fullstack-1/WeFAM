@@ -1,0 +1,182 @@
+.galleryHead {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px;
+}
+
+.btnDelete {
+    width: 60px;
+    height: 30px;
+    font-size: medium;
+    border: 1px solid #8a8a8a;
+    color: #8a8a8a;
+    border-radius: 10px;
+}
+
+.btnAdd {
+    width: 60px;
+    height: 30px;
+    font-size: medium;
+    color: #ffff;
+    border: 1px solid #8a8a8a;
+    background-color: #e1888b;
+    border-radius: 10px;
+}
+
+.imgSetting {
+    display: flex;
+    align-items: center;
+}
+
+.saveAndCheckbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 체크박스와 저장 버튼을 가운데 정렬 */
+    padding-top: 30px;
+}
+
+.checkboxLabel {
+    margin-top: 10px;
+    /* 간격 조절 */
+}
+
+.folderContainer {
+    display: flex;
+    flex-wrap: wrap;
+    /* 한 줄에 4개씩만 배치되고, 넘으면 다음 줄로 이동 */
+    justify-content: flex-start;
+    width: 72%;
+    /* 너비를 75%로 설정하여 폴더가 줄바꿈되도록 유도 */
+    margin: 40px auto 0;
+    padding: 0 60px;
+}
+
+.folder {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 7px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    /* 부드러운 전환 효과 */
+}
+
+/* 호버 효과 */
+.hoverEffect:hover {
+    background-color: #f0f0f0;
+    /* 폴더에 마우스를 올렸을 때 색상 변경 */
+    transform: translateY(-5px);
+    /* 약간 위로 올라가는 효과 */
+}
+
+/* 체크박스 스타일 */
+.folderCheckbox {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    width: 14px;
+    height: 14px;
+    display: none;
+    /* 기본적으로 체크박스를 숨김 */
+}
+
+/* 체크박스가 선택되었을 때 항상 표시 */
+.folderCheckbox:checked {
+    display: block;
+}
+
+/* 폴더가 호버되었을 때 체크박스 보이기 */
+.folder:hover .folderCheckbox {
+    display: block;
+}
+
+/* 폴더가 체크되었을 때도 체크박스 보이기 */
+.folderCheckbox:checked~.folderCheckbox {
+    display: block;
+}
+
+.folderIcon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.folderName {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.photoCount {
+    font-size: 12px;
+    color: #666;
+}
+
+.galleryModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.galleryOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    /* 오른쪽 끝에서부터 정렬 */
+    gap: 10px;
+    /* 버튼들 사이에 약간의 간격 */
+    margin-top: 15px;
+    margin-right: 20px;
+}
+
+.createButton {
+    background-color: #e1888b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.cancelButton {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.errorText {
+    color: red;
+    font-size: 12px;
+}
+
+.ModalInput {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #a86a6a;
+    border-radius: 4px;
+    outline: none;
+}
