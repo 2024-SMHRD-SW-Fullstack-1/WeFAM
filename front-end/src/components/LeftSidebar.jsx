@@ -38,7 +38,7 @@ const LeftSidebar = () => {
             </a>
           </li>
           <li>
-            <a href="/">
+            <a href="">
               <span>
                 <CiCalendar className={styles.categoryItemLogo} />
                 달력
