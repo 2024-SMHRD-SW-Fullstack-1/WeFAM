@@ -13,24 +13,24 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_group")
+@Table(name="tdl_joining")
 @Data
-public class GroupModel {
+public class JoiningModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_idx")
-    @JsonProperty("groupIdx")
-    private int groupIdx;
+    @Column(name = "join_idx")
+    @JsonProperty("joinIdx")
+    private int joinIdx;
 
-    @Column(name = "group_name")
-    @JsonProperty("groupName")
-    private String groupName;
-
-    @Column(name = "created_at")
-    @JsonProperty("createdAt")
-    private LocalDateTime createdAt;
-    
     @Column(name = "user_id")
     @JsonProperty("id")
     private String id;
+
+    @Column(name = "group_idx")
+    @JsonProperty("groupIdx")
+    private int groupIdx;
+    
+    @Column(name = "joinedAt")
+    @JsonProperty("joinedAt")
+    private LocalDateTime joinedAt;
 }

@@ -7,7 +7,7 @@ import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
 import Galary from "./components/galary/Galary";
 
-import "./css/App.module.css";
+import "./css/App.css";
 import "./css/Test.css";
 
 function App() {

@@ -37,12 +37,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     
-    // JJWT 의존성
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    
-    // JJWT에서 필요로 하는 자바 표준 암호화 라이브러리
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    
     // MySQL Connector
     runtimeOnly 'com.mysql:mysql-connector-j'
     
