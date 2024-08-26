@@ -6,6 +6,7 @@ import Memo from "./components/memo/Memo";
 import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
 import Galary from "./components/galary/Galary";
+import LogIn from "./components/login/LogIn";
 import "./css/App.css";
 import "./css/Test.css";
 import LeftSidebar from "./components/LeftSidebar";
