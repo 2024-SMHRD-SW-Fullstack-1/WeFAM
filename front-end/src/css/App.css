@@ -7,7 +7,7 @@
   --leftSidebar-width: 230px;
   --leftSidebarSmall-width: 60px;
   /* RightSidebar */
-  --rightSidebar-width: 300px;
+  --rightSidebar-width: 250px;
 
   /* Color */
   --color-coral: #e1888b;
@@ -17,6 +17,7 @@
   --color-pale-blue: #b6cfe2;
   --color-black: #000000;
   --color-white: #ffffff;
+  --color-grey: #737373;
 
   /* Font size */
   --font-sm: 0.875rem;
