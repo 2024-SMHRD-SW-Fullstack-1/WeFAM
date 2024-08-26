@@ -8,6 +8,22 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+  padding: 0 var(--space-lg);
+}
+
+.subHeader span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subHeader span button {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-4xl);
 }
 
 /* 반응형 디자인 */
