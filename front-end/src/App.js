@@ -5,10 +5,11 @@ import Calendar from "./components/calendar/Calendar";
 import Memo from "./components/memo/Memo";
 import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
-import Galary from "./components/galary/Galary";
-import Header from "./components/header/Header";
-import LogIn from "./components/login/LogIn"
-import "./css/App.module.css";
+import Gallery from "./components/gallery/Gallery";
+import GalleryFolder from "./components/gallery/GalleryFolder";
+import LogIn from "./components/login/LogIn";
+
+import "./css/App.css";
 import "./css/Test.css";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
@@ -22,9 +23,10 @@ function App() {
           <Route path="memo" element={<Memo />} />
           <Route path="todo" element={<Todo />} />
           <Route path="recipe" element={<Recipe />} />
-          <Route path="galary" element={<Galary />} />
+          <Route path="gallery" element={<Gallery />} />
+          <Route path="gallery/:name" element={<GalleryFolder />} /> {/* 동적 경로 추가 */}
         </Route>
-          <Route path="login" element={<LogIn />} />
+        <Route path="login" element={<LogIn />} />
       </Routes>
     </div>
   );
