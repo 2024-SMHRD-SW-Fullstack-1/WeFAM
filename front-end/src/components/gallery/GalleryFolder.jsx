@@ -135,9 +135,8 @@ const GalleryFolder = () => {
                     ))}
                 </ul>
 
-                <div className={styles.modalButtons}>
-                    <button className={styles.cancelButton} onClick={closeModal}>취소</button>
-                    <button className={styles.createButton} onClick={saveImages}>저장</button>
+                <div>
+                    <button className={styles.modalButton} onClick={saveImages}>저장</button>
                 </div>
             </Modal>
         </div>
