@@ -5,6 +5,7 @@
   top: var(--header-height);
   left: var(--leftSidebar-width);
   width: calc(100% - var(--leftSidebar-width) - var(--rightSidebar-width));
+  z-index: -1;
 }
 
 /* 반응형 디자인 */
