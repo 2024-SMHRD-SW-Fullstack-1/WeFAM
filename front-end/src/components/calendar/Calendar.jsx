@@ -135,7 +135,7 @@ const Calendar = () => {
   };
 
   return (
-    <div>
+    <div className='main'>
       {/* 검색 기능 */}
       <div style={{ marginTop: "10px", textAlign: "left" }}>
         <input
@@ -151,6 +151,7 @@ const Calendar = () => {
           }}
         />
       </div>
+
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView='dayGridMonth'
