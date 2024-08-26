@@ -6,7 +6,6 @@
   height: calc(100% - var(--header-height));
   background-color: aqua;
   transition: all var(--animation-duration);
-  z-index: var(--z-90);
 }
 
 .profile {
