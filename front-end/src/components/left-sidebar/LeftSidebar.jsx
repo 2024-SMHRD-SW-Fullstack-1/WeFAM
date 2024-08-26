@@ -86,7 +86,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/galary");
+                nav("/gallery");
               }}
             >
               <CiImageOn className={styles.categoryItemLogo} />
