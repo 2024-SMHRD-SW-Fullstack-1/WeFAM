@@ -5,7 +5,8 @@ import Calendar from "./components/calendar/Calendar";
 import Memo from "./components/memo/Memo";
 import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
-import Galary from "./components/galary/Galary";
+import Gallery from "./components/gallery/Gallery";
+import GalleryFolder from "./components/gallery/GalleryFolder";
 
 import "./css/App.module.css";
 import "./css/Test.css";
@@ -20,7 +21,8 @@ function App() {
           <Route path="memo" element={<Memo />} />
           <Route path="todo" element={<Todo />} />
           <Route path="recipe" element={<Recipe />} />
-          <Route path="galary" element={<Galary />} />
+          <Route path="gallery" element={<Gallery />} />
+          <Route path="gallery/:name" element={<GalleryFolder />} /> {/* 동적 경로 추가 */}
         </Route>
       </Routes>
     </div>
