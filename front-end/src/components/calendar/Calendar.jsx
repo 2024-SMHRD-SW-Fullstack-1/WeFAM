@@ -4,9 +4,19 @@ import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
+import EventModal from "./EventModal";
 
 const Calendar = () => {
   const [holidays, setHolidays] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [events, setEvents] = useState([
+    { title: "Event 122", start: "2024-08-01" },
+    { title: "Event 2", start: "2024-08-15" },
+    { title: "Meeting", start: "2024-08-18" },
+  ]);
 
   useEffect(() => {
     const year = new Date().getFullYear(); // 현재 연도를 기준으로 데이터 호출
@@ -19,7 +29,7 @@ const Calendar = () => {
           {
             params: {
               solYear: year,
-              numOfRows: 100, // 최대 100개의 공휴일 데이터를 가져옴
+              numOfRows: 0, // 최대 100개의 공휴일 데이터를 가져옴
               _type: "json",
               ServiceKey:
                 "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
@@ -63,6 +73,7 @@ const Calendar = () => {
               end: endDate.toISOString().split("T")[0], // 종료 날짜 (포함되도록 다음 날로 설정)
               allDay: true,
               backgroundColor: "#FF4D4D",
+              editable: false,
             };
           }
         );
@@ -76,6 +87,32 @@ const Calendar = () => {
 
     fetchHolidays();
   }, []);
+
+  // 검색 기능
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+  };
+
+  // 필터된 이벤트
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchTerm)
+  );
+
+  // 이벤트 클릭 시 모달을 열고 선택된 이벤트 저장
+  const handleEventClick = (clickInfo) => {
+    setSelectedEvent({
+      title: clickInfo.event.title,
+      start:
+        clickInfo.event.startStr ||
+        clickInfo.event.start.toISOString().split("T")[0], // startStr이 없으면 start를 사용
+      end:
+        clickInfo.event.endStr ||
+        clickInfo.event.end?.toISOString().split("T")[0] ||
+        clickInfo.event.start.toISOString().split("T")[0], // endStr이 없으면 end 또는 start를 사용
+    });
+    setIsModalOpen(true);
+  };
 
   const renderDayCellContent = (info) => {
     const dayOfWeek = info.date.toLocaleDateString("en-US", {
@@ -98,37 +135,92 @@ const Calendar = () => {
   };
 
   return (
-    <div className="main">
+    <div className='main'>
+      {/* 검색 기능 */}
+      <div style={{ marginTop: "10px", textAlign: "left" }}>
+        <input
+          type='text'
+          placeholder='일정을 검색하세요~'
+          value={searchTerm}
+          onChange={handleSearch}
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ddd",
+            width: "150px",
+          }}
+        />
+      </div>
+
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-        initialView="dayGridMonth"
-        locale="ko"
+        initialView='dayGridMonth'
+        locale='ko'
         nowIndicator={true}
         selectable={true}
+        allday={false}
         headerToolbar={{
-          start: "prev,next today",
-          center: "title",
-          end: "dayGridMonth,timeGridWeek",
+          left: "title,customButton",
+          center: "prev,today,next",
+          right: "dayGridMonth,timeGridWeek",
         }}
+        customButtons={{
+          customButton: {
+            text: "일정 추가", // 버튼 텍스트
+            click: () => alert("일정 추가"), // 버튼 클릭 시 동작
+          },
+        }}
+        editable={true}
         buttonText={{
           today: "오늘",
           month: "월간",
           week: "주간",
           day: "일간",
-          allday: "하루종일",
+          allDay: "하루종일",
         }}
-        height="90vh"
+        height='90vh'
         // dayHeaderContent={renderDayHeaderContent} // 요일 헤더 커스터마이징
         dayCellContent={renderDayCellContent}
+        allDaySlot={true}
+        droppable={true}
+        allDay={true}
+        weekends={true}
         events={[
           ...holidays, // 공휴일 데이터를 FullCalendar에 전달
+          ...events,
           {
-            title: "확인용",
-            start: "2024-08-22T00:00:00",
-            end: "2024-08-28T00:00:00", // 시간 정보 추가
+            title: "확인용1",
+            start: "2024-08-22",
+            end: "2024-08-28", // 시간 정보 추가
+            backgroundColor: "#cecece",
+          },
+          {
+            title: "출장",
+            start: "2024-08-21",
+            end: "2024-08-24", // 시간 정보 추가
+            backgroundColor: "#c9e812",
+          },
+          {
+            title: "여름 휴가",
+            start: "2024-08-29",
+            end: "2024-09-02", // 시간 정보 추가
+            backgroundColor: "var(--color-coral)",
+          },
+          {
+            title: "해외 출장",
+            start: "2024-08-04",
+            end: "2024-08-13", // 시간 정보 추가
           },
         ]}
+        eventClick={handleEventClick}
       />
+      {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
+      {isModalOpen && (
+        <EventModal
+          event={selectedEvent}
+          onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
+        />
+      )}
     </div>
   );
 };

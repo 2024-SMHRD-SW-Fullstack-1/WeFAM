@@ -11,22 +11,23 @@ import LogIn from "./components/login/LogIn";
 
 import "./css/App.css";
 import "./css/Test.css";
-import LeftSidebar from "./components/LeftSidebar";
-import RightSidebar from "./components/RightSidebar";
+import LeftSidebar from "./components/left-sidebar/LeftSidebar";
+import RightSidebar from "./components/right-sidebar/RightSidebar";
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
       <Routes>
-        <Route path="/" element={<Home />}>
+        <Route path='/' element={<Home />}>
           <Route index element={<Main />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="memo" element={<Memo />} />
-          <Route path="todo" element={<Todo />} />
-          <Route path="recipe" element={<Recipe />} />
-          <Route path="gallery" element={<Gallery />} />
-          <Route path="gallery/:name" element={<GalleryFolder />} /> {/* 동적 경로 추가 */}
+          <Route path='calendar' element={<Calendar />} />
+          <Route path='memo' element={<Memo />} />
+          <Route path='todo' element={<Todo />} />
+          <Route path='recipe' element={<Recipe />} />
+          <Route path='gallery' element={<Gallery />} />
+          <Route path='gallery/:name' element={<GalleryFolder />} />{" "}
+          {/* 동적 경로 추가 */}
         </Route>
-        <Route path="login" element={<LogIn />} />
+        <Route path='login' element={<LogIn />} />
       </Routes>
     </div>
   );
