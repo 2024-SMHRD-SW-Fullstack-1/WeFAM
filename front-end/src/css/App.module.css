@@ -52,7 +52,7 @@
   --animation-duration: 150ms;
 
   /* fullCallendar*/
-  --fc-small-font-size: .8em;
+  --fc-small-font-size: 0.8em;
   --fc-page-bg-color: #fff;
   --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
   --fc-neutral-text-color: #501818;
@@ -66,7 +66,7 @@
   --fc-button-active-bg-color: #d85156;
   --fc-button-active-border-color: none;
 
-  --fc-event-bg-color: var(--color-pale-blue);
+  --fc-event-bg-color: var(--color-maize);
   --fc-event-border-color: none;
   --fc-event-text-color: #fff;
   --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
@@ -84,7 +84,6 @@
   --fc-highlight-color: rgba(188, 232, 241, 0.3);
   --fc-today-bg-color: rgba(255, 220, 40, 0.15);
   --fc-now-indicator-color: red;
-  
 }
 
 /* Universal tags */
