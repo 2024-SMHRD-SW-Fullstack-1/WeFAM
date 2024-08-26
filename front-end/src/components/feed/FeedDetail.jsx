@@ -47,7 +47,11 @@ const FeedDetail = () => {
           </span>
         </div>
         <div className={styles.comment}>
-          <textarea rows="1" onChange={(e) => setContent(e.target.value)} />
+          <textarea
+            rows="1"
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="댓글 달기..."
+          />
           {content === "" ? null : <button>게시</button>}
         </div>
       </div>
