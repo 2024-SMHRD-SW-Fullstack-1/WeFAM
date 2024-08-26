@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Modal from "react-modal";
-import styles from "../css/AddCircle.module.css";
-import AddIcon from "../assets/images/icon-invitation.png"
+import styles from "./AddCircle.module.css";
+import AddIcon from "../../assets/images/icon-invitation.png"
 
 const AddCircle = ({ isOpen, onRequestClose }) => {
     const [link, setLink] = useState("https://WeFAM-invite-link.com"); // 초대 링크
@@ -32,7 +32,7 @@ const AddCircle = ({ isOpen, onRequestClose }) => {
                     <img className={styles.inviteIcon} src={AddIcon} alt="초대장" />
                     </div>
                     <div className={styles.linkContainer}>
-                        <h2 className={styles.addFont}>초대링크보</h2>
+                        <h2 className={styles.addFont}>초대링크 보내기</h2>
                         <input type="text" value={link} readOnly className={styles.linkInput} />
                         <button onClick={handleCopyLink} className={styles.copyButton}>
                             복사
