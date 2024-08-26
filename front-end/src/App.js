@@ -6,9 +6,7 @@ import Memo from "./components/memo/Memo";
 import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
 import Galary from "./components/galary/Galary";
-import Header from "./components/header/Header";
-import LogIn from "./components/login/LogIn"
-import "./css/App.module.css";
+import "./css/App.css";
 import "./css/Test.css";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
@@ -25,7 +23,7 @@ function App() {
           <Route path="recipe" element={<Recipe />} />
           <Route path="galary" element={<Galary />} />
         </Route>
-          <Route path="login" element={<LogIn />} />
+        <Route path="login" element={<LogIn />} />
       </Routes>
     </div>
   );
