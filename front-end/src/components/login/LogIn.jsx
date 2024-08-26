@@ -14,7 +14,48 @@ const LogIn = () => {
 
     nav("/login");
 
-  });
+  }, [nav]);
+
+  //카카오 로그인
+  const REST_API_KEY = 'e8bed681390865b7c0ef4d85e4e2c842';
+  const REDIRECT_URI = 'http://localhost:3000/login';
+  const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+  
+  useEffect(() => {
+    // const code = new URL(window.location.href).searchParams.get("code");
+    const url = window.location.href;
+    console.log("현재 URL:", url);  // 현재 URL을 확인하여 code 파라미터가 포함되어 있는지 확인
+
+    const code = new URL(url).searchParams.get("code");
+    if (code) {
+      console.log("백엔드로 보낼 코드", code);
+      // sendTokenBackend(code);
+    }
+  }, []); // 페이지 로드될 때 한 번 실행
+
+  const sendTokenBackend = async (code) => {
+    try {
+      const response = await fetch('주소', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // 백엔드에서 받은 데이터 처리
+      } else {
+        console.log('백 요청실패', response.statusText);
+      }
+    } catch (error) {
+      console.log('백 요청 중 오류', error);
+    }
+  };
+
+
+
 
 
   return (
@@ -28,7 +69,8 @@ const LogIn = () => {
 
           <div className={styles.kakao_loginButton}>
             <img src={Kakao} className={styles.icon} />
-            <button className={styles.KakaoLogin}>Kakao로 시작하기</button>
+            <button className={styles.KakaoLogin} onClick={() => { window.location.href = kakaoToken }}>Kakao로 시작하기</button>
+
           </div>
 
           <div className={styles.naver_loginButton}>
