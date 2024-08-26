@@ -13,24 +13,32 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_group")
+@Table(name="tbl_memo_comment")
 @Data
-public class GroupModel {
+public class MemoCommentModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_idx")
-    @JsonProperty("groupIdx")
-    private int groupIdx;
+    @Column(name = "cmt_idx")
+    @JsonProperty("cmtIdx")
+    private int cmtIdx;
 
-    @Column(name = "group_name")
-    @JsonProperty("groupName")
-    private String groupName;
+    @Column(name = "memo_idx")
+    @JsonProperty("memoIdx")
+    private int memoIdx;
 
+    @Column(name = "cmt_content")
+    @JsonProperty("cmtContent")
+    private String cmtContent;
+    
+    @Column(name = "cmt_likes")
+    @JsonProperty("cmtLikes")
+    private String cmtLikes;
+    
     @Column(name = "created_at")
     @JsonProperty("createdAt")
     private LocalDateTime createdAt;
-    
+
     @Column(name = "user_id")
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("userId")
+    private String userId;
 }
