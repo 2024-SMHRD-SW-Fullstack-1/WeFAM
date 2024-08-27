@@ -62,10 +62,10 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/todo");
-              }}>
+                nav("/housework");
+              }} >
               <CiCircleList className={styles.categoryItemLogo} />
-              <span>할일</span>
+              <span>집안일</span>
             </span>
           </li>
           <li>

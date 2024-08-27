@@ -39,19 +39,7 @@ const LogIn = () => {
     console.log("백으로 보내줄거 : ",code);
     setCode(code);
     sendKakaoTokenToBackend(code);
-    // 카카오 코드 처리
-
-    // if (code) {
-    //   if (url.includes('kauth.kakao.com')) {
-    //   } else if (url.includes('nid.naver.com')) {
-    //     sendNaverTokenToBackend(code); // 네이버 코드 처리
-    //   }else{
-    //     console.log("아무것도 안댐");
-        
-    //   }
-      
-    // }
-
+    
   }, []);
 
 

@@ -51,7 +51,7 @@ public class EventModel {
     
     @Column(name = "event_color")
     @JsonProperty("eventColor")
-    private String eventColor = ""; // 기본값 빈 문자열
+    private String eventColor = "black"; // 기본값 빈 문자열
 
     @Column(name = "event_location")
     @JsonProperty("eventLocation")
@@ -59,5 +59,5 @@ public class EventModel {
 
     @Column(name = "event_content")
     @JsonProperty("eventContent")
-    private String eventContent = ""; // 기본값 빈 문자열
+    private String eventContent = "none"; // 기본값 빈 문자열
 }
