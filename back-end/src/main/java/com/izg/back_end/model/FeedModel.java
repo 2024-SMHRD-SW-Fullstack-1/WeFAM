@@ -13,51 +13,42 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_feed")
+@Table(name = "feed")
 @Data
 public class FeedModel {
 
-		// 첨부파일 변수 없음. 추가할 것!
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-	    @Column(name = "feed_idx")
-	    @JsonProperty("feedIdx")
-	    private int feedIdx;
-
-	    @Column(name = "feed_type")
-	    @JsonProperty("feedType")
-	    private String feedType;
-
-	    @Column(name = "feed_title")
-	    @JsonProperty("feedTitle")
-	    private String feedTitle;
-	    
-	    @Column(name = "feed_content")
-	    @JsonProperty("feedContent")
-	    private String feedContent;
-	    
-	    @Column(name = "created_at")
-	    @JsonProperty("createdAt")
-	    private LocalDateTime createdAt;
-	    
-	    @Column(name = "feed_views")
-	    @JsonProperty("feedViews")
-	    private int feedViews;
-	    
-	    @Column(name = "feed_likes")
-	    @JsonProperty("feedLikes")
-	    private int feedLikes;
-	    
-//	    @Column(name = "location")
-//	    @JsonProperty("location")
-//	    private String location;
-	     
-	    @Column(name = "user_id")
-	    @JsonProperty("id")
-	    private String id;
-	    
-	    @Column(name = "group_idx")
-	    @JsonProperty("groupIdx")
-	    private String groupIdx;
-	    
-	}
+    // 첨부파일 변수 없음. 추가할 것!
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feed_idx")
+    @JsonProperty("feedIdx")
+    private int feedIdx = 0; // 기본값 0
+    
+    @Column(name = "family_idx")
+    @JsonProperty("familyIdx")
+    private int familyIdx = 0; // 기본값 0
+    
+    @Column(name = "user_id")
+    @JsonProperty("id")
+    private String id = ""; // 기본값 빈 문자열
+  
+    @Column(name = "posted_at")
+    @JsonProperty("postedAt")
+    private LocalDateTime postedAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간
+    
+    @Column(name = "feed_location")
+    @JsonProperty("feedLocation")
+    private String feedLocation = ""; // 기본값 빈 문자열, 필요시 주석 해제
+    
+    @Column(name = "feed_type")
+    @JsonProperty("feedType")
+    private String feedType = ""; // 기본값 빈 문자열
+    
+    @Column(name = "feed_content")
+    @JsonProperty("feedContent")
+    private String feedContent = ""; // 기본값 빈 문자열
+    
+    @Column(name = "feed_likes")
+    @JsonProperty("feedLikes")
+    private int feedLikes = 0; // 기본값 0
+}

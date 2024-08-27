@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Modal from 'react-modal';
 import { useDropzone } from 'react-dropzone'; // react-dropzone import
-import styles from "./Album.module.css";
+import styles from "./GalleryFolder.module.css";
 import { RiDragDropLine } from "react-icons/ri";
 
 Modal.setAppElement('#root');
 
-const Album = () => {
+const GalleryFolder = () => {
     const { name } = useParams();
     const [images, setImages] = useState([]); // 상태: 이미지 목록
     const [selectedImages, setSelectedImages] = useState([]); // 상태: 선택된 이미지 목록
@@ -191,4 +191,4 @@ const Album = () => {
     );
 };
 
-export default Album;
+export default GalleryFolder;
