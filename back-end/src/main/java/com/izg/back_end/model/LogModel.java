@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_log")
+@Table(name = "log")
 @Data
 public class LogModel {
 
