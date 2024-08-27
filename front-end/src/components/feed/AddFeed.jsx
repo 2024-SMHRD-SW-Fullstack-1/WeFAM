@@ -8,7 +8,7 @@ import { PiGameControllerLight } from "react-icons/pi";
 
 const AddFeed = () => {
   return (
-    <div className={styles.writeFeed}>
+    <div className={styles.addFeed}>
       <textarea
         className={styles.content}
         placeholder="무슨 생각을 하고 계신가요?"
