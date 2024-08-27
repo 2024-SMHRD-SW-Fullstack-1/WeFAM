@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_family")
+@Table(name = "family")
 @Data
 public class FamilyModel {
     @Id

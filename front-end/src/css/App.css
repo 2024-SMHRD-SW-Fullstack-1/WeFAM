@@ -82,7 +82,6 @@
 
   --fc-more-link-bg-color: #d0d0d0;
   --fc-more-link-text-color: inherit;
-  --fc-day-sat: red;
 
   --fc-event-resizer-thickness: 8px;
   --fc-event-resizer-dot-total-width: 8px;
@@ -210,7 +209,7 @@ p {
 .fc-event-title,
 .fc-event-time {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   width: 100%;
@@ -220,7 +219,7 @@ p {
 /* 시간 기반 이벤트에 대한 텍스트 정렬 */
 .fc-timegrid-event .fc-event-title {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   width: 100%;
@@ -228,8 +227,6 @@ p {
 
 .fc-daygrid-dot-event {
   padding: 0px;
-  color: var(--color-white);
-  background-color: var(--color-coral);
   margin: 0px;
 }
 
@@ -238,15 +235,39 @@ p {
 }
 
 .fc-daygrid-event-dot {
-  display: none;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #31bd48; /* 점의 색상 */
+  text-align: left;
 }
-
+.fc-event
+  fc-event-draggable
+  fc-event-resizable
+  fc-event-start
+  fc-event-end
+  fc-event-today
+  fc-daygrid-event
+  fc-daygrid-dot-event {
+  align-items: center;
+  align-content: center;
+}
 .fc .fc-daygrid-day-top {
   flex-direction: row;
 }
 
 .fc-event:hover {
-  background-color: #d85156;
+  background-color: #ececec;
+}
+
+.fc- .fc-secrollgrid {
+  border-color: transparent;
+}
+
+/* 셀의 높이를 %로 고정 */
+.fc-daygrid-day {
+  height: 16%; /* 캘린더 전체에서 각 셀이 차지할 비율 */
+  max-height: 100px; /* 최대 높이를 설정해도 됩니다 */
 }
 
 /*주 단위 */
