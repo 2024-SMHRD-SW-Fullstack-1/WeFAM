@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_feed")
+@Table(name = "feed")
 @Data
 public class FeedModel {
 

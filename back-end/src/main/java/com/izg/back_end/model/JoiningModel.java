@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tdl_joining")
+@Table(name = "joining")
 @Data
 public class JoiningModel {
 

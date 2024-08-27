@@ -1,14 +1,14 @@
 import React from "react";
 import styles from "./Feed.module.css";
-import WriteFeed from "./WriteFeed";
-import FeedDetail from "./FeedDetail";
+import AddFeed from "./AddFeed";
+import FeedList from "./FeedList";
 
 const Feed = () => {
   return (
     <div className="main">
       <div className={styles.feed}>
-        <WriteFeed />
-        <FeedDetail />
+        <AddFeed />
+        <FeedList />
       </div>
     </div>
   );
