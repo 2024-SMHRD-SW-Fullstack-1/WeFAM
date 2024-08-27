@@ -1,12 +1,12 @@
 import React from "react";
-import styles from "./WriteFeed.module.css";
+import styles from "./AddFeed.module.css";
 import { BsArrowReturnLeft } from "react-icons/bs";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
 
-const WriteFeed = () => {
+const AddFeed = () => {
   return (
     <div className={styles.writeFeed}>
       <textarea
@@ -40,4 +40,4 @@ const WriteFeed = () => {
   );
 };
 
-export default WriteFeed;
+export default AddFeed;
