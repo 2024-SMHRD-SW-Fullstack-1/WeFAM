@@ -5,6 +5,8 @@
   top: var(--header-height);
   left: var(--leftSidebar-width);
   width: calc(100% - var(--leftSidebar-width) - var(--rightSidebar-width));
+  display: flex;
+  justify-content: center;
   z-index: -1;
 }
 

@@ -1,53 +1,52 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import styles from './Gallery.module.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import Modal from "react-modal";
+import styles from "./Gallery.module.css";
+import { useNavigate } from "react-router-dom";
 
 // 모달의 루트 엘리먼트를 설정합니다
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const Gallery = () => {
-
   const nav = useNavigate();
 
   // 폴더 목록 상태 관리
   const [folders, setFolders] = useState([
-    { id: 1, name: '모든사진', photoCount: 0, icon: '📁' },
-    { id: 2, name: '질의응답', photoCount: 0, icon: '👨‍👩‍👧‍👦' },
+    { id: 1, name: "모든사진", photoCount: 0, icon: "📁" },
+    { id: 2, name: "질의응답", photoCount: 0, icon: "👨‍👩‍👧‍👦" },
   ]);
 
   // 선택된 폴더 상태 관리
   const [selectedFolders, setSelectedFolders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newFolderName, setNewFolderName] = useState('');
-  const [nameError, setNameError] = useState(''); // 폴더 이름 에러 메시지 상태
+  const [newFolderName, setNewFolderName] = useState("");
+  const [nameError, setNameError] = useState(""); // 폴더 이름 에러 메시지 상태
 
   // 폴더 추가
   const addFolder = () => {
     if (newFolderName.length > 10) {
-      setNameError('폴더 이름은 최대 10글자까지 가능합니다.');
+      setNameError("폴더 이름은 최대 10글자까지 가능합니다.");
     } else if (newFolderName) {
       const newFolder = {
         id: folders.length + 1,
         name: newFolderName,
         photoCount: 0,
-        icon: '📁',
+        icon: "📁",
       };
       setFolders([...folders, newFolder]);
-      setNewFolderName('');
-      setNameError(''); // 폴더 추가 시 에러 메시지 초기화
+      setNewFolderName("");
+      setNameError(""); // 폴더 추가 시 에러 메시지 초기화
       closeModal(); // 폴더 추가 후 모달 닫기
     }
   };
 
   const openModal = () => {
-    setNewFolderName(''); // 모달 열 때 폴더 이름 초기화
-    setNameError(''); // 모달 열 때 에러 메시지 초기화
+    setNewFolderName(""); // 모달 열 때 폴더 이름 초기화
+    setNameError(""); // 모달 열 때 에러 메시지 초기화
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setNewFolderName(''); // 모달 닫을 때 폴더 이름 초기화
+    setNewFolderName(""); // 모달 닫을 때 폴더 이름 초기화
     setIsModalOpen(false);
   };
 
@@ -64,7 +63,8 @@ const Gallery = () => {
   const deleteSelectedFolders = () => {
     setFolders((prevFolders) =>
       prevFolders.filter(
-        (folder) => !selectedFolders.includes(folder.id) || [1, 2].includes(folder.id)
+        (folder) =>
+          !selectedFolders.includes(folder.id) || [1, 2].includes(folder.id)
       )
     );
     setSelectedFolders([]); // 삭제 후 선택된 상태 초기화
@@ -74,7 +74,9 @@ const Gallery = () => {
   const toggleAllFolders = (event) => {
     if (event.target.checked) {
       // 기본 폴더(모든 사진, 질의응답) 제외하고 나머지 모든 폴더 선택
-      setSelectedFolders(folders.filter(folder => folder.id > 2).map(folder => folder.id));
+      setSelectedFolders(
+        folders.filter((folder) => folder.id > 2).map((folder) => folder.id)
+      );
     } else {
       // 모든 폴더 선택 해제
       setSelectedFolders([]);
@@ -83,7 +85,7 @@ const Gallery = () => {
 
   // 엔터키 입력 처리 함수
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault(); // 엔터키 기본 동작 방지
       addFolder(); // 폴더 추가 함수 호출
       // 폴더 추가가 성공적으로 이루어진 경우에만 모달 닫기
@@ -95,7 +97,7 @@ const Gallery = () => {
 
   // 폴더 클릭
   const handleFolderClick = (name) => {
-    nav(`/gallery/${name}`);  // 클릭한 폴더의 name에 따라 다른 경로로 이동
+    nav(`/gallery/${name}`); // 클릭한 폴더의 name에 따라 다른 경로로 이동
   };
 
   return (
@@ -107,14 +109,17 @@ const Gallery = () => {
             삭제
           </button>
           <div className={styles.saveAndCheckbox}>
-            <button className={styles.btnAdd} onClick={openModal}>추가</button>
+            <button className={styles.btnAdd} onClick={openModal}>
+              추가
+            </button>
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
                 onChange={toggleAllFolders}
                 checked={
                   folders.length > 2 &&
-                  selectedFolders.length === folders.filter(folder => folder.id > 2).length
+                  selectedFolders.length ===
+                    folders.filter((folder) => folder.id > 2).length
                 }
               />
               전체선택
@@ -127,8 +132,10 @@ const Gallery = () => {
         {folders.map((folder) => (
           <div
             key={folder.id}
-            className={`${styles.folder} ${styles.hoverEffect} ${folder.id > 2 ? styles.hoverEffect : ''}`}
-            onClick={() => handleFolderClick(folder.name)}  // 폴더 클릭 시 페이지 이동
+            className={`${styles.folder} ${styles.hoverEffect} ${
+              folder.id > 2 ? styles.hoverEffect : ""
+            }`}
+            onClick={() => handleFolderClick(folder.name)} // 폴더 클릭 시 페이지 이동
           >
             {/* 기본 폴더(모든 사진, 질의응답)에는 체크박스를 숨기거나 비활성화 */}
             {folder.id > 2 && (
@@ -142,7 +149,9 @@ const Gallery = () => {
             )}
             <div className={styles.folderIcon}>{folder.icon}</div>
             <div className={styles.folderName}>{folder.name}</div>
-            <div className={styles.photoCount}>{folder.photoCount} photo{folder.photoCount !== 1 ? 's' : ''}</div>
+            <div className={styles.photoCount}>
+              {folder.photoCount} photo{folder.photoCount !== 1 ? "s" : ""}
+            </div>
           </div>
         ))}
       </div>
@@ -156,7 +165,8 @@ const Gallery = () => {
         overlayClassName={styles.galleryOverlay}
       >
         <h1>폴더 추가</h1>
-        <input className={styles.ModalInput}
+        <input
+          className={styles.ModalInput}
           type="text"
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
@@ -165,8 +175,12 @@ const Gallery = () => {
         />
         {nameError && <p className={styles.errorText}>{nameError}</p>}
         <div className={styles.modalButtons}>
-          <button className={styles.cancelButton} onClick={closeModal}>취소</button>
-          <button className={styles.createButton} onClick={addFolder}>저장</button>
+          <button className={styles.cancelButton} onClick={closeModal}>
+            취소
+          </button>
+          <button className={styles.createButton} onClick={addFolder}>
+            저장
+          </button>
         </div>
       </Modal>
     </div>
