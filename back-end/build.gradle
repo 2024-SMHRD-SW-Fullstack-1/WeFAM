@@ -36,7 +36,6 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
-    
     // 개발 도구
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
@@ -49,6 +48,9 @@ dependencies {
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    
+    // AWS S3버킷
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {

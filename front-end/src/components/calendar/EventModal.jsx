@@ -47,12 +47,17 @@ const colorOptions = [
 const EventModal = ({ event, onClose, onSave }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false); // 상세 설정 상태 관리
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
-  const [alarmText, setAlarmText] = useState("알림 없음"); // 알림 상태에 따른 텍스트
+  const [alarmText, setAlarmText] = useState("10분 전"); // 알림 텍스트 기본값
   const [selectedOption, setSelectedOption] = useState(null); // 색상 선택 상태
   const [selectedColor, setSelectedColor] = useState(
     event.backgroundColor || "#FF4D4D"
   );
   const [selectedLabel, setSelectedLabel] = useState("");
+
+  // 알림 시간이 변경될 때 호출되는 함수
+  const handleAlarmChange = (time, unit) => {
+    setAlarmText(`${time} ${unit}`); // 알림 텍스트 업데이트
+  };
 
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
@@ -295,7 +300,10 @@ const EventModal = ({ event, onClose, onSave }) => {
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
                     }}>
-                    <AlarmSetting color={selectedColor} />
+                    <AlarmSetting
+                      onAlarmChange={handleAlarmChange}
+                      color={selectedColor}
+                    />
                   </div>
                 )}
               </div>
