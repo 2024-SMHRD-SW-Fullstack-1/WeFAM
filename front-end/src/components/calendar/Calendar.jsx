@@ -1,21 +1,68 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import EventModal from "./EventModal";
+import { BsSearch, BsCalendarPlus } from "react-icons/bs";
+import styles from "./Calendar.module.css";
 
 const Calendar = () => {
+  const calendarRef = useRef(null); // FullCalendar를 가리킬 ref
   const [holidays, setHolidays] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState(false); // 검색창 보임 여부 상태
 
   const [events, setEvents] = useState([
-    { title: "Event 122", start: "2024-08-01" },
-    { title: "Event 2", start: "2024-08-15" },
-    { title: "Meeting", start: "2024-08-18" },
+    {
+      id: 1,
+      title: "Event 122",
+      start: "2024-08-01",
+      backgroundColor: "#1abc9c",
+    },
+    {
+      id: 2,
+      title: "Event 2",
+      start: "2024-08-15",
+      backgroundColor: "#3498db",
+    },
+    {
+      id: 3,
+      title: "Meeting",
+      start: "2024-08-18",
+      backgroundColor: "#e74c3c",
+    },
+    {
+      id: 4,
+      title: "확인용1",
+      start: "2024-08-22",
+      end: "2024-08-28", // 시간 정보 추가
+      backgroundColor: "#1abc9c",
+    },
+    {
+      id: 5,
+      title: "출장",
+      start: "2024-08-21T09:00:00",
+      end: "2024-08-21T15:00:00", // 시간 정보 추가
+      backgroundColor: "#2c3e50",
+    },
+    {
+      id: 6,
+      title: "여름 휴가",
+      start: "2024-08-29",
+      end: "2024-09-02", // 시간 정보 추가
+      backgroundColor: "#9b59b6",
+    },
+    {
+      id: 7,
+      title: "해외 출장",
+      start: "2024-08-04",
+      end: "2024-08-13", // 시간 정보 추가
+      backgroundColor: "#f39c12",
+    },
   ]);
 
   useEffect(() => {
@@ -74,6 +121,7 @@ const Calendar = () => {
               allDay: true,
               backgroundColor: "#FF4D4D",
               editable: false,
+              isHoliday: true, // 공휴일 여부 플래그 추가
             };
           }
         );
@@ -88,20 +136,73 @@ const Calendar = () => {
     fetchHolidays();
   }, []);
 
-  // 검색 기능
-  const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
+  // 새로운 이벤트 추가 함수
+  const addNewEvent = () => {
+    const calendarApi = calendarRef.current.getApi(); // FullCalendar API 호출
+    const newEventId = events.length + 1; // 새로운 이벤트 ID 생성
+    const today = new Date(); // 현재 날짜
+    console.log("오늘", today);
+
+    const newEvent = {
+      id: newEventId,
+      title: "제목",
+      start: today, // 오늘 날짜 (시간 포함)
+      end: new Date(today.getTime() + 60 * 60 * 1000), // 1시간 뒤 종료
+      backgroundColor: "#ff6b6b", // 새로운 색상
+    };
+
+    // 이벤트를 FullCalendar에 추가
+    calendarApi.addEvent(newEvent);
+
+    // 상태 업데이트
+    setEvents([...events, newEvent]);
   };
 
-  // 필터된 이벤트
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchTerm)
-  );
+  // 모달에서 저장된 이벤트를 처리하는 함수
+  const handleSave = (updatedEvent) => {
+    console.log("Updated Event333:", updatedEvent.id); // 디버그용 로그 추가
+
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.id === updatedEvent.id ? updatedEvent : event
+      )
+    );
+    setIsModalOpen(false);
+    // 이벤트를 강제로 다시 렌더링
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+      const eventToUpdate = calendarApi.getEventById(updatedEvent.id);
+
+      if (eventToUpdate) {
+        eventToUpdate.setProp("backgroundColor", updatedEvent.backgroundColor);
+      }
+    }
+  };
+
+  // 상태 업데이트가 완료된 후 이벤트 상태를 확인하는 useEffect
+  useEffect(() => {
+    console.log("Updated Events State after change:", events);
+  }, [events]);
 
   // 이벤트 클릭 시 모달을 열고 선택된 이벤트 저장
   const handleEventClick = (clickInfo) => {
+    console.log("clickInfo:", clickInfo); // 전체 클릭 정보 출력
+    if (!clickInfo || !clickInfo.event) {
+      console.error("clickInfo or event is undefined:", clickInfo);
+      return;
+    }
+
+    console.log("Event ID:", clickInfo.event._def.publicId); // 이벤트 ID 출력
+    console.log("Event title:", clickInfo.event.title); // 이벤트 제목 출력
+    console.log("Event start:", clickInfo.event.start); // 이벤트 시작 시간 출력
+
+    console.log(
+      "Clicked Event backgroundColor:",
+      clickInfo.event.backgroundColor
+    );
+
     setSelectedEvent({
+      id: clickInfo.event._def.publicId,
       title: clickInfo.event.title,
       start:
         clickInfo.event.startStr ||
@@ -110,6 +211,7 @@ const Calendar = () => {
         clickInfo.event.endStr ||
         clickInfo.event.end?.toISOString().split("T")[0] ||
         clickInfo.event.start.toISOString().split("T")[0], // endStr이 없으면 end 또는 start를 사용
+      backgroundColor: clickInfo.event.backgroundColor,
     });
     setIsModalOpen(true);
   };
@@ -122,9 +224,9 @@ const Calendar = () => {
 
     // 'Sat'이 포함되면 파란색, 'Sun'이 포함되면 빨간색 설정
     if (dayOfWeek.includes("Sat")) {
-      color = "blue"; // 토요일: 파란색
+      color = "#2F76F9"; // 토요일: 파란색
     } else if (dayOfWeek.includes("Sun")) {
-      color = "red"; // 일요일: 빨간색
+      color = "#FF4D4D"; // 일요일: 빨간색
     }
 
     return (
@@ -137,90 +239,77 @@ const Calendar = () => {
   return (
     <div className='main'>
       {/* 검색 기능 */}
-      <div style={{ marginTop: "10px", textAlign: "left" }}>
-        <input
-          type='text'
-          placeholder='일정을 검색하세요~'
-          value={searchTerm}
-          onChange={handleSearch}
+      <div style={{ width: "90%" }}>
+        <div
           style={{
-            padding: "8px",
-            borderRadius: "5px",
-            border: "1px solid #ddd",
-            width: "150px",
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "6px",
+            padding: "5px",
+          }}>
+          <input
+            type='text'
+            placeholder='일정 검색'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
+            className={`${styles["search-input"]} ${
+              isSearchVisible ? styles["active"] : ""
+            }`} // 애니메이션 클래스 적용
+          />
+          {/*검색 아이콘 */}
+          <BsSearch
+            style={{ fontSize: "24px", cursor: "pointer" }}
+            onClick={() => setIsSearchVisible(!isSearchVisible)} // 클릭 시 검색창 보이기/숨기기
+          />
+          {/*일정 추가 아이콘 */}
+          <BsCalendarPlus style={{ fontSize: "24px" }} onClick={addNewEvent} />
+        </div>
+        <FullCalendar
+          ref={calendarRef} // ref 연결
+          plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+          initialView='dayGridMonth'
+          locale='ko'
+          nowIndicator={true}
+          selectable={true}
+          headerToolbar={{
+            left: "title",
+            center: "prev,today,next",
+            right: "dayGridMonth,timeGridWeek",
           }}
+          // customButtons={{
+          //   customButton: {
+          //     text: "일정 추가", // 버튼 텍스트
+          //     click: () => alert("일정 추가"), // 버튼 클릭 시 동작
+          //   },
+          // }}
+          editable={true}
+          buttonText={{
+            today: "오늘",
+            month: "월간",
+            week: "주간",
+            day: "일간",
+            allDay: "하루종일",
+          }}
+          height='85vh'
+          // dayHeaderContent={renderDayHeaderContent} // 요일 헤더 커스터마이징
+          dayCellContent={renderDayCellContent}
+          allDaySlot={true}
+          droppable={true}
+          weekends={true}
+          eventTimeFormat={true}
+          events={[...holidays, ...events]}
+          eventClick={handleEventClick}
         />
-      </div>
 
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-        initialView='dayGridMonth'
-        locale='ko'
-        nowIndicator={true}
-        selectable={true}
-        allday={false}
-        headerToolbar={{
-          left: "title,customButton",
-          center: "prev,today,next",
-          right: "dayGridMonth,timeGridWeek",
-        }}
-        customButtons={{
-          customButton: {
-            text: "일정 추가", // 버튼 텍스트
-            click: () => alert("일정 추가"), // 버튼 클릭 시 동작
-          },
-        }}
-        editable={true}
-        buttonText={{
-          today: "오늘",
-          month: "월간",
-          week: "주간",
-          day: "일간",
-          allDay: "하루종일",
-        }}
-        height='90vh'
-        // dayHeaderContent={renderDayHeaderContent} // 요일 헤더 커스터마이징
-        dayCellContent={renderDayCellContent}
-        allDaySlot={true}
-        droppable={true}
-        allDay={true}
-        weekends={true}
-        events={[
-          ...holidays, // 공휴일 데이터를 FullCalendar에 전달
-          ...events,
-          {
-            title: "확인용1",
-            start: "2024-08-22",
-            end: "2024-08-28", // 시간 정보 추가
-            backgroundColor: "#cecece",
-          },
-          {
-            title: "출장",
-            start: "2024-08-21",
-            end: "2024-08-24", // 시간 정보 추가
-            backgroundColor: "#c9e812",
-          },
-          {
-            title: "여름 휴가",
-            start: "2024-08-29",
-            end: "2024-09-02", // 시간 정보 추가
-            backgroundColor: "var(--color-coral)",
-          },
-          {
-            title: "해외 출장",
-            start: "2024-08-04",
-            end: "2024-08-13", // 시간 정보 추가
-          },
-        ]}
-        eventClick={handleEventClick}
-      />
-      {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
-      {isModalOpen && (
-        <EventModal
-          event={selectedEvent}
-          onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
-        />
-      )}
+        {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
+        {isModalOpen && (
+          <EventModal
+            event={selectedEvent}
+            onSave={handleSave}
+            onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
+          />
+        )}
+      </div>
     </div>
   );
 };
