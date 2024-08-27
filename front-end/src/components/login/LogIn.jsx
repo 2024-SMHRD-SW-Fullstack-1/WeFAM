@@ -6,64 +6,56 @@ import Kakao from '../../assets/images/Kakao.png'
 import Naver from '../../assets/images/naver.png'
 import Google from '../../assets/images/google.png'
 import axios from 'axios'
+import kakaoLogin from "react-kakao-login";
+
+// 카카오 로그인
+const REST_API_KEY = 'e8bed681390865b7c0ef4d85e4e2c842';
+const REDIRECT_URI = 'http://localhost:3000/login';
+const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+
+// 네이버 로그인
+const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
+const NAVER_CALLBACK_URL = "http://localhost:3000/login";
+const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
 const LogIn = () => {
   const nav = useNavigate();
 
+  //카카오로그인 핸들러
+  const KakaoLogin = () => {
+    window.location.href = kakaoToken;
+  };
+
+  // 네이버 로그인 핸들러
+  const NaverLogin = () => {
+    window.location.href = naverToken;
+  };
+
   useEffect(() => {
+    // 토큰값 추출
     const url = window.location.href;
-    const TockenCode = new URL(url).searchParams.get("code");
-    if (TockenCode) {
-      console.log("백엔드로 보낼 토큰 값 : ", TockenCode);
+    const code = new URL(url).searchParams.get("code");
+    console.log("백으로 넘겨줄 거 : ",code);
+    
 
-      sendKakaoTokenToBackend(TockenCode);
-    } else {
-      // code가 없을 때만 /login으로 리다이렉트
-      nav("/login");
+    // 리다이렉트된 URI가 네이버인지 카카오인지 확인하여 처리
+    if (url.includes('nid.naver.com')) {
+      sendNaverTokenToBackend(code); // 네이버 코드 처리
+    } else if (url.includes('kauth.kakao.com')) {
+      sendKakaoTokenToBackend(code); // 카카오 코드 처리
     }
-  }, [nav]);
-
-  //카카오 로그인
-  const REST_API_KEY = 'e8bed681390865b7c0ef4d85e4e2c842';
-  const REDIRECT_URI = 'http://localhost:3000/login';
-  const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
-
-  function kakaoLogin() {
-    window.Kakao.Auth.login({
-      scope: 'profile_nickname, profile_image',
-      success: function (authObj) {
-        console.log(authObj);
-        window.Kakao.API.request({
-          url: '/v2/user/me',
-          success: res =>{
-            const kakao_account = res.kakao_account;
-            console.log(kakao_account);
-            
-          }
-        });
-
-      }
-    });
-  }
-
-  //네이버 로그인
-  const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
-  const NAVER_CALLBACK_URL = "http://localhost:3000/login";
-  const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
-
+  }, []);
 
   const sendKakaoTokenToBackend = async (code) => {
     try {
       const response = await axios.post('http://localhost:8089/wefam/login', {
-
-        code: code
+        code: code,
       });
 
       if (response.status === 200) {
         const data = response.data;
-        console.log(data);
-
-        // 백엔드에서 받은 데이터 처리
+        console.log("카카오 사용자 정보 : ",data);
+        nav("/");
       } else {
         console.log('카카오 백 요청 실패', response.statusText);
       }
@@ -74,23 +66,22 @@ const LogIn = () => {
 
   const sendNaverTokenToBackend = async (code) => {
     try {
-      const response = await axios.post('네이버 백엔드 주소', {
-        code: code
+      const response = await axios.post('http://localhost:8089/wefam/login', {
+        code: code,
       });
 
       if (response.status === 200) {
         const data = response.data;
-        // 백엔드에서 받은 데이터 처리
+        console.log("네이버 사용자 정보 : ", data);
+        nav("/");
       } else {
-        console.log('네이버 백 요청 실패', response.statusText);
+        console.log("네이버 백 요청 실패", response.statusText);
+
       }
     } catch (error) {
-      console.log('네이버 백 요청 중 오류', error);
+      console.log("네이버 백 요청 중 오류", error);
     }
   };
-
-
-
 
 
   return (
@@ -104,23 +95,15 @@ const LogIn = () => {
 
           <div className={styles.kakao_loginButton}>
             <img src={Kakao} className={styles.icon} />
-            <button className={styles.KakaoLogin} onClick={kakaoLogin}>Kakao로 시작하기</button>
+            <button className={styles.KakaoLogin} onClick={KakaoLogin}>Kakao로 시작하기</button>
 
           </div>
 
           <div className={styles.naver_loginButton}>
             <img src={Naver} className={styles.icon} />
-            <button className={styles.NaverLogin} onClick={() => { window.location.href = naverToken }}>Naver로 시작하기</button>
+            <button className={styles.NaverLogin} onClick={NaverLogin}>Naver로 시작하기</button>
           </div>
-
-          <div className={styles.google_loginButton}>
-            <img src={Google} className={styles.icon} />
-            <button className={styles.GoogleLogin}>Google로 시작하기</button>
-          </div>
-
         </div>
-
-
       </div>
     </div>
 
