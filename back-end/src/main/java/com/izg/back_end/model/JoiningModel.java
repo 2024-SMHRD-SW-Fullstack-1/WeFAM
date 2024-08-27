@@ -13,24 +13,25 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tdl_joining")
+@Table(name = "tdl_joining")
 @Data
 public class JoiningModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "join_idx")
     @JsonProperty("joinIdx")
-    private int joinIdx;
+    private int joinIdx = 0; // 기본값 0
 
     @Column(name = "user_id")
     @JsonProperty("id")
-    private String id;
+    private String id = ""; // 기본값 빈 문자열
 
-    @Column(name = "group_idx")
-    @JsonProperty("groupIdx")
-    private int groupIdx;
-    
-    @Column(name = "joinedAt")
+    @Column(name = "family_idx")
+    @JsonProperty("familyIdx")
+    private int familyIdx = 0; // 기본값 0
+
+    @Column(name = "joined_at")
     @JsonProperty("joinedAt")
-    private LocalDateTime joinedAt;
+    private LocalDateTime joinedAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간
 }
