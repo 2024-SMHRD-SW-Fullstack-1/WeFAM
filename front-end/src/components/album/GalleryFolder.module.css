@@ -162,17 +162,24 @@
     cursor: pointer;
     margin-bottom: 20px;
     background-color: #f9f9f9;
+    transition: background-color 0.2s ease; /* 부드러운 배경색 전환 */
+
 }
 
 .dropzone p {
-    text-align: center;
     color: #888;
-    margin-top: 50px;
+    margin: 10px;
 }
 
-.dropzone button {
-    border: 1px solid black;
-    border-radius: 5px;
+.dragImg {
+    font-size: 48px; /* 아이콘 크기 조정 */
+    color: #888; /* 아이콘 색상 조정 */
+    margin-top: 40px; /* 아이콘과 텍스트 간의 간격 조정 */
+}
+
+/* 드래그 중 배경색 */
+.dragActive {
+    background-color: #cce5ff; /* 드래그 중 배경색 */
 }
 
 .fileList {
@@ -190,11 +197,22 @@
     margin-bottom: 8px;
 }
 
+.filePreview {
+    width: 45px; /* 미리보기 이미지의 너비 조정 */
+    height: 45px; /* 미리보기 이미지의 높이 조정 */
+    object-fit: cover; /* 이미지가 잘리지 않도록 설정 */
+    margin-right: 10px; /* 이미지와 파일 이름 간의 간격 조정 */
+}
+
+.fileItem span {
+    margin-top: 10px;
+}
+
 .fileItem button {
-    background-color: #ff4d4d;
+    background-color: #e1888b;
     border: none;
     color: white;
-    padding: 4px 8px;
+    padding: 8px;
     border-radius: 4px;
     cursor: pointer;
 }
