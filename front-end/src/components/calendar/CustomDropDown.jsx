@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "react-select";
 import { BsTagFill } from "react-icons/bs"; // 아이콘
 
-const CustomDropdown = ({ options, placeholder = "선택하세요", onChange }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
-
+const CustomDropdown = ({ options, placeholder, onChange, value }) => {
   const customStyles = {
     control: (provided) => ({
       ...provided,
       width: 490,
       alignItems: "center",
-      boder: "1px solid #e0e0e0",
+      boder: "0px solid #c02727",
       boderRadius: "10px",
       backgroundColor: "#f9f9f9" /* 박스 배경색 */,
     }),
@@ -40,19 +38,14 @@ const CustomDropdown = ({ options, placeholder = "선택하세요", onChange }) 
     </div>
   );
 
-  const handleChange = (selectedOption) => {
-    setSelectedOption(selectedOption);
-    onChange(selectedOption); // 선택된 값을 상위로 전달
-  };
-
   return (
     <Select
-      value={selectedOption}
-      onChange={handleChange}
+      value={value} // 상위에서 선택된 값을 전달
+      onChange={onChange}
       options={options}
       styles={customStyles}
       formatOptionLabel={formatOptionLabel}
-      placeholder={placeholder}
+      placeholder={placeholder} // 기본 placeholder 전달
     />
   );
 };

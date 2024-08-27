@@ -1,0 +1,135 @@
+/* 전체 레이아웃을 중앙에 맞추기 위한 컨테이너 */
+.houseworkContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px; /* 여백 설정 */
+}
+
+/* 제목과 추가 버튼을 포함한 상단 영역 */
+.houseworkTitle {
+    display: flex;
+    justify-content: space-between; /* 제목과 버튼 사이에 공간 분배 */
+    align-items: center;
+    width: 100%;
+    max-width: 1200px; /* 컨텐츠 최대 너비 조정 */
+    margin-bottom: 20px; /* 아래 여백 설정 */
+}
+
+/* 추가 버튼 스타일 */
+.addButton {
+    padding: 10px;
+    background-color: #e1888b; /* 배경색 */
+    color: white; /* 텍스트 색상 */
+    border: none;
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer;
+    margin: 10px;
+}
+
+.deleteButton {
+    padding: 10px;
+    color: #8a8a8a; /* 텍스트 색상 */
+    border: 1px solid #8a8a8a;
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer;
+}
+
+.addButton:hover {
+    background-color: #ca8285; /* 마우스 오버 시 배경색 */
+ }
+
+.checkBox {
+    height: 15px;
+    width: 15px;
+    margin-right: 10px; /* 체크박스와 텍스트 간격 */
+}
+
+/* 작업 섹션 스타일 */
+.taskSection {
+    width: 100%;
+    max-width: 1200px; /* 컨텐츠 최대 너비 조정 */
+    margin-bottom: 30px; /* 아래 여백 설정 */
+}
+
+.taskSection h2 {
+    font-size: 1.5em; /* 제목 크기 설정 */
+    margin-bottom: 15px; /* 아래 여백 설정 */
+}
+
+.taskSection ul {
+    list-style-type: none; /* 불릿 포인트 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+.taskSection li {
+    margin: 10px; /* 항목 간 여백 설정 */
+    display: flex;
+    align-items: center;
+}
+
+.completed {
+    text-decoration: line-through; /* 완료된 항목에 취소선 추가 */
+    color: grey; /* 색상 변경 */
+}
+
+/* 모달 스타일 */
+.houseworkModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 모달 중앙 정렬 */
+    width: 400px;
+    padding: 20px; /* 여백 설정 */
+    background-color: #fff; /* 배경색 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.houseworkModal h2 {
+    margin-bottom: 20px; /* 제목 아래 여백 설정 */
+}
+
+.houseworkModal select,
+.houseworkModal input {
+    width: 100%; /* 입력 필드와 선택 박스 너비 100% */
+    padding: 10px; /* 여백 설정 */
+    margin-bottom: 15px; /* 아래 여백 설정 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.houseworkModalButton {
+    padding: 10px 15px; /* 여백 설정 */
+    background-color: #e1888b; /* 배경색 */
+    color: white; /* 텍스트 색상 */
+    border: none;
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer;
+    margin-right: 10px; /* 오른쪽 여백 설정 */
+    transition: background-color 0.3s; /* 배경색 변경 시 애니메이션 */
+}
+
+.houseworkModalButton:hover {
+    background-color: #ca8285; /* 마우스 오버 시 배경색 */
+}
+
+.warningMessage {
+    color: red; /* 경고 메시지 색상 */
+    margin-bottom: 20px; /* 메시지와 다른 요소 간 여백 설정 */
+    font-size: 0.9em; /* 폰트 크기 조정 */
+}
+
+/* 모달 오버레이 스타일 */
+.houseworkOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+}

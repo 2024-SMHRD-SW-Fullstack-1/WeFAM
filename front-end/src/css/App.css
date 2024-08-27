@@ -193,11 +193,102 @@ p {
 }
 
 /* fullCalendar tags */
-.fc {
-  background-color: var(--calendar-bg-color);
-  color: var(--calendar-text-color);
+.fc .fc-day-sat a {
+  color: #2f76f9 !important;
+}
+
+.fc .fc-day-sun a {
+  color: #ff4d4d !important;
 }
 
 .fc .fc-media-screen {
-  margin-left: 100px;
+  margin-left: 2px;
+}
+
+/* 모든 이벤트에 대한 텍스트 정렬 */
+.fc-event {
+  /* background-color: var(--color-coral); */
+
+  border: none;
+}
+
+.fc-event-title,
+.fc-event-time {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+}
+
+/* 시간 기반 이벤트에 대한 텍스트 정렬 */
+.fc-timegrid-event .fc-event-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.fc-daygrid-dot-event {
+  padding: 0px;
+  margin: 0px;
+}
+
+.fc-event-title-container {
+  align-content: center;
+}
+
+.fc-daygrid-event-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #31bd48; /* 점의 색상 */
+  text-align: left;
+}
+.fc-event
+  fc-event-draggable
+  fc-event-resizable
+  fc-event-start
+  fc-event-end
+  fc-event-today
+  fc-daygrid-event
+  fc-daygrid-dot-event {
+  align-items: center;
+  align-content: center;
+}
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc-event:hover {
+  background-color: #ececec;
+}
+
+.fc- .fc-secrollgrid {
+  border-color: transparent;
+}
+
+/* 셀의 높이를 %로 고정 */
+.fc-daygrid-day {
+  height: 16%; /* 캘린더 전체에서 각 셀이 차지할 비율 */
+  max-height: 100px; /* 최대 높이를 설정해도 됩니다 */
+}
+
+/*주 단위 */
+.fc .fc-timegrid-divider {
+  padding: 0px;
+}
+
+/* react select*/
+.css-b62m3t-container .css-piclje-control {
+  border-color: transparent;
+}
+
+.css-1xc3v61-indicatorContainer .css-tj5bde-Svg {
+  display: none;
+}
+.css-1wy0on6 .css-1u9des2-indicatorSeparator {
+  display: none;
 }
