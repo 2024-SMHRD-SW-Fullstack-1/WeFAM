@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { BsAlarm } from "react-icons/bs"; // 알림 아이콘
 
-const AlarmSetting = () => {
+const AlarmSetting = ({ color }) => {
   const [alarmTime, setAlarmTime] = useState(10); // 알림 시간
   const [alarmUnit, setAlarmUnit] = useState("분 전"); // 알림 단위
   const [alarms, setAlarms] = useState([]); // 추가된 알림 리스트
@@ -26,21 +25,24 @@ const AlarmSetting = () => {
         style={{
           display: "absolute",
           alignItems: "center",
-        }}>
-        <span>일정 알림:</span>
+        }}
+      >
+        <span>일정 알림 </span>
         {/* 알림 시간 숫자 입력 */}
         <input
-          type='number'
+          type="number"
           value={alarmTime}
           onChange={(e) => setAlarmTime(e.target.value)}
           min={1}
           style={{
-            backgroundColor: "#ccc",
-            width: "100px",
+            backgroundColor: "#f9f9f9",
+            width: "50px",
+            height: "30px",
             padding: "5px",
             borderRadius: "5px",
             border: "none",
             textAlign: "center",
+            margin: 5,
           }}
         />
         {/* 알림 단위 선택 드롭다운 */}
@@ -48,14 +50,16 @@ const AlarmSetting = () => {
           value={alarmUnit}
           onChange={(e) => setAlarmUnit(e.target.value)}
           style={{
-            backgroundColor: "#ccc",
-            width: "100px",
+            backgroundColor: "#f9f9f9",
+            width: "75px",
+            height: "30px",
             padding: "5px",
             borderRadius: "5px",
             border: "none",
-            boxShadow: 0.1,
+
             textAlign: "center",
-          }}>
+          }}
+        >
           {unitOptions.map((option, index) => (
             <option key={index} value={option.value}>
               {option.label}
@@ -69,18 +73,19 @@ const AlarmSetting = () => {
         <button
           onClick={handleAddAlarm}
           style={{
-            color: "#007bff",
+            color: color,
             background: "none",
             border: "none",
             cursor: "pointer",
-          }}>
+          }}
+        >
           알림을 추가
         </button>
       </div>
 
       {/* 추가된 알림 목록 표시 */}
       {alarms.length > 0 && (
-        <div style={{ marginTop: "20px" }}>
+        <div>
           <h4>추가된 알림:</h4>
           <ul>
             {alarms.map((alarm, index) => (

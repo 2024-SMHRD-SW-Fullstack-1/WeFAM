@@ -15,78 +15,148 @@ import {
 import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./alarmSetting";
 
-const EventModal = ({ event, onClose }) => {
+const generateTimeOptions = () => {
+  const options = [];
+  let period = "오전"; // 오전과 오후를 구분
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+      const formattedMinute = minute.toString().padStart(2, "0");
+      period = hour < 12 ? "오전" : "오후";
+      options.push(`${period} ${formattedHour}:${formattedMinute}`);
+    }
+  }
+  return options;
+};
+
+const timeOptions = generateTimeOptions();
+
+const colorOptions = [
+  { value: "emerald", label: "에메랄드 그린", color: "#2ecc71" },
+  { value: "cyan", label: "모던 사이언", color: "#1abc9c" },
+  { value: "skyblue", label: "딥 스카이블루", color: "#3498db" },
+  { value: "brown", label: "파스텔 브라운", color: "#d35400" },
+  { value: "black", label: "미드나잇 블랙", color: "#2c3e50" },
+  { value: "red", label: "애플 레드", color: "#e74c3c" },
+  { value: "rose", label: "프렌치 로즈", color: "#e84393" },
+  { value: "pink", label: "코랄 핑크", color: "#ff6b6b" },
+  { value: "orange", label: "브라이트 오렌지", color: "#f39c12" },
+  { value: "violet", label: "소프트 바이올렛", color: "#9b59b6" },
+];
+
+const EventModal = ({ event, onClose, onSave }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false); // 상세 설정 상태 관리
-  const [selectedColor, setSelectedColor] = useState("#FF4D4D");
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
   const [alarmText, setAlarmText] = useState("알림 없음"); // 알림 상태에 따른 텍스트
+  const [selectedOption, setSelectedOption] = useState(null); // 색상 선택 상태
+  const [selectedColor, setSelectedColor] = useState(
+    event.backgroundColor || "#FF4D4D"
+  );
+  const [selectedLabel, setSelectedLabel] = useState("");
+
+  // 저장 버튼 클릭 시 이벤트 정보를 전달
+  const handleSaveClick = () => {
+    console.log("Saving event with color:", selectedColor); // 디버그용 로그
+    onSave({
+      ...event, // 기존 이벤트 정보 유지
+      start: startDate, // 업데이트된 시작 날짜
+      end: endDate, // 업데이트된 종료 날짜
+      backgroundColor: selectedColor, // 업데이트된 색상
+      id: event.id, // ID도 함께 전달
+    });
+  };
+
+  // 이미 존재하는 일정이면, 해당 색상의 라벨을 설정
+  useEffect(() => {
+    if (event && event.backgroundColor) {
+      setSelectedColor(event.backgroundColor);
+    }
+  }, [event.backgroundColor]);
 
   // CustomDropdown의 onChange 이벤트에서 올바른 color 값을 가져와 상태 업데이트
   const handleColorChange = (selectedOption) => {
-    if (selectedOption && selectedOption.color) {
-      setSelectedColor(selectedOption.color); // 선택된 색상 값을 저장
-    } else {
-      console.error("Color option is not available.");
-    }
+    setSelectedOption(selectedOption);
+    setSelectedColor(selectedOption.color);
   };
 
   // 상세 설정 버튼 클릭 시 토글
   const toggleDetail = () => {
     setIsDetailOpen((prevState) => !prevState);
   };
+
   const toggleAlarmSetting = () => {
     setShowAlarmSetting((prevState) => !prevState); // 알림 설정 토글
     setAlarmText(showAlarmSetting ? "알림 없음" : "10분 전"); // 알림 상태 텍스트 변경
   };
 
-  const colorOptions = [
-    { value: "emerald", label: "에메랄드 그린", color: "#2ecc71" },
-    { value: "cyan", label: "모던 사이언", color: "#1abc9c" },
-    { value: "skyblue", label: "딥 스카이블루", color: "#3498db" },
-    { value: "brown", label: "파스텔 브라운", color: "#d35400" },
-    { value: "black", label: "미드나잇 블랙", color: "#2c3e50" },
-    { value: "red", label: "애플 레드", color: "#e74c3c" },
-    { value: "rose", label: "프렌치 로즈", color: "#e84393" },
-    { value: "pink", label: "코랄 핑크", color: "#ff6b6b" },
-    { value: "orange", label: "브라이트 오렌지", color: "#f39c12" },
-    { value: "violet", label: "소프트 바이올렛", color: "#9b59b6" },
-  ];
-  // selectedColor가 변경될 때마다 로그 출력
   useEffect(() => {
-    console.log("Selected color updated:", selectedColor);
-  }, [selectedColor]); // selectedColor가 변경될 때마다 useEffect 실행
-
-  const timeOptions = [
-    "오전 12:00",
-    "오후 12:30",
-    "오후 1:00",
-    "오후 1:30",
-    "오후 2:00",
-    "오후 2:30",
-    "오후 3:00",
-    "오후 3:30",
-    "오후 4:00",
-    "오후 4:30",
-    "오후 5:00",
-    "오후 5:30",
-    "오후 6:00",
-    "오후 6:30",
-    "오후 7:00",
-    "오후 7:30",
-    "오후 8:00",
-    "오후 8:30",
-    "오후 9:00",
-    "오후 9:30",
-    "오후 10:00",
-    "오후 10:30",
-    "오후 11:00",
-    "오후 11:30",
-  ];
+    // 모달이 열릴 때, 이미 선택된 색상이 있으면 라벨 설정
+    const selectedOption = colorOptions.find(
+      (option) => option.color === event.backgroundColor
+    );
+    if (selectedOption) {
+      setSelectedLabel(selectedOption.label);
+    } else {
+      setSelectedLabel("색상을 선택하세요");
+    }
+  }, [event.backgroundColor]);
 
   const [startDate, setStartDate] = useState(new Date(event.start));
   const [endDate, setEndDate] = useState(new Date(event.end));
-  const [startTime, setStartTime] = useState("오전 0:00");
-  const [endTime, setEndTime] = useState("오후 0:00");
+
+  // ISO 8601 형식의 시간을 "오전/오후" 형식으로 변환하는 함수
+  const formatTimeForSelect = (isoString) => {
+    const date = new Date(isoString);
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const period = hours >= 12 ? "오후" : "오전";
+
+    if (hours > 12) {
+      hours -= 12;
+    } else if (hours === 0) {
+      hours = 12;
+    }
+
+    return `${period} ${hours}:${minutes}`;
+  };
+
+  // 시간 선택 핸들러에서 시간 값 업데이트
+  const handleStartTimeChange = (time) => {
+    const [period, hourMinute] = time.split(" ");
+    let [hour, minute] = hourMinute.split(":").map(Number);
+
+    // "오후"일 때 시간 계산
+    if (period === "오후" && hour < 12) {
+      hour += 12;
+    } else if (period === "오전" && hour === 12) {
+      hour = 0;
+    }
+
+    const newStartDate = new Date(startDate);
+    newStartDate.setHours(hour, minute);
+
+    // ISO로 변환하지 않고 Date 객체로 저장
+    setStartDate(newStartDate);
+  };
+
+  // 종료 시간 처리도 동일하게 적용
+  const handleEndTimeChange = (time) => {
+    const [period, hourMinute] = time.split(" ");
+    let [hour, minute] = hourMinute.split(":").map(Number);
+
+    if (period === "오후" && hour < 12) {
+      hour += 12;
+    } else if (period === "오전" && hour === 12) {
+      hour = 0;
+    }
+
+    const newEndDate = new Date(endDate);
+    newEndDate.setHours(hour, minute);
+
+    // ISO로 변환하지 않고 Date 객체로 저장
+    setEndDate(newEndDate);
+    console.log("확인용2", newEndDate);
+  };
 
   return (
     <div className={styles.modal}>
@@ -107,15 +177,15 @@ const EventModal = ({ event, onClose }) => {
             {/* 시작 날짜 */}
 
             <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              selected={new Date(startDate)}
+              onChange={(date) => setStartDate(date.toISOString())}
               dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
             <select
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
+              value={formatTimeForSelect(startDate)} // 시작 시간 값
+              onChange={(e) => handleStartTimeChange(e.target.value)}
               className={styles.timeInput}>
               {timeOptions.map((time, index) => (
                 <option key={index} value={time}>
@@ -127,8 +197,8 @@ const EventModal = ({ event, onClose }) => {
             <span> - </span>
             {/* 종료 시간 */}
             <select
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
+              value={formatTimeForSelect(endDate)}
+              onChange={(e) => handleEndTimeChange(e.target.value)}
               className={styles.timeInput}>
               {timeOptions.map((time, index) => (
                 <option key={index} value={time}>
@@ -138,8 +208,8 @@ const EventModal = ({ event, onClose }) => {
             </select>
             {/* 종료 날짜 */}
             <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              selected={new Date(endDate)}
+              onChange={(date) => setEndDate(date.toISOString())}
               dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
@@ -172,8 +242,14 @@ const EventModal = ({ event, onClose }) => {
           />
           <CustomDropdown
             options={colorOptions}
+            value={selectedOption} // 선택된 값 전달
             onChange={handleColorChange} // 선택된 값을 넘김
-            placeholder='색상을 선택하세요'
+            placeholder={
+              selectedColor
+                ? colorOptions.find((option) => option.color === selectedColor)
+                    ?.label || "색상을 선택하세요"
+                : "색상을 선택하세요"
+            }
           />
         </div>
 
@@ -196,40 +272,33 @@ const EventModal = ({ event, onClose }) => {
             {/*알림 설정 */}
             <div className={styles.field}>
               {/* 알림 설정 필드 */}
-              <div className={styles.contentField}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
-                  onClick={toggleAlarmSetting} // 클릭 시 드롭다운처럼 열리도록
-                >
-                  <BsAlarm
-                    className={styles.icon}
-                    style={{ color: selectedColor }}
-                  />
-                  <span>{alarmText}</span>
-                </div>
-              </div>
 
-              {/* 클릭 시 알림 설정 UI */}
-              {showAlarmSetting && (
-                <div
-                  style={{
-                    position: "absolute", // 절대 위치 설정
-                    zIndex: 1, // 다른 요소 위로 배치
-                    backgroundColor: "#f9f9f9",
-                    border: "1px solid #e0e0e0",
-                    borderRadius: "5px",
-                    padding: "10px",
-                    marginTop: "5px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
-                    width: "100%", // 필드 너비에 맞추기
-                  }}>
-                  <AlarmSetting />
-                </div>
-              )}
+              <BsAlarm
+                className={styles.icon}
+                style={{ color: selectedColor }}
+              />
+              <div className={styles.contentField}>
+                <span style={{ width: "100%" }} onClick={toggleAlarmSetting}>
+                  {alarmText}
+                </span>
+                {/* 클릭 시 알림 설정 UI */}
+                {showAlarmSetting && (
+                  <div
+                    style={{
+                      position: "absolute", // 절대 위치 설정
+                      zIndex: 1000, // 다른 요소 위로 배치
+                      backgroundColor: "#f9f9f9",
+                      border: "1px solid #e0e0e0",
+                      borderRadius: "5px",
+                      padding: "8px",
+                      marginTop: "25px",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
+                      width: "100%", // 필드 너비에 맞추기
+                    }}>
+                    <AlarmSetting color={selectedColor} />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/*지도 설정 */}
@@ -263,6 +332,7 @@ const EventModal = ({ event, onClose }) => {
           </button>
           <button
             className={styles.saveButton}
+            onClick={handleSaveClick} // 저장 시 선택된 색상 전달
             style={{ backgroundColor: selectedColor }} // 선택된 색상이 없으면 기본값
           >
             저장

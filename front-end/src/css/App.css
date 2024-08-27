@@ -7,7 +7,7 @@
   --leftSidebar-width: 230px;
   --leftSidebarSmall-width: 60px;
   /* RightSidebar */
-  --rightSidebar-width: 300px;
+  --rightSidebar-width: 250px;
 
   /* Color */
   --color-coral: #e1888b;
@@ -81,6 +81,7 @@
 
   --fc-more-link-bg-color: #d0d0d0;
   --fc-more-link-text-color: inherit;
+  --fc-day-sat: red;
 
   --fc-event-resizer-thickness: 8px;
   --fc-event-resizer-dot-total-width: 8px;
@@ -186,11 +187,80 @@ p {
 }
 
 /* fullCalendar tags */
-.fc {
-  background-color: var(--calendar-bg-color);
-  color: var(--calendar-text-color);
+.fc .fc-day-sat a {
+  color: #2f76f9 !important;
+}
+
+.fc .fc-day-sun a {
+  color: #ff4d4d !important;
 }
 
 .fc .fc-media-screen {
-  margin-left: 100px;
+  margin-left: 2px;
+}
+
+/* 모든 이벤트에 대한 텍스트 정렬 */
+.fc-event {
+  /* background-color: var(--color-coral); */
+
+  border: none;
+}
+
+.fc-event-title,
+.fc-event-time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+}
+
+/* 시간 기반 이벤트에 대한 텍스트 정렬 */
+.fc-timegrid-event .fc-event-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.fc-daygrid-dot-event {
+  padding: 0px;
+  color: var(--color-white);
+  background-color: var(--color-coral);
+  margin: 0px;
+}
+
+.fc-event-title-container {
+  align-content: center;
+}
+
+.fc-daygrid-event-dot {
+  display: none;
+}
+
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc-event:hover {
+  background-color: #d85156;
+}
+
+/*주 단위 */
+.fc .fc-timegrid-divider {
+  padding: 0px;
+}
+
+/* react select*/
+.css-b62m3t-container .css-piclje-control {
+  border-color: transparent;
+}
+
+.css-1xc3v61-indicatorContainer .css-tj5bde-Svg {
+  display: none;
+}
+.css-1wy0on6 .css-1u9des2-indicatorSeparator {
+  display: none;
 }

@@ -113,8 +113,6 @@
 .contentField {
   position: relative;
   display: flex;
-  align-items: row;
-  margin-bottom: 10px;
   width: 100%;
 }
 
@@ -136,5 +134,22 @@
   margin-bottom: 14px;
   cursor: pointer;
   font-size: 24px;
-  color: #333;
+  color: #222;
+}
+
+.search-input {
+  width: 0px; /* 처음에 검색창을 숨깁니다. */
+  transition: width 0.3s ease; /* 애니메이션으로 크기 변경 */
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  opacity: 0; /* 처음에 투명하게 */
+}
+
+.search-input.active {
+  width: 200px; /* 검색창이 넓어질 때의 크기 */
+  opacity: 1; /* 검색창이 나타나게 */
+  padding: 5px;
 }
