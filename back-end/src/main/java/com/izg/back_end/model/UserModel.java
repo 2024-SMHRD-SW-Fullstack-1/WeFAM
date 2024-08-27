@@ -12,11 +12,11 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_user")
+@Table(name = "user")
 @Data
 public class UserModel {
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id" )
     @JsonProperty("id")
     private String id = ""; // 기본값 빈 문자열
 

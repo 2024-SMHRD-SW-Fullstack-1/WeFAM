@@ -138,7 +138,7 @@ const Calendar = () => {
 
   // 새로운 이벤트 추가 함수
   const addNewEvent = () => {
-    const calendarApi = calendarRef.current.getApi(); // FullCalendar API 호출
+    // const calendarApi = calendarRef.current.getApi(); // FullCalendar API 호출
     const newEventId = events.length + 1; // 새로운 이벤트 ID 생성
     const today = new Date(); // 현재 날짜
     console.log("오늘", today);
@@ -148,11 +148,8 @@ const Calendar = () => {
       title: "제목",
       start: today, // 오늘 날짜 (시간 포함)
       end: new Date(today.getTime() + 60 * 60 * 1000), // 1시간 뒤 종료
-      backgroundColor: "#ff6b6b", // 새로운 색상
+      backgroundColor: "#2c3e50",
     };
-
-    // 이벤트를 FullCalendar에 추가
-    calendarApi.addEvent(newEvent);
 
     // 상태 업데이트
     setEvents([...events, newEvent]);
@@ -160,8 +157,6 @@ const Calendar = () => {
 
   // 모달에서 저장된 이벤트를 처리하는 함수
   const handleSave = (updatedEvent) => {
-    console.log("Updated Event333:", updatedEvent.id); // 디버그용 로그 추가
-
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.id === updatedEvent.id ? updatedEvent : event
@@ -180,26 +175,13 @@ const Calendar = () => {
   };
 
   // 상태 업데이트가 완료된 후 이벤트 상태를 확인하는 useEffect
-  useEffect(() => {
-    console.log("Updated Events State after change:", events);
-  }, [events]);
+  useEffect(() => {}, [events]);
 
   // 이벤트 클릭 시 모달을 열고 선택된 이벤트 저장
   const handleEventClick = (clickInfo) => {
     console.log("clickInfo:", clickInfo); // 전체 클릭 정보 출력
     if (!clickInfo || !clickInfo.event) {
-      console.error("clickInfo or event is undefined:", clickInfo);
-      return;
     }
-
-    console.log("Event ID:", clickInfo.event._def.publicId); // 이벤트 ID 출력
-    console.log("Event title:", clickInfo.event.title); // 이벤트 제목 출력
-    console.log("Event start:", clickInfo.event.start); // 이벤트 시작 시간 출력
-
-    console.log(
-      "Clicked Event backgroundColor:",
-      clickInfo.event.backgroundColor
-    );
 
     setSelectedEvent({
       id: clickInfo.event._def.publicId,
@@ -276,12 +258,6 @@ const Calendar = () => {
             center: "prev,today,next",
             right: "dayGridMonth,timeGridWeek",
           }}
-          // customButtons={{
-          //   customButton: {
-          //     text: "일정 추가", // 버튼 텍스트
-          //     click: () => alert("일정 추가"), // 버튼 클릭 시 동작
-          //   },
-          // }}
           editable={true}
           buttonText={{
             today: "오늘",
@@ -291,7 +267,6 @@ const Calendar = () => {
             allDay: "하루종일",
           }}
           height='85vh'
-          // dayHeaderContent={renderDayHeaderContent} // 요일 헤더 커스터마이징
           dayCellContent={renderDayCellContent}
           allDaySlot={true}
           droppable={true}
@@ -299,6 +274,9 @@ const Calendar = () => {
           eventTimeFormat={true}
           events={[...holidays, ...events]}
           eventClick={handleEventClick}
+          // 여기에 eventLimit을 추가
+          dayMaxEvents={3} // true로 설정하면 기본적으로 5개가 넘어가면 'View More' 표시
+          moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
         />
 
         {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}

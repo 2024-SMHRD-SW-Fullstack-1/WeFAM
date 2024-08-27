@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_event")
+@Table(name = "event")
 @Data
 public class EventModel {
     @Id
