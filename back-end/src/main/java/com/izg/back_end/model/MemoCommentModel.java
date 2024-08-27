@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 //@Entity
-//@Table(name = "tbl_memo_comment")
+//@Table(name = "memo_comment")
 //@Data
 public class MemoCommentModel {
 //    @Id

@@ -1,0 +1,90 @@
+.feedList {
+  width: 470px;
+}
+.feedItem {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-md);
+  padding: var(--space-sm);
+  background-color: beige;
+  margin-bottom: var(--space-lg);
+}
+.header {
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.feedInfoContainer {
+  height: 100%;
+  display: flex;
+  gap: var(--space-md);
+}
+.profileImg {
+  height: 40px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
+.profileImg img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.feedInfo {
+  height: 100%;
+}
+.wrTime,
+.location {
+  height: 50%;
+}
+.wrTime {
+  display: flex;
+  align-items: center;
+}
+.wrTime .writer {
+  font-weight: var(--weight-bold);
+}
+.wrTime .time {
+  color: var(--color-grey);
+}
+.location {
+  display: flex;
+  align-items: center;
+}
+
+.feedOptionsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  min-height: 100px;
+}
+.iconbar {
+  display: flex;
+  gap: var(--space-sm);
+}
+.iconbar span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+.comment {
+  display: flex;
+  align-items: center;
+}
+.comment textarea {
+  width: 90%;
+  resize: none;
+  border: none;
+  border-bottom: 1px solid var(--color-black);
+  background-color: beige;
+  outline: none;
+  font-size: var(--font-md);
+}
+
+.comment button {
+  width: 10%;
+  color: var(--color-black);
+}

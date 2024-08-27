@@ -6,9 +6,9 @@ import Calendar from "./components/calendar/Calendar";
 import Memo from "./components/memo/Memo";
 import Todo from "./components/todo/Todo";
 import Recipe from "./components/recipe/Recipe";
-import Gallery from "./components/gallery/Gallery";
-import GalleryFolder from "./components/gallery/GalleryFolder";
-import LogIn from "./components/login/LogIn";
+import Album from "./components/album/Album";
+import AlbumFolder from "./components/album/AlbumFolder";
+import Login from "./components/login/Login";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
@@ -21,11 +21,11 @@ function App() {
           <Route path="memo" element={<Memo />} />
           <Route path="todo" element={<Todo />} />
           <Route path="recipe" element={<Recipe />} />
-          <Route path="gallery" element={<Gallery />} />
-          <Route path="gallery/:name" element={<GalleryFolder />} />{" "}
+          <Route path="album" element={<Album />} />
+          <Route path="album/:name" element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
-        <Route path="login" element={<LogIn />} />
+        <Route path="login" element={<Login />} />
       </Routes>
     </div>
   );
