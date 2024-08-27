@@ -4,7 +4,7 @@ import Main from "./components/Main";
 import Feed from "./components/feed/Feed";
 import Calendar from "./components/calendar/Calendar";
 import Memo from "./components/memo/Memo";
-import Todo from "./components/todo/Todo";
+import HouseWork from "./components/housework/HouseWork";
 import Recipe from "./components/recipe/Recipe";
 import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
@@ -19,7 +19,7 @@ function App() {
           <Route index element={<Feed />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="memo" element={<Memo />} />
-          <Route path="todo" element={<Todo />} />
+          <Route path="housework" element={<HouseWork />} />
           <Route path="recipe" element={<Recipe />} />
           <Route path="album" element={<Album />} />
           <Route path="album/:name" element={<AlbumFolder />} />{" "}

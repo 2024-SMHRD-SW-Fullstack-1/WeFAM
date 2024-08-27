@@ -103,7 +103,7 @@ const Album = () => {
   return (
     <div className="main">
       <div className={styles.albumHead}>
-        <h1>갤러리</h1>
+        <h1>앨범</h1>
         <div className={styles.imgSetting}>
           <button className={styles.btnDelete} onClick={deleteSelectedFolders}>
             삭제

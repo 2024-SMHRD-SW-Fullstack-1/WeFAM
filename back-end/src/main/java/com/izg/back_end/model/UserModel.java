@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 public class UserModel {
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id" )
     @JsonProperty("id")
     private String id = ""; // 기본값 빈 문자열
 
