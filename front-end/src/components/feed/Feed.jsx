@@ -5,7 +5,7 @@ import FeedDetail from "./FeedDetail";
 
 const Feed = () => {
   return (
-    <div className="main">
+    <div className='main'>
       <div className={styles.feed}>
         <AddFeed />
         <FeedDetail />
