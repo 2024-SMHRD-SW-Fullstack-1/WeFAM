@@ -7,7 +7,7 @@
   --leftSidebar-width: 230px;
   --leftSidebarSmall-width: 60px;
   /* RightSidebar */
-  --rightSidebar-width: 300px;
+  --rightSidebar-width: 250px;
 
   /* Color */
   --color-coral: #e1888b;
@@ -17,6 +17,7 @@
   --color-pale-blue: #b6cfe2;
   --color-black: #000000;
   --color-white: #ffffff;
+  --color-grey: #737373;
 
   /* Font size */
   --font-sm: 0.875rem;
@@ -66,21 +67,22 @@
   --fc-neutral-text-color: #501818;
   --fc-border-color: #ddd;
 
-  --fc-button-text-color: #fff;
-  --fc-button-bg-color: var(--color-coral);
+  --fc-button-text-color: #fff !important;
+  --fc-button-bg-color: var(--color-coral) !important;
   --fc-button-border-color: none;
-  --fc-button-hover-bg-color: #da696d;
+  --fc-button-hover-bg-color: #da696d !important;
   --fc-button-hover-border-color: none;
-  --fc-button-active-bg-color: #d85156;
+  --fc-button-active-bg-color: #d85156 !important;
   --fc-button-active-border-color: none;
 
-  --fc-event-bg-color: var(--color-pale-blue);
+  --fc-event-bg-color: var(--color-maize);
   --fc-event-border-color: none;
   --fc-event-text-color: #fff;
   --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
 
   --fc-more-link-bg-color: #d0d0d0;
   --fc-more-link-text-color: inherit;
+  --fc-day-sat: red;
 
   --fc-event-resizer-thickness: 8px;
   --fc-event-resizer-dot-total-width: 8px;
@@ -186,24 +188,80 @@ p {
 }
 
 /* fullCalendar tags */
-.fc {
-  background-color: var(--calendar-bg-color);
-  color: var(--calendar-text-color);
+.fc .fc-day-sat a {
+  color: #2f76f9 !important;
 }
 
-.fc .fc-daygrid-day-number {
-  color: var(--primary-color); /* 날짜 숫자 색상 */
+.fc .fc-day-sun a {
+  color: #ff4d4d !important;
 }
 
-.fc .fc-toolbar-title {
-  color: var(--secondary-color); /* 제목 색상 */
+.fc .fc-media-screen {
+  margin-left: 2px;
 }
 
-.fc .fc-button {
-  background-color: var(--primary-color); /* 버튼 배경 색상 */
-  color: #fff;
+/* 모든 이벤트에 대한 텍스트 정렬 */
+.fc-event {
+  /* background-color: var(--color-coral); */
+
+  border: none;
 }
 
-.fc .fc-button:hover {
-  background-color: var(--secondary-color); /* 버튼 hover 색상 */
+.fc-event-title,
+.fc-event-time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+}
+
+/* 시간 기반 이벤트에 대한 텍스트 정렬 */
+.fc-timegrid-event .fc-event-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.fc-daygrid-dot-event {
+  padding: 0px;
+  color: var(--color-white);
+  background-color: var(--color-coral);
+  margin: 0px;
+}
+
+.fc-event-title-container {
+  align-content: center;
+}
+
+.fc-daygrid-event-dot {
+  display: none;
+}
+
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc-event:hover {
+  background-color: #d85156;
+}
+
+/*주 단위 */
+.fc .fc-timegrid-divider {
+  padding: 0px;
+}
+
+/* react select*/
+.css-b62m3t-container .css-piclje-control {
+  border-color: transparent;
+}
+
+.css-1xc3v61-indicatorContainer .css-tj5bde-Svg {
+  display: none;
+}
+.css-1wy0on6 .css-1u9des2-indicatorSeparator {
+  display: none;
 }

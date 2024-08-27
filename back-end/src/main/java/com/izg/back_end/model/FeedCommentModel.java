@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_feed_comment")
+@Table(name="feed_comment")
 @Data
 public class FeedCommentModel {
 
@@ -39,9 +39,9 @@ public class FeedCommentModel {
 //	    @JsonProperty("location")
 //	    private String location;
 	    
-	    @Column(name = "created_at")
-	    @JsonProperty("createdAt")
-	    private LocalDateTime createdAt;
+//	    @Column(name = "created_at")
+//	    @JsonProperty("createdAt")
+//	    private LocalDateTime createdAt;
 	    
 	    @Column(name = "user_id")
 	    @JsonProperty("id")
