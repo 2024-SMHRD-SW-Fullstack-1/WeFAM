@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./AddFeed.module.css";
 import { BsArrowReturnLeft } from "react-icons/bs";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
+import axios from "axios";
 
 const AddFeed = () => {
+  const [writer, setWriter] = useState("");
+  const [content, setContent] = useState("");
+  const [location, setLocation] = useState("");
+
+  async function addFeed() {
+    try {
+      const response = await axios.post(
+        "http://localhost:8089/wefam/add-feed",
+        {
+          familyIdx: 1,
+          id: "jgod",
+          feedContent: "content",
+          feedLocation: "여수",
+        }
+      );
+      console.log("addFeed 함수 실행 : " + response.data);
+    } catch (error) {
+      console.error("addFeed 함수 에러 : ", error);
+    }
+  }
+
   return (
     <div className={styles.addFeed}>
       <textarea
@@ -31,7 +53,7 @@ const AddFeed = () => {
           </button>
         </span>
         <span>
-          <button>
+          <button onClick={addFeed}>
             <BsArrowReturnLeft />
           </button>
         </span>

@@ -21,7 +21,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/add-memo").permitAll()
+                    .requestMatchers("/add-feed", "/fetch-feeds").permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->
