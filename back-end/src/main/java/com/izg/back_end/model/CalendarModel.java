@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_calendar")
+@Table(name="calendar")
 @Data
 public class CalendarModel {
 
