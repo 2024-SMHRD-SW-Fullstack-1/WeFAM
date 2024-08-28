@@ -24,7 +24,8 @@ const LeftSidebar = () => {
         <img
           className={styles.profileThumbnail}
           src={profileThumbnail}
-          alt='프로필'></img>
+          alt="프로필"
+        ></img>
         <div className={styles.profileName}>구찌캣</div>
       </div>
 
@@ -36,7 +37,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/");
-              }}>
+              }}
+            >
               <CiHome className={styles.categoryItemLogo} />
               <span>홈</span>
             </span>
@@ -45,7 +47,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/calendar");
-              }}>
+              }}
+            >
               <CiCalendar className={styles.categoryItemLogo} />
               <span>달력</span>
             </span>
@@ -53,8 +56,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/memo");
-              }}>
+                nav("/");
+              }}
+            >
               <CiStickyNote className={styles.categoryItemLogo} />
               <span>메모</span>
             </span>
@@ -63,7 +67,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/housework");
-              }}>
+              }}
+            >
               <CiCircleList className={styles.categoryItemLogo} />
               <span>집안일</span>
             </span>
@@ -72,7 +77,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/");
-              }}>
+              }}
+            >
               <CiForkAndKnife className={styles.categoryItemLogo} />
               <span>요리법</span>
             </span>
@@ -81,7 +87,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/album");
-              }}>
+              }}
+            >
               <CiImageOn className={styles.categoryItemLogo} />
               <span>사진첩</span>
             </span>
@@ -94,7 +101,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/settings");
-              }}>
+              }}
+            >
               <CiSettings className={styles.categoryItemLogo} />
               <span>설정</span>
             </span>
@@ -103,7 +111,8 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/login");
-              }}>
+              }}
+            >
               <CiLogout className={styles.categoryItemLogo} />
               <span>로그아웃</span>
             </span>
