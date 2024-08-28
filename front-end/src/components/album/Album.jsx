@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import styles from "./Gallery.module.css";
+import styles from "./Album.module.css";
 import { useNavigate } from "react-router-dom";
 
 // 모달의 루트 엘리먼트를 설정합니다
 Modal.setAppElement("#root");
 
-const Gallery = () => {
+const Album = () => {
   const nav = useNavigate();
 
   // 폴더 목록 상태 관리
@@ -97,13 +97,13 @@ const Gallery = () => {
 
   // 폴더 클릭
   const handleFolderClick = (name) => {
-    nav(`/gallery/${name}`); // 클릭한 폴더의 name에 따라 다른 경로로 이동
+    nav(`/album/${name}`); // 클릭한 폴더의 name에 따라 다른 경로로 이동
   };
 
   return (
-    <div className='main'>
-      <div className={styles.galleryHead}>
-        <h1>갤러리</h1>
+    <div className="main">
+      <div className={styles.albumHead}>
+        <h1>앨범</h1>
         <div className={styles.imgSetting}>
           <button className={styles.btnDelete} onClick={deleteSelectedFolders}>
             삭제
@@ -114,7 +114,7 @@ const Gallery = () => {
             </button>
             <label className={styles.checkboxLabel}>
               <input
-                type='checkbox'
+                type="checkbox"
                 onChange={toggleAllFolders}
                 checked={
                   folders.length > 2 &&
@@ -140,7 +140,7 @@ const Gallery = () => {
             {/* 기본 폴더(모든 사진, 질의응답)에는 체크박스를 숨기거나 비활성화 */}
             {folder.id > 2 && (
               <input
-                type='checkbox'
+                type="checkbox"
                 className={styles.folderCheckbox}
                 checked={selectedFolders.includes(folder.id)}
                 onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 방지
@@ -160,17 +160,18 @@ const Gallery = () => {
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
-        contentLabel='폴더 추가'
-        className={styles.galleryModal}
-        overlayClassName={styles.galleryOverlay}>
+        contentLabel="폴더 추가"
+        className={styles.albumModal}
+        overlayClassName={styles.albumOverlay}
+      >
         <h1>폴더 추가</h1>
         <input
           className={styles.ModalInput}
-          type='text'
+          type="text"
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
           onKeyDown={handleKeyDown} // 엔터키 입력 처리
-          placeholder='폴더명을 입력해주세요.'
+          placeholder="폴더명을 입력해주세요."
         />
         {nameError && <p className={styles.errorText}>{nameError}</p>}
         <div className={styles.modalButtons}>
@@ -186,4 +187,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default Album;

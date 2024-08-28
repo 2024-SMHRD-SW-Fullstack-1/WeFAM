@@ -1,4 +1,11 @@
 /* Global */
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
 
 :root {
   /* Header */
@@ -96,13 +103,13 @@
 }
 
 /* Universal tags */
-
 * {
   box-sizing: border-box;
+  /* Font */
+  font-family: "Pretendard-Regular", "맑은 고딕", "Open Sans", sans-serif;
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
   margin: 0;
   padding: 0;
   -ms-overflow-style: none;
@@ -133,7 +140,6 @@ button {
 }
 
 /* Typography */
-
 h1 {
   font-size: var(--font-4xl);
   font-weight: var(--weight-bold);
