@@ -1,13 +1,12 @@
-.feedList {
-  width: 470px;
-}
 .feedItem {
   display: flex;
   flex-direction: column;
   row-gap: var(--space-md);
-  padding: var(--space-sm);
-  background-color: beige;
+  padding: var(--space-sm) var(--space-sm) var(--space-xl) var(--space-sm);
   margin-bottom: var(--space-lg);
+  border-bottom: 1px solid;
+  border-bottom-color: rgb(var(--color-separator));
+  background-color: rgba(225, 136, 139, 0.4);
 }
 .header {
   height: 40px;
@@ -54,12 +53,31 @@
 }
 
 .feedOptionsContainer {
+  position: relative;
   display: flex;
   align-items: center;
 }
+.options {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 80px;
+  margin: 0;
+  padding: 0;
+  background-color: blueviolet;
+}
+.options li {
+  height: 30px;
+}
+.options li button {
+  width: 100%;
+  height: 100%;
+}
 
-.content {
-  min-height: 100px;
+.footer {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-xs);
 }
 .iconbar {
   display: flex;
@@ -78,10 +96,10 @@
   width: 90%;
   resize: none;
   border: none;
-  border-bottom: 1px solid var(--color-black);
-  background-color: beige;
   outline: none;
   font-size: var(--font-md);
+  display: flex;
+  align-items: center;
 }
 
 .comment button {

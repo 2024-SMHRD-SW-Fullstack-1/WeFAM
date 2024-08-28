@@ -25,6 +25,7 @@
   --color-black: #000000;
   --color-white: #ffffff;
   --color-grey: #737373;
+  --color-separator: 219, 219, 219;
 
   /* Font size */
   --font-sm: 0.875rem;

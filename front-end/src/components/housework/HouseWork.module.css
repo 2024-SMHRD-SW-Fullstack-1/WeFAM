@@ -29,6 +29,7 @@
     margin: 10px;
 }
 
+/* 삭제 버튼 스타일 */
 .deleteButton {
     padding: 10px;
     color: #8a8a8a; /* 텍스트 색상 */
@@ -37,10 +38,12 @@
     cursor: pointer;
 }
 
+/* 추가 버튼 호버 스타일 */
 .addButton:hover {
     background-color: #ca8285; /* 마우스 오버 시 배경색 */
- }
+}
 
+/* 체크박스 스타일 */
 .checkBox {
     height: 15px;
     width: 15px;
@@ -71,9 +74,17 @@
     align-items: center;
 }
 
+/* 완료된 항목 스타일 */
 .completed {
     text-decoration: line-through; /* 완료된 항목에 취소선 추가 */
     color: grey; /* 색상 변경 */
+}
+
+/* 이미지 아이콘 스타일 */
+.imgIcon {
+    display: flex;
+    height: 20px;
+    width: 20px;
 }
 
 /* 모달 스타일 */
@@ -103,6 +114,7 @@
     border-radius: 5px; /* 모서리 둥글게 */
 }
 
+/* 모달 버튼 스타일 */
 .houseworkModalButton {
     padding: 10px 15px; /* 여백 설정 */
     background-color: #e1888b; /* 배경색 */
@@ -114,10 +126,12 @@
     transition: background-color 0.3s; /* 배경색 변경 시 애니메이션 */
 }
 
+/* 모달 버튼 호버 스타일 */
 .houseworkModalButton:hover {
     background-color: #ca8285; /* 마우스 오버 시 배경색 */
 }
 
+/* 경고 메시지 스타일 */
 .warningMessage {
     color: red; /* 경고 메시지 색상 */
     margin-bottom: 20px; /* 메시지와 다른 요소 간 여백 설정 */
@@ -132,4 +146,48 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+}
+
+/* 드롭다운 컨테이너 스타일 */
+.dropdownContainer {
+    position: relative;
+    display: inline-block;
+}
+
+/* 드롭다운 버튼 스타일 */
+.dropdownButton {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdownMenu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 30px;
+    right: 0; /* 드롭다운 메뉴가 항상 오른쪽 끝에 위치하도록 설정 */
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1;
+    padding: 5px 0;
+}
+
+/* 드롭다운 메뉴 버튼 스타일 */
+.dropdownMenu button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+/* 드롭다운 메뉴 버튼 호버 스타일 */
+.dropdownMenu button:hover {
+    background-color: #f1f1f1;
 }

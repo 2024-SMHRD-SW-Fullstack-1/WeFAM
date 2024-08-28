@@ -17,22 +17,32 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
-   @Bean
-   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-      http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                  .requestMatchers("/login","add-feed", "/get-all-feeds", "delete-feed/**", "calendar/**").permitAll().anyRequest().authenticated())
-            .sessionManagement(
-                  sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .httpBasic().disable();
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 
-      return http.build();
-   }
+						.requestMatchers("/login",
+										"/add-feed",
+										"/get-all-feeds",
+										"/update-feed/**",
+										"/delete-feed/**",
+										"/calendar/**",
+										"/add-work",
+										"/get-works",
+										"/update-work/**",
+										"/delete-work/**")
+						.permitAll().anyRequest().authenticated())
+				.sessionManagement(
+						sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.httpBasic().disable();
 
-   @Bean
-   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-         throws Exception {
-      return authenticationConfiguration.getAuthenticationManager();
-   }
+		return http.build();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
 }
-
