@@ -63,7 +63,7 @@ const LeftSidebar = () => {
             <span
               onClick={() => {
                 nav("/housework");
-              }} >
+              }}>
               <CiCircleList className={styles.categoryItemLogo} />
               <span>집안일</span>
             </span>
@@ -71,7 +71,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/recipe");
+                nav("/");
               }}>
               <CiForkAndKnife className={styles.categoryItemLogo} />
               <span>요리법</span>
@@ -93,7 +93,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/settins");
+                nav("/settings");
               }}>
               <CiSettings className={styles.categoryItemLogo} />
               <span>설정</span>

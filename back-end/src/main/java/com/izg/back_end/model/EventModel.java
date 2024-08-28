@@ -58,5 +58,5 @@ public class EventModel {
 
     @Column(name = "event_content")
     @JsonProperty("eventContent")
-    private String eventContent = "none"; // 기본값 빈 문자열
+    private String eventContent = ""; // 기본값 빈 문자열
 }
