@@ -28,9 +28,10 @@ public class UserModel {
     @JsonProperty("nick")
     private String nick = ""; // 기본값 빈 문자열
 
-    @Column(name = "user_birthdate")
+    @Column(name = "user_birthdate", nullable = false)
     @JsonProperty("birth")
-    private LocalDate birth = LocalDate.now(); // 기본값 현재 날짜
+    private LocalDate birth = LocalDate.now(); // 기본값을 현재 날짜로 설정
+
 
     @Column(name = "user_profile_img")
     @JsonProperty("profileImg")
