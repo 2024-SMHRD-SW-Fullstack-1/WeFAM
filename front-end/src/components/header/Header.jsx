@@ -14,8 +14,13 @@ import add_group from "../../assets/images/add-group.png";
 import { useState } from "react";
 import Modal from "react-modal";
 import AddCircle from "./AddCircle";
+import { elapsedTime } from "../../elapsedTime";
 
 const Header = () => {
+  const address = "광주광역시 동구 중앙로 196";
+
+  // getCoordinates(address);
+
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
@@ -37,12 +42,12 @@ const Header = () => {
     setIsAddCircleOpen(false);
   };
 
-  // const addGroup = () => {
-  //   const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
-  //   if (newGroupName) {
-  //     setGroups([...groups, newGroupName]);
-  //   }
-  // };
+  const addGroup = () => {
+    const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
+    if (newGroupName) {
+      setGroups([...groups, newGroupName]);
+    }
+  };
 
   return (
     <div>
@@ -66,7 +71,8 @@ const Header = () => {
           isOpen={isGroupOpen}
           onRequestClose={closeGroup}
           className={styles.modalContent}
-          overlayClassName={styles.modalOverlay}>
+          overlayClassName={styles.modalOverlay}
+        >
           <div className={styles.modalHeader}>
             <div className={styles.modalHeaderTop}>
               <button onClick={closeGroup} className={styles.closeGroupButton}>
@@ -83,28 +89,30 @@ const Header = () => {
                 <img
                   className={styles.profileImage}
                   src={backji}
-                  alt='backji'></img>
+                  alt="backji"
+                ></img>
 
                 <img
                   className={styles.profileImage}
                   src={nosa}
-                  alt='nosa'></img>
+                  alt="nosa"
+                ></img>
 
                 <img
                   className={styles.profileImage}
                   src={leemusong}
-                  alt='leemusong'></img>
+                  alt="leemusong"
+                ></img>
 
                 <img
                   className={styles.profileImage}
                   src={add_group}
-                  alt='add-group'
+                  alt="add-group"
                   onClick={openAddCircle}
                 />
               </div>
             </div>
           </div>
-          
         </Modal>
 
         <AddCircle isOpen={isAddCircleOpen} onRequestClose={closeAddCircle} />

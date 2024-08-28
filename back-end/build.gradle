@@ -29,6 +29,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    //Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
     // 개발 도구
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
@@ -41,18 +45,6 @@ dependencies {
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-<<<<<<< HEAD
-    
-<<<<<<< HEAD
-=======
-    // AWS S3버킷
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-    
-    //Webflux
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-=======
->>>>>>> ca89e66adbb71c5664201f30ec970a372b32704a
->>>>>>> 9e0f02cdf7e78d00ef9353743bc70a6c9cfc8ab5
 }
 
 tasks.named('test') {
