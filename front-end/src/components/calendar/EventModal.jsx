@@ -61,6 +61,12 @@ const EventModal = ({ event, onClose, onSave }) => {
   const [startDate, setStartDate] = useState(new Date(event.start));
   const [endDate, setEndDate] = useState(new Date(event.end));
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
+  const [title, setTitle] = useState(event.title);
+
+  // 입력 변경 시 상태 업데이트
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
 
   // 알림 시간이 변경될 때 호출되는 함수
   const handleAlarmChange = (time, unit) => {
@@ -154,7 +160,10 @@ const EventModal = ({ event, onClose, onSave }) => {
 
   // 종료 시간 처리도 동일하게 적용
   const handleEndTimeChange = (time) => {
-    if (isAllDay) return; // 종일 이벤트일 경우 시간 변경 무시
+    if (!time) {
+      console.error("Invalid time value:", time); // time 값이 없을 경우 디버그 로그 출력
+      return;
+    }
 
     const [period, hourMinute] = time.split(" ");
     let [hour, minute] = hourMinute.split(":").map(Number);
@@ -195,11 +204,9 @@ const EventModal = ({ event, onClose, onSave }) => {
         <div className={styles.titleContainer}>
           <input
             className={styles.title}
-            value={event.title || ""}
-            placeholder='제목' // placeholder에 안내 문구 추가
-            onChange={(e) => handleEndTimeChange(e.target.value)}>
-            {/* {event.title} */}
-          </input>
+            value={title || ""}
+            placeholder='제목'
+            onChange={handleTitleChange}></input>
 
           <BsThreeDotsVertical className={styles.threeDots} />
         </div>

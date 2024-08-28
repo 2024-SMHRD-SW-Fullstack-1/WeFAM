@@ -36,7 +36,7 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
       <div className={styles.header}>
         <div className={styles.feedInfoContainer}>
           <div className={styles.profileImg}>
-            <img src={profileDefaultImage} alt="Profile" />
+            <img src={profileDefaultImage} alt='Profile' />
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
@@ -51,24 +51,21 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
         <button
           className={styles.feedOptionsContainer}
           onClick={toggleOptions}
-          ref={optionsRef}
-        >
+          ref={optionsRef}>
           <BsThreeDots />
           {isOptionsVisible && (
             <ul className={styles.options}>
               <li>
                 <button
-                  className="option"
-                  onClick={() => onUpdate(feed.feedIdx)}
-                >
+                  className='option'
+                  onClick={() => onUpdate(feed.feedIdx)}>
                   수정
                 </button>
               </li>
               <li>
                 <button
-                  className="option"
-                  onClick={() => onDelete(feed.feedIdx)}
-                >
+                  className='option'
+                  onClick={() => onDelete(feed.feedIdx)}>
                   삭제
                 </button>
               </li>
@@ -105,7 +102,7 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
           </span>
         </div>
         <div className={styles.comment}>
-          <textarea rows="1" placeholder="댓글 달기..." />
+          <textarea rows='1' placeholder='댓글 달기...' />
           <button>게시</button>
         </div>
       </div>
