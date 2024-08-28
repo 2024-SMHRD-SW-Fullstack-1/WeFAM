@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './HouseWork.module.css';
 import Modal from 'react-modal';
 import icon from '../../assets/images/icon-more.png';
@@ -11,27 +11,27 @@ const familyMembers = ['모두함께', '엄마', '아빠', '아이'];
 Modal.setAppElement('#root');
 
 const HouseWork = () => {
-    const [dailyTasks, setDailyTasks] = useState([]);
-    const [shortTermTasks, setShortTermTasks] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [taskType, setTaskType] = useState('daily');
-    const [taskName, setTaskName] = useState('');
-    const [taskNote, setTaskNote] = useState('');
-    const [points, setPoints] = useState(0);
-    const [assignedMember, setAssignedMember] = useState('');
-    const [selectedTasks, setSelectedTasks] = useState(new Set());
-    const [warningMessage, setWarningMessage] = useState('');
+    // 상태 관리
+    const [dailyTasks, setDailyTasks] = useState([]); // 매일 할 일 목록
+    const [shortTermTasks, setShortTermTasks] = useState([]); // 단기 작업 목록
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기/닫기 상태
+    const [taskType, setTaskType] = useState('daily'); // 작업 타입 (매일 할 일 또는 단기 작업)
+    const [taskName, setTaskName] = useState(''); // 작업 이름
+    const [taskNote, setTaskNote] = useState(''); // 작업 노트
+    const [points, setPoints] = useState(0); // 총 포인트
+    const [assignedMember, setAssignedMember] = useState(''); // 담당자 선택
+    const [warningMessage, setWarningMessage] = useState(''); // 경고 메시지
 
-    const [dropdownOpen, setDropdownOpen] = useState(null);
+    const [dropdownOpen, setDropdownOpen] = useState(null); // 드롭다운 메뉴 열기/닫기 상태
 
     // 수정 모드인지, 수정할 항목의 인덱스 상태 관리
-    const [editTaskIndex, setEditTaskIndex] = useState(null);
-    const [editTaskType, setEditTaskType] = useState(null);
+    const [editTaskIndex, setEditTaskIndex] = useState(null); // 수정할 작업의 인덱스
+    const [editTaskType, setEditTaskType] = useState(null); // 수정할 작업의 타입
 
     // 모달 열기
     const openModal = () => setIsModalOpen(true);
 
-    // 모달 닫기
+    // 모달 닫기 및 초기화
     const closeModal = () => {
         setIsModalOpen(false);
         setTaskName('');
@@ -42,22 +42,52 @@ const HouseWork = () => {
         setEditTaskType(null); // 수정 모드 상태 초기화
     };
 
-    // 입력 필드 값 변경 처리
-    const handleTaskTypeChange = (e) => setTaskType(e.target.value);
-    const handleTaskNameChange = (e) => setTaskName(e.target.value);
-    const handleTaskNoteChange = (e) => setTaskNote(e.target.value);
-    const handleAssignedMemberChange = (e) => setAssignedMember(e.target.value);
+    // 입력 필드 값 변경 처리 함수들
+    const handleTaskTypeChange = (e) => setTaskType(e.target.value); // 작업 타입 변경
+    const handleTaskNameChange = (e) => setTaskName(e.target.value); // 작업 이름 변경
+    const handleTaskNoteChange = (e) => setTaskNote(e.target.value); // 작업 노트 변경
+    const handleAssignedMemberChange = (e) => setAssignedMember(e.target.value); // 담당자 선택 변경
+
+    // 서버에서 작업을 가져오는 함수
+    const fetchTasks = async () => {
+        try {
+            const response = await axios.get('/wefam/get-works');
+            const tasks = response.data;
+
+            // 각 작업을 dailyTasks와 shortTermTasks로 분류
+            const daily = tasks.filter(task => task.taskType === 'daily');
+            const shortTerm = tasks.filter(task => task.taskType === 'shortTerm');
+
+            setDailyTasks(daily);
+            setShortTermTasks(shortTerm);
+
+            // 포인트 계산
+            const totalPoints = tasks.reduce((acc, task) => acc + task.points, 0);
+            setPoints(totalPoints);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    };
+
+    // 컴포넌트 마운트 시 작업을 불러옴
+    useEffect(() => {
+        fetchTasks();
+    }, []);
 
     // 작업 추가 또는 수정
     const addOrUpdateTask = async () => {
+        // 작업 이름이 비어 있으면 작업하지 않음
         if (taskName.trim() === '') return;
-        if (taskType === 'daily' && assignedMember.trim() === '') {
+
+        // 매일 할 일인데 담당자가 선택되지 않은 경우 경고 메시지 표시
+        if (taskType === 'daily' && (assignedMember && assignedMember.trim() === '')) {
             setWarningMessage('담당자를 선택해 주세요.');
             return;
         }
 
+        // 작업 객체 생성
         const task = {
-            workIdx: editTaskIndex !== null ? editTaskIndex : null, // 수정 모드 시 workIdx 포함
+            workIdx: editTaskIndex !== null ? editTaskIndex : null,
             workTitle: taskName,
             workNote: taskNote,
             completed: false,
@@ -71,17 +101,14 @@ const HouseWork = () => {
 
         try {
             let response;
-            if (editTaskIndex !== null) {
-                response = await axios.put(`/wefam/update-work/${editTaskIndex}`, task); // 수정 요청 (PUT)
-            } else {
-                response = await axios.post('/wefam/add-work', task); // 추가 요청 (POST)
-            }
 
-            console.log('Task added/updated:', response.data);
-
+            // 수정 모드일 때
             if (editTaskIndex !== null) {
-                // 수정된 항목을 프론트엔드 상태에서 업데이트
-                if (editTaskType === 'daily') {
+                response = await axios.put(`/wefam/update-work/${editTaskIndex}`, task);
+                console.log('Task updated:', response.data);
+
+                // 수정된 작업 상태 업데이트
+                if (taskType === 'daily') {
                     const updatedTasks = dailyTasks.map((t, index) =>
                         index === editTaskIndex ? { ...t, ...task } : t
                     );
@@ -93,6 +120,10 @@ const HouseWork = () => {
                     setShortTermTasks(updatedTasks);
                 }
             } else {
+                // 새로운 작업 추가 모드일 때
+                response = await axios.post('/wefam/add-work', task);
+                console.log('Task added:', response.data);
+
                 if (taskType === 'daily') {
                     setDailyTasks([...dailyTasks, task]);
                 } else {
@@ -100,89 +131,75 @@ const HouseWork = () => {
                 }
             }
 
-            closeModal();
+            closeModal(); // 작업 후 모달 닫기
         } catch (error) {
             console.error('Error adding or updating task:', error);
-            // 에러 처리
         }
     };
 
-
     // 작업 완료 상태 토글
     const toggleTaskCompletion = async (taskList, setTaskList, index) => {
-        const newTasks = [...taskList];
-        const task = newTasks[index];
+        const newTasks = [...taskList]; // 작업 리스트 복사
+        const task = newTasks[index]; // 해당 작업 선택
 
         try {
-            const updatedTask = { ...task, completed: !task.completed };
-            await axios.put(`/wefam/update-work/${task.workIdx}`, updatedTask);
+            const updatedTask = { ...task, completed: !task.completed }; // 완료 상태 토글
+            await axios.put(`/wefam/update-work/${task.workIdx}`, updatedTask); // 서버에 업데이트 요청
 
-            task.completed = !task.completed;
+            task.completed = !task.completed; // 상태 업데이트
 
+            // 포인트 계산
             if (task.completed) {
                 setPoints(points + task.points);
             } else {
                 setPoints(points - task.points);
             }
 
-            setTaskList(newTasks);
+            setTaskList(newTasks); // 업데이트된 리스트로 상태 갱신
         } catch (error) {
             console.error('Error updating task completion:', error);
-            // 에러 처리
         }
     };
-
-
-    // 선택된 작업 토글
-    const handleTaskSelect = (taskIndex) => {
-        const newSelectedTasks = new Set(selectedTasks);
-
-        if (newSelectedTasks.has(taskIndex)) {
-            newSelectedTasks.delete(taskIndex);
-        } else {
-            newSelectedTasks.add(taskIndex);
-        }
-        setSelectedTasks(newSelectedTasks);
-    };
-
 
     // 선택된 작업 삭제
-    const deleteSelectedTasks = async (taskList, setTaskList) => {
-        const tasksToDelete = Array.from(selectedTasks).map(index => taskList[index].workIdx);
-
+    const deleteSelectedTasks = async (index, taskType) => {
         try {
-            await axios.delete('/wefam/delete-works', { data: { ids: tasksToDelete } });
+            const taskList = taskType === 'daily' ? dailyTasks : shortTermTasks; // 작업 리스트 선택
+            const taskToDelete = taskList[index]; // 삭제할 작업 선택
 
-            const newTasks = taskList.filter((_, index) => !selectedTasks.has(index));
-            setTaskList(newTasks);
-            setSelectedTasks(new Set());
+            // 서버에서 작업 삭제 요청
+            await axios.delete(`/wefam/delete-work/${taskToDelete.workIdx}`);
+
+            // 업데이트된 작업 리스트
+            const updatedTasks = taskList.filter((_, i) => i !== index);
+            taskType === 'daily' ? setDailyTasks(updatedTasks) : setShortTermTasks(updatedTasks);
+
+            console.log(`Task ${index} deleted successfully`);
         } catch (error) {
-            console.error('Error deleting tasks:', error);
-            // 에러 처리
+            console.error('Error deleting task:', error);
         }
     };
-
 
     // 드롭다운 메뉴 토글
     const toggleDropdown = (index) => {
-        setDropdownOpen(dropdownOpen === index ? null : index);
+        setDropdownOpen(dropdownOpen === index ? null : index); // 드롭다운 열기/닫기 토글
     };
 
     // 작업 수정
     const handleTaskEdit = (taskIndex, taskList, taskType) => {
-        const task = taskList[taskIndex];
-        setTaskName(task.workTitle);
-        setTaskNote(task.workNote);
-        setAssignedMember(task.assignedTo);
-        setTaskType(taskType);
-        setEditTaskIndex(taskIndex);
-        setEditTaskType(taskType);
-        setIsModalOpen(true);
+        const task = taskList[taskIndex]; // 수정할 작업 선택
+        setTaskName(task.workTitle); // 작업 이름 설정
+        setTaskNote(task.workNote); // 작업 노트 설정
+        setAssignedMember(task.assignedTo); // 담당자 설정
+        setTaskType(taskType); // 작업 타입 설정
+        setEditTaskIndex(taskIndex); // 수정 모드에서 작업 인덱스 설정
+        setEditTaskType(taskType); // 수정 모드에서 작업 타입 설정
+        setIsModalOpen(true); // 모달 열기
     };
 
     // 모달 외부 클릭 처리
     const handleOutsideClick = (e) => {
-        if (!e.target.closest(`.${styles.dropdownContainer}`)) {
+        if (!e.target.closest(`.${styles.dropdownContainer}`)) { // 드롭다운 외부 클릭 시 닫기
             setDropdownOpen(null);
         }
     };
@@ -199,6 +216,7 @@ const HouseWork = () => {
                     </div>
                 </div>
 
+                {/* 매일 할 일 섹션 */}
                 <div className={styles.taskSection}>
                     <section>
                         <h3>매일 할 일</h3>
@@ -224,7 +242,7 @@ const HouseWork = () => {
                                         {dropdownOpen === `daily-${index}` && (
                                             <div className={styles.dropdownMenu}>
                                                 <button onClick={() => handleTaskEdit(index, dailyTasks, 'daily')}>수정</button>
-                                                <button onClick={() => deleteSelectedTasks(dailyTasks, setDailyTasks)}>삭제</button>
+                                                <button onClick={() => deleteSelectedTasks(index, taskType)}>삭제</button>
                                             </div>
                                         )}
                                     </div>
@@ -234,6 +252,7 @@ const HouseWork = () => {
                     </section>
                 </div>
 
+                {/* 오늘의 미션 섹션 */}
                 <div className={styles.taskSection}>
                     <section>
                         <h3>오늘의 미션</h3>
@@ -259,7 +278,7 @@ const HouseWork = () => {
                                         {dropdownOpen === `shortTerm-${index}` && (
                                             <div className={styles.dropdownMenu}>
                                                 <button onClick={() => handleTaskEdit(index, shortTermTasks, 'shortTerm')}>수정</button>
-                                                <button onClick={() => deleteSelectedTasks(shortTermTasks, setShortTermTasks)}>삭제</button>
+                                                <button onClick={() => deleteSelectedTasks(index, taskType)}>삭제</button>
                                             </div>
                                         )}
                                     </div>
@@ -269,11 +288,13 @@ const HouseWork = () => {
                     </section>
                 </div>
 
+                {/* 포인트 섹션 */}
                 <div className={styles.points}>
                     <h3>총 포인트: {points}점</h3>
                     <p>포인트로 소원권 등 다양한 보상을 받을 수 있습니다.</p>
                 </div>
 
+                {/* 작업 추가/수정 모달 */}
                 <Modal
                     isOpen={isModalOpen}
                     onRequestClose={closeModal}
@@ -316,5 +337,4 @@ const HouseWork = () => {
         </div>
     );
 };
-
 export default HouseWork;

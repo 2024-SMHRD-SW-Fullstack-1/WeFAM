@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
-const AlarmSetting = ({ color }) => {
-  const [alarmTime, setAlarmTime] = useState(10); // 알림 시간
-  const [alarmUnit, setAlarmUnit] = useState("분 전"); // 알림 단위
-  const [alarms, setAlarms] = useState([]); // 추가된 알림 리스트
+const AlarmSetting = ({ color, onAddAlarm }) => {
+  const [alarmTime, setAlarmTime] = useState(10); // 기본 알림 시간
+  const [alarmUnit, setAlarmUnit] = useState("분 전"); // 기본 알림 단위
 
   const unitOptions = [
     { label: "분 전", value: "분 전" },
@@ -13,26 +12,21 @@ const AlarmSetting = ({ color }) => {
   ];
 
   // 알림 추가 함수
-  const handleAddAlarm = () => {
-    const newAlarm = `${alarmTime} ${alarmUnit}`;
-    setAlarms([...alarms, newAlarm]); // 새로운 알림 추가
+  const handleAddAlarmClick = () => {
+    if (onAddAlarm) {
+      onAddAlarm(alarmTime, alarmUnit); // 상위 컴포넌트로 알림 정보 전달
+    }
   };
 
   return (
     <div style={{ padding: "5px" }}>
-      {/* 알림 입력 부분 */}
-      <div
-        style={{
-          display: "absolute",
-          alignItems: "center",
-        }}
-      >
-        <span>일정 알림 </span>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <span>일정 알림</span>
         {/* 알림 시간 숫자 입력 */}
         <input
-          type="number"
+          type='number'
           value={alarmTime}
-          onChange={(e) => setAlarmTime(e.target.value)}
+          onChange={(e) => setAlarmTime(Number(e.target.value))}
           min={1}
           style={{
             backgroundColor: "#f9f9f9",
@@ -56,10 +50,8 @@ const AlarmSetting = ({ color }) => {
             padding: "5px",
             borderRadius: "5px",
             border: "none",
-
             textAlign: "center",
-          }}
-        >
+          }}>
           {unitOptions.map((option, index) => (
             <option key={index} value={option.value}>
               {option.label}
@@ -69,31 +61,17 @@ const AlarmSetting = ({ color }) => {
       </div>
 
       {/* 알림 추가 버튼 */}
-      <div style={{ marginTop: "10px" }}>
-        <button
-          onClick={handleAddAlarm}
-          style={{
-            color: color,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          알림을 추가
-        </button>
-      </div>
-
-      {/* 추가된 알림 목록 표시 */}
-      {alarms.length > 0 && (
-        <div>
-          <h4>추가된 알림:</h4>
-          <ul>
-            {alarms.map((alarm, index) => (
-              <li key={index}>{alarm}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <button
+        onClick={handleAddAlarmClick}
+        style={{
+          color: color,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          marginTop: "10px",
+        }}>
+        알림 추가
+      </button>
     </div>
   );
 };

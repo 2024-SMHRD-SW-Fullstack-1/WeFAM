@@ -80,7 +80,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/gallery");
+                nav("/album");
               }}>
               <CiImageOn className={styles.categoryItemLogo} />
               <span>사진첩</span>

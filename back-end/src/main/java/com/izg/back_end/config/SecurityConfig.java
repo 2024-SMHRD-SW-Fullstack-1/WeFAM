@@ -21,7 +21,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/add-memo", "/wefam/add-work").permitAll()
+                    .requestMatchers("/wefam/**", "/add-work", "/get-works").permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->
@@ -35,5 +35,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }
