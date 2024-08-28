@@ -5,6 +5,7 @@ import WeFAM from '../../assets/images/WeFAM_logo.png.png';
 import Kakao from '../../assets/images/Kakao.png';
 import Naver from '../../assets/images/naver.png';
 import axios from 'axios';
+import RightSidebar from '../right-sidebar/RightSidebar';
 
 // 카카오 로그인
 const REST_API_KEY = 'e8bed681390865b7c0ef4d85e4e2c842';
@@ -18,6 +19,7 @@ const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&
 
 const LogIn = () => {
   const [code, setCode] = useState(null);
+  const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
   const nav = useNavigate();
 
   //카카오로그인 핸들러
@@ -44,19 +46,17 @@ const LogIn = () => {
 
 
 
-  const sendKakaoTokenToBackend =  (code) => {
+  const sendKakaoTokenToBackend = async (code) => {
     try {
-      const response =  axios.get('http://localhost:8089/wefam/login', 
-       { params: { code }} 
-       
-      );  // 'Code'를 'code'로 수정
-      console.log("연결 완료");
-      console.log(code);
+      const response = await axios.post('http://localhost:8089/wefam/login', code, {
+        headers: {
+          'Content-Type': 'text/plain',  // 단순 문자열로 전달
+        },
+      });
   
       if (response.status === 200) {
-        const data = response.data;
-        console.log("카카오 사용자 정보 : ", data);
-        nav("/");
+        console.log("카카오 사용자 정보: ", response.data);
+        nav("/");  // 리디렉션
       } else {
         console.log('카카오 백 요청 실패', response.statusText);
       }
@@ -64,6 +64,7 @@ const LogIn = () => {
       console.log('카카오 백 요청 중 오류:', error.response ? error.response.data : error.message);
     }
   };
+  
   
 
   const sendNaverTokenToBackend = async (code) => {
@@ -87,6 +88,7 @@ const LogIn = () => {
 
   return (
     <div className={styles.LoginPage}>
+      {userData && <RightSidebar users={[userData]} />} {/* userData가 존재할 때만 RightSidebar 렌더링 */}
       <div>
         <img src={WeFAM} className={styles.WeFAM_Logo} alt="WeFAM Logo" />
         <h2 className={styles.subtitle}>우리 가족만을 위한 특별한 공간</h2>

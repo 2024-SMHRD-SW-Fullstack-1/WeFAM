@@ -14,7 +14,7 @@ const RightSidebar = () => {
       { name: "원터", image: winter, online: true },
       { name: "카리나", image: karina, online: true },
       { name: "아이유", image: iu, online: false },
-      { name: "마블리", image: madong, online: false }
+      { name: "마블리", image: "http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg", online: false }
     ];
 
     setUsers(exampleUsers); //api되면 여기에 호출
