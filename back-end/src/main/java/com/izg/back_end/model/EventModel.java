@@ -1,7 +1,6 @@
 package com.izg.back_end.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -60,4 +59,6 @@ public class EventModel {
     @Column(name = "event_content")
     @JsonProperty("eventContent")
     private String eventContent = ""; // 기본값 빈 문자열
+
+    
 }
