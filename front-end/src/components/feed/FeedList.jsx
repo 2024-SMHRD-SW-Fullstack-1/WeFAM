@@ -9,8 +9,10 @@ import { BsChatHeart } from "react-icons/bs";
 import { BsThreeDots } from "react-icons/bs";
 
 const FeedList = () => {
+  let num = 0;
   const [feedSize, setFeedSize] = useState(0);
   const [feeds, setFeeds] = useState([]);
+  const [visibleOptions, setVisibleOptions] = useState({});
 
   useEffect(() => {
     const fetchFeeds = async () => {
@@ -42,6 +44,62 @@ const FeedList = () => {
     }
   });
 
+  function editFeed() {
+    alert("수정 클릭");
+  }
+
+  function deleteFeed() {
+    alert("삭제 클릭");
+  }
+
+  // 옵션창 열고 닫기
+  const toggleOptions = (feedIdx) => {
+    setVisibleOptions((prev) => {
+      // 모든 피드의 옵션을 false로 설정
+      const newOptions = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {});
+
+      // 선택된 feedIdx의 옵션만 true로 설정
+      return {
+        ...newOptions,
+        [feedIdx]: true,
+      };
+    });
+  };
+
+  // 어떤 옵션창 열려있는 지 확인해보기
+  useEffect(() => {
+    console.log("Visible Options changed: ", visibleOptions);
+  }, [visibleOptions]);
+
+  // 옵션창이 아닌 다른 영역을 선택했을 때 옵션창
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      // 모든 옵션 버튼을 선택하기 위한 클래스 이름 가져오기
+      const optionsButtons = document.querySelectorAll(".option");
+
+      // 클릭된 요소가 옵션 버튼의 자식이거나 버튼 자체인 경우를 체크
+      const isClickInsideOptions = Array.from(optionsButtons).some((button) =>
+        button.contains(e.target)
+      );
+
+      // 클릭된 위치가 옵션 버튼 내부가 아닌 경우, 모든 옵션을 닫기
+      if (!isClickInsideOptions) {
+        setVisibleOptions({});
+      }
+    };
+
+    // 마운트 시 클릭 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 언마운트 시 클릭 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className={styles.feedList}>
       {feeds.map((feed) => (
@@ -63,9 +121,22 @@ const FeedList = () => {
               </div>
             </div>
 
-            <div className={styles.feedOptionsContainer}>
-              <BsThreeDots className={styles.options} />
-            </div>
+            <button
+              className={styles.feedOptionsContainer}
+              onClick={() => toggleOptions(feed.feedIdx)}
+            >
+              <BsThreeDots />
+              {visibleOptions[feed.feedIdx] ? (
+                <ul className={styles.options}>
+                  <li>
+                    <button className="option">수정</button>
+                  </li>
+                  <li>
+                    <button className="option">삭제</button>
+                  </li>
+                </ul>
+              ) : null}
+            </button>
           </div>
 
           <div className={styles.content}>
