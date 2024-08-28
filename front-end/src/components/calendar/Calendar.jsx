@@ -15,56 +15,54 @@ const Calendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false); // 검색창 보임 여부 상태
+  const [events, setEvents] = useState([]);
 
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Event 122",
-      start: "2024-08-01",
-      backgroundColor: "#1abc9c",
-    },
-    {
-      id: 2,
-      title: "Event 2",
-      start: "2024-08-15",
-      backgroundColor: "#3498db",
-    },
-    {
-      id: 3,
-      title: "Meeting",
-      start: "2024-08-18",
-      backgroundColor: "#e74c3c",
-    },
-    {
-      id: 4,
-      title: "확인용1",
-      start: "2024-08-22",
-      end: "2024-08-28", // 시간 정보 추가
-      backgroundColor: "#1abc9c",
-    },
-    {
-      id: 5,
-      title: "출장",
-      start: "2024-08-21T09:00:00",
-      end: "2024-08-21T15:00:00", // 시간 정보 추가
-      backgroundColor: "#2c3e50",
-    },
-    {
-      id: 6,
-      title: "여름 휴가",
-      start: "2024-08-29",
-      end: "2024-09-02", // 시간 정보 추가
-      backgroundColor: "#9b59b6",
-    },
-    {
-      id: 7,
-      title: "해외 출장",
-      start: "2024-08-04",
-      end: "2024-08-13", // 시간 정보 추가
-      backgroundColor: "#f39c12",
-    },
-  ]);
+  // 그룹원 일정 가져오기
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8089/wefam/calendar"
+        );
+        const fullCalendarEvents = response.data.map((event) => {
+          const startDate = new Date(`${event.eventStDt}T${event.eventStTm}`);
+          const endDate = new Date(`${event.eventEdDt}T${event.eventEdTm}`);
 
+          // 종료 날짜가 시작 날짜와 동일하고 시간이 00:00인 경우
+          const isAllDay = startDate.toDateString() !== endDate.toDateString();
+
+          // allDay 이벤트의 경우, endDate에 1일 추가 (FullCalendar 규칙 상)
+          if (isAllDay) {
+            endDate.setDate(endDate.getDate() + 1); // 마지막 날도 포함되도록 1일 추가
+          }
+          return {
+            id: event.eventIdx,
+            title: event.eventTitle,
+            start: startDate.toISOString(), // ISO 8601 형식으로 변환
+            end: endDate.toISOString(), // ISO 8601 형식으로 변환
+            backgroundColor: event.eventColor,
+            familyIdx: event.familyIdx,
+            userId: event.userId,
+            content: event.eventContent,
+            location: event.location || "",
+            isholiday: false,
+            classNames: ["custom-dot-event"],
+            allDay: isAllDay, // 날짜 범위에 따라 allDay 설정
+          };
+        });
+
+        setEvents(fullCalendarEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error); // 오류 로그 추가
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  // 이벤트 상태가 업데이트될 때마다 확인
+  useEffect(() => {}, [events]); // 이벤트가 변경될 때마다 로그
+
+  // 공휴일 데이터 가져오기
   useEffect(() => {
     const year = new Date().getFullYear(); // 현재 연도를 기준으로 데이터 호출
 
@@ -76,7 +74,7 @@ const Calendar = () => {
           {
             params: {
               solYear: year,
-              numOfRows: 0, // 최대 100개의 공휴일 데이터를 가져옴
+              numOfRows: 0, // 최대 0개의 공휴일 데이터를 가져옴
               _type: "json",
               ServiceKey:
                 "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
@@ -136,33 +134,24 @@ const Calendar = () => {
     fetchHolidays();
   }, []);
 
-  // 새로운 이벤트 추가 함수
-  const addNewEvent = () => {
-    // const calendarApi = calendarRef.current.getApi(); // FullCalendar API 호출
-    const newEventId = events.length + 1; // 새로운 이벤트 ID 생성
-    const today = new Date(); // 현재 날짜
-    console.log("오늘", today);
-
-    const newEvent = {
-      id: newEventId,
-      title: "제목",
-      start: today, // 오늘 날짜 (시간 포함)
-      end: new Date(today.getTime() + 60 * 60 * 1000), // 1시간 뒤 종료
-      backgroundColor: "#2c3e50",
-    };
-
-    // 상태 업데이트
-    setEvents([...events, newEvent]);
-  };
-
   // 모달에서 저장된 이벤트를 처리하는 함수
-  const handleSave = (updatedEvent) => {
+  const saveEvent = async (updatedEvent) => {
+    console.log(updatedEvent);
+
+    // try {
+    //   const response = await axios.post(
+    //     `http://localhost:8089/wefam/calendar/${updatedEvent.id}`,
+    //     updatedEvent
+    //   );
+    console.log(updatedEvent);
+
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.id === updatedEvent.id ? updatedEvent : event
       )
     );
     setIsModalOpen(false);
+
     // 이벤트를 강제로 다시 렌더링
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
@@ -170,29 +159,38 @@ const Calendar = () => {
 
       if (eventToUpdate) {
         eventToUpdate.setProp("backgroundColor", updatedEvent.backgroundColor);
+        eventToUpdate.setStart(updatedEvent.start); // 시작 날짜 업데이트
+        eventToUpdate.setEnd(updatedEvent.end); // 종료 날짜 업데이트
       }
     }
+    // } catch (error) {
+    //   console.error("Error updating event:", error); // 에러 처리}
+    // }
   };
-
-  // 상태 업데이트가 완료된 후 이벤트 상태를 확인하는 useEffect
-  useEffect(() => {}, [events]);
 
   // 이벤트 클릭 시 모달을 열고 선택된 이벤트 저장
   const handleEventClick = (clickInfo) => {
-    console.log("clickInfo:", clickInfo); // 전체 클릭 정보 출력
     if (!clickInfo || !clickInfo.event) {
+      return;
     }
 
+    // start와 end 시간이 존재할 경우 시간을 추출하여 문자열로 변환
+    const formatTime = (date) => {
+      if (!date) return null; // date가 없으면 null 반환
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}`;
+    };
+
+    // 이벤트 정보 저장 (시간도 문자열로 변환)
     setSelectedEvent({
-      id: clickInfo.event._def.publicId,
+      id: clickInfo.event.id,
       title: clickInfo.event.title,
-      start:
-        clickInfo.event.startStr ||
-        clickInfo.event.start.toISOString().split("T")[0], // startStr이 없으면 start를 사용
-      end:
-        clickInfo.event.endStr ||
-        clickInfo.event.end?.toISOString().split("T")[0] ||
-        clickInfo.event.start.toISOString().split("T")[0], // endStr이 없으면 end 또는 start를 사용
+      start: clickInfo.event.start, // 원래 날짜
+      startTime: formatTime(clickInfo.event.start), // 시간 추출
+      end: clickInfo.event.end, // 원래 날짜
+      endTime: formatTime(clickInfo.event.end), // 시간 추출
+      allDay: clickInfo.event.allDay, // allDay 여부
       backgroundColor: clickInfo.event.backgroundColor,
     });
     setIsModalOpen(true);
@@ -214,6 +212,80 @@ const Calendar = () => {
     return (
       <div style={{ color: color }}>
         {info.dayNumberText.replace("일", "")} {/* 날짜 번호에서 '일' 제거 */}
+      </div>
+    );
+  };
+  const handleAddEventClick = () => {
+    setSelectedEvent({
+      id: null,
+      title: "",
+      start: new Date(),
+      end: new Date(),
+      backgroundColor: "#FF4D4D",
+      allDay: false,
+    });
+    setIsModalOpen(true);
+  };
+
+  const renderEventContent = (eventInfo) => {
+    const { event } = eventInfo;
+
+    const startTime = event.start
+      ? new Date(event.start).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "";
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}>
+        {/* Dot */}
+        <div
+          style={{
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            backgroundColor: event.backgroundColor || "#FF4D4D",
+            marginRight: "5px", // 도트와 타이틀 사이에 간격 추가
+            flexShrink: 0,
+          }}
+        />
+        {/* Title and Time */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            overflow: "hidden",
+          }}>
+          <span
+            style={{
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
+              minWidth: 0,
+            }}>
+            {event.title}
+          </span>
+          {!event.allDay && (
+            <span
+              style={{
+                textAlign: "right",
+                fontSize: "0.9em",
+                color: "#666",
+                marginLeft: "10px",
+                flexShrink: 0,
+              }}>
+              {startTime}
+            </span>
+          )}
+        </div>
       </div>
     );
   };
@@ -244,7 +316,10 @@ const Calendar = () => {
             onClick={() => setIsSearchVisible(!isSearchVisible)} // 클릭 시 검색창 보이기/숨기기
           />
           {/*일정 추가 아이콘 */}
-          <BsCalendarPlus style={{ fontSize: "24px" }} onClick={addNewEvent} />
+          <BsCalendarPlus
+            style={{ fontSize: "24px" }}
+            onClick={handleAddEventClick}
+          />
         </div>
         <FullCalendar
           ref={calendarRef} // ref 연결
@@ -256,7 +331,7 @@ const Calendar = () => {
           headerToolbar={{
             left: "title",
             center: "prev,today,next",
-            right: "dayGridMonth,timeGridWeek",
+            right: "dayGridMonth,timeGridWeek, customButton",
           }}
           editable={true}
           buttonText={{
@@ -274,16 +349,16 @@ const Calendar = () => {
           eventTimeFormat={true}
           events={[...holidays, ...events]}
           eventClick={handleEventClick}
-          // 여기에 eventLimit을 추가
-          dayMaxEvents={3} // true로 설정하면 기본적으로 5개가 넘어가면 'View More' 표시
+          dayMaxEvents={3}
           moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+          eventContent={renderEventContent}
         />
 
         {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
         {isModalOpen && (
           <EventModal
             event={selectedEvent}
-            onSave={handleSave}
+            onSave={saveEvent}
             onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
           />
         )}
