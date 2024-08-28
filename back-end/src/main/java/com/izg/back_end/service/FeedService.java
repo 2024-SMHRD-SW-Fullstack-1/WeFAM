@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.repository.FeedRepository;
@@ -18,8 +19,9 @@ public class FeedService {
 		return feedRepository.save(fm);
 	}
 	
+	@Transactional(readOnly = true)
 	public List<FeedModel> getAllFeeds() {
-		return feedRepository.findAll();
+		return feedRepository.findAllOrderByPostedAtDesc();
 	}
 	
 	public void deleteFeed(int feedIdx) {

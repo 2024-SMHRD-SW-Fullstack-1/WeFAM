@@ -7,27 +7,27 @@ import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
 import axios from "axios";
 
-const AddFeed = () => {
+const AddFeed = ({ onAddFeed }) => {
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
 
-  async function addFeed() {
-    try {
-      const response = await axios.post(
-        "http://localhost:8089/wefam/add-feed",
-        {
-          familyIdx: 1,
-          id: "jgod",
-          feedContent: content,
-          feedLocation: "여수",
-        }
-      );
-      console.log("addFeed 함수 실행 : " + response.data);
-    } catch (error) {
-      console.error("addFeed 함수 에러 : ", error);
+  const handleAddFeed = async () => {
+    if (content.trim() === "") {
+      // 경고창을 띄워서 내용을 입력하게 하자
+      alert("내용을 입력하세요.");
+      return;
     }
-  }
+    const newFeed = {
+      familyIdx: 1, // 필요한 경우, 실제 데이터로 수정
+      id: "jgod", // 필요한 경우, 실제 데이터로 수정
+      feedContent: content,
+      feedLocation: location,
+    };
+    await onAddFeed(newFeed); // 상위 컴포넌트의 함수 호출
+    setContent(""); // 입력 필드 초기화
+    setLocation("");
+  };
 
   return (
     <div className={styles.addFeed}>
@@ -54,7 +54,7 @@ const AddFeed = () => {
           </button>
         </span>
         <span>
-          <button onClick={addFeed}>
+          <button onClick={handleAddFeed}>
             <BsArrowReturnLeft />
           </button>
         </span>
