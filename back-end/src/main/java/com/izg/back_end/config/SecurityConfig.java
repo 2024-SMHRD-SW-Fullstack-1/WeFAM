@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+<<<<<<< HEAD
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
@@ -34,3 +35,24 @@ public class SecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 }
+=======
+   @Bean
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                  .requestMatchers("/login","add-feed", "/get-all-feeds", "delete-feed/**", "calendar/**").permitAll().anyRequest().authenticated())
+            .sessionManagement(
+                  sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .httpBasic().disable();
+
+      return http.build();
+   }
+
+   @Bean
+   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+         throws Exception {
+      return authenticationConfiguration.getAuthenticationManager();
+   }
+}
+
+>>>>>>> ca89e66adbb71c5664201f30ec970a372b32704a
