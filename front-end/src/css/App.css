@@ -68,7 +68,7 @@
   --animation-duration: 150ms;
 
   /* fullCallendar*/
-  --fc-small-font-size: 0.8em;
+  --fc-small-font-size: 14px;
   --fc-page-bg-color: #fff;
   --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
   --fc-neutral-text-color: #501818;
@@ -98,7 +98,7 @@
   --fc-bg-event-color: rgb(143, 223, 130);
   --fc-bg-event-opacity: 0.5;
   --fc-highlight-color: rgba(188, 232, 241, 0.3);
-  --fc-today-bg-color: rgba(255, 220, 40, 0.15);
+  --fc-today-bg-color: none;
   --fc-now-indicator-color: red;
 }
 
@@ -208,7 +208,6 @@ p {
 /* 모든 이벤트에 대한 텍스트 정렬 */
 .fc-event {
   /* background-color: var(--color-coral); */
-
   border: none;
 }
 
@@ -231,21 +230,30 @@ p {
   width: 100%;
 }
 
-.fc-daygrid-dot-event {
+.fc-daygrid-dot-event .fc-event-title,
+.fc-daygrid-dot-event .fc-event-time {
+  display: flex;
+  flex-direction: row;
   padding: 0px;
   margin: 0px;
+}
+.fc-daygrid-dot-event {
+  align-items: right;
 }
 
 .fc-event-title-container {
   align-content: center;
 }
 
-.fc-daygrid-event-dot {
-  display: inline-block;
+.custom-dot-event .fc-daygrid-event-dot {
+  display: flex; /* flex 컨테이너로 설정 */
+  justify-content: space-between; /* 요소 간에 공간을 분배 */
+  align-items: center; /* 세로 방향 가운데 정렬 */
+  /* display: inline-block; */
   width: 12px;
   height: 12px;
-  background-color: #31bd48; /* 점의 색상 */
-  text-align: left;
+  background-color: #FF4D4D !important; 
+  /* text-item: left; */
 }
 .fc-event
   fc-event-draggable
@@ -253,11 +261,22 @@ p {
   fc-event-start
   fc-event-end
   fc-event-today
-  fc-daygrid-event
-  fc-daygrid-dot-event {
+  fc-daygrid-event {
   align-items: center;
   align-content: center;
 }
+
+.fc-event-time {
+  margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
+  order: 2; /* 나중에 표시되게 함 */
+}
+
+.fc-event-title {
+  order: 1; /* 먼저 표시되게 함 */
+}
+
 .fc .fc-daygrid-day-top {
   flex-direction: row;
 }
@@ -274,6 +293,13 @@ p {
 .fc-daygrid-day {
   height: 16%; /* 캘린더 전체에서 각 셀이 차지할 비율 */
   max-height: 100px; /* 최대 높이를 설정해도 됩니다 */
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: var(--color-coral);
+  border-radius: 50%;
+  padding : 3px;
+  color: white;
 }
 
 /*주 단위 */
