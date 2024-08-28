@@ -19,7 +19,7 @@ const AddFeed = () => {
         {
           familyIdx: 1,
           id: "jgod",
-          feedContent: "content",
+          feedContent: content,
           feedLocation: "여수",
         }
       );
@@ -35,6 +35,7 @@ const AddFeed = () => {
         className={styles.content}
         placeholder="무슨 생각을 하고 계신가요?"
         name="content"
+        onChange={(e) => setContent(e.target.value)}
       ></textarea>
       <hr className={styles.customHr}></hr>
       <div className={styles.footer}>
