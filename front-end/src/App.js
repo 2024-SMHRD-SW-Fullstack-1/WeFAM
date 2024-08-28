@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Feed from "./components/feed/Feed";
 import Calendar from "./components/calendar/Calendar";
-import Memo from "./components/memo/Memo";
 import HouseWork from "./components/housework/HouseWork";
 import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
@@ -16,12 +15,12 @@ function App() {
         <Route path='/' element={<Home />}>
           <Route index element={<Feed />} />
           <Route path='calendar' element={<Calendar />} />
-          <Route path='memo' element={<Memo />} />
           <Route path='housework' element={<HouseWork />} />
           <Route path='album' element={<Album />} />
           <Route path='album/:name' element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
+
         <Route path='login' element={<Login />} />
       </Routes>
     </div>
