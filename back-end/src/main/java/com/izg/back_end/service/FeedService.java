@@ -21,4 +21,8 @@ public class FeedService {
 	public List<FeedModel> getAllFeeds() {
 		return feedRepository.findAll();
 	}
+	
+	public void deleteFeed(int feedIdx) {
+		feedRepository.deleteById(feedIdx);
+	}
 }

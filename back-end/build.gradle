@@ -29,6 +29,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    //Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
     // 개발 도구
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
@@ -41,9 +45,6 @@ dependencies {
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    //Webflux
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 
