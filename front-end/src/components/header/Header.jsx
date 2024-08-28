@@ -42,12 +42,12 @@ const Header = () => {
     setIsAddCircleOpen(false);
   };
 
-  // const addGroup = () => {
-  //   const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
-  //   if (newGroupName) {
-  //     setGroups([...groups, newGroupName]);
-  //   }
-  // };
+  const addGroup = () => {
+    const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
+    if (newGroupName) {
+      setGroups([...groups, newGroupName]);
+    }
+  };
 
   return (
     <div>
@@ -140,7 +140,10 @@ const Header = () => {
               </div>
             ))}
             <div className={styles.addGroupSection}>
-              
+              <p>그룹 추가하기</p>
+              <button className={styles.addGroupButton} onClick={addGroup}>
+                +
+              </button>
             </div>
           </div>
         </Modal>

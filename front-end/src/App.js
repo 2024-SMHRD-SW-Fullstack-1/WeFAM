@@ -8,7 +8,7 @@ import HouseWork from "./components/housework/HouseWork";
 import Recipe from "./components/recipe/Recipe";
 import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
-import LogIn from "./components/login/LogIn";
+import Login from "./components/login/Login";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
@@ -25,7 +25,7 @@ function App() {
           <Route path="album/:name" element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
-        <Route path="login" element={<LogIn />} />
+        <Route path="login" element={<Login />} />
       </Routes>
     </div>
   );

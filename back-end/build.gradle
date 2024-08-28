@@ -29,13 +29,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'mysql:mysql-connector-java'
-    implementation 'org.springframework.security:spring-security-oauth2-client'
-    implementation 'org.springframework.security:spring-security-oauth2-jose'
-    
-    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     // 개발 도구
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
@@ -48,9 +41,6 @@ dependencies {
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    
-    // AWS S3버킷
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
