@@ -16,30 +16,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-<<<<<<< HEAD
-   @Bean
-   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-      http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                  .requestMatchers("/login", "add-feed", "/get-all-feeds", "delete-feed/**").permitAll().anyRequest().authenticated())
-            .sessionManagement(
-                  sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .httpBasic().disable();
-
-      return http.build();
-   }
-
-   @Bean
-   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-         throws Exception {
-      return authenticationConfiguration.getAuthenticationManager();
-   }
-=======
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-						.requestMatchers("/login", "add-feed", "/get-all-feeds", "delete-feed/**", "calendar/**", "/add-work", "/get-works")
+						.requestMatchers("/login",
+										"/add-feed",
+										"/get-all-feeds",
+										"/update-feed/**",
+										"/delete-feed/**",
+										"/calendar/**",
+										"/add-work",
+										"/get-works")
 						.permitAll().anyRequest().authenticated())
 				.sessionManagement(
 						sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,5 +41,4 @@ public class SecurityConfig {
 			throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
->>>>>>> 07825e7e808dfd1c88b120e80cb67a45072a05d7
 }
