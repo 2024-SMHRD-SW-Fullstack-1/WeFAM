@@ -5,21 +5,28 @@ import winter from '../../assets/images/winter.png'
 import iu from '../../assets/images/iu.png'
 import madong from '../../assets/images/madong.png'
 
-const RightSidebar = () => {
+const RightSidebar = ({userData}) => { //prop으로 받아옴
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // 통신되기 전 일단 예시
-    const exampleUsers = [
-      { name: "원터", image: winter, online: true },
-      { name: "카리나", image: karina, online: true },
-      { name: "아이유", image: iu, online: false },
-      { name: "마블리", image: "http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg", online: false }
-    ];
-
-    setUsers(exampleUsers); //api되면 여기에 호출
-
-  }, []); // 빈 배열을 두 번째 인자로 전달하여 컴포넌트가 마운트될 때만 실행되도록 설정
+    if (userData) {
+      // 실제 카카오 사용자 데이터로 users 상태를 설정
+      const loadedUsers = [
+        { name: userData.name, image: userData.profileImg, online: true },
+        // 필요한 다른 사용자 정보 추가
+      ];
+      setUsers(loadedUsers);
+    } else {
+      // 예시 사용자 데이터
+      const exampleUsers = [
+        { name: "원터", image: winter, online: true },
+        { name: "카리나", image: karina, online: true },
+        { name: "아이유", image: iu, online: false },
+        { name: "마블리", image: madong, online: false }
+      ];
+      setUsers(exampleUsers);
+    }
+  }, [userData]); // userData가 변경될 때마다 실행
   
   return (
     <div className={styles.rightSidebar}>
@@ -29,10 +36,10 @@ const RightSidebar = () => {
         <ul className={styles.userList}>
           {users.map((user, index) => (
             <li key={index} className={styles.userItem}>
-              <img src={user.image} className={styles.userImage} alt={user.name} />
-              <span className={styles.userName}>{user.name}</span>
-              <span className={`${styles.status} ${user.online ? styles.online : styles.offline}`}></span>
-            </li>
+            <img src={user.image} className={styles.userImage} alt={user.name} />
+            <span className={styles.userName}>{user.name}</span>
+            <span className={`${styles.status} ${user.online ? styles.online : styles.offline}`}></span>
+          </li>
           ))}
         </ul>
       </div>

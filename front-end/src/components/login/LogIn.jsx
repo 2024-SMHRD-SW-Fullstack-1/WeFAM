@@ -14,7 +14,7 @@ const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&c
 
 // 네이버 로그인
 const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
-const NAVER_CALLBACK_URL = "http://localhost:3000/login";
+const NAVER_CALLBACK_URL = "http://localhost:3000";
 const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
 const LogIn = () => {
@@ -56,7 +56,7 @@ const LogIn = () => {
   
       if (response.status === 200) {
         console.log("카카오 사용자 정보: ", response.data);
-        nav("/");  // 리디렉션
+        nav("/", { state: { userData: response.data } });  // 로그인 성공 후 홈페이지로 리디렉션하고, 사용자 데이터를 전달
       } else {
         console.log('카카오 백 요청 실패', response.statusText);
       }
@@ -88,7 +88,6 @@ const LogIn = () => {
 
   return (
     <div className={styles.LoginPage}>
-      {userData && <RightSidebar users={[userData]} />} {/* userData가 존재할 때만 RightSidebar 렌더링 */}
       <div>
         <img src={WeFAM} className={styles.WeFAM_Logo} alt="WeFAM Logo" />
         <h2 className={styles.subtitle}>우리 가족만을 위한 특별한 공간</h2>
