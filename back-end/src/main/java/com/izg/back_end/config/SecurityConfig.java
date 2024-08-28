@@ -20,7 +20,14 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-						.requestMatchers("/login", "add-feed", "/get-all-feeds", "delete-feed/**", "calendar/**", "/add-work", "/get-works")
+						.requestMatchers("/login",
+										"/add-feed",
+										"/get-all-feeds",
+										"/update-feed/**",
+										"/delete-feed/**",
+										"/calendar/**",
+										"/add-work",
+										"/get-works")
 						.permitAll().anyRequest().authenticated())
 				.sessionManagement(
 						sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
