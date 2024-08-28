@@ -33,17 +33,14 @@ dependencies {
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
     // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+   	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
     
     // MySQL Connector
     runtimeOnly 'com.mysql:mysql-connector-j'
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    
-    // AWS S3버킷
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
