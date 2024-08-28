@@ -83,9 +83,8 @@ const Header = () => {
 
                 <img
                   className={styles.profileImage}
-                  src={karina}
-                  alt="karina"
-                ></img>
+                  src={"http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg"}
+                  alt='karina'></img>
 
                 <img
                   className={styles.profileImage}
@@ -112,38 +111,6 @@ const Header = () => {
                   onClick={openAddCircle}
                 />
               </div>
-            </div>
-          </div>
-          <div className={styles.modalBody}>
-            {groups.map((group, index) => (
-              <div key={index} className={styles.groupSection}>
-                <p>{group}</p>
-                {/* 그룹 멤버 */}
-                <div className={styles.profileContainer}>
-                  <img
-                    className={styles.profileImage}
-                    src={karina}
-                    alt="karina"
-                  ></img>
-                  <img
-                    className={styles.profileImage}
-                    src={winter}
-                    alt="winter"
-                  ></img>
-                  <img className={styles.profileImage} src={iu} alt="iu"></img>
-                  <img
-                    className={styles.profileImage}
-                    src={madong}
-                    alt="madong"
-                  ></img>
-                </div>
-              </div>
-            ))}
-            <div className={styles.addGroupSection}>
-              <p>그룹 추가하기</p>
-              <button className={styles.addGroupButton} onClick={addGroup}>
-                +
-              </button>
             </div>
           </div>
         </Modal>

@@ -1,26 +1,26 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.2'
-	id 'io.spring.dependency-management' version '1.1.6'
+   id 'java'
+   id 'org.springframework.boot' version '3.3.2'
+   id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.izg'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+   toolchain {
+      languageVersion = JavaLanguageVersion.of(17)
+   }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+   compileOnly {
+      extendsFrom annotationProcessor
+   }
 }
 
 repositories {
-	mavenCentral()
+   mavenCentral()
 }
 
 dependencies {
@@ -41,8 +41,27 @@ dependencies {
     
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+<<<<<<< HEAD
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+=======
+<<<<<<< HEAD
+    
+<<<<<<< HEAD
+=======
+    // AWS S3버킷
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    
+    //Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+=======
+>>>>>>> ca89e66adbb71c5664201f30ec970a372b32704a
+>>>>>>> 9e0f02cdf7e78d00ef9353743bc70a6c9cfc8ab5
+}
+
+tasks.named('test') {
+   useJUnitPlatform()
+>>>>>>> 07825e7e808dfd1c88b120e80cb67a45072a05d7
 }
