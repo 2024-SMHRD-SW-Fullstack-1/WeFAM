@@ -77,13 +77,16 @@ const EventModal = ({ event, onClose, onSave }) => {
   const handleSaveClick = () => {
     console.log("Saving event with color:", selectedColor); // 디버그용 로그
     onSave({
-      ...event, // 기존 이벤트 정보 유지
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
       backgroundColor: selectedColor, // 업데이트된 색상
-      id: event.id, // ID도 함께 전달
+      id: event.id || "UnKnown", // ID도 함께 전달
       allDay: isAllDay,
+      familyIdx: event.familyIdx,
+      eventContent: event.eventContent,
+      userId: event.userId,
     });
+    console.log(onSave);
   };
 
   // 이미 존재하는 일정이면, 해당 색상의 라벨을 설정
