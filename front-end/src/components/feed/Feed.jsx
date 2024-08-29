@@ -62,6 +62,7 @@ const Feed = () => {
   const updateFeed = useCallback(async (feedIdx, feedContent) => {
     console.log(`updateFeed 함수 실행 : ${feedIdx}번 피드 업데이트`);
     try {
+      setIsLoading(true);
       await axios.patch(`http://localhost:8089/wefam/update-feed/${feedIdx}`, {
         feedContent,
       });
@@ -69,6 +70,8 @@ const Feed = () => {
       console.log("피드의 내용만 업데이트");
     } catch (error) {
       console.error("피드 업데이트 에러", error);
+    } finally {
+      setIsLoading(false);
     }
   });
 

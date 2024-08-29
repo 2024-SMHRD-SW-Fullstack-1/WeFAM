@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginPage.module.css";
 import WeFAM from "../../assets/images/WeFAM_logo.png";
@@ -6,6 +6,8 @@ import Kakao from "../../assets/images/Kakao.png";
 import Naver from "../../assets/images/naver.png";
 import axios from "axios";
 import RightSidebar from "../right-sidebar/RightSidebar";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../features/userSlice";
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
@@ -14,13 +16,14 @@ const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&c
 
 // 네이버 로그인
 const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
-const NAVER_CALLBACK_URL = "http://localhost:3000/login";
+const NAVER_CALLBACK_URL = "http://localhost:3000";
 const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
-const Login = () => {
+const LogIn = () => {
   const [code, setCode] = useState(null);
-  const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
+  // const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
   const nav = useNavigate();
+  const dispatch = useDispatch();
 
   //카카오로그인 핸들러
   const KakaoLogin = () => {
@@ -57,7 +60,8 @@ const Login = () => {
 
       if (response.status === 200) {
         console.log("카카오 사용자 정보: ", response.data);
-        nav("/"); // 리디렉션
+        dispatch(setUserData(response.data)); // Redux에 사용자 데이터 저장
+        nav("/", { state: { userData: response.data } });
       } else {
         console.log("카카오 백 요청 실패", response.statusText);
       }
@@ -92,8 +96,6 @@ const Login = () => {
 
   return (
     <div className={styles.LoginPage}>
-      {userData && <RightSidebar users={[userData]} />}{" "}
-      {/* userData가 존재할 때만 RightSidebar 렌더링 */}
       <div>
         <img src={WeFAM} className={styles.WeFAM_Logo} alt="WeFAM Logo" />
         <h2 className={styles.subtitle}>우리 가족만을 위한 특별한 공간</h2>
@@ -118,4 +120,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LogIn;
