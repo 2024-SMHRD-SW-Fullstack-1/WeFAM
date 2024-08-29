@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.service.UserService;
 import com.izg.back_end.model.FeedModel;
+import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -46,10 +47,15 @@ public class UserController {
     }
  // 새로운 엔드포인트 추가
     
-    @GetMapping("/get-family")
+    @GetMapping("/get-family") //DB에 저장된 정보 불러오깅
 	public List<UserModel> getFamily() {
 		System.out.println("Gotten All Feeds : " + userService.getFamily());
 		return userService.getFamily();
 	}
     
+//    @GetMapping("/get-family-staus")
+//    public List<LogModel> getFamilyStaus(){
+//    	return userService.getFamilyStaus();
+//    }
+//    
 }
