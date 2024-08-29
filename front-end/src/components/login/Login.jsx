@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginPage.module.css";
-import WeFAM from "../../assets/images/WeFAM_logo.png.png";
+import WeFAM from "../../assets/images/WeFAM_logo.png";
 import Kakao from "../../assets/images/Kakao.png";
 import Naver from "../../assets/images/naver.png";
 import axios from "axios";

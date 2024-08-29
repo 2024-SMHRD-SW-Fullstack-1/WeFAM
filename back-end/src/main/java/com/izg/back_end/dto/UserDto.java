@@ -1,9 +1,9 @@
-package com.izg.back_end.UserDTO;
+package com.izg.back_end.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class UserDTO {
+public class UserDto {
     private String id;
     private String name;
     private String nick;

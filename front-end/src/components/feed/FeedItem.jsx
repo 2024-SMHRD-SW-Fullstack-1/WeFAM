@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
 import styles from "./FeedList.module.css";
-import FeedModal from "./FeedModal";
+import FeedDetailModal from "./FeedDetailModal";
 import { BsSuitHeart, BsChatHeart, BsThreeDots } from "react-icons/bs";
 import profileDefaultImage from "../../assets/images/profile-default-image.png";
 import { elapsedTime } from "../../elapsedTime";
 
-const FeedItem = ({ feed, onUpdate, onDelete }) => {
+const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null); // 선택된 이벤트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
@@ -18,9 +17,12 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
   }, []);
   const handleClickOutside = useCallback((e) => {
     if (optionsRef.current && !optionsRef.current.contains(e.target)) {
+      console.log("옵션 클릭");
       setIsOptionsVisible(false);
     }
   }, []);
+
+  // 옵션창이 켜져있을 때
   useEffect(() => {
     if (isOptionsVisible) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -34,29 +36,21 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
   }, [isOptionsVisible, handleClickOutside]);
 
   // 피드 수정 클릭 시 모달을 열고 선택된 피드 저장
-  const onClickFeed = (feedIdx) => {
+  const handleUpdateFeed = (feedIdx) => {
+    console.log(`${feed.feedIdx}번 피드 수정 클릭`);
     // 피드 정보 모달에 보여주기 위해 저장
     setSelectedFeed({
-      idx: feedIdx,
+      idx: feed.feedIdx,
     });
     setIsModalOpen(true);
   };
 
-  // 피드를 수정하는 함수
-  // const updateFeed = async (feedIdx, content) => {
-  //   try {
-  //     await axios.patch(
-  //       `http://localhost:8089/wefam/update-feed/${feedIdx}`, content
-  //     );
-  //     console.log("피드의 내용만 업데이트", response.data);
-  //   } catch (error) {
-  //     console.error("피드 업데이트 에러", error);
-  //   }
-  // };
-
-  // const partialUpdateData = {
-  //   content: feed.feedContent,
-  // }
+  const handleDeleteFeed = async (feedIdx) => {
+    if (window.confirm(`${feedIdx}번 피드를 삭제하시겠습니까?`)) {
+      // Feed 컴포넌트 -> FeedList 컴포넌트 -> FeedItem 컴포넌트
+      await onDeleteFeed(feedIdx);
+    }
+  };
 
   return (
     <div className={styles.feedItem}>
@@ -76,7 +70,7 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
           </div>
         </div>
 
-        <button
+        <div
           className={styles.feedOptionsContainer}
           onClick={toggleOptions}
           ref={optionsRef}
@@ -87,7 +81,7 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
               <li>
                 <button
                   className="option"
-                  onClick={() => onClickFeed(feed.feedIdx)}
+                  onClick={() => handleUpdateFeed(feed.feedIdx)}
                 >
                   수정
                 </button>
@@ -95,14 +89,14 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
               <li>
                 <button
                   className="option"
-                  onClick={() => onDelete(feed.feedIdx)}
+                  onClick={() => handleDeleteFeed(feed.feedIdx)}
                 >
                   삭제
                 </button>
               </li>
             </ul>
           )}
-        </button>
+        </div>
       </div>
 
       <div className={styles.content}>
@@ -140,7 +134,12 @@ const FeedItem = ({ feed, onUpdate, onDelete }) => {
 
       {/* 모달이 열렸을 때만 FeedModal 컴포넌트 렌더링 */}
       {isModalOpen && (
-        <FeedModal feed={selectedFeed} onClose={() => setIsModalOpen(false)} />
+        <FeedDetailModal
+          feed={selectedFeed}
+          onShow={onGetFeedDetail}
+          onSave={onUpdateFeed}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
     </div>
   );

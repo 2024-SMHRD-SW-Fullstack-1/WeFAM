@@ -2,7 +2,7 @@
 import React from "react";
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
-import WeFAMlogo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo-text.png";
 import karina from "../../assets/images/karina.png";
 import winter from "../../assets/images/winter.png";
 import iu from "../../assets/images/iu.png";
@@ -21,10 +21,15 @@ const Header = () => {
 
   // getCoordinates(address);
 
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
+
+  const toggleLeftSidebar = () => {
+    setIsLeftSidebarOpen(!isLeftSidebarOpen);
+  };
 
   const openGroup = () => {
     setIsGroupOpen(true);
@@ -51,18 +56,19 @@ const Header = () => {
 
   return (
     <div>
-      <nav className={styles.topBar}>
-        <div className={styles.groupListContainer}>
-          <button className={styles.groupListBtn}>
-            {/* 왼쪽 미니바 */}
-            <HiMiniBars3 className={styles.groupListIcon} />
-          </button>
-          {/* WeFAM로고 */}
-          <img className={styles.WeFAMlogo} src={WeFAMlogo}></img>
-        </div>
+      <nav>
+        <button className={styles.menuBtn}>
+          {/* 왼쪽 미니바 */}
+          <HiMiniBars3
+            className={styles.menuIcon}
+            onClick={() => toggleLeftSidebar}
+          />
+        </button>
+        {/* WeFAM로고 */}
+        <img className={styles.logo} src={logo}></img>
 
-        <div className={styles.groupNameContainer}>
-          <button onClick={openGroup} className={styles.groupNameButton}>
+        <div className={styles.groupContainer}>
+          <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
           </button>
         </div>
@@ -83,8 +89,11 @@ const Header = () => {
 
                 <img
                   className={styles.profileImage}
-                  src={"http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg"}
-                  alt='karina'></img>
+                  src={
+                    "http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg"
+                  }
+                  alt="karina"
+                ></img>
 
                 <img
                   className={styles.profileImage}
