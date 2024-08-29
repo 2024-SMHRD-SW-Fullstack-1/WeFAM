@@ -31,7 +31,8 @@ public class SecurityConfig {
 										"/add-work",
 										"/get-works",
 										"/update-work/**",
-										"/delete-work/**")
+										"/delete-work/**",
+										"/get-family")
 						.permitAll().anyRequest().authenticated())
 				.sessionManagement(
 						sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
