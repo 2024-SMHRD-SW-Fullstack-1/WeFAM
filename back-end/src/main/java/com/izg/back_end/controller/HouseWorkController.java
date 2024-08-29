@@ -37,7 +37,7 @@ public class HouseWorkController {
 	}
 
 	@PutMapping("/update-work/{workIdx}")
-	public HouseWorkModel updateWork(@PathVariable int workIdx, @RequestBody HouseWorkModel houseWorkModel) {
+	public HouseWorkModel updateWork(@PathVariable("workIdx") int workIdx, @RequestBody HouseWorkModel houseWorkModel) {
 		Optional<HouseWorkModel> existingWork = houseWorkService.getWorkById(workIdx);
 		if (existingWork.isPresent()) {
 			houseWorkModel.setWorkIdx(workIdx); // 기존 ID 유지
@@ -48,7 +48,7 @@ public class HouseWorkController {
 	}
 
 	@DeleteMapping("/delete-work/{workIdx}")
-	public String deleteWork(@PathVariable int workIdx) {
+	public String deleteWork(@PathVariable("workIdx") int workIdx) {
 		houseWorkService.deleteWorkById(workIdx);
 		return "작업이 성공적으로 삭제되었습니다.";
 	}

@@ -1,6 +1,6 @@
 package com.izg.back_end.service;
 
-import com.izg.back_end.UserDTO.UserDTO;
+import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class UserService {
     }
 
     // 카카오 서버에서 유저 정보를 받아옴
-    public UserDTO getUserInforFromKakao(String accessToken) {
+    public UserDto getUserInforFromKakao(String accessToken) {
         String userInfoUri = "https://kapi.kakao.com/v2/user/me";
         RestTemplate restTemplate = new RestTemplate();
 
@@ -69,7 +69,7 @@ public class UserService {
         Map<String, Object> properties = (Map<String, Object>) responseBody.get("properties");
         Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
 
-        UserDTO userDTO = new UserDTO();
+        UserDto userDTO = new UserDto();
         userDTO.setId(responseBody.get("id").toString());
         userDTO.setName(properties.get("nickname").toString());
         userDTO.setNick(properties.get("nickname").toString());
@@ -87,7 +87,7 @@ public class UserService {
     }
 
     // 유저 정보를 데이터베이스에 저장
-    public void saveUser(UserDTO userDTO) {
+    public void saveUser(UserDto userDTO) {
         if (userDTO.getBirth() == null) {
             userDTO.setBirth(LocalDate.now()); // 기본값 설정 또는 예외 처리
         }

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
-import modalStyles from "../modal/Modal.module.css";
-import styles from "./FeedModal.module.css";
+import modalStyles from "../../modal/Modal.module.css";
 
-const FeedModal = ({ feed, onClose, onSave }) => {
+const RouletteModal = (feed, onClose, onSave) => {
   // 저장 버튼 클릭 시 피드 정보를 전달
   const handleSaveClick = () => {
     onSave({
-      idx: feed.feedIdx, // ID도 함께 전달
+      // 전달할 데이터
     });
   };
 
@@ -19,11 +18,11 @@ const FeedModal = ({ feed, onClose, onSave }) => {
       >
         <div>
           {/* 작성자, 그룹, 코알 필드 */}
-          <div className={styles.field}>
+          <div>
             <span>작성자</span>
           </div>
           {/* 사용자 */}
-          <div className={styles.field}>
+          <div>
             <span>그룹</span>
           </div>
           {/* 모달 하단 버튼들 */}
@@ -42,4 +41,4 @@ const FeedModal = ({ feed, onClose, onSave }) => {
   );
 };
 
-export default FeedModal;
+export default RouletteModal;

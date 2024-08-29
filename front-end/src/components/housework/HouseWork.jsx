@@ -51,7 +51,7 @@ const HouseWork = () => {
     // 서버에서 작업을 가져오는 함수
     const fetchTasks = async () => {
         try {
-            const response = await axios.get('/wefam/get-works');
+            const response = await axios.get('http://localhost:8089/wefam/get-works');
             const tasks = response.data;
 
             // 각 작업을 dailyTasks와 shortTermTasks로 분류
@@ -104,7 +104,7 @@ const HouseWork = () => {
 
             // 수정 모드일 때
             if (editTaskIndex !== null) {
-                response = await axios.put(`/wefam/update-work/${editTaskIndex}`, task);
+                response = await axios.put(`http://localhost:8089/wefam/update-work/${editTaskIndex}`, task);
                 console.log('Task updated:', response.data);
 
                 // 수정된 작업 상태 업데이트
@@ -121,7 +121,7 @@ const HouseWork = () => {
                 }
             } else {
                 // 새로운 작업 추가 모드일 때
-                response = await axios.post('/wefam/add-work', task);
+                response = await axios.post('http://localhost:8089/wefam/add-work', task);
                 console.log('Task added:', response.data);
 
                 if (taskType === 'daily') {
@@ -144,7 +144,7 @@ const HouseWork = () => {
 
         try {
             const updatedTask = { ...task, completed: !task.completed }; // 완료 상태 토글
-            await axios.put(`/wefam/update-work/${task.workIdx}`, updatedTask); // 서버에 업데이트 요청
+            await axios.put(`http://localhost:8089/wefam/update-work/${task.workIdx}`, updatedTask); // 서버에 업데이트 요청
 
             task.completed = !task.completed; // 상태 업데이트
 
@@ -168,7 +168,7 @@ const HouseWork = () => {
             const taskToDelete = taskList[index]; // 삭제할 작업 선택
 
             // 서버에서 작업 삭제 요청
-            await axios.delete(`/wefam/delete-work/${taskToDelete.workIdx}`);
+            await axios.delete(`http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`);
 
             // 업데이트된 작업 리스트
             const updatedTasks = taskList.filter((_, i) => i !== index);
