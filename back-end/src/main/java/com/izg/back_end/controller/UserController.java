@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
+import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.service.UserService;
-import com.izg.back_end.UserDTO.UserDTO;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,7 +25,7 @@ public class UserController {
             String accessToken = userService.getKakaoAccessToken(code);
 
             // 액세스 토큰을 이용해 사용자 정보 가져오기
-            UserDTO userDTO = userService.getUserInforFromKakao(accessToken);
+            UserDto userDTO = userService.getUserInforFromKakao(accessToken);
 
             // 유저 정보를 데이터베이스에 저장
             userService.saveUser(userDTO);
