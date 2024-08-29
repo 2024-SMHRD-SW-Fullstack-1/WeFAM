@@ -26,8 +26,8 @@ public class FeedService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<FeedModel> getAllFeeds() {
-		return feedRepository.findAllOrderByPostedAtDesc();
+	public List<FeedModel> getAllFeeds(int familyIdx) {
+		return feedRepository.findByFamilyIdxOrderByPostedAtDesc(familyIdx);
 	}
 	
 	@Transactional

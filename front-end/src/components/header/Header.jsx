@@ -1,35 +1,30 @@
 // 타임트리 젤 위의 헤더 부분입니다.
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
 import logo from "../../assets/images/logo-text.png";
-import karina from "../../assets/images/karina.png";
-import winter from "../../assets/images/winter.png";
-import iu from "../../assets/images/iu.png";
-import madong from "../../assets/images/madong.png";
-import backji from "../../assets/images/backjihyeng.png";
-import nosa from "../../assets/images/nosayean.png";
-import leemusong from "../../assets/images/leemusong.png";
 import add_group from "../../assets/images/add-group.png";
-import { useState } from "react";
-import Modal from "react-modal";
 import AddCircle from "./AddCircle";
-import { elapsedTime } from "../../elapsedTime";
-import { useSelector } from "react-redux";
 
 const Header = () => {
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+
   const address = "광주광역시 동구 중앙로 196";
 
   // getCoordinates(address);
 
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
 
-  const toggleLeftSidebar = () => {
-    setIsLeftSidebarOpen(!isLeftSidebarOpen);
+  const handleMenuClick = () => {
+    dispatch(toggleLeftSidebar());
   };
 
   // Redux에서 사용자 정보 가져오기
@@ -61,16 +56,25 @@ const Header = () => {
   return (
     <div>
       <nav>
-        <button className={styles.menuBtn}>
-          {/* 왼쪽 미니바 */}
-          <HiMiniBars3
-            className={styles.menuIcon}
-            onClick={() => toggleLeftSidebar}
-          />
-        </button>
-        {/* WeFAM로고 */}
-        <img className={styles.logo} src={logo}></img>
-
+        <div className={styles.menuBtnContainer}>
+          <button className={styles.menuBtn}>
+            {/* 왼쪽 미니바 */}
+            <HiMiniBars3
+              className={styles.menuIcon}
+              onClick={handleMenuClick}
+            />
+          </button>
+        </div>
+        <div
+          className={styles.logoContainer}
+          onClick={() => {
+            nav("/");
+          }}
+          style={{ cursor: "pointer" }}
+        >
+          {/* WeFAM로고 */}
+          <img className={styles.logo} src={logo}></img>
+        </div>
         <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼

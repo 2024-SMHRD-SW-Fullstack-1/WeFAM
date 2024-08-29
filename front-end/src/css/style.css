@@ -1,5 +1,4 @@
 /* main */
-
 .main {
   position: absolute;
   top: var(--header-height);
@@ -14,8 +13,10 @@
 @media (max-width: 767px) {
   /* 모바일 스타일 */
   .main {
-    left: var(--leftSidebarSmall-width);
-    width: calc(100% - var(--leftSidebarSmall-width));
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
