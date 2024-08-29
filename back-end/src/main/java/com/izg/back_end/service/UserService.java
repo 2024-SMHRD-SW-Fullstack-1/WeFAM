@@ -1,6 +1,7 @@
 package com.izg.back_end.service;
 
 import com.izg.back_end.dto.UserDto;
+import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,10 @@ public class UserService {
 	public List<UserModel> getFamily(){
 		return userRepository.findAll();
 	}
+	
+//	public List<LogModel> getFamilyStaus(){
+//		return userRepository.findAll();
+//	}
 
 	
 }

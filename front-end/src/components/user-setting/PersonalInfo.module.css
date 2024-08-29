@@ -1,0 +1,42 @@
+.personalInfo {
+    padding: 20px;
+  }
+  
+  .profileContainer {
+    margin-top: 20px;
+  }
+  
+  .profileContainer span {
+    font-size: 20px; /* 글씨 크기를 키웁니다 */
+    font-weight: bold; /* 글씨를 굵게 만듭니다 */
+  }
+
+
+  .profileInfo {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 50px;
+  }
+  
+  .profileImg {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .editButton {
+    background-color: #A0D6B4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .editButton:hover {
+    background-color: #7cb342;
+  }
+  
