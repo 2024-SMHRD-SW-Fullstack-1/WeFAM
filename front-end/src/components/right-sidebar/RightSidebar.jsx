@@ -4,9 +4,11 @@ import karina from '../../assets/images/karina.png'
 import winter from '../../assets/images/winter.png'
 import iu from '../../assets/images/iu.png'
 import madong from '../../assets/images/madong.png'
+import { useSelector } from 'react-redux';
 
-const RightSidebar = ({userData}) => { //prop으로 받아옴
+const RightSidebar = () => { //prop으로 받아옴
   const [users, setUsers] = useState([]);
+  const userData = useSelector((state) => state.user.userData);
 
   useEffect(() => {
     if (userData) {

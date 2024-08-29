@@ -21,7 +21,7 @@ function App() {
           <Route path='album/:name' element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
-          <Route path='*' element={<RightSidebar />} /> {/* RightSidebar 추가 */}
+       {/*  <Route path='*' element={<RightSidebar />} /> {/* RightSidebar 추가 */} 
         <Route path='login' element={<Login />} />
       </Routes>
     </div>
