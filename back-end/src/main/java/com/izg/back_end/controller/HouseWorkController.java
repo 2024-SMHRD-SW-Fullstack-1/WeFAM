@@ -3,7 +3,6 @@ package com.izg.back_end.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +27,7 @@ public class HouseWorkController {
 	@PostMapping("/add-work")
 	public HouseWorkModel addWork(@RequestBody HouseWorkModel houseWorkModel) {
 		HouseWorkModel work = houseWorkRepository.save(houseWorkModel);
+		System.out.println("work : " + work);
 		return work;
 	}
 	
@@ -41,6 +41,7 @@ public class HouseWorkController {
 		Optional<HouseWorkModel> existingWork = houseWorkService.getWorkById(workIdx);
 		if (existingWork.isPresent()) {
 			houseWorkModel.setWorkIdx(workIdx); // 기존 ID 유지
+			System.out.println(existingWork);
 			return houseWorkService.saveOrUpdateWork(houseWorkModel);
 		} else {
 			throw new RuntimeException("작업을 찾을 수 없습니다.");
@@ -49,6 +50,7 @@ public class HouseWorkController {
 
 	@DeleteMapping("/delete-work/{workIdx}")
 	public String deleteWork(@PathVariable("workIdx") int workIdx) {
+		System.out.println("삭제 idx : " + workIdx);
 		houseWorkService.deleteWorkById(workIdx);
 		return "작업이 성공적으로 삭제되었습니다.";
 	}
