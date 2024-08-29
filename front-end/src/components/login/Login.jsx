@@ -47,6 +47,7 @@ const LogIn = () => {
     
   }, []);
 
+  
 
 
   const sendKakaoTokenToBackend = async (code) => {
@@ -58,9 +59,11 @@ const LogIn = () => {
       });
   
       if (response.status === 200) {
-        console.log("카카오 사용자 정보: ", response.data);
-        dispatch(setUserData(response.data));  // Redux에 사용자 데이터 저장
-        nav("/", { state: { userData: response.data } });
+        const userData = response.data
+        console.log("카카오 사용자 정보: ", userData);
+        dispatch(setUserData(userData));  // Redux에 사용자 데이터 저장
+
+        nav("/", { state: { userData} });
       } else {
         console.log('카카오 백 요청 실패', response.statusText);
       }
@@ -68,7 +71,6 @@ const LogIn = () => {
       console.log('카카오 백 요청 중 오류:', error.response ? error.response.data : error.message);
     }
   };
-  
   
 
   const sendNaverTokenToBackend = async (code) => {
@@ -89,6 +91,10 @@ const LogIn = () => {
       console.log("네이버 백 요청 중 오류", error);
     }
   };
+
+  
+
+
 
   return (
     <div className={styles.LoginPage}>
