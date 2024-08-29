@@ -19,7 +19,7 @@ const HouseWork = () => {
     const [taskName, setTaskName] = useState(''); // 작업 이름
     const [taskNote, setTaskNote] = useState(''); // 작업 노트
     const [points, setPoints] = useState(0); // 총 포인트
-    const [assignedMember, setAssignedMember] = useState(''); // 담당자 선택
+    const [workUser, setWorkUser] = useState(''); // 담당자 선택
     const [warningMessage, setWarningMessage] = useState(''); // 경고 메시지
 
     const [dropdownOpen, setDropdownOpen] = useState(null); // 드롭다운 메뉴 열기/닫기 상태
@@ -36,7 +36,7 @@ const HouseWork = () => {
         setIsModalOpen(false);
         setTaskName('');
         setTaskNote('');
-        setAssignedMember('');
+        setWorkUser('');
         setWarningMessage('');
         setEditTaskIndex(null); // 수정 모드 상태 초기화
         setEditTaskType(null); // 수정 모드 상태 초기화
@@ -46,13 +46,15 @@ const HouseWork = () => {
     const handleTaskTypeChange = (e) => setTaskType(e.target.value); // 작업 타입 변경
     const handleTaskNameChange = (e) => setTaskName(e.target.value); // 작업 이름 변경
     const handleTaskNoteChange = (e) => setTaskNote(e.target.value); // 작업 노트 변경
-    const handleAssignedMemberChange = (e) => setAssignedMember(e.target.value); // 담당자 선택 변경
+    const handleWorkUserChange = (e) => setWorkUser(e.target.value); // 담당자 선택 변경
 
     // 서버에서 작업을 가져오는 함수
     const fetchTasks = async () => {
         try {
             const response = await axios.get('http://localhost:8089/wefam/get-works');
             const tasks = response.data;
+
+            console.log(tasks);
 
             // 각 작업을 dailyTasks와 shortTermTasks로 분류
             const daily = tasks.filter(task => task.taskType === 'daily');
@@ -76,22 +78,19 @@ const HouseWork = () => {
 
     // 작업 추가 또는 수정
     const addOrUpdateTask = async () => {
-        // 작업 이름이 비어 있으면 작업하지 않음
         if (taskName.trim() === '') return;
 
-        // 매일 할 일인데 담당자가 선택되지 않은 경우 경고 메시지 표시
-        if (taskType === 'daily' && (assignedMember && assignedMember.trim() === '')) {
+        if (taskType === 'daily' && workUser.trim() === '') {
             setWarningMessage('담당자를 선택해 주세요.');
             return;
         }
 
-        // 작업 객체 생성
         const task = {
             workIdx: editTaskIndex !== null ? editTaskIndex : null,
             workTitle: taskName,
             workNote: taskNote,
             completed: false,
-            assignedTo: assignedMember,
+            workUser: workUser,
             points: taskType === 'daily' ? 10 : 20,
             deadline: taskType === 'shortTerm' ? new Date().toISOString().split('T')[0] : null,
             taskType: taskType,
@@ -102,36 +101,33 @@ const HouseWork = () => {
         try {
             let response;
 
-            // 수정 모드일 때
             if (editTaskIndex !== null) {
-                response = await axios.put(`http://localhost:8089/wefam/update-work/${editTaskIndex}`, task);
+                // 수정 모드
+                response = await axios.put(`http://localhost:8089/wefam/update-work/${task.workIdx}`, task);
                 console.log('Task updated:', response.data);
 
-                // 수정된 작업 상태 업데이트
                 if (taskType === 'daily') {
-                    const updatedTasks = dailyTasks.map((t, index) =>
-                        index === editTaskIndex ? { ...t, ...task } : t
-                    );
-                    setDailyTasks(updatedTasks);
+                    setDailyTasks(dailyTasks.map(t =>
+                        t.workIdx === response.data.workIdx ? response.data : t
+                    ));
                 } else {
-                    const updatedTasks = shortTermTasks.map((t, index) =>
-                        index === editTaskIndex ? { ...t, ...task } : t
-                    );
-                    setShortTermTasks(updatedTasks);
+                    setShortTermTasks(shortTermTasks.map(t =>
+                        t.workIdx === response.data.workIdx ? response.data : t
+                    ));
                 }
             } else {
-                // 새로운 작업 추가 모드일 때
+                // 새로운 작업 추가 모드
                 response = await axios.post('http://localhost:8089/wefam/add-work', task);
                 console.log('Task added:', response.data);
 
                 if (taskType === 'daily') {
-                    setDailyTasks([...dailyTasks, task]);
+                    setDailyTasks([...dailyTasks, response.data]);
                 } else {
-                    setShortTermTasks([...shortTermTasks, task]);
+                    setShortTermTasks([...shortTermTasks, response.data]);
                 }
             }
 
-            closeModal(); // 작업 후 모달 닫기
+            closeModal();
         } catch (error) {
             console.error('Error adding or updating task:', error);
         }
@@ -139,23 +135,19 @@ const HouseWork = () => {
 
     // 작업 완료 상태 토글
     const toggleTaskCompletion = async (taskList, setTaskList, index) => {
-        const newTasks = [...taskList]; // 작업 리스트 복사
-        const task = newTasks[index]; // 해당 작업 선택
+        const task = taskList[index]; // 해당 작업 선택
 
         try {
             const updatedTask = { ...task, completed: !task.completed }; // 완료 상태 토글
             await axios.put(`http://localhost:8089/wefam/update-work/${task.workIdx}`, updatedTask); // 서버에 업데이트 요청
 
-            task.completed = !task.completed; // 상태 업데이트
-
             // 포인트 계산
-            if (task.completed) {
-                setPoints(points + task.points);
-            } else {
-                setPoints(points - task.points);
-            }
+            const newPoints = updatedTask.completed ? points + task.points : points - task.points;
+            setPoints(newPoints);
 
-            setTaskList(newTasks); // 업데이트된 리스트로 상태 갱신
+            setTaskList(taskList.map(t =>
+                t.workIdx === task.workIdx ? updatedTask : t
+            )); // 업데이트된 리스트로 상태 갱신
         } catch (error) {
             console.error('Error updating task completion:', error);
         }
@@ -164,17 +156,15 @@ const HouseWork = () => {
     // 선택된 작업 삭제
     const deleteSelectedTasks = async (index, taskType) => {
         try {
-            const taskList = taskType === 'daily' ? dailyTasks : shortTermTasks; // 작업 리스트 선택
-            const taskToDelete = taskList[index]; // 삭제할 작업 선택
+            const taskList = taskType === 'daily' ? dailyTasks : shortTermTasks;
+            const taskToDelete = taskList[index];
 
-            // 서버에서 작업 삭제 요청
             await axios.delete(`http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`);
 
-            // 업데이트된 작업 리스트
-            const updatedTasks = taskList.filter((_, i) => i !== index);
+            const updatedTasks = taskList.filter(t => t.workIdx !== taskToDelete.workIdx);
             taskType === 'daily' ? setDailyTasks(updatedTasks) : setShortTermTasks(updatedTasks);
 
-            console.log(`Task ${index} deleted successfully`);
+            console.log(`Task ${taskToDelete.workIdx} deleted successfully`);
         } catch (error) {
             console.error('Error deleting task:', error);
         }
@@ -190,9 +180,9 @@ const HouseWork = () => {
         const task = taskList[taskIndex]; // 수정할 작업 선택
         setTaskName(task.workTitle); // 작업 이름 설정
         setTaskNote(task.workNote); // 작업 노트 설정
-        setAssignedMember(task.assignedTo); // 담당자 설정
+        setWorkUser(task.workUser); // 담당자 설정
         setTaskType(taskType); // 작업 타입 설정
-        setEditTaskIndex(taskIndex); // 수정 모드에서 작업 인덱스 설정
+        setEditTaskIndex(task.workIdx); // 수정 모드에서 작업의 workIdx 설정
         setEditTaskType(taskType); // 수정 모드에서 작업 타입 설정
         setIsModalOpen(true); // 모달 열기
     };
@@ -222,15 +212,15 @@ const HouseWork = () => {
                         <h3>매일 할 일</h3>
                         <ul>
                             {dailyTasks.map((task, index) => (
-                                <li key={index} className={task.completed ? styles.completed : ''}>
-                                    <input
-                                        type="checkbox"
-                                        checked={task.completed}
-                                        onChange={() => toggleTaskCompletion(dailyTasks, setDailyTasks, index)}
-                                        className={styles.checkBox}
-                                    />
-                                    <h4>{task.assignedTo} : {task.workTitle} - {task.workNote} - {task.points} 포인트</h4>
+                                <li key={task.workIdx} className={task.completed ? styles.completed : ''}>
+                                    <h4>{task.workUser} : {task.workTitle} - {task.workNote} - {task.points} 포인트</h4>
                                     <div className={styles.dropdownContainer}>
+                                        <input
+                                            type="checkbox"
+                                            checked={task.completed}
+                                            onChange={() => toggleTaskCompletion(dailyTasks, setDailyTasks, index)}
+                                            className={styles.checkBox}
+                                        />
                                         <img
                                             src={icon}
                                             onClick={(e) => {
@@ -242,7 +232,7 @@ const HouseWork = () => {
                                         {dropdownOpen === `daily-${index}` && (
                                             <div className={styles.dropdownMenu}>
                                                 <button onClick={() => handleTaskEdit(index, dailyTasks, 'daily')}>수정</button>
-                                                <button onClick={() => deleteSelectedTasks(index, taskType)}>삭제</button>
+                                                <button onClick={() => deleteSelectedTasks(index, 'daily')}>삭제</button>
                                             </div>
                                         )}
                                     </div>
@@ -258,15 +248,15 @@ const HouseWork = () => {
                         <h3>오늘의 미션</h3>
                         <ul>
                             {shortTermTasks.map((task, index) => (
-                                <li key={index} className={task.completed ? styles.completed : ''}>
-                                    <input
-                                        type="checkbox"
-                                        checked={task.completed}
-                                        onChange={() => toggleTaskCompletion(shortTermTasks, setShortTermTasks, index)}
-                                        className={styles.checkBox}
-                                    />
+                                <li key={task.workIdx} className={task.completed ? styles.completed : ''}>
                                     <h4>마감일: {task.deadline} - {task.workTitle} - {task.workNote} - {task.points} 포인트</h4>
                                     <div className={styles.dropdownContainer}>
+                                        <input
+                                            type="checkbox"
+                                            checked={task.completed}
+                                            onChange={() => toggleTaskCompletion(shortTermTasks, setShortTermTasks, index)}
+                                            className={styles.checkBox}
+                                        />
                                         <img
                                             src={icon}
                                             onClick={(e) => {
@@ -278,7 +268,7 @@ const HouseWork = () => {
                                         {dropdownOpen === `shortTerm-${index}` && (
                                             <div className={styles.dropdownMenu}>
                                                 <button onClick={() => handleTaskEdit(index, shortTermTasks, 'shortTerm')}>수정</button>
-                                                <button onClick={() => deleteSelectedTasks(index, taskType)}>삭제</button>
+                                                <button onClick={() => deleteSelectedTasks(index, 'shortTerm')}>삭제</button>
                                             </div>
                                         )}
                                     </div>
@@ -313,14 +303,8 @@ const HouseWork = () => {
                         value={taskName}
                         onChange={handleTaskNameChange}
                     />
-                    <input
-                        type="text"
-                        placeholder="노트"
-                        value={taskNote}
-                        onChange={handleTaskNoteChange}
-                    />
                     {taskType === 'daily' && (
-                        <select value={assignedMember} onChange={handleAssignedMemberChange}>
+                        <select value={workUser} onChange={handleWorkUserChange}>
                             <option value="">담당자 선택</option>
                             {familyMembers.map((member, index) => (
                                 <option key={index} value={member}>{member}</option>
@@ -328,13 +312,22 @@ const HouseWork = () => {
                         </select>
                     )}
                     {warningMessage && <p className={styles.warningMessage}>{warningMessage}</p>}
-                    <button className={styles.houseworkModalButton} onClick={addOrUpdateTask}>
-                        {editTaskIndex !== null ? '수정 완료' : '추가'}
-                    </button>
-                    <button className={styles.houseworkModalButton} onClick={closeModal}>취소</button>
+                    <input
+                        type="text"
+                        placeholder="유의사항"
+                        value={taskNote}
+                        onChange={handleTaskNoteChange}
+                    />
+                    <div className={styles.houseworkModalButtonContainer}>
+                        <button className={styles.houseworkModalButton} onClick={closeModal}>취소</button>
+                        <button className={styles.houseworkModalButton} onClick={addOrUpdateTask}>
+                            {editTaskIndex !== null ? '수정 완료' : '추가'}
+                        </button>
+                    </div>
                 </Modal>
             </div>
         </div>
     );
 };
+
 export default HouseWork;

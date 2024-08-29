@@ -6,6 +6,7 @@ import HouseWork from "./components/housework/HouseWork";
 import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
+import RightSidebar from "./components/right-sidebar/RightSidebar";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
@@ -20,7 +21,7 @@ function App() {
           <Route path='album/:name' element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
-
+       {/*  <Route path='*' element={<RightSidebar />} /> {/* RightSidebar 추가 */} 
         <Route path='login' element={<Login />} />
       </Routes>
     </div>

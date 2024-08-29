@@ -15,6 +15,7 @@ import { useState } from "react";
 import Modal from "react-modal";
 import AddCircle from "./AddCircle";
 import { elapsedTime } from "../../elapsedTime";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const address = "광주광역시 동구 중앙로 196";
@@ -30,6 +31,9 @@ const Header = () => {
   const toggleLeftSidebar = () => {
     setIsLeftSidebarOpen(!isLeftSidebarOpen);
   };
+
+  // Redux에서 사용자 정보 가져오기
+  const userData = useSelector((state) => state.user.userData);
 
   const openGroup = () => {
     setIsGroupOpen(true);
@@ -47,12 +51,12 @@ const Header = () => {
     setIsAddCircleOpen(false);
   };
 
-  const addGroup = () => {
-    const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
-    if (newGroupName) {
-      setGroups([...groups, newGroupName]);
-    }
-  };
+  // const addGroup = () => {
+  //   const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
+  //   if (newGroupName) {
+  //     setGroups([...groups, newGroupName]);
+  //   }
+  // };
 
   return (
     <div>
@@ -85,33 +89,15 @@ const Header = () => {
                 <h2>{groupName} ▲</h2>
               </button>
               <div className={styles.groupProfileContainer}>
-                {/* 우리가족 멤버 이미지 */}
+                {/* 카카오 프로필 이미지 */}
 
-                <img
-                  className={styles.profileImage}
-                  src={
-                    "http://k.kakaocdn.net/dn/CYJjL/btsHfBYRDec/gLKFXVPeoywDsFoqHgD2cK/img_640x640.jpg"
-                  }
-                  alt="karina"
-                ></img>
-
-                <img
-                  className={styles.profileImage}
-                  src={backji}
-                  alt="backji"
-                ></img>
-
-                <img
-                  className={styles.profileImage}
-                  src={nosa}
-                  alt="nosa"
-                ></img>
-
-                <img
-                  className={styles.profileImage}
-                  src={leemusong}
-                  alt="leemusong"
-                ></img>
+                {userData && userData.profileImg && (
+                  <img
+                    className={styles.profileImage}
+                    src={userData.profileImg}
+                    alt={userData.nickname}
+                  />
+                )}
 
                 <img
                   className={styles.profileImage}
