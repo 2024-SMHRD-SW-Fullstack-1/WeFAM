@@ -7,22 +7,23 @@ import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
 import RightSidebar from "./components/right-sidebar/RightSidebar";
+import Settings from "./components/user-setting/Settings";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
   return (
-    <div className='App'>
+    <div className="App">
       <Routes>
-        <Route path='/' element={<Home />}>
+        <Route path="/" element={<Home />}>
           <Route index element={<Feed />} />
-          <Route path='calendar' element={<Calendar />} />
-          <Route path='housework' element={<HouseWork />} />
-          <Route path='album' element={<Album />} />
-          <Route path='album/:name' element={<AlbumFolder />} />{" "}
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="housework" element={<HouseWork />} />
+          <Route path="album" element={<Album />} />
+          <Route path="album/:name" element={<AlbumFolder />} />{" "}
           {/* 동적 경로 추가 */}
         </Route>
-       {/*  <Route path='*' element={<RightSidebar />} /> {/* RightSidebar 추가 */} 
-        <Route path='login' element={<Login />} />
+        {/*  <Route path='*' element={<RightSidebar />} /> {/* RightSidebar 추가 */}
+        <Route path="login" element={<Login />} />
       </Routes>
     </div>
   );

@@ -36,10 +36,10 @@ public class FeedController {
 		return feedService.getFeedDetail(feedIdx);
 	}
 	
-	@GetMapping("/get-all-feeds")
-	public List<FeedModel> getAllFeeds() {
-		System.out.println("Gotten all feeds : " + feedService.getAllFeeds());
-		return feedService.getAllFeeds();
+	@GetMapping("/get-all-feeds/{familyIdx}")
+	public List<FeedModel> getAllFeeds(@PathVariable("familyIdx") Integer familyIdx) {
+		System.out.println("Gotten my group's feeds : " + feedService.getAllFeeds(familyIdx));
+		return feedService.getAllFeeds(familyIdx);
 	}
 	
 	@PatchMapping("/update-feed/{feedIdx}")
