@@ -25,6 +25,7 @@ public class SecurityConfig {
 						.requestMatchers("/login",
 										"/add-feed",
 										"/get-all-feeds",
+										"/get-feed-detail/**",
 										"/update-feed/**",
 										"/delete-feed/**",
 										"/calendar/**",
