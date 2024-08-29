@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
@@ -24,6 +25,7 @@ public class SecurityConfig {
 						.requestMatchers("/login",
 										"/add-feed",
 										"/get-all-feeds",
+										"/get-feed-detail/**",
 										"/update-feed/**",
 										"/delete-feed/**",
 										"/add-event",
