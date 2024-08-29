@@ -17,6 +17,7 @@
   --rightSidebar-width: 250px;
 
   /* Color */
+  --color-sunset: #ff4d4d;
   --color-coral: #e1888b;
   --color-peach: #f0b49c;
   --color-maize: #f5d0a3;
@@ -252,8 +253,8 @@ p {
   align-items: center;
   /* 세로 방향 가운데 정렬 */
   /* display: inline-block; */
-  /* /* width: 12px; */
-  /* height: 12px; */
+  /* width: 12px;
+  height: 12px; */
   /* background-color: #ff4d4d !important; */
   /* text-item: left; */
 }
