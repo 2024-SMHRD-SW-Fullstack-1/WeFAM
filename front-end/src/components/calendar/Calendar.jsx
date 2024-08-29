@@ -73,6 +73,8 @@ const Calendar = () => {
         });
 
         setEvents(fullCalendarEvents);
+        console.log("dd", response.data);
+
         console.log("불러오기", events);
       } catch (error) {
         console.error("Error fetching events:", error); // 오류 로그 추가
