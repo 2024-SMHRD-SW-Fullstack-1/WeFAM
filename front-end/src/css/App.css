@@ -247,14 +247,15 @@ p {
   align-content: center;
 }
 
-.custom-dot-event .fc-daygrid-event-dot {
-  display: flex; /* flex 컨테이너로 설정 */
-  justify-content: space-between; /* 요소 간에 공간을 분배 */
-  align-items: center; /* 세로 방향 가운데 정렬 */
+.custom-dot-event {
+  display: flex; /*flex 컨테이너로 설정*/
+  /* justify-content: space-between; 요소 간에 공간을 분배 */
+  align-items: center;
+  /* 세로 방향 가운데 정렬 */
   /* display: inline-block; */
-  width: 12px;
-  height: 12px;
-  background-color: #ff4d4d !important;
+  /* width: 12px;
+  height: 12px; */
+  /* background-color: #ff4d4d !important; */
   /* text-item: left; */
 }
 .fc-event
