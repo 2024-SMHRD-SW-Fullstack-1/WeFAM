@@ -1,7 +1,8 @@
 // 타임트리 젤 위의 헤더 부분입니다.
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
 import styles from "./Header.module.css";
@@ -20,6 +21,7 @@ const Header = () => {
 
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
+  const [userImages, setUserImages] = useState([]);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
 
@@ -46,12 +48,20 @@ const Header = () => {
     setIsAddCircleOpen(false);
   };
 
-  // const addGroup = () => {
-  //   const newGroupName = prompt("새 그룹명을 입력하세요."); // 그룹 이름 입력 받기
-  //   if (newGroupName) {
-  //     setGroups([...groups, newGroupName]);
-  //   }
-  // };
+  useEffect(() => {
+    if (userData) {
+      // 실제 사용자 데이터를 가져오는 axios 요청
+      axios
+        .get("http://localhost:8089/wefam/get-family")
+        .then((response) => {
+          const loadedImages = response.data.map((user) => user.profileImg);
+          setUserImages(loadedImages);
+        })
+        .catch((error) => {
+          console.error("가져오기 에러!!", error);
+        });
+    }
+  }, [userData]); // userData가 변경될 때마다 실행
 
   return (
     <div>
@@ -94,15 +104,14 @@ const Header = () => {
               </button>
               <div className={styles.groupProfileContainer}>
                 {/* 카카오 프로필 이미지 */}
-
-                {userData && userData.profileImg && (
+                {userImages.map((image, index) => (
                   <img
-                    className={styles.profileImage}
-                    src={userData.profileImg}
-                    alt={userData.nickname}
+                    key={index}
+                    src={image}
+                    className={styles.groupProfileContainer}
+                    alt={`user-${index}`}
                   />
-                )}
-
+                ))}
                 <img
                   className={styles.profileImage}
                   src={add_group}

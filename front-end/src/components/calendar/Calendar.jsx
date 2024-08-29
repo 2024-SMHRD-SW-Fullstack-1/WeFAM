@@ -17,6 +17,27 @@ const Calendar = () => {
   const [isSearchVisible, setIsSearchVisible] = useState(false); // 검색창 보임 여부 상태
   const [events, setEvents] = useState([]);
 
+  //요일에 따른 날짜 색상
+  const renderDayCellContent = (info) => {
+    const dayOfWeek = info.date.toLocaleDateString("en-US", {
+      weekday: "short",
+    }); // 'Sat', 'Sun' 등으로 요일 텍스트 가져옴
+    let color = "";
+
+    // 'Sat'이 포함되면 파란색, 'Sun'이 포함되면 빨간색 설정
+    if (dayOfWeek.includes("Sat")) {
+      color = "#2F76F9"; // 토요일: 파란색
+    } else if (dayOfWeek.includes("Sun")) {
+      color = "#FF4D4D"; // 일요일: 빨간색
+    }
+
+    return (
+      <div style={{ color: color }}>
+        {info.dayNumberText.replace("일", "")} {/* 날짜 번호에서 '일' 제거 */}
+      </div>
+    );
+  };
+
   // 그룹원 일정 가져오기
   useEffect(() => {
     const fetchEvents = async () => {
@@ -52,6 +73,9 @@ const Calendar = () => {
         });
 
         setEvents(fullCalendarEvents);
+        console.log("dd", response.data);
+
+        console.log("불러오기", events);
       } catch (error) {
         console.error("Error fetching events:", error); // 오류 로그 추가
       }
@@ -137,14 +161,6 @@ const Calendar = () => {
   // 모달에서 저장된 이벤트를 처리하는 함수
   const saveEvent = async (updatedEvent) => {
     console.log(updatedEvent);
-
-    // try {
-    //   const response = await axios.post(
-    //     `http://localhost:8089/wefam/calendar/${updatedEvent.id}`,
-    //     updatedEvent
-    //   );
-    console.log(updatedEvent);
-
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.id === updatedEvent.id ? updatedEvent : event
@@ -163,13 +179,28 @@ const Calendar = () => {
         eventToUpdate.setEnd(updatedEvent.end); // 종료 날짜 업데이트
       }
     }
-    // } catch (error) {
-    //   console.error("Error updating event:", error); // 에러 처리}
-    // }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8089/wefam/add-event`,
+        updatedEvent
+      );
+      console.log(updatedEvent);
+    } catch (error) {
+      console.error("Error updating event:", error); // 에러 처리}
+    }
   };
 
   // 이벤트 클릭 시 모달을 열고 선택된 이벤트 저장
   const handleEventClick = (clickInfo) => {
+    // const selectedEvent = events.find(
+    //   (event) => event.id === clickInfo.event.id
+    // );
+
+    // console.log("Selected event:", selectedEvent); // 선택된 이벤트 확인
+    // console.log("Selected event familyIdx:", selectedEvent.familyIdx); // familyIdx 확인
+    console.log("클릭함", clickInfo);
+
     if (!clickInfo || !clickInfo.event) {
       return;
     }
@@ -181,7 +212,7 @@ const Calendar = () => {
       const minutes = date.getMinutes().toString().padStart(2, "0");
       return `${hours}:${minutes}`;
     };
-
+    const { extendedProps } = clickInfo.event; // extendedProps에서 추가 데이터 추출
     // 이벤트 정보 저장 (시간도 문자열로 변환)
     setSelectedEvent({
       id: clickInfo.event.id,
@@ -192,32 +223,18 @@ const Calendar = () => {
       endTime: formatTime(clickInfo.event.end), // 시간 추출
       allDay: clickInfo.event.allDay, // allDay 여부
       backgroundColor: clickInfo.event.backgroundColor,
+      familyIdx: extendedProps.familyIdx, // extendedProps에서 familyIdx 가져오기
+      content: extendedProps.content, // extendedProps에서 content 가져오기
+      userId: extendedProps.userId, // extendedProps에서 userId 가져오기
     });
+    console.log("선택 ", selectedEvent);
+
     setIsModalOpen(true);
   };
 
-  const renderDayCellContent = (info) => {
-    const dayOfWeek = info.date.toLocaleDateString("en-US", {
-      weekday: "short",
-    }); // 'Sat', 'Sun' 등으로 요일 텍스트 가져옴
-    let color = "";
-
-    // 'Sat'이 포함되면 파란색, 'Sun'이 포함되면 빨간색 설정
-    if (dayOfWeek.includes("Sat")) {
-      color = "#2F76F9"; // 토요일: 파란색
-    } else if (dayOfWeek.includes("Sun")) {
-      color = "#FF4D4D"; // 일요일: 빨간색
-    }
-
-    return (
-      <div style={{ color: color }}>
-        {info.dayNumberText.replace("일", "")} {/* 날짜 번호에서 '일' 제거 */}
-      </div>
-    );
-  };
+  //추가
   const handleAddEventClick = () => {
     setSelectedEvent({
-      id: null,
       title: "",
       start: new Date(),
       end: new Date(),
@@ -266,10 +283,10 @@ const Calendar = () => {
           }}>
           <span
             style={{
-              overflow: "hidden",
-              whiteSpace: "nowrap",
+              overflow: "hidden ",
+              whiteSpace: "nowrap ",
               flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
-              minWidth: 0,
+              minWidth: " 0 ",
             }}>
             {event.title}
           </span>

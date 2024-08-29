@@ -7,6 +7,7 @@ import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
 import RightSidebar from "./components/right-sidebar/RightSidebar";
+import Settings from "./components/user-setting/Settings";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
