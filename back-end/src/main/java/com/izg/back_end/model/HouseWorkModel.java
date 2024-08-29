@@ -30,6 +30,10 @@ public class HouseWorkModel {
 	@Column(name = "user_id")
 	@JsonProperty("userId")
 	private String userId = ""; // 기본값 빈 문자열
+	
+	@Column(name = "work_user")
+    @JsonProperty("workUser")
+    private String workUser = ""; // 기본값 빈 문자열, 담당자 이름
 
 	@Column(name = "work_title")
 	@JsonProperty("workTitle")
