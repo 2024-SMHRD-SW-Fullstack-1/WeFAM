@@ -28,6 +28,7 @@ public class SecurityConfig {
 										"/get-feed-detail/**",
 										"/update-feed/**",
 										"/delete-feed/**",
+										"/add-event",
 										"/calendar/**",
 										"/add-work",
 										"/get-works",
