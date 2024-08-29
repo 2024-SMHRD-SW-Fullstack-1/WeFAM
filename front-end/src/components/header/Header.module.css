@@ -4,48 +4,34 @@ nav {
   height: var(--header-height);
   display: flex;
   align-items: center;
-  border: 0.5px solid var(--color-white);
   background-color: var(--color-white);
 }
-
-.topBar {
-  background-color: #fff;
-  height: 72px;
+.menuBtn {
+  width: var(--header-height);
+  height: var(--header-height);
+  padding: 0;
+  font-size: var(--font-4xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo {
+  width: calc(var(--leftSidebar-width) - var(--header-height));
+  height: 40px;
+  padding: 0 var(--space-sm);
 }
 
-.groupListContainer {
-  width: 60px;
+.groupContainer {
+  width: calc(100% - var(--leftSidebar-width) - var(--rightSidebar-width));
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  left: 100px;
 }
 
-.WeFAMlogo {
-  height: 40px;
-  width: 190px;
-  position: relative;
-  left: 30%;
-}
-
-.groupNameContainer {
-  position: relative;
-  text-align: center;
-  flex-grow: 1;
-}
-
-.groupNameButton {
-  /* 가족 그룹명 */
-  background: none;
-  border: none;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  position: static;
-  padding-right: 1.8cm;
-  padding-bottom: 0.2cm;
+.groupBtn {
+  font-size: var(--space-lg);
+  padding: 0;
 }
 
 .groupListBtn {
