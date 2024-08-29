@@ -44,12 +44,11 @@ public class UserController {
             return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
         }
     }
- // 새로운 엔드포인트 추가
     
+    // 새로운 엔드포인트 추가
     @GetMapping("/get-family")
 	public List<UserModel> getFamily() {
-		System.out.println("Gotten All Feeds : " + userService.getFamily());
+		System.out.println("Gotten all users in my family : " + userService.getFamily());
 		return userService.getFamily();
 	}
-    
 }

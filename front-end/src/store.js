@@ -1,19 +1,23 @@
 // src/store.js
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './features/userSlice';
-import storage from 'redux-persist/lib/storage';
-import { persistStore, persistReducer } from 'redux-persist';
-import { combineReducers } from 'redux';
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./features/userSlice";
+import familyReducer from "./features/familySlice";
+import leftSidebarReducer from "./features/leftSidebarSlice";
+import storage from "redux-persist/lib/storage";
+import { persistStore, persistReducer } from "redux-persist";
+import { combineReducers } from "redux";
 
 // persist 설정
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
 };
 
 // rootReducer 설정
 const rootReducer = combineReducers({
   user: userReducer,
+  family: familyReducer,
+  leftSidebar: leftSidebarReducer,
 });
 
 // persistReducer로 감싸기
