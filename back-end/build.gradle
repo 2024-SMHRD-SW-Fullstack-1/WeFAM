@@ -30,6 +30,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'org.springframework.security:spring-security-oauth2-client'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    
     // 개발 도구
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     
