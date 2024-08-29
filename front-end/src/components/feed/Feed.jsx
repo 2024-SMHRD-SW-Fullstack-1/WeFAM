@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import styles from "./Feed.module.css";
 import AddFeed from "./AddFeed";
@@ -7,20 +8,52 @@ import Preloader from "../preloader/Preloader";
 const Feed = () => {
   const [feeds, setFeeds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [familyIdx, setFamilyIdx] = useState(0);
+
+  // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
+  // 이 데이터는 state.user.userData에 저장되어 있음.
+  const userData = useSelector((state) => state.user.userData);
+  // 로그인한 사용자의 데이터 확인
+  console.log("userData는 ", userData);
+
+  // Redux store에서 현재 로그인한 사용자의 가족 데이터를 가져오기.
+  // 이 데이터는 state.family.familyData에 저장되어 있음.
+  // const familyData = useSelector((state) => state.family.familyData);
+  // 로그인한 사용자의 가족 데이터 확인
+  // console.log("familyData는 ", familyData);
+
+  // 재효 시작
+  const getFamilyData = async (id) => {
+    console.log("가족 데이터 받아오기");
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-familyData/${id}`
+      );
+      console.log("나의 가족 정보 : ", response.data);
+      return response.data;
+      // dispatch(setFamilyData(familyData)); // Redux에 가족 데이터 저장
+      // nav("/", { state: { familyData } });
+    } catch (error) {
+      console.error("가족 정보 요청 에러", error);
+    }
+  };
+  // 재효 끝
 
   // 모든 피드를 가져오는 함수
-  const getAllFeeds = useCallback(async () => {
+  const getAllFeeds = useCallback(async (familyIdx) => {
     try {
       setIsLoading(true);
       // API 호출하여 피드 데이터 가져오기
       const response = await axios.get(
-        "http://localhost:8089/wefam/get-all-feeds"
+        `http://localhost:8089/wefam/get-all-feeds/${familyIdx}`
       );
       setFeeds(response.data);
-      console.log("getAllFeeds 함수 실행 : ", response.data);
+      console.log(
+        `${familyIdx}번 가족 getAllFeeds 함수 실행 : ${response.data}`
+      );
     } catch (error) {
       // 에러 발생 시 콘솔에 에러 메시지 출력
-      console.error("getAllFeeds 함수 에러 : ", error);
+      console.error(`${familyIdx}번 가족 getAllFeeds 함수 에러 : ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -93,8 +126,25 @@ const Feed = () => {
   });
 
   useEffect(() => {
-    getAllFeeds(); // 컴포넌트가 마운트될 때 피드를 가져옴
-  }, []);
+    const fetchData = async () => {
+      try {
+        // 사용자 데이터에서 가족 데이터 가져오기
+        const familyData = await getFamilyData(userData.id);
+        if (familyData) {
+          setFamilyIdx(familyData.familyIdx);
+
+          // 피드를 가져오기 전에 상태가 업데이트되기를 기다립니다.
+          await getAllFeeds(familyData.familyIdx);
+        }
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userData.id]);
 
   return (
     <div className="main">
@@ -113,7 +163,6 @@ const Feed = () => {
             />
           </div>
         )}
-        {/* 로딩 상태일 때만 로딩 컴포넌트 표시 */}
       </div>
     </div>
   );

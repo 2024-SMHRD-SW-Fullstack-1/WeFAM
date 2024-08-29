@@ -8,6 +8,11 @@
   transition: all var(--animation-duration);
 }
 
+.leftSidebar.closed {
+  left: 0px;
+  width: var(--leftSidebarSmall-width);
+}
+
 .profile {
   width: 100%;
   height: 180px;
@@ -38,6 +43,7 @@
 
 .category ul li > span {
   width: 100%;
+  height: 60%;
   padding-left: var(--space-sm);
   display: flex;
   justify-content: flex-start;
@@ -77,11 +83,19 @@
 }
 
 /* 반응형 디자인 */
-@media (max-width: 1199px) {
+@media (max-width: 767px) {
+  .leftSidebar {
+    left: calc(-1 * var(--leftSidebarSmall-width));
+    width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
   .leftSidebar {
     left: 0px;
     width: var(--leftSidebarSmall-width);
   }
+
   .profile {
     width: var(--leftSidebarSmall-width);
     height: var(--leftSidebarSmall-width);
