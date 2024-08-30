@@ -80,7 +80,6 @@ const EventModal = ({ event, onClose, onSave }) => {
     onSave({
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
-      backgroundColor: selectedColor, // 업데이트된 색상
       title: title,
       id: event.id || "UnKnown", // ID도 함께 전달
       allDay: isAllDay,
@@ -210,9 +209,8 @@ const EventModal = ({ event, onClose, onSave }) => {
           <input
             className={styles.title}
             value={title || ""}
-            placeholder="제목"
-            onChange={handleTitleChange}
-          ></input>
+            placeholder='제목'
+            onChange={handleTitleChange}></input>
 
           <BsThreeDotsVertical className={styles.threeDots} />
         </div>
@@ -228,7 +226,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -236,8 +234,7 @@ const EventModal = ({ event, onClose, onSave }) => {
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -252,8 +249,7 @@ const EventModal = ({ event, onClose, onSave }) => {
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -265,7 +261,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
           </div>
@@ -280,7 +276,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -368,8 +364,7 @@ const EventModal = ({ event, onClose, onSave }) => {
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}
-                  >
+                    }}>
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}

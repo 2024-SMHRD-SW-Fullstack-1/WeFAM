@@ -60,8 +60,10 @@ public class EventModel {
     @JsonProperty("eventContent")
     private String eventContent = ""; // 기본값 빈 문자열
 
+
     @Column(name = "is_all_day")
     @JsonProperty("isAllDay")
     private int isAllDay = 0;
     
+
 }

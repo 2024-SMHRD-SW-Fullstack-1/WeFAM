@@ -47,6 +47,7 @@ const Calendar = () => {
   };
 
   // 그룹원 일정 가져오기
+
   const fetchEvents = async () => {
     try {
       const response = await axios.get("http://localhost:8089/wefam/calendar");
@@ -246,14 +247,17 @@ const Calendar = () => {
     const eventEnd = clickInfo.event.end;
 
     console.log("이벤트 종료 시간:", eventEnd); // 종료 시간 확인
+
     setSelectedEvent({
       id: clickInfo.event.id,
       title: clickInfo.event.title,
       start: clickInfo.event.start, // 원래 날짜
       startTime: formatTime(clickInfo.event.start), // 시간 추출
+
       end: clickInfo.event.end || clickInfo.event.start, // 원래 날짜
       endTime:
         formatTime(clickInfo.event.end) || formatTime(clickInfo.event.start), // 시간 추출
+
       allDay: clickInfo.event.allDay, // allDay 여부
       backgroundColor: clickInfo.event.backgroundColor,
       familyIdx: extendedProps.familyIdx, // extendedProps에서 familyIdx 가져오기
@@ -419,6 +423,7 @@ const Calendar = () => {
         theme='light'
         z-index='100'
       />
+
       {/* 검색 기능 */}
       <div style={{ width: "90%" }}>
         <div
@@ -493,6 +498,7 @@ const Calendar = () => {
             onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
           />
         )}
+
         {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
         {isEventOpen && (
           <EventDetail

@@ -57,15 +57,14 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
           )}
         </div>
       </div>
-      <div className={styles.title} style={{ marginRight: "30px" }}>
+      <div className={styles.title}>
         <h2 style={{ color: eventColor }}>{event.title}</h2>
       </div>
       {/** 일정 기간 */}
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}
-      >
+        } ${event.allDay ? styles.allDay : ""}`}>
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
