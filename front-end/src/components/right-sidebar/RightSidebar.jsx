@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./RightSidebar.module.css";
+
 import karina from '../../assets/images/karina.png'
 import winter from '../../assets/images/winter.png'
 import iu from '../../assets/images/iu.png'
@@ -14,6 +15,7 @@ const RightSidebar = () => {
   useEffect(() => {
     if (userData) {
       // 실제 사용자 데이터를 가져오는 axios 요청
+
       axios.get('http://localhost:8089/wefam/get-family')
         .then(response => {
           const loadedUsers = response.data.map(user => ({
@@ -33,6 +35,7 @@ const RightSidebar = () => {
         { name: "카리나", image: karina, online: true },
         { name: "아이유", image: iu, online: false },
         { name: "마블리", image: madong, online: false }
+
       ];
       setUsers(exampleUsers);
     }
@@ -46,6 +49,7 @@ const RightSidebar = () => {
         <ul className={styles.userList}>
           {users.map((user, index) => (
             <li key={index} className={styles.userItem}>
+
               <img src={user.image} className={styles.userImage} alt={user.name} />
               <span className={styles.userName}>{user.name}</span>
               <span className={`${styles.status} ${user.online ? styles.online : styles.offline}`}></span>
