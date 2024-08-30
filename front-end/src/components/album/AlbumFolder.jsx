@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDropzone } from "react-dropzone"; // react-dropzone import
@@ -14,6 +15,10 @@ const AlbumFolder = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 슬라이드의 인덱스
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // 이미지 확대 모달 상태
+
+  const userData = useSelector((state) => state.user.userData);
+  // 로그인한 사용자의 데이터 확인
+  console.log("userData : ", userData);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -44,14 +49,31 @@ const AlbumFolder = () => {
 
   // 이미지 저장하는 함수
 
-  const saveImages = async ()=> {
-    const forData = new FormData();
-    selectedFiles.forEach((file)=>{
-      FormData.append("images", file);
-    });
+  // const saveImages = async ()=> {
+  //   const forData = new FormData();
+  //   selectedFiles.forEach((file)=>{
+  //     FormData.append("images", file);
+  //   });
+    
+  //   try {
+  //     const response = await fetch("/api/upload-images", {
+  //       method: "POST",
+  //       body: FormData,
+  //     });
+
+  //     if (response.ok) {
+  //       const savedImages = await response.json();
+  //       const newImages = savedImages.map((img) => ({
+  //         id: img.id,
+  //         url: img.url,
+  //         selected: false,
+  //       }));
+  //       setImages()
+  //     }
+  //   }
 
     
-  }
+  // }
 
 
   const toggleImageSelection = (id) => {

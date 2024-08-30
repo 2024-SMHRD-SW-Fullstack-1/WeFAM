@@ -8,8 +8,8 @@ import com.izg.back_end.model.HouseworkModel;
 
 public interface HouseworkRepository extends JpaRepository<HouseworkModel, Integer> {
 
-   Optional<HouseworkModel> findById(int workIdx);
+	Optional<HouseworkModel> findById(int workIdx);
 
-   void deleteById(int workIdx);
-   
+	void deleteById(int workIdx);
+	
 }
