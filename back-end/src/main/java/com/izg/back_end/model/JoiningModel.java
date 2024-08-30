@@ -24,8 +24,8 @@ public class JoiningModel {
     private int joinIdx = 0; // 기본값 0
 
     @Column(name = "user_id")
-    @JsonProperty("id")
-    private String id = ""; // 기본값 빈 문자열
+    @JsonProperty("userId")
+    private String userId = ""; // 기본값 빈 문자열
 
     @Column(name = "family_idx")
     @JsonProperty("familyIdx")

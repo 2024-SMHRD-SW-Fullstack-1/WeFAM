@@ -28,8 +28,8 @@ public class FeedCommentModel {
     private int feedIdx = 0; // Default to 0
     
     @Column(name = "user_id")
-    @JsonProperty("id")
-    private String id = ""; // Default to empty string
+    @JsonProperty("userId")
+    private String userId = ""; // Default to empty string
     
     @Column(name = "cmt_content")
     @JsonProperty("cmtContent")

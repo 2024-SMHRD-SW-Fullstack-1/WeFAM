@@ -15,13 +15,4 @@ public class FamilyController {
     @Autowired
     private FamilyService familyService;
 
-    @GetMapping("/get-familyData/{id}")
-    public ResponseEntity<FamilyModel> getFamilyData(@PathVariable("id") String id) {
-        System.out.println("Received User ID: " + id);
-
-        FamilyModel familyModel = familyService.getFamilyById(id);
-        System.out.println("Family Index: " + familyModel.getFamilyIdx());
-
-        return ResponseEntity.ok(familyModel);
-    }
 }

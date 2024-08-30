@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "./AddFeed.module.css";
-import RouletteModal from "./game/RouletteModal";
+import GameModal from "./game/GameModal";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
 
-const AddFeed = React.memo(({ onAddFeed, onGetFamilyData }) => {
+const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
@@ -29,10 +29,10 @@ const AddFeed = React.memo(({ onAddFeed, onGetFamilyData }) => {
       return;
     }
     try {
-      const familyData = await onGetFamilyData(userData.id);
+      const joiningData = await onGetJoiningData(userData.id);
       const newFeed = {
-        familyIdx: familyData.familyIdx,
-        id: userData.id,
+        familyIdx: joiningData.familyIdx,
+        userId: userData.id,
         feedContent: content,
         feedLocation: location,
       };
@@ -78,7 +78,7 @@ const AddFeed = React.memo(({ onAddFeed, onGetFamilyData }) => {
 
       {/* 모달이 열렸을 때만 RouletteModal 컴포넌트 렌더링 */}
       {isGameModalOpen && (
-        <RouletteModal onClose={() => setIsGameModalOpen(false)} />
+        <GameModal onClose={() => setIsGameModalOpen(false)} />
       )}
     </div>
   );
