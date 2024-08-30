@@ -1,165 +1,118 @@
-/* 전체 레이아웃을 중앙에 맞추기 위한 컨테이너 */
 .houseworkContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
-    padding: 20px; /* 여백 설정 */
+    padding: 20px;
 }
 
-/* 제목과 추가 버튼을 포함한 상단 영역 */
 .houseworkTitle {
     display: flex;
-    justify-content: space-between; /* 제목과 버튼 사이에 공간 분배 */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1000px; /* 컨텐츠 최대 너비 조정 */
-    margin-bottom: 20px; /* 아래 여백 설정 */
+    max-width: 1100px;
+    margin-bottom: 20px;
 }
 
-/* 추가 버튼 스타일 */
 .addButton {
     padding: 10px;
-    background-color: #e1888b; /* 배경색 */
-    color: white; /* 텍스트 색상 */
+    background-color: #e1888b;
+    color: white;
     border: none;
-    border-radius: 5px; /* 모서리 둥글게 */
+    border-radius: 5px;
     cursor: pointer;
     margin: 10px;
 }
 
-/* 추가 버튼 호버 스타일 */
 .addButton:hover {
-    background-color: #ca8285; /* 마우스 오버 시 배경색 */
+    background-color: #ca8285;
 }
 
-/* 체크박스 스타일 */
-.checkBox {
-    height: 15px;
-    width: 15px;
-    margin-right: 10px; /* 체크박스와 텍스트 간격 */
-}
-
-/* 작업 섹션 스타일 */
 .taskSection {
     width: 100%;
-    max-width: 1200px; /* 컨텐츠 최대 너비 조정 */
-    margin-bottom: 30px; /* 아래 여백 설정 */
-    
+    max-width: 1200px;
+    margin-bottom: 30px;
     padding: 10px;
 }
 
 .taskSection h2 {
-    font-size: 1.5em; /* 제목 크기 설정 */
-    margin-bottom: 15px; /* 아래 여백 설정 */
+    padding: 10px;
 }
 
 .taskSection ul {
-    list-style-type: none; /* 불릿 포인트 제거 */
+    list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
 .taskSection li {
-    margin: 10px; /* 항목 간 여백 설정 */
+    margin: 10px;
     display: flex;
     align-items: center;
-    border: 1px solid #c4c4c4; /* 테두리 색상 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-    border-radius: 8px; /* 모서리 둥글게 */
+    border: 1px solid #c4c4c4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     padding: 10px;
-    justify-content: space-between; /* 자식 요소들 간 공간을 균등하게 배분 */
+    justify-content: space-between;
 }
 
-/* 완료된 항목 스타일 */
 .completed {
-    text-decoration: line-through; /* 완료된 항목에 취소선 추가 */
-    color: grey; /* 색상 변경 */
+    text-decoration: line-through;
+    color: grey;
 }
 
-/* 이미지 아이콘 스타일 */
-.imgIcon {
+.taskContent {
     display: flex;
-    height: 20px;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.taskTitle {
+    font-size: 1.2em;
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.taskNote {
+    font-size: 1em;
+    color: #666;
+    margin: 5px 0;
+}
+
+.taskUser {
+    font-size: 0.9em;
+    color: #999;
+}
+
+.taskRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.taskIcon {
     width: 20px;
+    height: 20px;
+    margin-bottom: 5px;
 }
 
-/* 모달 스타일 */
-.houseworkModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* 모달 중앙 정렬 */
-    width: 400px;
-    padding: 20px; /* 여백 설정 */
-    background-color: #fff; /* 배경색 */
-    border: 1px solid #ccc; /* 테두리 색상 */
-    border-radius: 8px; /* 모서리 둥글게 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-}
-
-.houseworkModal h2 {
-    margin-bottom: 20px; /* 제목 아래 여백 설정 */
-}
-
-.houseworkModal select,
-.houseworkModal input {
-    width: 100%; /* 입력 필드와 선택 박스 너비 100% */
-    padding: 10px; /* 여백 설정 */
-    margin-bottom: 15px; /* 아래 여백 설정 */
-    border: 1px solid #ccc; /* 테두리 색상 */
-    border-radius: 5px; /* 모서리 둥글게 */
-}
-
-.houseworkModalButtonContainer {
-    display: flex;
-    justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
-    margin-top: 20px; /* 버튼 위에 약간의 여백 추가 */
-}
-
-/* 모달 버튼 스타일 */
-.houseworkModalButton {
-    padding: 10px 15px; /* 여백 설정 */
-    background-color: #e1888b; /* 배경색 */
-    color: white; /* 텍스트 색상 */
-    border: none;
-    border-radius: 5px; /* 모서리 둥글게 */
-    cursor: pointer;
-    margin-left: 10px; /* 오른쪽 여백 설정 */
-    transition: background-color 0.3s; /* 배경색 변경 시 애니메이션 */
-}
-
-/* 모달 버튼 호버 스타일 */
-.houseworkModalButton:hover {
-    background-color: #ca8285; /* 마우스 오버 시 배경색 */
-}
-
-/* 경고 메시지 스타일 */
-.warningMessage {
-    color: red; /* 경고 메시지 색상 */
-    margin-bottom: 20px; /* 메시지와 다른 요소 간 여백 설정 */
-    font-size: 0.9em; /* 폰트 크기 조정 */
-}
-
-/* 모달 오버레이 스타일 */
-.houseworkOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+.taskPoints {
+    font-size: 1em;
+    color: #ca8285;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
 .dropdownContainer {
     display: flex;
-    align-items: center; /* 체크박스와 이미지 아이콘을 세로로 가운데 정렬 */
-    position: relative; /* 드롭다운 메뉴의 위치를 이 컨테이너를 기준으로 설정 */
-    margin-left: auto; /* 요소를 오른쪽 끝으로 이동 */
+    align-items: center;
+    position: relative;
 }
 
-/* 드롭다운 버튼 스타일 */
 .dropdownButton {
     background: none;
     border: none;
@@ -167,13 +120,11 @@
     cursor: pointer;
 }
 
-/* 드롭다운 메뉴 스타일 */
 .dropdownMenu {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 100%; /* 부모 요소의 바로 아래에 위치 */
-    left: 30px; /* 부모 요소의 왼쪽에 맞춰서 펼쳐지게 설정 */
+    top: 20px;
     background-color: white;
     min-width: 120px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -182,7 +133,6 @@
     padding: 5px 0;
 }
 
-/* 드롭다운 메뉴 버튼 스타일 */
 .dropdownMenu button {
     background: none;
     border: none;
@@ -192,7 +142,22 @@
     text-align: left;
 }
 
-/* 드롭다운 메뉴 버튼 호버 스타일 */
 .dropdownMenu button:hover {
     background-color: #f1f1f1;
+}
+
+.points {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.points h3 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.points p {
+    color: #666;
+    font-size: 1em;
 }
