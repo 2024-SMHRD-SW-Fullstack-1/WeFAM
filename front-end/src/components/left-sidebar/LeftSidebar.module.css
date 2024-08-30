@@ -60,6 +60,10 @@
   align-items: center;
 }
 
+.category ul li:hover {
+  color: var(--color-sunset);
+}
+
 .categoryItemLogo {
   font-size: var(--font-4xl);
 }
