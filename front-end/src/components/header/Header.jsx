@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
-import logo from "../../assets/images/logo-text.png";
+import logo from "../../assets/images/logo-text-segoe.png";
 import add_group from "../../assets/images/add-group.png";
 import AddCircle from "./AddCircle";
 
