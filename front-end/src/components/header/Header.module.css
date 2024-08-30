@@ -141,6 +141,11 @@ nav {
   bottom: 15px;
 }
 
+.closeGroupButton h2{
+  font-size: var(--space-lg);
+  margin-top: 20px;
+}
+
 .modalBody {
   margin-top: 20px;
   text-align: center;
