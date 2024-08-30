@@ -110,7 +110,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/login");
+                nav("/");
               }}
             >
               <CiLogout className={styles.categoryItemLogo} />

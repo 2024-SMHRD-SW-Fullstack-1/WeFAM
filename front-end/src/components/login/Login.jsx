@@ -11,7 +11,7 @@ import { setUserData } from "../../features/userSlice";
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
-const REDIRECT_URI = "http://localhost:3000/login";
+const REDIRECT_URI = "http://localhost:3000/main";
 const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
 // 네이버 로그인
@@ -19,7 +19,7 @@ const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
 const NAVER_CALLBACK_URL = "http://localhost:3000";
 const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
-const LogIn = () => {
+const Main = () => {
   const [code, setCode] = useState(null);
   // const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
   const nav = useNavigate();
@@ -126,4 +126,4 @@ const LogIn = () => {
   );
 };
 
-export default LogIn;
+export default Main;
