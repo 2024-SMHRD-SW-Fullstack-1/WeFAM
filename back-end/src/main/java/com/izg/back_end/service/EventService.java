@@ -1,7 +1,5 @@
 package com.izg.back_end.service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.izg.back_end.model.EventModel;
 import com.izg.back_end.repository.EventRepository;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 
 @Service
 public class EventService {
