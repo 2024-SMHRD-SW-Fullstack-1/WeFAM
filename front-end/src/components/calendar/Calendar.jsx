@@ -262,7 +262,8 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}>
+        }}
+      >
         {/* Dot */}
         <div
           style={{
@@ -280,14 +281,16 @@ const Calendar = () => {
             display: "flex",
             justifyContent: "space-between",
             overflow: "hidden",
-          }}>
+          }}
+        >
           <span
             style={{
               overflow: "hidden ",
               whiteSpace: "nowrap ",
               flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
               minWidth: " 0 ",
-            }}>
+            }}
+          >
             {event.title}
           </span>
           {!event.allDay && (
@@ -298,7 +301,8 @@ const Calendar = () => {
                 color: "#666",
                 marginLeft: "10px",
                 flexShrink: 0,
-              }}>
+              }}
+            >
               {startTime}
             </span>
           )}
@@ -308,7 +312,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className='main'>
+    <div className="main">
       {/* 검색 기능 */}
       <div style={{ width: "90%" }}>
         <div
@@ -317,10 +321,11 @@ const Calendar = () => {
             justifyContent: "flex-end",
             gap: "6px",
             padding: "5px",
-          }}>
+          }}
+        >
           <input
-            type='text'
-            placeholder='일정 검색'
+            type="text"
+            placeholder="일정 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
@@ -341,14 +346,14 @@ const Calendar = () => {
         <FullCalendar
           ref={calendarRef} // ref 연결
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView='dayGridMonth'
-          locale='ko'
+          initialView="dayGridMonth"
+          locale="ko"
           nowIndicator={true}
           selectable={true}
           headerToolbar={{
             left: "title",
             center: "prev,today,next",
-            right: "dayGridMonth,timeGridWeek, customButton",
+            right: "dayGridMonth,timeGridWeek",
           }}
           editable={true}
           buttonText={{
@@ -358,7 +363,7 @@ const Calendar = () => {
             day: "일간",
             allDay: "하루종일",
           }}
-          height='85vh'
+          height="85vh"
           dayCellContent={renderDayCellContent}
           allDaySlot={true}
           droppable={true}
@@ -367,7 +372,7 @@ const Calendar = () => {
           events={[...holidays, ...events]}
           eventClick={handleEventClick}
           dayMaxEvents={3}
-          moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+          moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
           eventContent={renderEventContent}
         />
 
