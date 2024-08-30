@@ -52,9 +52,6 @@ const PersonalInfo = () => {
         </div>
       </div>
       <hr />
-      <div className={styles.profileContainer}>
-        <span>ddd</span>
-      </div>
     </div>
   );
 };

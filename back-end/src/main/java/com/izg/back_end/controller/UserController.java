@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
@@ -46,23 +49,26 @@ public class UserController {
         }
     }
     
-<<<<<<< HEAD
-    @GetMapping("/get-family") //DB에 저장된 정보 불러오깅
-=======
+    // 로그아웃 엔드포인트
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+    	session.invalidate(); // 세션 무효화
+    	
+    	return ResponseEntity.ok().build();
+    }
+    
+    
     // 새로운 엔드포인트 추가
     @GetMapping("/get-family")
->>>>>>> c6bdad8fb6b4d87ac1c51529c7b8629e6420712d
 	public List<UserModel> getFamily() {
 		System.out.println("Gotten all users in my family : " + userService.getFamily());
 		return userService.getFamily();
 	}
-<<<<<<< HEAD
     
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
 //    	return userService.getFamilyStaus();
 //    }
 //    
-=======
->>>>>>> c6bdad8fb6b4d87ac1c51529c7b8629e6420712d
 }

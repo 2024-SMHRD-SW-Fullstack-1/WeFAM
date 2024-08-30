@@ -6,6 +6,7 @@ import axios from 'axios';
 
 const FamilyManagement = () => {
   const [userImages, setUserImages] = useState([]);
+  const [users, setUsers] = useState([]);
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
   const [nickname, setNickname] = useState(userData ? userData.name : "");
@@ -44,18 +45,16 @@ const images = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITE
       <span>{userData.nick}</span>
       </div>
       <hr />
-      <div className={styles.profileContainer}>
-        <img src={userImages[2]} alt="" className={styles.profileImg} />
-        <span>엄마</span>
-      </div>
-      <hr />
-      <div className={styles.profileContainer}>
-        <img src={images} alt="" className={styles.profileImg} />
-        <span>동생</span>
-      </div>
-      <hr />
-      <div className={styles.profileContainer}>
-      </div>
+      {users.map((user, index) => (
+        <div key={index} className={styles.profileContainer}>
+          <div className={styles.profileInfo}>
+            <img src={user.profileImg} alt="Profile" className={styles.profileImg} />
+            <span>{user.name}</span>
+            <button>구성원 떠나기</button>
+          </div>
+          <hr />
+        </div>
+      ))}
     </div>
   );
 };
