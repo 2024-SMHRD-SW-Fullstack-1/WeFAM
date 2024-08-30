@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
 
 import profileThumbnail from "../../assets/images/gucci-cat.png";
@@ -16,9 +16,10 @@ import { CiLogout } from "react-icons/ci";
 
 const LeftSidebar = () => {
   const nav = useNavigate();
+  const isOpen = useSelector((state) => state.leftSidebar.isOpen);
 
   return (
-    <div className={styles.leftSidebar}>
+    <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
       {/* 프로필 */}
       <div className={styles.profile}>
         <img
@@ -36,8 +37,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
+                nav("/main");
               }}
+              style={{ cursor: "pointer" }}
             >
               <CiHome className={styles.categoryItemLogo} />
               <span>홈</span>
@@ -46,8 +48,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/calendar");
+                nav("/main/calendar");
               }}
+              style={{ cursor: "pointer" }}
             >
               <CiCalendar className={styles.categoryItemLogo} />
               <span>달력</span>
@@ -56,18 +59,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
+                nav("/main/housework");
               }}
-            >
-              <CiStickyNote className={styles.categoryItemLogo} />
-              <span>메모</span>
-            </span>
-          </li>
-          <li>
-            <span
-              onClick={() => {
-                nav("/housework");
-              }}
+              style={{ cursor: "pointer" }}
             >
               <CiCircleList className={styles.categoryItemLogo} />
               <span>집안일</span>
@@ -76,8 +70,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
+                nav("/main/recipe");
               }}
+              style={{ cursor: "pointer" }}
             >
               <CiForkAndKnife className={styles.categoryItemLogo} />
               <span>요리법</span>
@@ -86,8 +81,9 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/album");
+                nav("/main/album");
               }}
+              style={{ cursor: "pointer" }}
             >
               <CiImageOn className={styles.categoryItemLogo} />
               <span>사진첩</span>

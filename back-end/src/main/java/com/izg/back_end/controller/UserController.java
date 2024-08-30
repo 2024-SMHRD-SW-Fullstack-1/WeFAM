@@ -45,17 +45,24 @@ public class UserController {
             return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
         }
     }
- // 새로운 엔드포인트 추가
     
+<<<<<<< HEAD
     @GetMapping("/get-family") //DB에 저장된 정보 불러오깅
+=======
+    // 새로운 엔드포인트 추가
+    @GetMapping("/get-family")
+>>>>>>> c6bdad8fb6b4d87ac1c51529c7b8629e6420712d
 	public List<UserModel> getFamily() {
-		System.out.println("Gotten All Feeds : " + userService.getFamily());
+		System.out.println("Gotten all users in my family : " + userService.getFamily());
 		return userService.getFamily();
 	}
+<<<<<<< HEAD
     
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
 //    	return userService.getFamilyStaus();
 //    }
 //    
+=======
+>>>>>>> c6bdad8fb6b4d87ac1c51529c7b8629e6420712d
 }
