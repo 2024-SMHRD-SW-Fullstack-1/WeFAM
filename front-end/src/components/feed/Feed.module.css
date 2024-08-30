@@ -1,0 +1,11 @@
+.feed {
+  width: 640px;
+  height: 100vh;
+}
+
+@media (max-width: 767px) {
+  /* 모바일 스타일 */
+  .feed {
+    width: 90%;
+  }
+}
