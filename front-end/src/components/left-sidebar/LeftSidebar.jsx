@@ -19,21 +19,21 @@ const LeftSidebar = () => {
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
 
-// const handleLogout = async () => {
-//   try {
-//     // 로그아웃 API 호출 (예: 세션 삭제)
-//     await axios.post('http://localhost:8089/wefam/logout');
+const handleLogout = async () => {
+  try {
+    // 로그아웃 API 호출 (예: 세션 삭제)
+    await axios.post('http://localhost:8089/wefam/logout');
     
-//     // 세션 삭제 후 카카오 로그인 동의 화면으로 돌아가기 위해
-//     window.localStorage.clear(); // 로컬 스토리지 삭제
-//     window.sessionStorage.clear(); // 세션 스토리지 삭제
+    // 세션 삭제 후 카카오 로그인 동의 화면으로 돌아가기 위해
+    window.localStorage.clear(); // 로컬 스토리지 삭제
+    window.sessionStorage.clear(); // 세션 스토리지 삭제
 
-//     // 홈 화면으로 리디렉션
-//     nav("/");
-//   } catch (error) {
-//     console.error("로그아웃 중 에러 발생:", error);
-//   }
-// };
+    // 홈 화면으로 리디렉션
+    nav("/");
+  } catch (error) {
+    console.error("로그아웃 중 에러 발생:", error);
+  }
+};
 
   return (
     <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
@@ -122,7 +122,7 @@ const LeftSidebar = () => {
           </li>
           <li>
             <span
-              // onClick={handleLogout}
+              onClick={handleLogout}
             >
               <CiLogout className={styles.categoryItemLogo} />
               <span>로그아웃</span>

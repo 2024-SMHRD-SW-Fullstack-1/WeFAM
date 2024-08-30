@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login/kakao" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="main" element={<Home />}>
           <Route index element={<Feed />} />
           <Route path="calendar" element={<Calendar />} />
