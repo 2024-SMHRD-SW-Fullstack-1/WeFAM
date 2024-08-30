@@ -1,25 +1,19 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import styles from "./AddFeed.module.css";
-import GameModal from "./game/GameModal";
-import { PiArrowBendDownLeft } from "react-icons/pi";
+import RouletteModal from "./game/RouletteModal";
+import { BsArrowReturnLeft } from "react-icons/bs";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
+import axios from "axios";
 
-const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
+const AddFeed = React.memo(({ onAddFeed }) => {
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
 
   const [isGameModalOpen, setIsGameModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
-
-  // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
-  // 이 데이터는 state.user.userData에 저장되어 있음.
-  const userData = useSelector((state) => state.user.userData);
-  // 로그인한 사용자의 데이터 확인
-  console.log("AddFeed 리렌더링 중");
 
   // 새로운 피드 작성 클릭
   const handleAddFeed = async () => {
@@ -28,22 +22,17 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
       alert("내용을 입력하세요.");
       return;
     }
-    try {
-      const joiningData = await onGetJoiningData(userData.id);
-      const newFeed = {
-        familyIdx: joiningData.familyIdx,
-        userId: userData.id,
-        feedContent: content,
-        feedLocation: location,
-      };
-
-      await onAddFeed(newFeed); // 상위 컴포넌트의 함수 호출
-      setContent("");
-      setLocation("");
-    } catch (error) {
-      console.error("AddFeed 함수에서 오류 발생:", error);
-    }
+    const newFeed = {
+      familyIdx: 1, // 필요한 경우, 실제 데이터로 수정
+      id: "jgod", // 필요한 경우, 실제 데이터로 수정
+      feedContent: content,
+      feedLocation: location,
+    };
+    await onAddFeed(newFeed); // 상위 컴포넌트의 함수 호출
+    setContent("");
+    setLocation("");
   };
+
   return (
     <div className={styles.addFeed}>
       <textarea
@@ -70,15 +59,15 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
           </button>
         </span>
         <span>
-          <button className={styles.addFeedBtn} onClick={handleAddFeed}>
-            <PiArrowBendDownLeft />
+          <button onClick={handleAddFeed}>
+            <BsArrowReturnLeft />
           </button>
         </span>
       </div>
 
       {/* 모달이 열렸을 때만 RouletteModal 컴포넌트 렌더링 */}
       {isGameModalOpen && (
-        <GameModal onClose={() => setIsGameModalOpen(false)} />
+        <RouletteModal onClose={() => setIsGameModalOpen(false)} />
       )}
     </div>
   );
