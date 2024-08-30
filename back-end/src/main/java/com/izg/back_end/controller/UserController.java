@@ -14,7 +14,11 @@ import org.springframework.http.ResponseEntity;
 
 import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.izg.back_end.model.FeedModel;
+import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -45,10 +49,26 @@ public class UserController {
         }
     }
     
+    // 로그아웃 엔드포인트
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+       session.invalidate(); // 세션 무효화
+       
+       return ResponseEntity.ok().build();
+    }
+    
+    
     // 새로운 엔드포인트 추가
     @GetMapping("/get-family")
-	public List<UserModel> getFamily() {
-		System.out.println("Gotten all users in my family : " + userService.getFamily());
-		return userService.getFamily();
-	}
+   public List<UserModel> getFamily() {
+      System.out.println("Gotten all users in my family : " + userService.getFamily());
+      return userService.getFamily();
+   }
+    
+//    @GetMapping("/get-family-staus")
+//    public List<LogModel> getFamilyStaus(){
+//       return userService.getFamilyStaus();
+//    }
+//    
 }
