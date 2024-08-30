@@ -37,7 +37,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
+                nav("/main");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -48,7 +48,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/calendar");
+                nav("/main/calendar");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -59,7 +59,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/housework");
+                nav("/main/housework");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -70,7 +70,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
+                nav("/main/recipe");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -81,7 +81,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/album");
+                nav("/main/album");
               }}
               style={{ cursor: "pointer" }}
             >
