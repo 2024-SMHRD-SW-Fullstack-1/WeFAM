@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -21,8 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 @Service
 public class UserService {
 
@@ -82,15 +79,15 @@ public class UserService {
 		userDTO.setJoinedAt(LocalDateTime.now());
         
 
-		if (kakaoAccount.get("birthday") != null) {
-			String birthday = kakaoAccount.get("birthday").toString();
-			int currentYear = LocalDate.now().getYear();
-			userDTO.setBirth(
-					LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
-		}
+      if (kakaoAccount.get("birthday") != null) {
+         String birthday = kakaoAccount.get("birthday").toString();
+         int currentYear = LocalDate.now().getYear();
+         userDTO.setBirth(
+               LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
+      }
 
-		return userDTO;
-	}
+      return userDTO;
+   }
 
     // 유저 정보를 데이터베이스에 저장
     public void saveUser(UserDto userDTO) {

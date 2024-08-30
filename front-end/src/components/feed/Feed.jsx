@@ -10,6 +10,41 @@ const Feed = () => {
 
   // 모든 피드를 가져오는 함수
   const getAllFeeds = useCallback(async () => {
+  const [familyIdx, setFamilyIdx] = useState(0);
+
+  // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
+  // 이 데이터는 state.user.userData에 저장되어 있음.
+  const userData = useSelector((state) => state.user.userData);
+
+  // 확인을 위해 콘솔에 출력
+  console.log(userData);
+  // 로그인한 사용자의 데이터 확인
+  console.log("userData : ", userData);
+
+  // Redux store에서 현재 로그인한 사용자의 가족 데이터를 가져오기.
+  // 이 데이터는 state.family.familyData에 저장되어 있음.
+  // const familyData = useSelector((state) => state.family.familyData);
+  // 로그인한 사용자의 가족 데이터 확인
+  // console.log("familyData는 ", familyData);
+
+  // 내가 속한 가족 데이터 받기.
+  const getJoiningData = useCallback(async (userId) => {
+    console.log("가족 데이터 받아오기");
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-joiningData/${userId}`
+      );
+      console.log("나의 가족 정보 : ", response.data);
+      return response.data;
+      // dispatch(setFamilyData(familyData)); // Redux에 가족 데이터 저장
+      // nav("/", { state: { familyData } });
+    } catch (error) {
+      console.error("가족 정보 요청 에러", error);
+    }
+  }, []);
+
+  // 내가 속한 가족의 모든 피드를 가져오는 함수
+  const getAllFeeds = useCallback(async (familyIdx) => {
     try {
       setIsLoading(true);
       // API 호출하여 피드 데이터 가져오기

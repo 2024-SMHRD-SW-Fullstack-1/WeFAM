@@ -37,3 +37,4 @@ public class HouseworkService {
       houseWorkRepository.deleteById(workIdx);
    }
 }
+}

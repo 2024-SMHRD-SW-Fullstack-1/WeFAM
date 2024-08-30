@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import styles from "./AddFeed.module.css";
 import RouletteModal from "./game/RouletteModal";
 import { BsArrowReturnLeft } from "react-icons/bs";
+import UploadImageModal from "./UploadImageModal";
+import GameModal from "./game/GameModal";
+import { PiArrowBendDownLeft } from "react-icons/pi";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
@@ -13,6 +16,7 @@ const AddFeed = React.memo(({ onAddFeed }) => {
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
 
+  const [isUploadImageModalOpen, setIsUploadImageModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
   const [isGameModalOpen, setIsGameModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
 
   // 새로운 피드 작성 클릭
@@ -45,7 +49,7 @@ const AddFeed = React.memo(({ onAddFeed }) => {
       <hr className={styles.customHr}></hr>
       <div className={styles.footer}>
         <span>
-          <button>
+          <button onClick={() => setIsUploadImageModalOpen(true)}>
             <CiImageOn />
           </button>
           <button>
@@ -65,7 +69,10 @@ const AddFeed = React.memo(({ onAddFeed }) => {
         </span>
       </div>
 
-      {/* 모달이 열렸을 때만 RouletteModal 컴포넌트 렌더링 */}
+      {isUploadImageModalOpen && (
+        <UploadImageModal onClose={() => setIsUploadImageModalOpen(false)} />
+      )}
+
       {isGameModalOpen && (
         <RouletteModal onClose={() => setIsGameModalOpen(false)} />
       )}
