@@ -12,38 +12,37 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.izg.back_end.model.HouseWorkModel;
-import com.izg.back_end.repository.HouseWorkRepository;
-import com.izg.back_end.service.HouseWorkService;
+import com.izg.back_end.model.HouseworkModel;
+import com.izg.back_end.repository.HouseworkRepository;
+import com.izg.back_end.service.HouseworkService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class HouseWorkController {
+public class HouseworkController {
 
-	private final HouseWorkRepository houseWorkRepository;
-	private final HouseWorkService houseWorkService;
+	private final HouseworkRepository houseworkRepository;
+	private final HouseworkService houseworkService;
 
 	@PostMapping("/add-work")
-	public HouseWorkModel addWork(@RequestBody HouseWorkModel houseWorkModel) {
-		HouseWorkModel work = houseWorkRepository.save(houseWorkModel);
+	public HouseworkModel addWork(@RequestBody HouseworkModel houseworkModel) {
+		HouseworkModel work = houseworkRepository.save(houseworkModel);
 		System.out.println("work : " + work);
 		return work;
 	}
 	
 	@GetMapping("/get-works")
-	public List<HouseWorkModel> getAllWorks() {
-		return houseWorkService.getAllWorks();
+	public List<HouseworkModel> getAllWorks() {
+		return houseworkService.getAllWorks();
 	}
 
 	@PutMapping("/update-work/{workIdx}")
-	public HouseWorkModel updateWork(@PathVariable("workIdx") int workIdx, @RequestBody HouseWorkModel houseWorkModel) {
-		Optional<HouseWorkModel> existingWork = houseWorkService.getWorkById(workIdx);
+	public HouseworkModel updateWork(@PathVariable("workIdx") int workIdx, @RequestBody HouseworkModel houseworkModel) {
+		Optional<HouseworkModel> existingWork = houseworkService.getWorkById(workIdx);
 		if (existingWork.isPresent()) {
-			houseWorkModel.setWorkIdx(workIdx); // 기존 ID 유지
-			System.out.println(existingWork);
-			return houseWorkService.saveOrUpdateWork(houseWorkModel);
+			houseworkModel.setWorkIdx(workIdx); // 기존 ID 유지
+			return houseworkService.saveOrUpdateWork(houseworkModel);
 		} else {
 			throw new RuntimeException("작업을 찾을 수 없습니다.");
 		}
@@ -51,8 +50,8 @@ public class HouseWorkController {
 
 	@DeleteMapping("/delete-work/{workIdx}")
 	public String deleteWork(@PathVariable("workIdx") int workIdx) {
+		houseworkService.deleteWorkById(workIdx);
 		System.out.println("삭제 idx : " + workIdx);
-		houseWorkService.deleteWorkById(workIdx);
 		return "작업이 성공적으로 삭제되었습니다.";
 	}
 }
