@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import styles from "./FeedList.module.css";
 import FeedDetailModal from "./FeedDetailModal";
 import { BsSuitHeart, BsChatHeart, BsThreeDots } from "react-icons/bs";
@@ -9,12 +11,44 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null); // 선택된 이벤트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
-  const optionsRef = useRef(null);
+  const [writerId, setWriterId] = useState(null); // 피드 작성자의 ID 상태 추가
+  const optionsRef = useRef(null); // 옵션
+  const textarea = useRef(null); // 댓글
+
+  // 댓글 높이 자동 조절
+  const handleResizeHeight = () => {
+    textarea.current.style.height = "auto"; //height 초기화
+    textarea.current.style.height = textarea.current.scrollHeight + "px";
+  };
+
+  // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
+  const userData = useSelector((state) => state.user.userData);
+  // 로그인한 사용자의 데이터 확인
+  console.log("userData : ", userData);
+
+  // 피드 작성자 ID 가져오기
+  const fetchWriterId = useCallback(async () => {
+    try {
+      // GET 요청을 보내어 feed 데이터를 가져오기.
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-feed-detail/${feed.feedIdx}`
+      );
+      console.log("피드 작성자 아이디 데이터 : ", response.data.id);
+      // 응답 받은 데이터를 상태로 설정.
+      setWriterId(response.data.id);
+    } catch (error) {
+      console.error("피드 작성자 아이디 요청 에러:", error);
+    }
+  }, [feed.feedIdx]);
 
   // 옵션
   const toggleOptions = useCallback(() => {
+    if (!isOptionsVisible) {
+      fetchWriterId(); // 옵션이 처음 열릴 때만 작성자 아이디를 가져옴
+    }
     setIsOptionsVisible((prev) => !prev);
-  }, []);
+  }, [isOptionsVisible, fetchWriterId]);
+
   const handleClickOutside = useCallback((e) => {
     if (optionsRef.current && !optionsRef.current.contains(e.target)) {
       console.log("옵션 클릭");
@@ -34,6 +68,17 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOptionsVisible, handleClickOutside]);
+
+  // 피드 공유 미구현
+  // 피드 공유 클릭 시 모달을 열고 선택된 피드 저장
+  const handleShareFeed = (feedIdx) => {
+    // console.log(`${feed.feedIdx}번 피드 공유 클릭`);
+    // 피드 정보 모달에 보여주기 위해 저장
+    // setSelectedFeed({
+    //   idx: feed.feedIdx,
+    // });
+    // setIsModalOpen(true);
+  };
 
   // 피드 수정 클릭 시 모달을 열고 선택된 피드 저장
   const handleUpdateFeed = (feedIdx) => {
@@ -62,7 +107,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
-              <span className={styles.writer}>{feed.id}</span>
+              <span className={styles.writerId}>{feed.id}</span>
               <span>ㆍ</span>
               <span className={styles.time}>{elapsedTime(feed.postedAt)}</span>
             </div>
@@ -73,27 +118,41 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         <div
           className={styles.feedOptionsContainer}
           onClick={toggleOptions}
+          style={{ cursor: "pointer" }}
           ref={optionsRef}
         >
           <BsThreeDots />
-          {isOptionsVisible && (
+
+          {isOptionsVisible && writerId !== null && (
             <ul className={styles.options}>
               <li>
                 <button
                   className="option"
-                  onClick={() => handleUpdateFeed(feed.feedIdx)}
+                  onClick={() => handleShareFeed(feed.feedIdx)}
                 >
-                  수정
+                  공유
                 </button>
               </li>
-              <li>
-                <button
-                  className="option"
-                  onClick={() => handleDeleteFeed(feed.feedIdx)}
-                >
-                  삭제
-                </button>
-              </li>
+              {writerId === userData.id && (
+                <>
+                  <li>
+                    <button
+                      className="option"
+                      onClick={() => handleUpdateFeed(feed.feedIdx)}
+                    >
+                      수정
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="option"
+                      onClick={() => handleDeleteFeed(feed.feedIdx)}
+                    >
+                      삭제
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           )}
         </div>
@@ -127,8 +186,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </span>
         </div>
         <div className={styles.comment}>
-          <textarea rows="1" placeholder="댓글 달기..." />
-          <button>게시</button>
+          <textarea
+            ref={textarea}
+            rows="1"
+            placeholder="댓글 달기..."
+            onChange={handleResizeHeight}
+          />
+          <button className={styles.addCommentBtn}>댓글</button>
         </div>
       </div>
 
