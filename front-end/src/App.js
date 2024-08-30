@@ -21,6 +21,7 @@ function App() {
           <Route path="housework" element={<HouseWork />} />
           <Route path="album" element={<Album />} />
           <Route path="album/:name" element={<AlbumFolder />} />{" "}
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </div>
