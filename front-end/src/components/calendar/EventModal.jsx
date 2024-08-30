@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import styles from "./EventModal.module.css"; // 모달 관련 CSS
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // DatePicker 스타일
@@ -79,7 +80,7 @@ const EventModal = ({ event, onClose, onSave }) => {
     onSave({
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
-      backgroundColor: selectedColor, // 업데이트된 색상
+      title: title,
       id: event.id || "UnKnown", // ID도 함께 전달
       allDay: isAllDay,
       familyIdx: event.familyIdx,
@@ -200,7 +201,7 @@ const EventModal = ({ event, onClose, onSave }) => {
     }
   };
 
-  return (
+  return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
         {/* 제목 */}
@@ -411,7 +412,8 @@ const EventModal = ({ event, onClose, onSave }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body // 모달을 body에 추가
   );
 };
 
