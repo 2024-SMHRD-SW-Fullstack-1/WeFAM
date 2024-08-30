@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "./AddFeed.module.css";
+import UploadImageModal from "./UploadImageModal";
 import GameModal from "./game/GameModal";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 import { CiImageOn } from "react-icons/ci";
@@ -13,6 +14,7 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
 
+  const [isUploadImageModalOpen, setIsUploadImageModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
   const [isGameModalOpen, setIsGameModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
 
   // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
@@ -56,7 +58,7 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
       <hr className={styles.customHr}></hr>
       <div className={styles.footer}>
         <span>
-          <button>
+          <button onClick={() => setIsUploadImageModalOpen(true)}>
             <CiImageOn />
           </button>
           <button>
@@ -76,7 +78,10 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
         </span>
       </div>
 
-      {/* 모달이 열렸을 때만 RouletteModal 컴포넌트 렌더링 */}
+      {isUploadImageModalOpen && (
+        <UploadImageModal onClose={() => setIsUploadImageModalOpen(false)} />
+      )}
+
       {isGameModalOpen && (
         <GameModal onClose={() => setIsGameModalOpen(false)} />
       )}
