@@ -4,7 +4,7 @@ nav {
   height: var(--header-height);
   display: flex;
   align-items: center;
-  background-color: var(--color-white);
+  background-color: var(--color-light-grey);
 }
 .menuBtnContainer {
   width: var(--header-height);
@@ -121,7 +121,7 @@ nav {
   gap: 10px;
   width: 50px;
   height: 50px;
-  border-radius: 50%
+  border-radius: 50%;
 }
 .profileContainer {
   /* 밑에 있는 그룹 */
