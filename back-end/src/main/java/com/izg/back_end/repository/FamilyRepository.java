@@ -7,5 +7,5 @@ import com.izg.back_end.model.FamilyModel;
 
 @Repository
 public interface FamilyRepository extends JpaRepository<FamilyModel, Integer> {
-	FamilyModel findById(String id);
+
 }

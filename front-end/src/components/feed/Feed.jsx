@@ -6,6 +6,9 @@ import AddFeed from "./AddFeed";
 import FeedList from "./FeedList";
 import Preloader from "../preloader/Preloader";
 const Feed = () => {
+  // 현재 getAllFeeds로 가족 피드들을 모두 불러와서 피드 데이터가 feed에 들어옴
+  // feed 변수로 FeedItem에 뿌려서 출력 중
+
   const [feeds, setFeeds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [familyIdx, setFamilyIdx] = useState(0);
@@ -23,11 +26,11 @@ const Feed = () => {
   // console.log("familyData는 ", familyData);
 
   // 내가 속한 가족 데이터 받기.
-  const getFamilyData = async (id) => {
+  const getJoiningData = useCallback(async (id) => {
     console.log("가족 데이터 받아오기");
     try {
       const response = await axios.get(
-        `http://localhost:8089/wefam/get-familyData/${id}`
+        `http://localhost:8089/wefam/get-joiningData/${id}`
       );
       console.log("나의 가족 정보 : ", response.data);
       return response.data;
@@ -36,7 +39,7 @@ const Feed = () => {
     } catch (error) {
       console.error("가족 정보 요청 에러", error);
     }
-  };
+  }, []);
 
   // 내가 속한 가족의 모든 피드를 가져오는 함수
   const getAllFeeds = useCallback(async (familyIdx) => {
@@ -56,25 +59,28 @@ const Feed = () => {
     } finally {
       setIsLoading(false);
     }
-  });
+  }, []);
 
   // 새로운 피드 작성 함수
-  const addFeed = useCallback(async (newFeed) => {
-    try {
-      console.log("addFeed 함수 실행 ");
-      setIsLoading(true);
-      await axios.post("http://localhost:8089/wefam/add-feed", newFeed, {
-        headers: {
-          "Content-Type": "application/json", // 서버가 JSON 형식을 기대할 경우
-        },
-      });
-      await getAllFeeds(familyIdx);
-    } catch (error) {
-      console.error("addFeed 함수 에러 : ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  });
+  const addFeed = useCallback(
+    async (newFeed) => {
+      try {
+        console.log("addFeed 함수 실행 ");
+        setIsLoading(true);
+        await axios.post("http://localhost:8089/wefam/add-feed", newFeed, {
+          headers: {
+            "Content-Type": "application/json", // 서버가 JSON 형식을 기대할 경우
+          },
+        });
+        await getAllFeeds(familyIdx);
+      } catch (error) {
+        console.error("addFeed 함수 에러 : ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [familyIdx, getAllFeeds]
+  );
 
   // 피드 작성자 ID 가져오기
   const fetchWriter = useCallback(async (feedIdx) => {
@@ -107,7 +113,7 @@ const Feed = () => {
     } finally {
       setIsLoading(false);
     }
-  });
+  }, []);
 
   // 피드를 수정하는 함수
   const updateFeed = useCallback(
@@ -171,12 +177,12 @@ const Feed = () => {
     const fetchData = async () => {
       try {
         // 사용자 데이터에서 가족 데이터 가져오기
-        const familyData = await getFamilyData(userData.id);
-        if (familyData) {
-          setFamilyIdx(familyData.familyIdx);
+        const joiningData = await getJoiningData(userData.id);
+        if (joiningData) {
+          setFamilyIdx(joiningData.familyIdx);
 
           // 피드를 가져오기 전에 상태가 업데이트되기를 기다립니다.
-          await getAllFeeds(familyData.familyIdx);
+          await getAllFeeds(joiningData.familyIdx);
         }
       } catch (error) {
         console.error("Error in fetchData:", error);
@@ -186,7 +192,7 @@ const Feed = () => {
     };
 
     fetchData();
-  }, [userData.id]);
+  }, [userData.id, getJoiningData, getAllFeeds]);
 
   return (
     <div className="main">
@@ -196,7 +202,7 @@ const Feed = () => {
           <Preloader isLoading={isLoading} />
         ) : (
           <div className={styles.feedContent}>
-            <AddFeed onAddFeed={addFeed} onGetFamilyData={getFamilyData} />
+            <AddFeed onAddFeed={addFeed} onGetJoiningData={getJoiningData} />
             <FeedList
               feeds={feeds}
               onGetFeedDetail={getFeedDetail}

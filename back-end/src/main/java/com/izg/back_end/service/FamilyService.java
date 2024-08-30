@@ -11,8 +11,4 @@ public class FamilyService {
 
     @Autowired
     private FamilyRepository familyRepository;
-
-    public FamilyModel getFamilyById(String id) {
-        return familyRepository.findById(id);
-    }
 }
