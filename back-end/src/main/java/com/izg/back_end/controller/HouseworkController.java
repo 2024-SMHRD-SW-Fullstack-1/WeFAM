@@ -28,6 +28,7 @@ public class HouseworkController {
 	@PostMapping("/add-work")
 	public HouseworkModel addWork(@RequestBody HouseworkModel houseworkModel) {
 		HouseworkModel work = houseworkRepository.save(houseworkModel);
+		System.out.println("work : " + work);
 		return work;
 	}
 	
@@ -50,6 +51,7 @@ public class HouseworkController {
 	@DeleteMapping("/delete-work/{workIdx}")
 	public String deleteWork(@PathVariable("workIdx") int workIdx) {
 		houseworkService.deleteWorkById(workIdx);
+		System.out.println("삭제 idx : " + workIdx);
 		return "작업이 성공적으로 삭제되었습니다.";
 	}
 }
