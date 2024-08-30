@@ -13,17 +13,17 @@ import "./css/App.css";
 import "./css/Test.css";
 function App() {
   return (
-    <div className='App'>
+    <div className="App">
       <Routes>
-        <Route path='Main' element={<Home />}>
+        <Route path="/" element={<Login />} />
+        <Route path="main" element={<Home />}>
           <Route index element={<Feed />} />
-          <Route path='calendar' element={<Calendar />} />
-          <Route path='housework' element={<HouseWork />} />
-          <Route path='album' element={<Album />} />
-          <Route path='album/:name' element={<AlbumFolder />} />{" "}
-          <Route path='settings' element={<Settings />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="housework" element={<HouseWork />} />
+          <Route path="album" element={<Album />} />
+          <Route path="album/:name" element={<AlbumFolder />} />{" "}
+          <Route path="settings" element={<Settings />} />
         </Route>
-        <Route path='/' element={<Login />} />
       </Routes>
     </div>
   );

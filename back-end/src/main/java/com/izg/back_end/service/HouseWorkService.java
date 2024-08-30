@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseWorkService {
 
 	private final HouseWorkRepository houseWorkRepository;
-
+	
 	// 집안일 추가 또는 수정
 	public HouseWorkModel saveOrUpdateWork(HouseWorkModel houseWorkModel) {
 		return houseWorkRepository.save(houseWorkModel);

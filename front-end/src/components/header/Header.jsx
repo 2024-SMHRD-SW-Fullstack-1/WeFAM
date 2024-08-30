@@ -1,37 +1,32 @@
 // 타임트리 젤 위의 헤더 부분입니다.
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
-import logo from "../../assets/images/logo-text.png";
-import karina from "../../assets/images/karina.png";
-import winter from "../../assets/images/winter.png";
-import iu from "../../assets/images/iu.png";
-import madong from "../../assets/images/madong.png";
-import backji from "../../assets/images/backjihyeng.png";
-import nosa from "../../assets/images/nosayean.png";
-import leemusong from "../../assets/images/leemusong.png";
+import logo from "../../assets/images/logo-text-segoe.png";
 import add_group from "../../assets/images/add-group.png";
-import Modal from "react-modal";
 import AddCircle from "./AddCircle";
-import { elapsedTime } from "../../elapsedTime";
-import { useSelector } from "react-redux";
-import axios from "axios";
 
 const Header = () => {
-  const address = "광주광역시 동구 중앙로 196";
+  const nav = useNavigate();
+  const dispatch = useDispatch();
 
+  const address = "광주광역시 동구 중앙로 196";
 
   // getCoordinates(address);
 
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [userImages, setUserImages] = useState([]);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
 
-  const toggleLeftSidebar = () => {
-    setIsLeftSidebarOpen(!isLeftSidebarOpen);
+  const handleMenuClick = () => {
+    dispatch(toggleLeftSidebar());
   };
 
   // Redux에서 사용자 정보 가져오기
@@ -56,34 +51,40 @@ const Header = () => {
   useEffect(() => {
     if (userData) {
       // 실제 사용자 데이터를 가져오는 axios 요청
-      axios.get('http://localhost:8089/wefam/get-family')
-        .then(response => {
-          const loadedImages = response.data.map(user => user.profileImg);
+      axios
+        .get("http://localhost:8089/wefam/get-family")
+        .then((response) => {
+          const loadedImages = response.data.map((user) => user.profileImg);
           setUserImages(loadedImages);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("가져오기 에러!!", error);
         });
-    } else {
-      // 예시 사용자 데이터
-      const exampleImages = [karina, winter, iu, madong];
-      setUserImages(exampleImages);
     }
   }, [userData]); // userData가 변경될 때마다 실행
 
   return (
     <div>
       <nav>
-        <button className={styles.menuBtn}>
-          {/* 왼쪽 미니바 */}
-          <HiMiniBars3
-            className={styles.menuIcon}
-            onClick={() => toggleLeftSidebar}
-          />
-        </button>
-        {/* WeFAM로고 */}
-        <img className={styles.logo} src={logo}></img>
-
+        <div className={styles.menuBtnContainer}>
+          <button className={styles.menuBtn}>
+            {/* 왼쪽 미니바 */}
+            <HiMiniBars3
+              className={styles.menuIcon}
+              onClick={handleMenuClick}
+            />
+          </button>
+        </div>
+        <div
+          className={styles.logoContainer}
+          onClick={() => {
+            nav("/");
+          }}
+          style={{ cursor: "pointer" }}
+        >
+          {/* WeFAM로고 */}
+          <img className={styles.logo} src={logo}></img>
+        </div>
         <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
@@ -102,10 +103,14 @@ const Header = () => {
                 <h2>{groupName} ▲</h2>
               </button>
               <div className={styles.groupProfileContainer}>
-               
                 {/* 카카오 프로필 이미지 */}
                 {userImages.map((image, index) => (
-                  <img key={index} src={image} className={styles.groupProfileContainer} alt={`user-${index}`} />
+                  <img
+                    key={index}
+                    src={image}
+                    className={styles.groupProfileContainer}
+                    alt={`user-${index}`}
+                  />
                 ))}
                 <img
                   className={styles.profileImage}

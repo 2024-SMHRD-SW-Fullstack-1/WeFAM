@@ -8,6 +8,7 @@ import axios from "axios";
 import RightSidebar from "../right-sidebar/RightSidebar";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../features/userSlice";
+import { setFamilyData } from "../../features/familySlice";
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
@@ -19,7 +20,7 @@ const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
 const NAVER_CALLBACK_URL = "http://localhost:3000";
 const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
-const Main = () => {
+const Login = () => {
   const [code, setCode] = useState(null);
   // const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
   const nav = useNavigate();
@@ -59,11 +60,11 @@ const Main = () => {
       );
 
       if (response.status === 200) {
-        const userData = response.data
+        const userData = response.data;
         console.log("카카오 사용자 정보: ", userData);
-        dispatch(setUserData(userData));  // Redux에 사용자 데이터 저장
+        dispatch(setUserData(userData)); // Redux에 사용자 데이터 저장
 
-        nav("/", { state: { userData} });
+        nav("/", { state: { userData } });
       } else {
         console.log("카카오 백 요청 실패", response.statusText);
       }
@@ -96,10 +97,6 @@ const Main = () => {
     }
   };
 
-  
-
-
-
   return (
     <div className={styles.LoginPage}>
       <div>
@@ -126,4 +123,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Login;
