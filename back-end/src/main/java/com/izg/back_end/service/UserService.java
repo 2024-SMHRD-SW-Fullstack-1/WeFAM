@@ -40,7 +40,7 @@ public class UserService {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
 		params.add("client_id", "e8bed681390865b7c0ef4d85e4e2c842"); // 여기에 실제 카카오 REST API 키를 입력하세요
-		params.add("redirect_uri", "http://localhost:3000/login");
+		params.add("redirect_uri", "http://localhost:3000/login/kakao");
 		params.add("code", code);
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);

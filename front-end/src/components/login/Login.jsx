@@ -12,7 +12,7 @@ import { setFamilyData } from "../../features/familySlice";
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
-const REDIRECT_URI = "http://localhost:3000/main";
+const REDIRECT_URI = "http://localhost:3000/login/kakao";
 const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
 // 네이버 로그인
@@ -54,7 +54,7 @@ const Login = () => {
         code,
         {
           headers: {
-            "Content-Type": "text/plain", // 단순 문자열로 전달
+            "Content-Type": "application/json", // 단순 문자열로 전달
           },
         }
       );
@@ -64,7 +64,7 @@ const Login = () => {
         console.log("카카오 사용자 정보: ", userData);
         dispatch(setUserData(userData)); // Redux에 사용자 데이터 저장
 
-        nav("/", { state: { userData } });
+        nav("/main", { state: { userData } });
       } else {
         console.log("카카오 백 요청 실패", response.statusText);
       }
