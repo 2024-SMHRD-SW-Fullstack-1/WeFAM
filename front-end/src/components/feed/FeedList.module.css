@@ -1,9 +1,9 @@
 .feedItem {
   display: flex;
   flex-direction: column;
-  row-gap: var(--space-md);
-  padding: var(--space-sm) var(--space-sm) var(--space-xl) var(--space-sm);
-  margin-bottom: var(--space-lg);
+  row-gap: var(--space-lg);
+  padding: var(--space-sm) var(--space-sm) var(--space-2xl) var(--space-sm);
+  margin-bottom: var(--space-2xl);
   border-bottom: 1px solid;
   border-bottom-color: rgb(var(--color-separator));
 }
@@ -63,10 +63,20 @@
   width: 80px;
   margin: 0;
   padding: 0;
-  background-color: blueviolet;
+  border-top: 1px solid var(--color-sunset);
+  border-left: 1px solid var(--color-sunset);
+  border-right: 1px solid var(--color-sunset);
+  background-color: var(--color-white);
 }
 .options li {
   height: 30px;
+  border-bottom: 1px solid var(--color-sunset);
+}
+.options li:hover {
+  background-color: var(--color-sunset);
+}
+.options li:hover button {
+  color: var(--color-white);
 }
 .options li button {
   width: 100%;
@@ -76,7 +86,7 @@
 .footer {
   display: flex;
   flex-direction: column;
-  row-gap: var(--space-sm);
+  row-gap: var(--space-lg);
 }
 .iconbar {
   display: flex;
@@ -88,6 +98,7 @@
   gap: var(--space-xs);
 }
 .comment {
+  min-height: 40px;
   display: flex;
   align-items: center;
 }
@@ -101,7 +112,14 @@
   align-items: center;
 }
 
-.comment button {
-  width: 10%;
-  color: var(--color-black);
+.comment .addCommentBtn {
+  width: 56px;
+  height: 28px;
+  color: var(--color-white);
+  background-color: var(--color-sunset);
+  padding: 0;
+  border-radius: var(--radius-sm);
+}
+.comment .addCommentBtn:hover {
+  background-color: var(--color-sunset-hover);
 }

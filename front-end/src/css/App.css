@@ -18,6 +18,7 @@
 
   /* Color */
   --color-sunset: #ff4d4d;
+  --color-sunset-hover: #ff0d0d;
   --color-coral: #e1888b;
   --color-peach: #f0b49c;
   --color-maize: #f5d0a3;
@@ -26,6 +27,7 @@
   --color-black: #000000;
   --color-white: #ffffff;
   --color-grey: #737373;
+  --color-light-grey: #f1f3f5;
   --color-separator: 219, 219, 219;
 
   /* Font size */
@@ -48,6 +50,7 @@
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
+  --space-2xl: 4rem;
 
   /* radius */
   --radius-sm: 0.5rem;

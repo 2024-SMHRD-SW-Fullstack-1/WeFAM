@@ -20,7 +20,7 @@ const NAVER_CLIENT_ID = "Ww06wMPg4Td98siNlRth";
 const NAVER_CALLBACK_URL = "http://localhost:3000";
 const naverToken = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_CALLBACK_URL}`;
 
-const LogIn = () => {
+const Login = () => {
   const [code, setCode] = useState(null);
   // const [userData, setUserData] = useState(null); // 사용자 데이터를 저장할 상태 추가
   const nav = useNavigate();
@@ -123,4 +123,4 @@ const LogIn = () => {
   );
 };
 
-export default LogIn;
+export default Login;
