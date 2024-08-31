@@ -21,6 +21,7 @@ const Calendar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false); // 검색창 보임 여부 상태
   const [events, setEvents] = useState([]);
+  const [coordinates, setCoordinates] = useState(null); // 좌표 상태
   let clickTimeout = null;
 
   const userData = useSelector((state) => state.user.userData);
@@ -37,6 +38,15 @@ const Calendar = () => {
       color = "#2F76F9"; // 토요일: 파란색
     } else if (dayOfWeek.includes("Sun")) {
       color = "#FF4D4D"; // 일요일: 빨간색
+    }
+
+    // 오늘 날짜인지 확인
+    const today = new Date();
+    const isToday = info.date.toDateString() === today.toDateString();
+
+    // 오늘이면 색상을 흰색으로 설정
+    if (isToday) {
+      color = "#FFFFFF"; // 흰색
     }
 
     return (
@@ -64,29 +74,24 @@ const Calendar = () => {
           familyIdx: event.familyIdx,
           userId: event.userId,
           content: event.eventContent || "",
-          location: event.location || "",
+          location: event.eventLocation || "",
           isholiday: false,
           classNames: ["custom-dot-event"],
           allDay: event.isAllDay == 1,
+          latitude: event.latitude,
+          longitude: event.longitude,
         };
       });
 
       setEvents(fullCalendarEvents);
-      console.log("dd", response.data);
-
-      console.log("불러오기", events);
     } catch (error) {
       console.error("Error fetching events:", error); // 오류 로그 추가
     }
   };
-  console.log(" gㅏㄹ엊ㄹ01", events);
 
   useEffect(() => {
     fetchEvents();
   }, []);
-
-  // 이벤트 상태가 업데이트될 때마다 확인
-  useEffect(() => {}, [events]); // 이벤트가 변경될 때마다 로그
 
   // 공휴일 데이터 가져오기
   useEffect(() => {
@@ -176,7 +181,7 @@ const Calendar = () => {
       return `${hours}:${minutes}`;
     };
 
-    console.log("업데이트", updatedEvent);
+    console.log("업데이트 확인", updatedEvent);
 
     // 날짜와 시간으로 분리
     const eventToSave = {
@@ -188,6 +193,11 @@ const Calendar = () => {
       eventEdDt: formatDate(new Date(updatedEvent.end)),
       eventEdTm: formatTime(new Date(updatedEvent.end)),
       eventColor: updatedEvent.backgroundColor, // 필드명 맞춤
+      isAllDay: updatedEvent.allDay,
+      userId: userData.id,
+      eventLocation: updatedEvent.location,
+      latitude: updatedEvent.latitude,
+      longitude: updatedEvent.longitude,
     };
 
     const eventIdx = updatedEvent.id;
@@ -218,8 +228,8 @@ const Calendar = () => {
             },
           }
         );
+        setSelectedEvent(updatedEvent);
         await fetchEvents();
-
         setIsModalOpen(false);
         console.log("응답 데이터", response.data);
         console.log("업데이트된 이벤트", updatedEvent);
@@ -263,6 +273,10 @@ const Calendar = () => {
       familyIdx: extendedProps.familyIdx, // extendedProps에서 familyIdx 가져오기
       content: extendedProps.content, // extendedProps에서 content 가져오기
       userId: extendedProps.userId, // extendedProps에서 userId 가져오기
+      eventLocation: extendedProps.location,
+      latitude: extendedProps.latitude,
+      longitude: extendedProps.longitude,
+      location: extendedProps.location,
     });
 
     setIsEventOpen(true);
@@ -308,7 +322,6 @@ const Calendar = () => {
         backgroundColor: "#FF4D4D",
         allDay: false,
         familyIdx: 1,
-        // userId: userData.id,
       });
       setIsModalOpen(true);
       setIsEventOpen(false);
@@ -341,7 +354,8 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}>
+        }}
+      >
         {/* allDay가 true이거나 날짜가 다를 때 바 형태로 표시 */}
         {event.allDay || !sameDate ? (
           <>
@@ -352,7 +366,8 @@ const Calendar = () => {
                 backgroundColor: event.backgroundColor || "#FF4D4D",
                 borderRadius: "2px",
                 position: "relative",
-              }}>
+              }}
+            >
               <span
                 style={{
                   position: "relative",
@@ -364,7 +379,8 @@ const Calendar = () => {
                   textOverflow: "ellipsis",
                   lineHeight: "8px",
                   color: "#fff", // 바 형태에서는 흰색 글씨로 표시
-                }}>
+                }}
+              >
                 {event.title}
               </span>
             </div>
@@ -388,7 +404,8 @@ const Calendar = () => {
                 whiteSpace: "nowrap",
                 flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
                 minWidth: "0",
-              }}>
+              }}
+            >
               {event.title}
             </span>
 
@@ -398,7 +415,8 @@ const Calendar = () => {
                 fontSize: "0.9em",
                 color: "#666",
                 flexShrink: 0,
-              }}>
+              }}
+            >
               {startTime}
             </span>
           </>
@@ -408,10 +426,10 @@ const Calendar = () => {
   };
 
   return (
-    <div className='main'>
+    <div className="main">
       {/* ToastContainer는 루트 컴포넌트에 포함 */}
       <ToastContainer
-        position='bottom-center'
+        position="bottom-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
@@ -420,8 +438,8 @@ const Calendar = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme='light'
-        z-index='100'
+        theme="light"
+        z-index="100"
       />
 
       {/* 검색 기능 */}
@@ -432,10 +450,11 @@ const Calendar = () => {
             justifyContent: "flex-end",
             gap: "6px",
             padding: "5px",
-          }}>
+          }}
+        >
           <input
-            type='text'
-            placeholder='일정 검색'
+            type="text"
+            placeholder="일정 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
@@ -456,8 +475,8 @@ const Calendar = () => {
         <FullCalendar
           ref={calendarRef} // ref 연결
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView='dayGridMonth'
-          locale='ko'
+          initialView="dayGridMonth"
+          locale="ko"
           nowIndicator={true}
           selectable={true}
           headerToolbar={{
@@ -473,7 +492,7 @@ const Calendar = () => {
             day: "일간",
             allDay: "하루종일",
           }}
-          height='85vh'
+          height="85vh"
           dayCellContent={renderDayCellContent}
           allDaySlot={true}
           droppable={true}
@@ -486,7 +505,7 @@ const Calendar = () => {
           // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
           dateClick={handleDateDoubleClick}
           dayMaxEvents={3}
-          moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+          moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
           eventContent={renderEventContent}
         />
 
@@ -499,18 +518,18 @@ const Calendar = () => {
           />
         )}
 
-        {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
+        {/* 모달이 열렸을 때만 DetailModal 컴포넌트 렌더링 */}
         {isEventOpen && (
           <EventDetail
             key={selectedEvent.id}
             event={selectedEvent}
-            // onSave={saveEvent}
-            onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
             onEdit={handleEditClick} // 수정 버튼에 사용할 함수
+            onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
             onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
           />
         )}
       </div>
+      {/* 지도는 장소가 설정된 경우에만 모달 외부에 표시 */}
     </div>
   );
 };

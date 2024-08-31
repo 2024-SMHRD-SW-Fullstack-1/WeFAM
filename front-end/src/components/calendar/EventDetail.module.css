@@ -24,10 +24,7 @@
   text-align: center;
   color: var(--color-primary);
 }
-.icon {
-  font-size: 20px;
-  color: rgb(143, 143, 143);
-}
+
 
 .details {
   display: flex;
@@ -59,7 +56,7 @@
 }
 
 .commentSection {
-  margin-top: 30px; /* 추가: 댓글 부분과 위 내용 사이의 여백 */
+  margin-top: 10px; /* 추가: 댓글 부분과 위 내용 사이의 여백 */
   border-top: 1px solid var(--color-border);
   padding-top: 20px;
 }
@@ -154,4 +151,52 @@
 
 .menu div:hover {
   background-color: #f0f0f0;
+  font-weight: bold;
+    /* 텍스트 굵게 처리 */
+}
+
+.locationContainer {
+  margin-top: 20px;
+  /* 지도의 상단 여백 */
+}
+
+.locationName {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+  /* 이름과 지도의 간격 */
+  text-align: center;
+  /* 가운데 정렬 */
+}
+
+.mapContainer {
+  width: 100%;
+  /* 지도가 컨테이너에 맞게 */
+  height: 200px;
+  /* 지도의 높이 지정 */
+  background-color: white;
+  /* 지도 배경을 흰색으로 설정 */
+  border-radius: 8px;
+  /* 지도의 모서리를 둥글게 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* 그림자 추가 */
+}
+
+.field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+  padding : 0 10px
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  color: rgb(143, 143, 143);
+  font-size: 20px !important;
+  vertical-align: middle;
+  /* 아이콘과 텍스트가 수평으로 정렬되도록 */
 }

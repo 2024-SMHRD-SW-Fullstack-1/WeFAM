@@ -1,5 +1,6 @@
 package com.izg.back_end.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -52,10 +53,6 @@ public class EventModel {
     @JsonProperty("eventColor")
     private String eventColor; // 기본값 빈 문자열
 
-    @Column(name = "event_location")
-    @JsonProperty("eventLocation")
-    private String eventLocation = ""; // 기본값 빈 문자열
-
     @Column(name = "event_content")
     @JsonProperty("eventContent")
     private String eventContent = ""; // 기본값 빈 문자열
@@ -65,5 +62,17 @@ public class EventModel {
     @JsonProperty("isAllDay")
     private int isAllDay = 0;
     
+
+    @Column(name = "event_location")
+    @JsonProperty("eventLocation")
+    private String eventLocation = ""; // 기본값 빈 문자열
+    
+    @Column(name = "latitude")
+    @JsonProperty("latitude")
+    private BigDecimal latitude = BigDecimal.ZERO; // 기본값 0
+    
+    @Column(name = "longitude")
+    @JsonProperty("longitude")
+    private BigDecimal longitude = BigDecimal.ZERO; // 기본값 0
 
 }
