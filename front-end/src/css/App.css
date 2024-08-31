@@ -201,11 +201,12 @@ p {
 
 /* fullCalendar tags */
 .fc .fc-day-sat a {
-  color: #2f76f9 !important;
+  color: #2f76f9;
+  
 }
 
 .fc .fc-day-sun a {
-  color: #ff4d4d !important;
+  color: #ff4d4d;
 }
 
 .fc .fc-media-screen {
@@ -308,7 +309,7 @@ p {
   background: var(--color-coral);
   border-radius: 50%;
   padding: 3px;
-  color: white;
+  color: #ffffff !important;
 }
 
 /*주 단위 */
