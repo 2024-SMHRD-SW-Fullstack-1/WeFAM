@@ -6,7 +6,6 @@ import LeftSidebar from "./left-sidebar/LeftSidebar";
 import RightSidebar from "./right-sidebar/RightSidebar";
 
 const Home = () => {
-  // asdfasfasf
   const location = useLocation();
   const userData = location.state?.userData || null;
   return (

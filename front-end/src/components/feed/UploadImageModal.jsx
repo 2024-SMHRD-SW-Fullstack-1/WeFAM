@@ -29,7 +29,6 @@ const UploadImageModal = ({ onClose }) => {
       const currentImageUrl = URL.createObjectURL(files[i]);
       imageUrlList.push(currentImageUrl);
     }
-
     setImgPreview(imageUrlList);
     setSelectedFiles([...selectedFiles, ...files]);
   };

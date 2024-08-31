@@ -104,17 +104,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     };
   }, [isOptionsVisible, handleClickOutside]);
 
-  // 피드 공유 미구현
-  // 피드 공유 클릭 시 모달을 열고 선택된 피드 저장
-  const handleShareFeed = (feedIdx) => {
-    // console.log(`${feed.feedIdx}번 피드 공유 클릭`);
-    // 피드 정보 모달에 보여주기 위해 저장
-    // setSelectedFeed({
-    //   idx: feed.feedIdx,
-    // });
-    // setIsModalOpen(true);
-  };
-
   // 피드 수정 클릭 시 모달을 열고 선택된 피드 저장
   const handleUpdateFeed = (feedIdx) => {
     console.log(`${feed.feedIdx}번 피드 수정 클릭`);
@@ -142,7 +131,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
-              <span className={styles.writerId}>{feed.userId}</span>
+
+              <span className={styles.writer}>{feed.id}</span>
               <span>ㆍ</span>
               <span className={styles.time}>{elapsedTime(feed.postedAt)}</span>
             </div>
@@ -153,12 +143,10 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         <div
           className={styles.feedOptionsContainer}
           onClick={toggleOptions}
-          style={{ cursor: "pointer" }}
           ref={optionsRef}
         >
           <BsThreeDots />
-
-          {isOptionsVisible && writerId !== null && (
+          {isOptionsVisible && (
             <ul className={styles.options}>
               <li>
                 <button

@@ -91,6 +91,7 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
           <p>이미지가 없습니다.</p>
         )}
       </div>
+
       <textarea
         className={styles.content}
         placeholder="무슨 생각을 하고 계신가요?"
@@ -116,7 +117,7 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
         </span>
         <span>
           <button className={styles.addFeedBtn} onClick={handleAddFeed}>
-            <PiArrowBendDownLeft />
+            <PiArrowBendDownLeft /> e2baf217768fc0d3dd68d150b193eed37d825312
           </button>
         </span>
       </div>
