@@ -36,5 +36,5 @@ public class HouseworkService {
    public void deleteWorkById(int workIdx) {
       houseWorkRepository.deleteById(workIdx);
    }
-}
+
 }
