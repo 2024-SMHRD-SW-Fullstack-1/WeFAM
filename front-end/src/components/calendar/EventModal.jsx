@@ -9,18 +9,21 @@ import {
   BsClock,
   BsPaperclip,
   BsAlarm,
-  BsPinMap,
   BsPersonCircle,
   BsThreeDotsVertical,
 } from "react-icons/bs";
+import { FiMapPin } from "react-icons/fi";
+
 import CustomDropdown from "./CustomDropDown";
-import AlarmSetting from "./alarmSetting";
+import AlarmSetting from "./AlarmSetting";
+import MapComponent from "./Map";
+import MapSearchInput from "./MapSearch";
 
 const generateTimeOptions = () => {
   const options = [];
   let period = "오전";
   for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 1) {
+    for (let minute = 0; minute < 60; minute += 30) {
       const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
       const formattedMinute = minute.toString().padStart(2, "0");
       period = hour < 12 ? "오전" : "오후";
@@ -50,7 +53,7 @@ const colorOptions = [
   { value: "pale-blue", label: "페일 블루", color: "#b6cfe2" }, // --color-pale-blue
 ];
 
-const EventModal = ({ event, onClose, onSave }) => {
+const EventModal = ({ event, onClose, onSave, onMap }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false); // 상세 설정 상태 관리
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
   const [alarmText, setAlarmText] = useState("10분 전"); // 알림 텍스트 기본값
@@ -63,6 +66,8 @@ const EventModal = ({ event, onClose, onSave }) => {
   const [endDate, setEndDate] = useState(new Date(event.end));
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
   const [title, setTitle] = useState(event.title);
+  const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState(null); // 좌표 상태 추가
 
   // 입력 변경 시 상태 업데이트
   const handleTitleChange = (e) => {
@@ -74,20 +79,30 @@ const EventModal = ({ event, onClose, onSave }) => {
     setAlarmText(`${time} ${unit}`); // 알림 텍스트 업데이트
   };
 
+  const handlePlaceSelect = (place) => {
+    setLocation(place.place_name);
+    setCoordinates({ lat: parseFloat(place.y), lng: parseFloat(place.x) }); // 좌표 설정
+  };
+
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
     console.log("Saving event with color:", selectedColor); // 디버그용 로그
+    console.log("Saving event with location:", location); // 디버그용 로그
     onSave({
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
       title: title,
-      id: event.id || "UnKnown", // ID도 함께 전달
+      id: event.id, // ID도 함께 전달
       allDay: isAllDay,
       familyIdx: event.familyIdx,
       eventContent: event.eventContent,
+      backgroundColor: selectedColor,
       userId: event.userId,
+      location: location,
+      latitude: coordinates?.lat, // 좌표 정보에서 위도 추출
+      longitude: coordinates?.lng, // 좌표 정보에서 경도 추출
+      allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
     });
-    console.log(onSave);
   };
 
   // 이미 존재하는 일정이면, 해당 색상의 라벨을 설정
@@ -183,7 +198,6 @@ const EventModal = ({ event, onClose, onSave }) => {
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setEndDate(newEndDate);
-    console.log("확인용2", newEndDate);
   };
 
   // 종일 이벤트 토글
@@ -202,6 +216,7 @@ const EventModal = ({ event, onClose, onSave }) => {
   };
 
   return ReactDOM.createPortal(
+    // <MapComponent coordinates={coordinates} />
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
         {/* 제목 */}
@@ -209,8 +224,9 @@ const EventModal = ({ event, onClose, onSave }) => {
           <input
             className={styles.title}
             value={title || ""}
-            placeholder='제목'
-            onChange={handleTitleChange}></input>
+            placeholder="제목"
+            onChange={handleTitleChange}
+          ></input>
 
           <BsThreeDotsVertical className={styles.threeDots} />
         </div>
@@ -226,7 +242,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -234,7 +250,8 @@ const EventModal = ({ event, onClose, onSave }) => {
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -249,7 +266,8 @@ const EventModal = ({ event, onClose, onSave }) => {
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -261,7 +279,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
           </div>
@@ -276,7 +294,7 @@ const EventModal = ({ event, onClose, onSave }) => {
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type='checkbox'
+                type="checkbox"
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -364,7 +382,8 @@ const EventModal = ({ event, onClose, onSave }) => {
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}>
+                    }}
+                  >
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}
@@ -375,12 +394,16 @@ const EventModal = ({ event, onClose, onSave }) => {
             </div>
 
             {/*지도 설정 */}
+            <MapComponent coordinates={coordinates} />
+            <br />
             <div className={styles.field}>
-              <BsPinMap
+              <FiMapPin
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <span>장소</span>
+              <div>
+                <MapSearchInput onPlaceSelect={handlePlaceSelect} />
+              </div>
             </div>
 
             {/*파일 첨부 */}
