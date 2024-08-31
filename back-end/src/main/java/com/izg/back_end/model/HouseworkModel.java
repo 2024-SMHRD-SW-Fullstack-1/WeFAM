@@ -58,5 +58,4 @@ public class HouseworkModel {
    @Column(name = "posted_at")
    @JsonProperty("postedAt")
    private LocalDateTime postedAt = LocalDateTime.now(); // 미션이 작성된 날짜 및 시간
-
 }
