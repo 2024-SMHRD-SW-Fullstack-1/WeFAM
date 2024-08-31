@@ -1,13 +1,34 @@
 import React from "react";
 import styles from "./EventDetail.module.css";
 import ReactDOM from "react-dom";
-import { useState, useEffect } from "react";
-import { BsXLg, BsThreeDotsVertical, BsChevronRight } from "react-icons/bs";
+import { useState, useEffect, useRef } from "react";
+import {
+  BsXLg,
+  BsThreeDotsVertical,
+  BsChevronRight,
+  BsPinMap,
+} from "react-icons/bs";
+import { FiMapPin } from "react-icons/fi";
+import MapComponent from "./Map";
 
 const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
   const eventColor = event.backgroundColor;
   const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 열림/닫힘 상태
   const [eventData, setEventData] = useState(event); // event prop을 상태로 관리
+  const menuRef = useRef(null); // 메뉴 div를 참조할 ref 생성
+  const [coordinates, setCoordinates] = useState(null);
+  const [editHovered, setEditHovered] = useState(false);
+  const [deleteHovered, setDeleteHovered] = useState(false);
+
+  useEffect(() => {
+    // event가 변경될 때마다 coordinates와 location을 설정
+    if (event.latitude && event.longitude) {
+      setCoordinates({
+        lat: event.latitude,
+        lng: event.longitude,
+      });
+    }
+  }, [event]);
 
   useEffect(() => {
     setEventData(event); // event prop이 변경될 때마다 eventData를 업데이트
@@ -17,6 +38,7 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
   // 날짜 포맷팅 함수
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -40,6 +62,23 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
     return hours >= 12 ? "오후" : "오전";
   };
 
+  // 메뉴 외부 클릭 시 메뉴 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    // 전역 클릭 이벤트 리스너 등록
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
   return ReactDOM.createPortal(
     <div className={styles.EventDetail} onClick={(e) => e.stopPropagation()}>
       {/* Header 부분 */}
@@ -50,9 +89,31 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
         <div className={styles.icon} style={{ marginLeft: "auto" }}>
           <BsThreeDotsVertical onClick={handleMenuClick} />
           {isMenuOpen && (
-            <div className={styles.menu}>
-              <div onClick={onEdit}>수정</div>
-              <div onClick={onDelete}>삭제</div>
+            <div className={styles.menu} ref={menuRef}>
+              <div
+                onClick={onEdit}
+                onMouseEnter={() => setEditHovered(true)}
+                onMouseLeave={() => setEditHovered(false)}
+                style={{
+                  color: editHovered ? eventColor : "inherit",
+                  fontWeight: editHovered ? "bold" : "normal",
+                  backgroundColor: editHovered ? "#f0f0f0" : "transparent",
+                }}
+              >
+                수정
+              </div>
+              <div
+                onClick={onDelete}
+                onMouseEnter={() => setDeleteHovered(true)}
+                onMouseLeave={() => setDeleteHovered(false)}
+                style={{
+                  color: deleteHovered ? eventColor : "inherit",
+                  fontWeight: deleteHovered ? "bold" : "normal",
+                  backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
+                }}
+              >
+                삭제
+              </div>
             </div>
           )}
         </div>
@@ -64,7 +125,8 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}>
+        } ${event.allDay ? styles.allDay : ""}`}
+      >
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
@@ -94,6 +156,26 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
           )}
         </div>
       </div>
+
+      {/* 지도  */}
+      {coordinates != null && (
+        <div className={styles.locationContainer}>
+          <div className={styles.field}>
+            <FiMapPin
+              className={styles.icon}
+              style={{ color: eventColor }} // 선택된 색상이 없으면 기본값
+            />
+            <div>
+              <h3 className={styles.locationName}>{event.location}</h3>
+            </div>
+          </div>
+
+          <div className={styles.mapContainer}>
+            <MapComponent coordinates={coordinates} />
+          </div>
+        </div>
+      )}
+
       {/* Content 부분 */}
       <div className={styles.content}>
         <p>{event.content}</p>

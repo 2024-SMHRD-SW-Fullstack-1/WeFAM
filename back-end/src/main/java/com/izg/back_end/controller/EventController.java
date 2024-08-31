@@ -49,6 +49,7 @@ public class EventController {
     
     @PostMapping("/add-event")
     public EventModel addEvent(@RequestBody EventModel eventModel) {
+    	
         return eventService.updateEvent(eventModel); // 새로운 이벤트를 추가하는 서비스 메서드 호출
     }
 }
