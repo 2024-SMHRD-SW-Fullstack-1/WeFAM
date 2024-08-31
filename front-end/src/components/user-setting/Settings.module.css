@@ -2,8 +2,8 @@
 
 .settingsPage {
   display: flex;
-  width: 1450px;
-  height: 880px; /* 페이지가 전체 높이를 차지하도록 설정 */
+  width: 100%; /* 전체 화면 너비에 맞춤 */
+  height: 100vh; /* 전체 화면 높이에 맞춤 */
   overflow: hidden; /* 콘텐츠가 화면을 넘어갈 경우 숨김 처리 */
 }
 
@@ -30,7 +30,8 @@
   text-overflow: ellipsis; /* 넘치는 텍스트를 '...'로 표시 */
 }
 
-.menu li.active { /* 선택됬을 때 색상 */
+.menu li.active {
+  /* 선택됬을 때 색상 */
   background-color: #ddd;
 }
 

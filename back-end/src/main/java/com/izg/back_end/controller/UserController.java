@@ -53,22 +53,20 @@ public class UserController {
     
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session) {
-       session.invalidate(); // 세션 무효화
-       
-       return ResponseEntity.ok().build();
+    	session.invalidate(); // 세션 무효화
+    	return ResponseEntity.ok().build();
     }
     
     
     // 새로운 엔드포인트 추가
     @GetMapping("/get-family")
-   public List<UserModel> getFamily() {
-      System.out.println("Gotten all users in my family : " + userService.getFamily());
-      return userService.getFamily();
-   }
+	public List<UserModel> getFamily() {
+		System.out.println("Gotten all users in my family : " + userService.getFamily());
+		return userService.getFamily();
+	}
     
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
-//       return userService.getFamilyStaus();
+//    	return userService.getFamilyStaus();
 //    }
-//    
 }

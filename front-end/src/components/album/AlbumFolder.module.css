@@ -1,8 +1,15 @@
 .albumHead {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between; /* 요소들을 양쪽 끝에 배치 */
   align-items: center;
-  padding: 40px;
+  width: 100%; /* 앨범헤드가 전체 폭을 차지하게 함 */
+  padding: 50px;
+  box-sizing: border-box; /* 패딩 포함된 width 계산 */
+  margin-bottom: 20px; /* 컨테이너와 약간의 간격 추가 */
+}
+
+.albumWrapper {
+  width: 100%;
 }
 
 .folderName {
@@ -210,4 +217,35 @@
   color: white; /* 텍스트 색상 */
   cursor: pointer; /* 포인터 커서 */
   width: 150px; /* 고정된 너비 */
+}
+
+.imageModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.imageModalContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalImage {
+  max-width: 100%;
+  max-height: 80vh;
+}
+
+.imageModalContent button {
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
 }
