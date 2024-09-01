@@ -29,8 +29,8 @@ public class FeedModel {
     private int familyIdx = 0; // 기본값 0
     
     @Column(name = "user_id")
-    @JsonProperty("id")
-    private String id = ""; // 기본값 빈 문자열
+    @JsonProperty("userId")
+    private String userId = ""; // 기본값 빈 문자열
   
     @Column(name = "posted_at")
     @JsonProperty("postedAt")

@@ -77,7 +77,6 @@ public class UserService {
 		userDTO.setProfileImg(properties.get("profile_image").toString());
 		userDTO.setLoginSource("kakao");
 		userDTO.setJoinedAt(LocalDateTime.now());
-        
 
       if (kakaoAccount.get("birthday") != null) {
          String birthday = kakaoAccount.get("birthday").toString();
@@ -114,6 +113,4 @@ public class UserService {
 //	public List<LogModel> getFamilyStaus(){
 //		return userRepository.findAll();
 //	}
-
-	
 }

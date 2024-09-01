@@ -1,8 +1,7 @@
-// PersonalInfo.js
-import React, { useState, useEffect } from 'react';
-import styles from './PersonalInfo.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./PersonalInfo.module.css";
 import { useSelector } from "react-redux";
-import axios from 'axios';
+import axios from "axios";
 
 const PersonalInfo = () => {
   const [userImages, setUserImages] = useState([]);
@@ -24,9 +23,6 @@ const PersonalInfo = () => {
   //   }
   // }, [userData]); // userData가 변경될 때마다 실행
 
-
-
-
   return (
     <div className={styles.personalInfo}>
       <h1>개인정보 관리</h1>
@@ -34,7 +30,13 @@ const PersonalInfo = () => {
       <div className={styles.profileContainer}>
         <span>개인 프로필 사진</span>
         <div className={styles.profileInfo}>
-          {<img src={userData.profileImg} alt="Profile" className={styles.profileImg} />}
+          {
+            <img
+              src={userData.profileImg}
+              alt="Profile"
+              className={styles.profileImg}
+            />
+          }
           <button className={styles.editImgButton}>수정</button>
         </div>
       </div>
@@ -42,7 +44,8 @@ const PersonalInfo = () => {
       <div className={styles.profileContainer}>
         <span>닉네임</span>
         <div>
-          <input type="text" className={styles.editNick} /> {/* value={userData.name} */ }
+          <input type="text" className={styles.editNick} />{" "}
+          {/* value={userData.name} */}
           <button className={styles.editNickButton}>수정</button>
         </div>
       </div>
@@ -52,6 +55,3 @@ const PersonalInfo = () => {
 };
 
 export default PersonalInfo;
-
-
-

@@ -13,7 +13,6 @@ import {
   BsThreeDotsVertical,
 } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
-
 import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
 import MapComponent from "./Map";
@@ -152,7 +151,6 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
     } else if (hours === 0) {
       hours = 12;
     }
-
     return `${period} ${hours}:${minutes}`;
   };
 

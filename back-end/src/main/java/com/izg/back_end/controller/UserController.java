@@ -55,7 +55,6 @@ public class UserController {
     public ResponseEntity<Void> logout(HttpSession session) {
     	session.invalidate(); // 세션 무효화
     	return ResponseEntity.ok().build();
-       
     }
     
     
@@ -70,5 +69,4 @@ public class UserController {
 //    public List<LogModel> getFamilyStaus(){
 //    	return userService.getFamilyStaus();
 //    }
-//    
 }

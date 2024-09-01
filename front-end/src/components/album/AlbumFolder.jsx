@@ -35,7 +35,6 @@ const AlbumFolder = () => {
       prevFiles.filter((file) => file.name !== fileName)
     );
   };
-
   const inputImages = () => {
     const newImages = selectedFiles.map((file) => ({
       id: images.length + 1 + Math.random(),
@@ -54,7 +53,7 @@ const AlbumFolder = () => {
   //   selectedFiles.forEach((file)=>{
   //     FormData.append("images", file);
   //   });
-    
+
   //   try {
   //     const response = await fetch("/api/upload-images", {
   //       method: "POST",
@@ -72,9 +71,7 @@ const AlbumFolder = () => {
   //     }
   //   }
 
-    
   // }
-
 
   const toggleImageSelection = (id) => {
     setSelectedImages((prevSelected) =>
@@ -229,11 +226,9 @@ const AlbumFolder = () => {
             <button onClick={showNextImage}>{">"}</button>
           </div>
         </Modal>
-
       </div>
     </div>
   );
-
 };
 
 export default AlbumFolder;
