@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import ReactDOM from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addImage, clearImages } from "../../features/imagesOnFeedSlice";
 import modalStyles from "../modal/Modal.module.css";
 import styles from "./UploadImageModal.module.css";
@@ -11,19 +11,13 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 
 const UploadImageModal = ({ onClose }) => {
   const [imgPreview, setImgPreview] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스
   const dispatch = useDispatch();
-  let images = useSelector((state) => state.imagesOnFeed);
   const maxImageCnt = 10;
 
-  console.log("Redux 상태 images:", images);
-  console.log("images는 배열인가요?", Array.isArray(images));
-
   const uploadImages = (files) => {
-    // 이미지를 Redux에 넣기 전에 우선 Redux에 저장된 이미지를 모두 삭제
-    // dispatch는 순서가 보장됩니다. 그러므로 clear 후에 add가 됩니다.
-    dispatch(clearImages());
-
     let imageUrlList = [...imgPreview];
 
     if (files.length + imgPreview.length > maxImageCnt) {
@@ -34,10 +28,9 @@ const UploadImageModal = ({ onClose }) => {
     for (let i = 0; i < files.length; i++) {
       const currentImageUrl = URL.createObjectURL(files[i]);
       imageUrlList.push(currentImageUrl);
-      dispatch(addImage({ url: currentImageUrl, file: files[i] }));
     }
-
     setImgPreview(imageUrlList);
+    setSelectedFiles([...selectedFiles, ...files]);
   };
 
   const handleDragOver = useCallback((event) => {
@@ -57,30 +50,42 @@ const UploadImageModal = ({ onClose }) => {
       const droppedFiles = Array.from(event.dataTransfer.files);
       uploadImages(droppedFiles);
     },
-    [uploadImages]
+    [uploadImages, selectedFiles, imgPreview]
   );
 
-  const handleClearImages = () => {
-    dispatch(clearImages());
-  };
-
   const onFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    uploadImages(selectedFiles);
+    const newFiles = Array.from(e.target.files);
+    uploadImages(newFiles);
   };
 
   // 취소 버튼
   const handleCancel = () => {
     dispatch(clearImages());
-    setImgPreview([]); // 미리보기 이미지도 비우기
+    setImgPreview([]);
+    setSelectedFiles([]); // 선택된 파일 목록도 초기화
     onClose();
   };
 
+  // 저장 버튼: 선택된 파일들을 리덕스에 저장
   const onSave = () => {
-    console.log("Saving images...");
+    dispatch(clearImages()); // 기존 저장된 이미지 삭제
+    selectedFiles.forEach((file) => {
+      const url = URL.createObjectURL(file);
+      dispatch(addImage({ url, file }));
+    });
     onClose();
   };
-  // className을 동적으로 설정
+
+  // 슬라이드 이전으로 이동
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  };
+
+  // 슬라이드 다음으로 이동
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => Math.min(prev + 1, imgPreview.length - 1));
+  };
+
   const dropzoneClassName = `${styles.dropzone} ${
     dragging ? styles.dragging : ""
   }`;
@@ -94,15 +99,20 @@ const UploadImageModal = ({ onClose }) => {
         <div className={styles.imgModal}>
           {imgPreview.length > 0 ? (
             <div className={styles.preview}>
-              <div className={styles.leftArrow}>
-                <MdKeyboardArrowLeft />
-              </div>
-              {imgPreview.map((url, index) => (
-                <img key={index} src={url} alt={`preview-${index}`} />
-              ))}
-              <div className={styles.rightArrow}>
-                <MdKeyboardArrowRight />
-              </div>
+              {currentSlide > 0 && (
+                <div className={styles.leftArrow} onClick={handlePrevSlide}>
+                  <MdKeyboardArrowLeft />
+                </div>
+              )}
+              <img
+                src={imgPreview[currentSlide]}
+                alt={`preview-${currentSlide}`}
+              />
+              {currentSlide < imgPreview.length - 1 && (
+                <div className={styles.rightArrow} onClick={handleNextSlide}>
+                  <MdKeyboardArrowRight />
+                </div>
+              )}
             </div>
           ) : (
             <div
@@ -112,7 +122,6 @@ const UploadImageModal = ({ onClose }) => {
               onDrop={handleDrop}
             >
               <CiImageOn />
-
               <p>사진을 여기에 끌어다 놓으세요!</p>
               <div className={styles.filebox}>
                 <input
@@ -127,7 +136,6 @@ const UploadImageModal = ({ onClose }) => {
           )}
 
           <div className={modalStyles.modalFooter}>
-            <button onClick={handleClearImages}>이미지 비우기</button>
             <button className={modalStyles.cancelButton} onClick={handleCancel}>
               취소
             </button>
