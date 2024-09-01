@@ -1,0 +1,71 @@
+.profileImage {
+    width: 200px;
+    height: 200px;
+    border-radius: 5%;
+    object-fit: cover;
+  }
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modalTitle {
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+  
+  .modalLabel {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .modalInputText,
+  .modalInputDate {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .modalInputFile {
+    margin-bottom: 15px;
+  }
+  
+  .saveBtn, .closeBtn {
+    padding: 10px 15px;
+    background-color: #E1888B;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .saveBtn:hover, .closeBtn:hover {
+    background-color: #D85156;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  

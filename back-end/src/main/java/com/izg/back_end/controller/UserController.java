@@ -1,81 +1,72 @@
 package com.izg.back_end.controller;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import com.izg.back_end.dto.UserDto;
+import com.izg.back_end.service.FamilyService;
+import com.izg.back_end.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
+import com.izg.back_end.model.FamilyModel;
+import com.izg.back_end.model.FeedModel;
+import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
-import com.izg.back_end.repository.UserRepository;
 
-import java.net.http.HttpHeaders;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> kakaoLogin(@RequestBody Map<String, String> requestBody) {
-        String code = requestBody.get("code");
+    public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
+        System.out.println("카카오 로그인 요청 수신. 인가 코드: " + code);
+        try {
+            // 인가 코드를 사용해 액세스 토큰을 얻음
+            String accessToken = userService.getKakaoAccessToken(code);
 
-        // 카카오 서버에 요청을 보내 토큰을 받아옴
-        String accessToken = getKakaoAccessToken(code);
+            // 액세스 토큰을 이용해 사용자 정보 가져오기
+            UserDto userDTO = userService.getUserInforFromKakao(accessToken);
 
-        // 액세스 토큰을 사용하여 사용자 정보 받아오기
-        UserModel user = getUserInfoFromKakao(accessToken);
+            // 유저 정보를 데이터베이스에 저장
+            userService.saveUser(userDTO);
 
-        // 사용자 정보를 데이터베이스에 저장 (또는 업데이트)
-        userRepository.save(user);
-
-        return ResponseEntity.ok("로그인 성공");
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            System.out.println("카카오 로그인 처리 중 오류 발생");
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+        }
     }
-
-    private String getKakaoAccessToken(String code) {
-        String tokenUri = "https://kauth.kakao.com/oauth/token";
-        RestTemplate restTemplate = new RestTemplate();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("grant_type", "authorization_code");
-        params.put("client_id", "e8bed681390865b7c0ef4d85e4e2c842");
-        params.put("redirect_uri", "http://localhost:3000/login");
-        params.put("code", code);
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUri, params, Map.class);
-        Map<String, String> responseBody = (Map<String, String>) response.getBody();
-
-        return responseBody.get("access_token");
+    
+    // 로그아웃 엔드포인트
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+        session.invalidate(); // 세션 무효화
+        return ResponseEntity.ok().build();
     }
-
-    private UserModel getUserInfoFromKakao(String accessToken) {
-        String userInfoUri = "https://kapi.kakao.com/v2/user/me";
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 헤더에 Authorization 추가
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-        
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Map.class);
-        
-        Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
-        
-        // 사용자 정보 추출
-        UserModel user = new UserModel();
-        user.setId(responseBody.get("id").toString());
-        user.setName(responseBody.get("properties").get("nickname").toString());
-        user.setProfileImg(responseBody.get("properties").get("profile_image").toString());
-        user.setLoginSource("kakao");
-        user.setJoinedAt(LocalDateTime.now());
-        
-        return user;
+    
+    // 가족만 보여주기
+    @GetMapping("/get-family")
+    public List<UserModel> getFamily() {
+        return userService.getUsersInJoining();
     }
+//    @GetMapping("/get-family-staus")
+//    public List<LogModel> getFamilyStaus(){
+//    	return userService.getFamilyStaus();
+//    }
+//    
 }

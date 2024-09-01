@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
 
 import profileThumbnail from "../../assets/images/gucci-cat.png";
@@ -13,18 +13,52 @@ import { CiForkAndKnife } from "react-icons/ci";
 import { CiImageOn } from "react-icons/ci";
 import { CiSettings } from "react-icons/ci";
 import { CiLogout } from "react-icons/ci";
+import axios from "axios";
 
 const LeftSidebar = () => {
   const nav = useNavigate();
+  const isOpen = useSelector((state) => state.leftSidebar.isOpen);
+
+  // 쿠키 삭제 함수
+const deleteAllCookies = () => {
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  }
+};
+
+const handleLogout = async () => {
+  try {
+    // 서버에 로그아웃 요청
+    await axios.post('http://localhost:8089/wefam/logout');
+
+    // 모든 쿠키 삭제
+    deleteAllCookies();
+
+    // 로컬 스토리지와 세션 스토리지 삭제
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+
+    // 로그인 페이지로 리다이렉트
+    nav("/");
+  } catch (error) {
+    console.error("로그아웃 중 에러 발생:", error);
+  }
+};
 
   return (
-    <div className={styles.leftSidebar}>
+    <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
       {/* 프로필 */}
       <div className={styles.profile}>
         <img
           className={styles.profileThumbnail}
           src={profileThumbnail}
-          alt='프로필'></img>
+          alt="프로필"
+        ></img>
         <div className={styles.profileName}>구찌캣</div>
       </div>
 
@@ -35,8 +69,10 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/");
-              }}>
+                nav("/main");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiHome className={styles.categoryItemLogo} />
               <span>홈</span>
             </span>
@@ -44,8 +80,10 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/calendar");
-              }}>
+                nav("/main/calendar");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiCalendar className={styles.categoryItemLogo} />
               <span>달력</span>
             </span>
@@ -53,26 +91,21 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/memo");
-              }}>
-              <CiStickyNote className={styles.categoryItemLogo} />
-              <span>메모</span>
-            </span>
-          </li>
-          <li>
-            <span
-              onClick={() => {
-                nav("/todo");
-              }}>
+                nav("/main/housework");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiCircleList className={styles.categoryItemLogo} />
-              <span>할일</span>
+              <span>집안일</span>
             </span>
           </li>
           <li>
             <span
               onClick={() => {
-                nav("/recipe");
-              }}>
+                nav("/main/recipe");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiForkAndKnife className={styles.categoryItemLogo} />
               <span>요리법</span>
             </span>
@@ -80,8 +113,10 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/gallery");
-              }}>
+                nav("/main/album");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiImageOn className={styles.categoryItemLogo} />
               <span>사진첩</span>
             </span>
@@ -93,17 +128,17 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/settins");
-              }}>
+                nav("/main/settings");
+              }}
+            >
               <CiSettings className={styles.categoryItemLogo} />
-              <span>설정</span>
+              <span>가족정보</span>
             </span>
           </li>
           <li>
             <span
-              onClick={() => {
-                nav("/login");
-              }}>
+              onClick={handleLogout}
+            >
               <CiLogout className={styles.categoryItemLogo} />
               <span>로그아웃</span>
             </span>

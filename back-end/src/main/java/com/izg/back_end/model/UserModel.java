@@ -12,35 +12,36 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_user")
+@Table(name = "user")
 @Data
 public class UserModel {
-	@Id
-    @Column(name = "user_id")
+    @Id
+    @Column(name = "user_id" )
     @JsonProperty("id")
-    private String id;
+    private String id = ""; // 기본값 빈 문자열
 
     @Column(name = "user_name")
     @JsonProperty("name")
-    private String name;
+    private String name = ""; // 기본값 빈 문자열
 
     @Column(name = "user_nick")
     @JsonProperty("nick")
-    private String nick;
+    private String nick = ""; // 기본값 빈 문자열
 
-    @Column(name = "user_birthdate")
+    @Column(name = "user_birthdate", nullable = false)
     @JsonProperty("birth")
-    private LocalDate birth;
+    private LocalDate birth = LocalDate.now(); // 기본값을 현재 날짜로 설정
+
 
     @Column(name = "user_profile_img")
     @JsonProperty("profileImg")
-    private String profileImg;	
-    
+    private String profileImg = ""; // 기본값 빈 문자열
+
     @Column(name = "joined_at")
     @JsonProperty("joinedAt")
-    private LocalDateTime joinedAt;
-    
+    private LocalDateTime joinedAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간
+
     @Column(name = "login_source")
     @JsonProperty("loginSource")
-    private String loginSource;
+    private String loginSource = ""; // 기본값 빈 문자열
 }

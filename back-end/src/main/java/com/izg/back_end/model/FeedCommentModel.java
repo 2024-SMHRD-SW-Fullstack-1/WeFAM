@@ -13,37 +13,33 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="tbl_feed_comment")
+@Table(name = "feed_comment")
 @Data
 public class FeedCommentModel {
 
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-	    @Column(name = "cmt_idx")
-	    @JsonProperty("cmtIdx")
-	    private int cmtIdx;
-		
-		@Column(name = "feed_idx")
-	    @JsonProperty("feedIdx")
-	    private int feedIdx;
-	    
-	    @Column(name = "cmt_content")
-	    @JsonProperty("cmtContent")
-	    private String cmtContent;
-	      
-	    @Column(name = "cmt_likes")
-	    @JsonProperty("cmtLikes")
-	    private int cmtLikes;
-	    
-//	    @Column(name = "location")
-//	    @JsonProperty("location")
-//	    private String location;
-	    
-	    @Column(name = "created_at")
-	    @JsonProperty("createdAt")
-	    private LocalDateTime createdAt;
-	    
-	    @Column(name = "user_id")
-	    @JsonProperty("id")
-	    private String id;   
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cmt_idx")
+    @JsonProperty("cmtIdx")
+    private int cmtIdx = 0; // Default to 0
+
+    @Column(name = "feed_idx")
+    @JsonProperty("feedIdx")
+    private int feedIdx = 0; // Default to 0
+    
+    @Column(name = "user_id")
+    @JsonProperty("userId")
+    private String userId = ""; // Default to empty string
+    
+    @Column(name = "cmt_content")
+    @JsonProperty("cmtContent")
+    private String cmtContent = ""; // Default to empty string
+    
+    @Column(name = "posted_at")
+    @JsonProperty("postedAt")
+    private LocalDateTime postedAt = LocalDateTime.now(); // Default to current date and time
+       
+    @Column(name = "cmt_likes")
+    @JsonProperty("cmtLikes")
+    private int cmtLikes = 0; // Default to 0
+}
