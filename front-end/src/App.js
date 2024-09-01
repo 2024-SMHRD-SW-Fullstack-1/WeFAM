@@ -19,7 +19,8 @@ function App() {
           <Route index element={<Feed />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="housework" element={<HouseWork />} />
-          <Route path="album" element={<AlbumFolder />} />
+          <Route path="album" element={<Album />} />
+          <Route path="album/:name" element={<AlbumFolder />} />{" "}
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

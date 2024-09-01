@@ -1,78 +1,75 @@
 .imgModal {
-    position: relative;
-    width: 768px;
-    height: 768px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: 768px;
+  height: 768px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropzone {
-    border: 2px dashed #ccc;
-    text-align: center;
-    color: #aaa;
-    width: 640px;
-    height: 640px;
+  border: 2px dashed #ccc;
+  text-align: center;
+  color: #aaa;
+  width: 640px;
+  height: 640px;
 }
-
 .dropzone.dragging {
-    border-color: #000;
-    color: #000;
+  border-color: #000;
+  color: #000;
 }
 
 .filebox .uploadName {
-    display: inline-block;
-    height: 40px;
-    padding: 0 10px;
-    vertical-align: middle;
-    border: 1px solid #dddddd;
-    width: 78%;
-    color: #999999;
+  display: inline-block;
+  height: 40px;
+  padding: 0 10px;
+  vertical-align: middle;
+  border: 1px solid #dddddd;
+  width: 78%;
+  color: #999999;
 }
 
 .filebox label {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    vertical-align: middle;
-    background-color: #999999;
-    cursor: pointer;
-    height: 40px;
-    margin-left: 10px;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #fff;
+  vertical-align: middle;
+  background-color: #999999;
+  cursor: pointer;
+  height: 40px;
+  margin-left: 10px;
 }
 
 .filebox input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    overflow: hidden;
-    border: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
 }
 
 .preview,
 img {
-    width: 640px;
-    height: 640px;
+  width: 640px;
+  height: 640px;
 }
 
 .leftArrow,
 .rightArrow {
-    position: absolute;
-    top: calc(50% - 16px);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    color: var(--color-white);
-    font-size: var(--font-4xl);
-    background-color: rgba(0, 0, 0, 0.7);
-    /* 검은색 배경, 50% 투명도 */
+  position: absolute;
+  top: calc(50% - 16px);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--color-white);
+  font-size: var(--font-4xl);
+  background-color: rgba(0, 0, 0, 0.7); /* 검은색 배경, 50% 투명도 */
 }
-
 .leftArrow {
-    left: var(--space-sm);
+  left: var(--space-sm);
 }
-
 .rightArrow {
-    right: var(--space-sm);
+  right: var(--space-sm);
 }

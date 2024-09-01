@@ -14,7 +14,7 @@ const Home = () => {
       <LeftSidebar />
       {/* 이 부분에 중첩된 라우트가 렌더링됩니다 */}
       <Outlet />
-      <RightSidebar  userData={userData}/>
+      <RightSidebar userData={userData} />
     </div>
   );
 };
