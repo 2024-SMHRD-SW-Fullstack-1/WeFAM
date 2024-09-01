@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Modal from "react-modal";
-import { useDropzone } from "react-dropzone"; // react-dropzone import
+import { useDropzone } from "react-dropzone";
 import styles from "./AlbumFolder.module.css";
+import axios from "axios";
 
 Modal.setAppElement("#root");
 
@@ -13,12 +14,9 @@ const AlbumFolder = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 슬라이드의 인덱스
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // 이미지 확대 모달 상태
-
-  const userData = useSelector((state) => state.user.userData);
-  // 로그인한 사용자의 데이터 확인
-  console.log("userData : ", userData);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const userId = useSelector((state) => state.user.userData.id);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -28,7 +26,7 @@ const AlbumFolder = () => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const removeFile = (fileName) => {
     setSelectedFiles((prevFiles) =>
@@ -36,6 +34,7 @@ const AlbumFolder = () => {
     );
   };
 
+  // 이미지 로컬 상태에 추가 (브라우저에서 미리보기)
   const inputImages = () => {
     const newImages = selectedFiles.map((file) => ({
       id: images.length + 1 + Math.random(),
@@ -47,34 +46,57 @@ const AlbumFolder = () => {
     closeModal();
   };
 
-  // 이미지 저장하는 함수
+  // 이미지 저장
+  const saveImages = async () => {
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append("image", file);
+    });
+    formData.append("userId", userId);
 
-  // const saveImages = async ()=> {
-  //   const forData = new FormData();
-  //   selectedFiles.forEach((file)=>{
-  //     FormData.append("images", file);
-  //   });
-    
-  //   try {
-  //     const response = await fetch("/api/upload-images", {
-  //       method: "POST",
-  //       body: FormData,
-  //     });
+    try {
+      const response = await axios.post("http://localhost:8089/album/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-  //     if (response.ok) {
-  //       const savedImages = await response.json();
-  //       const newImages = savedImages.map((img) => ({
-  //         id: img.id,
-  //         url: img.url,
-  //         selected: false,
-  //       }));
-  //       setImages()
-  //     }
-  //   }
+      if (response.status === 200) {
+        alert("이미지 업로드 성공!");
+        fetchImages(); // 업로드 후 이미지를 다시 불러옴
+        setSelectedFiles([]);
+        closeModal();
+      } else {
+        alert("이미지 업로드 실패");
+      }
+    } catch (error) {
+      console.error("이미지 업로드 중 오류 발생:", error);
+    }
+  };
 
-    
-  // }
+  // 이미지 초기 로드
+  const fetchImages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8089/album/user/${userId}`);
+      if (response.status === 200) {
+        setImages(response.data.map((img) => ({
+          id: img.albumId,
+          url: img.imageUrl,
+          name: img.imageName,
+        })));
+      } else {
+        console.error("이미지 가져오기 실패");
+      }
+    } catch (error) {
+      console.error("이미지 가져오기 중 오류 발생:", error);
+    }
+  };
 
+  useEffect(() => {
+    if (userId) {
+      fetchImages();
+    }
+  }, [userId]);
 
   const toggleImageSelection = (id) => {
     setSelectedImages((prevSelected) =>
@@ -130,6 +152,8 @@ const AlbumFolder = () => {
               <p className={styles.folderNameText}>{name}</p>
             </div>
             <div className={styles.imgArray}>
+              <p>날짜</p>
+              <input type="date" />
               <p>정렬순서</p>
               <select>
                 <option>최신 순</option>
@@ -143,7 +167,7 @@ const AlbumFolder = () => {
               삭제
             </button>
             <div className={styles.saveAndCheckbox}>
-              <button className={styles.btnAdd}>저장</button>
+              <button className={styles.btnAdd} onClick={saveImages}>저장</button>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -174,7 +198,7 @@ const AlbumFolder = () => {
                 src={image.url}
                 alt={`img-${image.id}`}
                 className={styles.image}
-                onClick={() => openImageModal(index)} // 이미지 클릭 시 확대 모달 오픈
+                onClick={() => openImageModal(index)}
               />
             </div>
           ))}
@@ -229,11 +253,9 @@ const AlbumFolder = () => {
             <button onClick={showNextImage}>{">"}</button>
           </div>
         </Modal>
-
       </div>
     </div>
   );
-
 };
 
 export default AlbumFolder;

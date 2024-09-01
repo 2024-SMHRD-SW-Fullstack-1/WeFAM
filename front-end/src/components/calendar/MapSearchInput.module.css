@@ -1,0 +1,68 @@
+.searchContainer {
+    position: relative;
+}
+
+.customInput {
+    width: 490px;
+    /* Select 컴포넌트와 동일한 너비 */
+    padding: 10px;
+    border: none;
+    /* Select와 동일한 테두리 색상 */
+    border-radius: 10px;
+    /* Select와 동일한 둥근 테두리 */
+    background-color: #f9f9f9;
+    /* Select와 동일한 배경색 */
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    box-shadow: none;
+    /* Select와 일치하게 그림자 제거 */
+    box-sizing: border-box;
+    /* padding과 border가 width에 포함되도록 설정 */
+}
+
+.customInput:focus {
+    /* border-color: #c02727; */
+    /* 포커스 시 테두리 색상 */
+    box-shadow: 0 0 0 2px rgba(192, 39, 39, 0.2);
+    /* 포커스 시 Select와 같은 그림자 효과 */
+}
+
+.customInput::placeholder {
+    color: #888;
+}
+
+.searchResults {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+    /* 둥근 테두리 추가 */
+}
+
+.searchResults li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.searchResults li.selected {
+    background-color: #f0f0f0;
+}
+
+.searchResults li:hover {
+    background-color: #eee;
+}
+
+.placeName {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.placeAddress {
+    font-size: 12px;
+    color: #888;
+}

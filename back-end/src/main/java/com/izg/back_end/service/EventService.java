@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.izg.back_end.model.EventModel;
 import com.izg.back_end.repository.EventRepository;
+import com.izg.back_end.repository.UserRepository;
 
 @Service
 public class EventService {
@@ -16,7 +17,10 @@ public class EventService {
 	EventRepository eventRepository;
 	EventModel eventModel;
 	
+	@Autowired
+    private UserRepository userRepository;
 	
+	// 일정 불러오기
 	public List<EventModel> getEventList() {
 		return	eventRepository.findAll();
 		
@@ -24,6 +28,10 @@ public class EventService {
 	
 	//일정 추가 삭제
 	public EventModel updateEvent(EventModel eventModel) {
+		// 사용자 유효성 검사를 추가
+        if (!userRepository.existsById(eventModel.getUserId())) {
+            throw new IllegalArgumentException("Invalid user ID");
+        }
 		return eventRepository.save(eventModel);
 	}
 	
