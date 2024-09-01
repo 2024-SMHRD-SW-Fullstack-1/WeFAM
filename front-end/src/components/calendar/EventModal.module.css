@@ -105,16 +105,18 @@
 }
 
 .icon {
+  width: 20px;
+  height: 20px;
   margin-right: 12px;
-  font-size: 20px;
+  font-size: 20px !important;
   color: #ff4d4d;
+  vertical-align: middle;
+  /* 아이콘과 텍스트가 수평으로 정렬되도록 */
 }
 
 .contentField {
   position: relative;
   display: flex;
-  align-items: row;
-  margin-bottom: 10px;
   width: 100%;
 }
 
@@ -130,11 +132,23 @@
   display: flex;
   justify-content: space-between;
   align-items: end;
+
+  padding-bottom: 24px;
+  width: 100%;
+}
+
+.title {
+  border: transparent;
+  border-radius: 8px;
+  height: 32px;
+  /* background-color: #f9f9f9; */
+  flex-grow: 1;
+  margin-left: 35px;
+  font-size: 1.3rem;
 }
 
 .threeDots {
-  margin-bottom: 14px;
   cursor: pointer;
-  font-size: 24px;
-  color: #333;
+  font-size: 32px;
+  color: #ffff;
 }
