@@ -1,0 +1,252 @@
+.albumHead {
+  display: flex;
+  justify-content: space-between; /* 요소들을 양쪽 끝에 배치 */
+  align-items: center;
+  width: 100%; /* 앨범헤드가 전체 폭을 차지하게 함 */
+  padding: 50px;
+  box-sizing: border-box; /* 패딩 포함된 width 계산 */
+  margin-bottom: 20px; /* 컨테이너와 약간의 간격 추가 */
+}
+
+.albumWrapper{
+  width: 100%;
+}
+
+.folderName {
+  display: flex;
+  align-items: baseline;
+}
+
+.folderNameText {
+  margin-left: 5px;
+  color: #646464;
+}
+
+.btnDelete {
+  width: 60px;
+  height: 30px;
+  font-size: medium;
+  border: 1px solid #8a8a8a;
+  color: #8a8a8a;
+  border-radius: 10px;
+}
+
+.btnAdd {
+  width: 60px;
+  height: 30px;
+  font-size: medium;
+  color: #ffff;
+  border: 1px solid #8a8a8a;
+  background-color: #e1888b;
+  border-radius: 10px;
+}
+
+.btnPlus {
+  background-color: #e1888b;
+  color: black;
+  font-size: var(--font-2xl);
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #8a8a8a;
+}
+
+.imgArray {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.imgArray p {
+  font-weight: var(--weight-semi-bold);
+}
+
+.imgArray select {
+  padding: 3px;
+  margin-top: 1px;
+  border: 2px solid var(--color-coral);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.imgArray select:focus {
+  border-color: var(--color-coral);
+  outline: none;
+}
+
+.imgSetting {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.saveAndCheckbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 체크박스와 저장 버튼을 가운데 정렬 */
+  padding-top: 30px;
+}
+
+.checkboxLabel {
+  margin-top: 10px;
+  /* 간격 조절 */
+}
+
+.folderContainer {
+  display: flex;
+  flex-wrap: wrap;
+  /* 한 줄에 4개씩만 배치되고, 넘으면 다음 줄로 이동 */
+  justify-content: flex-start;
+  width: 72%;
+  /* 너비를 75%로 설정하여 폴더가 줄바꿈되도록 유도 */
+  margin: 40px auto 0;
+  padding: 0 60px;
+}
+
+.folder {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin: 7px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  /* 부드러운 전환 효과 */
+}
+
+.folderCheckbox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.folderModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.folderModal h1 {
+  text-align: center;
+}
+
+.folderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dropzone {
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+.dropzone p {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+}
+
+.dropzone button {
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.fileList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.fileItem button {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modalButton {
+  display: block;
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 8px 20px; /* 버튼 크기 */
+  font-size: 16px; /* 텍스트 크기 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  background-color: #e1888b; /* 배경색 */
+  border: none; /* 테두리 없음 */
+  color: white; /* 텍스트 색상 */
+  cursor: pointer; /* 포인터 커서 */
+  width: 150px; /* 고정된 너비 */
+}
+
+
+.imageModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.imageModalContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalImage {
+  max-width: 100%;
+  max-height: 80vh;
+}
+
+.imageModalContent button {
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}

@@ -4,50 +4,52 @@ nav {
   height: var(--header-height);
   display: flex;
   align-items: center;
-  border: 0.5px solid var(--color-coral);
-  background-color: var(--color-coral);
+  background-color: var(--color-light-grey);
 }
-
-
-.topBar{
-  
-  background-color: #F5D0A3;
-  height: 72px;
+.menuBtnContainer {
+  width: var(--header-height);
+  height: var(--header-height);
+  z-index: var(--z-90);
 }
-
-.groupListContainer {
-  width: 60px;
-  height: 100%;
+.menuBtn {
+  width: var(--header-height);
+  height: var(--header-height);
+  padding: 0;
+  font-size: var(--font-4xl);
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  left: 100px;
 }
-
-.WeFAMlogo{
+.logoContainer {
+  width: calc(var(--leftSidebar-width) - var(--header-height));
+  height: var(--header-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-90);
+}
+.logo {
+  width: 100%;
   height: 40px;
-  width: 190px;
-  position: relative;
-  left: 30%;
+  padding: 0 var(--space-sm);
 }
 
-.groupNameContainer {
-  position: relative;
-  text-align: center;
-  flex-grow: 1;
+.groupContainer {
+  position: absolute;
+  top: calc(var(--header-height) / 2);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: var(--header-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-80);
 }
 
-.groupNameButton{  /* 가족 그룹명 */
-  background: none;
-  border: none;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  position: static;
-  padding-right: 1.8cm; 
-  padding-bottom: 0.2cm;
-  
+.groupBtn {
+  font-size: var(--space-lg);
+  padding: 0;
 }
 
 .groupListBtn {
@@ -63,7 +65,8 @@ nav {
   color: black;
 }
 
-.modalOverlay { /* 모달띄웠을 때 back */
+.modalOverlay {
+  /* 모달띄웠을 때 back */
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;
@@ -75,7 +78,8 @@ nav {
   align-items: center;
 }
 
-.modalContent { /* 그룹 모달 창 */
+.modalContent {
+  /* 그룹 모달 창 */
   position: fixed;
   top: 0%; /* 화면 상단에 고정시키고 아래로 확장될 수 있도록 설정 */
   left: 50%;
@@ -90,7 +94,6 @@ nav {
   max-height: 60%; /* 모달 창의 최대 높이 설정 */
   overflow-y: auto; /* 내용이 많을 경우 스크롤 가능하도록 설정 */
   z-index: 1000;
-
 }
 
 .modalHeader {
@@ -100,11 +103,12 @@ nav {
   align-items: center;
   padding: 20px 0;
   border-bottom: 1px solid #ddd;
-  background-color: #F5D0A3;
+  background-color: var(--color-white);
   border-radius: 10px 10px 0 0;
 }
 
-.modalHeaderTop{ /* 메인 가족 그룹쪽 css */
+.modalHeaderTop {
+  /* 메인 가족 그룹쪽 css */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -117,8 +121,10 @@ nav {
   gap: 10px;
   width: 50px;
   height: 50px;
+  border-radius: 50%;
 }
-.profileContainer{ /* 밑에 있는 그룹 */
+.profileContainer {
+  /* 밑에 있는 그룹 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -135,12 +141,18 @@ nav {
   bottom: 15px;
 }
 
+.closeGroupButton h2{
+  font-size: var(--space-lg);
+  margin-top: 20px;
+}
+
 .modalBody {
   margin-top: 20px;
   text-align: center;
 }
 
-.groupSection { /* 밑에 있는 그룹쪽 css */
+.groupSection {
+  /* 밑에 있는 그룹쪽 css */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -150,8 +162,6 @@ nav {
 .groupSection:last-child {
   border-bottom: none; /* 마지막 그룹에는 구분선이 없도록 */
 }
-
-
 
 .profileImage {
   flex-shrink: 0;
@@ -169,16 +179,7 @@ nav {
   background: none;
   border: none;
   cursor: pointer;
-  color: #4CAF50;
-}
-
-.logoContainer {
-  width: 150px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-right: var(--space-md);
+  /* color: #4caf50; */
 }
 
 .logoContainer .logoLink {
@@ -228,8 +229,6 @@ nav {
   padding: var(--space-md);
 }
 
-
-
 .profileButton {
   width: 48px;
   height: 48px;
@@ -244,5 +243,11 @@ nav {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 0.5px solid var(--color-coral);
+  border: 0.5px solid var(--color-white);
+}
+
+@media (max-width: 1199px) {
+  .logoContainer {
+    display: none;
+  }
 }
