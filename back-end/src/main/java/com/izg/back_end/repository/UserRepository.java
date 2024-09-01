@@ -11,6 +11,8 @@ import com.izg.back_end.model.UserModel;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserModel, String> {
-	 // 특정 사용자의 가족 구성원을 찾는 메서드 정의
 	
+	// 특정 사용자의 가족 구성원을 찾는 메서드 정의
+    @Query("SELECT u FROM UserModel u JOIN JoiningModel j ON u.id = j.userId WHERE j.familyIdx = :familyIdx")
+    List<UserModel> findUsersByFamilyIdx(@Param("familyIdx") Integer familyIdx);
 }

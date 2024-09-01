@@ -152,3 +152,25 @@
   font-size: 32px;
   color: #ffff;
 }
+
+
+.commonBox {
+  background-color: #f8f8f8;
+  /* 연한 회색 배경 */
+  border-radius: 3px;
+  /* 둥근 모서리 */
+  padding: 4px 15px;
+  /* 내용물 여백 */
+  color: #000000;
+  /* 텍스트 색상 */
+  width: 100%;
+  /* 넓이 */
+  height: 38px;
+  margin-right: 10px;
+  font-size: 16px;
+  /* 텍스트 크기 */
+  display: flex;
+  /* 플렉스 박스 사용 */
+  align-items: center;
+  /* 세로 정렬 */
+}

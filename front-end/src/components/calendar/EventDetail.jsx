@@ -5,13 +5,21 @@ import { useState, useEffect, useRef } from "react";
 import {
   BsXLg,
   BsThreeDotsVertical,
-  BsChevronRight,
+  BsChevronCompactRight,
   BsPinMap,
 } from "react-icons/bs";
+import { RiArrowRightWideLine } from "react-icons/ri";
 import { FiMapPin } from "react-icons/fi";
-import MapComponent from "./Map";
-
-const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
+import { MapInDetail } from "./LocationMap";
+import { useSelector } from "react-redux";
+const EventDetail = ({
+  event,
+  onClose,
+  onDelete,
+  onEdit,
+  familyUsers,
+  familyName,
+}) => {
   const eventColor = event.backgroundColor;
   const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 열림/닫힘 상태
   const [eventData, setEventData] = useState(event); // event prop을 상태로 관리
@@ -29,13 +37,25 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
       });
     }
   }, [event]);
-
+  const userProfile = familyUsers.find((user) => user.id === event.userId);
   useEffect(() => {
+    if (event && event.start && !(event.start instanceof Date)) {
+      event.start = new Date(event.start);
+    }
+
+    if (event && event.end && !(event.end instanceof Date)) {
+      event.end = new Date(event.end);
+    }
+
     setEventData(event); // event prop이 변경될 때마다 eventData를 업데이트
   }, [event]);
 
   // 메뉴 클릭 핸들러
   const handleMenuClick = () => {
+    console.log("familyName", familyName);
+    console.log("familyUsers", familyUsers);
+    console.log(event);
+
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -86,6 +106,15 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
         <div className={styles.icon}>
           <BsXLg onClick={onClose} />
         </div>
+
+        <div className={styles.profileContainer}>
+          {/* 작성자 프로필 이미지와 호버 시 닉네임 표시 */}
+          <div className={styles.profileImageWrapper}>
+            <img src={userProfile.profileImg} className={styles.profileImage} />
+            <span className={styles.nicknameTooltip}>{userProfile.name}</span>
+          </div>
+        </div>
+
         <div className={styles.icon} style={{ marginLeft: "auto" }}>
           <BsThreeDotsVertical onClick={handleMenuClick} />
           {isMenuOpen && (
@@ -118,6 +147,7 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
           )}
         </div>
       </div>
+
       <div className={styles.title}>
         <h2 style={{ color: eventColor }}>{event.title}</h2>
       </div>
@@ -139,8 +169,10 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
           )}
         </div>
 
-        <BsChevronRight
-          className={styles.arrow}
+        <RiArrowRightWideLine
+          className={`${styles.arrow} ${
+            eventData.allDay ? styles.smallArrow : ""
+          }`}
           style={{ color: eventColor }}
         />
 
@@ -158,7 +190,7 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
       </div>
 
       {/* 지도  */}
-      {coordinates != null && (
+      {coordinates && (
         <div className={styles.locationContainer}>
           <div className={styles.field}>
             <FiMapPin
@@ -171,7 +203,7 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
           </div>
 
           <div className={styles.mapContainer}>
-            <MapComponent coordinates={coordinates} />
+            <MapInDetail coordinates={coordinates} />
           </div>
         </div>
       )}
@@ -181,8 +213,8 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
         <p>{event.content}</p>
       </div>
 
-      {/* Comment 부분 */}
-      <div className={styles.commentSection}>
+      {/*Comment 부분*/}
+      {/* <div className={styles.commentSection}>
         <div className={styles.comment}>
           <span>작성자: {event.userId}</span>
           <span>일정을 등록했습니다</span>
@@ -191,8 +223,9 @@ const EventDetail = ({ event, onClose, onDelete, onEdit }) => {
             {new Date(event.start).toLocaleTimeString()}
           </span>
         </div>
-      </div>
+      </div> */}
     </div>,
+
     document.body // 모달을 body에 추가
   );
 };
