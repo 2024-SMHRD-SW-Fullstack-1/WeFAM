@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import EventModal from "./EventModal";
-import { BsSearch, BsCalendarPlus } from "react-icons/bs";
+import { BsSearch, BsCalendarPlus, BsPlus } from "react-icons/bs";
 import styles from "./Calendar.module.css";
 import EventDetail from "./EventDetail";
 import "react-toastify/dist/ReactToastify.css";
@@ -422,6 +423,39 @@ const Calendar = () => {
     );
   };
 
+  useEffect(() => {
+    const searchButton = document.querySelector(".fc-customSearch-button");
+    const addButton = document.querySelector(".fc-customAddEvent-button");
+
+    if (searchButton) {
+      ReactDOM.render(
+        <BsSearch
+          style={{
+            fontSize: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />,
+        searchButton
+      );
+    }
+
+    if (addButton) {
+      ReactDOM.render(
+        <BsCalendarPlus
+          style={{
+            fontSize: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />,
+        addButton
+      );
+    }
+  }, []);
+
   return (
     <div className="main">
       {/* ToastContainer는 루트 컴포넌트에 포함 */}
@@ -457,16 +491,17 @@ const Calendar = () => {
               isSearchVisible ? styles["active"] : ""
             }`} // 애니메이션 클래스 적용
           />
+          {/*
           {/*검색 아이콘 */}
-          <BsSearch
+          {/* <BsSearch
             style={{ fontSize: "24px", cursor: "pointer" }}
             onClick={() => setIsSearchVisible(!isSearchVisible)} // 클릭 시 검색창 보이기/숨기기
-          />
+          /> */}
           {/*일정 추가 아이콘 */}
-          <BsCalendarPlus
+          {/* <BsCalendarPlus
             style={{ fontSize: "24px" }}
             onClick={handleAddEventClick}
-          />
+          /> */}
         </div>
         <FullCalendar
           ref={calendarRef} // ref 연결
@@ -478,7 +513,7 @@ const Calendar = () => {
           headerToolbar={{
             left: "title",
             center: "prev,today,next",
-            right: "dayGridMonth,timeGridWeek",
+            right: "customSearch,customAddEvent", // 커스텀 버튼 추가
           }}
           editable={true}
           buttonText={{
@@ -503,6 +538,16 @@ const Calendar = () => {
           dayMaxEvents={3}
           moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
           eventContent={renderEventContent}
+          customButtons={{
+            customSearch: {
+              text: "", // 텍스트 비움
+              click: () => setIsSearchVisible(!isSearchVisible),
+            },
+            customAddEvent: {
+              text: "", // 텍스트 비움
+              click: handleAddEventClick,
+            },
+          }}
         />
 
         {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
@@ -525,7 +570,6 @@ const Calendar = () => {
           />
         )}
       </div>
-      {/* 지도는 장소가 설정된 경우에만 모달 외부에 표시 */}
     </div>
   );
 };
