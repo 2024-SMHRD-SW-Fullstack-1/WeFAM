@@ -39,10 +39,17 @@ const FamilyManagement = () => {
     });
   };
 
+  // 바뀐 값을 DB에 저장하기
   const handleSaveChanges = () => {
-    console.log("프로필 업데이트:", selectedProfile);
-    // 여기에서 서버에 프로필 변경 요청을 보낼 수 있습니다.
-    closeModal();
+    axios.put('http://localhost:8089/wefam/update-profile', selectedProfile)
+    .then(response => {
+      console.log('프로필 업데이트 성공:', response.data);
+      closeModal(); // 모달 닫기
+      window.location.reload(); // 페이지 새로고침
+    })
+    .catch(error => {
+      console.error('프로필 업데이트 실패:', error);
+    });
   };
 
   return (
@@ -59,6 +66,7 @@ const FamilyManagement = () => {
               onClick={() => openModal(user)} 
             />
             <span>{user.name}</span>
+            <span className={styles.nickname}>({user.nick})</span>
           </div>
           <hr />
         </div>

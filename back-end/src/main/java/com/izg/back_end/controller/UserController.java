@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +56,7 @@ public class UserController {
     // 로그아웃 엔드포인트
     
     @PostMapping("/logout")
+    @CrossOrigin(methods = { RequestMethod.POST }) // 이 엔드포인트도 POST만 허용
     public ResponseEntity<Void> logout(HttpSession session) {
         session.invalidate(); // 세션 무효화
         return ResponseEntity.ok().build();
@@ -69,4 +72,16 @@ public class UserController {
 //    	return userService.getFamilyStaus();
 //    }
 //    
+ // 프로필 업데이트를 위한 엔드포인트 추가
+    @PutMapping("/update-profile")
+    public ResponseEntity<UserModel> updateProfile(@RequestBody UserModel updatedUser) {
+        try {
+            // 서비스 레이어에서 유저 프로필 업데이트
+            UserModel savedUser = userService.updateUserProfile(updatedUser);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    
 }

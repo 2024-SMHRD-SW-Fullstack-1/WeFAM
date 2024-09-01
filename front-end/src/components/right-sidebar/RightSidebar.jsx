@@ -74,7 +74,7 @@ const RightSidebar = () => {
 
               <img src={user.image} className={styles.userImage} alt={user.name} />
               <span className={styles.userName}>{user.name}</span>
-              <span>{user.nick}</span>
+              <span>({user.nick})</span>
               <span className={`${styles.status} ${user.online ? styles.online : styles.offline}`}></span>
             </li>
           ))}
