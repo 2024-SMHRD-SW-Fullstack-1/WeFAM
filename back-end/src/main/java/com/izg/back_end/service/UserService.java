@@ -101,16 +101,36 @@ public class UserService {
 			userDTO.setBirth(LocalDate.now()); // 기본값 설정 또는 예외 처리
 		}
 
-		UserModel user = new UserModel();
-		user.setId(userDTO.getId());
-		user.setName(userDTO.getName());
-		user.setNick(userDTO.getNick());
-		user.setBirth(userDTO.getBirth());
-		user.setProfileImg(userDTO.getProfileImg());
-		user.setJoinedAt(userDTO.getJoinedAt());
-		user.setLoginSource(userDTO.getLoginSource());
+		 // 기존 사용자 확인
+        UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
 
-		userRepository.save(user);
+        if (existingUser != null) {
+            // 기존 사용자 정보 업데이트
+            existingUser.setName(userDTO.getName());
+            existingUser.setNick(userDTO.getNick());
+            existingUser.setBirth(userDTO.getBirth());
+            existingUser.setProfileImg(userDTO.getProfileImg());
+            existingUser.setLoginSource(userDTO.getLoginSource());
+            // joined_at 필드는 업데이트하지 않음 (처음 가입된 시간 유지)
+        } else {
+            // 새로운 사용자 저장
+            UserModel newUser = new UserModel();
+            newUser.setId(userDTO.getId());
+            newUser.setName(userDTO.getName());
+            newUser.setNick(userDTO.getNick());
+            newUser.setBirth(userDTO.getBirth());
+            newUser.setProfileImg(userDTO.getProfileImg());
+            newUser.setJoinedAt(userDTO.getJoinedAt());
+            newUser.setLoginSource(userDTO.getLoginSource());
+
+            userRepository.save(newUser);
+        }
+
+        // 기존 사용자도 업데이트를 진행한 후 저장
+        if (existingUser != null) {
+            userRepository.save(existingUser);
+        }
+    
 	}
 
 	 public List<UserModel> getUsersInJoining() {
