@@ -131,7 +131,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
-
               <span className={styles.writer}>{feed.id}</span>
               <span>ㆍ</span>
               <span className={styles.time}>{elapsedTime(feed.postedAt)}</span>
@@ -148,14 +147,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           <BsThreeDots />
           {isOptionsVisible && (
             <ul className={styles.options}>
-              <li>
-                <button
-                  className="option"
-                  onClick={() => handleShareFeed(feed.feedIdx)}
-                >
-                  공유
-                </button>
-              </li>
               {writerId === userData.id && (
                 <>
                   <li>
