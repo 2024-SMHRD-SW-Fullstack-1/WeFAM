@@ -57,7 +57,6 @@ const Calendar = () => {
   };
 
   // 그룹원 일정 가져오기
-
   const fetchEvents = async () => {
     try {
       const response = await axios.get("http://localhost:8089/wefam/calendar");
@@ -338,7 +337,6 @@ const Calendar = () => {
     const endDate = new Date(event.end);
 
     const sameDate = startDate.toDateString() === endDate.toDateString();
-
     const startTime = event.start
       ? new Date(event.start).toLocaleTimeString([], {
           hour: "2-digit",
@@ -408,7 +406,6 @@ const Calendar = () => {
             >
               {event.title}
             </span>
-
             <span
               style={{
                 textAlign: "right",
@@ -441,7 +438,6 @@ const Calendar = () => {
         theme="light"
         z-index="100"
       />
-
       {/* 검색 기능 */}
       <div style={{ width: "90%" }}>
         <div

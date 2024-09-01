@@ -19,21 +19,21 @@ const LeftSidebar = () => {
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
 
-const handleLogout = async () => {
-  try {
-    // 로그아웃 API 호출 (예: 세션 삭제)
-    await axios.post('http://localhost:8089/wefam/logout');
-    
-    // 세션 삭제 후 카카오 로그인 동의 화면으로 돌아가기 위해
-    window.localStorage.clear(); // 로컬 스토리지 삭제
-    window.sessionStorage.clear(); // 세션 스토리지 삭제
+  const handleLogout = async () => {
+    try {
+      // 로그아웃 API 호출 (예: 세션 삭제)
+      await axios.post("http://localhost:8089/wefam/logout");
 
-    // 홈 화면으로 리디렉션
-    nav("/");
-  } catch (error) {
-    console.error("로그아웃 중 에러 발생:", error);
-  }
-};
+      // 세션 삭제 후 카카오 로그인 동의 화면으로 돌아가기 위해
+      window.localStorage.clear(); // 로컬 스토리지 삭제
+      window.sessionStorage.clear(); // 세션 스토리지 삭제
+
+      // 홈 화면으로 리디렉션
+      nav("/");
+    } catch (error) {
+      console.error("로그아웃 중 에러 발생:", error);
+    }
+  };
 
   return (
     <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
@@ -92,7 +92,7 @@ const handleLogout = async () => {
               style={{ cursor: "pointer" }}
             >
               <CiForkAndKnife className={styles.categoryItemLogo} />
-              <span>요리법</span>
+              <span>요리사</span>
             </span>
           </li>
           <li>
@@ -103,12 +103,12 @@ const handleLogout = async () => {
               style={{ cursor: "pointer" }}
             >
               <CiImageOn className={styles.categoryItemLogo} />
-              <span>사진첩</span>
+              <span>가족 앨범</span>
             </span>
           </li>
         </ul>
 
-        {/* 세팅 */}
+        {/* 가족 정보 */}
         <ul className={styles.set}>
           <li>
             <span
@@ -117,13 +117,11 @@ const handleLogout = async () => {
               }}
             >
               <CiSettings className={styles.categoryItemLogo} />
-              <span>설정</span>
+              <span>가족 정보</span>
             </span>
           </li>
           <li>
-            <span
-              onClick={handleLogout}
-            >
+            <span onClick={handleLogout}>
               <CiLogout className={styles.categoryItemLogo} />
               <span>로그아웃</span>
             </span>
