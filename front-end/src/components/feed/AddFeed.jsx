@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "./AddFeed.module.css";
 import UploadImageModal from "./UploadImageModal";
 import GameModal from "./game/GameModal";
@@ -9,8 +9,9 @@ import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { clearImages } from "../../features/imagesOnFeedSlice";
 
-const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
+const AddFeed = React.memo(({ onAddFeed, onGetJoiningData, onGetAllFeeds }) => {
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
@@ -20,7 +21,13 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
 
   // Redux에서 로그인한 사용자 데이터 및 이미지를 가져오기
   const userData = useSelector((state) => state.user.userData);
-  const images = useSelector((state) => state.imagesOnFeed);
+  const images = useSelector((state) => state.imagesOnFeed.images);
+  console.log("images : ", images);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // 페이지 로드 시 이미지 상태를 초기화
+    dispatch(clearImages());
+  }, [dispatch]);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -58,40 +65,6 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
 
   return (
     <div className={styles.addFeed}>
-      <div className={styles.imagePreviewWrapper}>
-        {images.length > 0 ? (
-          <div className={styles.imagePreviewContainer}>
-            {currentIndex > 0 && (
-              <button className={styles.arrowButton} onClick={handlePrev}>
-                <MdKeyboardArrowLeft />
-              </button>
-            )}
-
-            <div className={styles.imagePreview}>
-              {images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image.url}
-                  alt={`preview-${index}`}
-                  style={{
-                    transform: `translateX(-${currentIndex * 100}%)`,
-                    transition: "transform 0.3s ease",
-                  }}
-                />
-              ))}
-            </div>
-
-            {currentIndex + 5 < images.length && (
-              <button className={styles.arrowButton} onClick={handleNext}>
-                <MdKeyboardArrowRight />
-              </button>
-            )}
-          </div>
-        ) : (
-          <p>이미지가 없습니다.</p>
-        )}
-      </div>
-
       <textarea
         className={styles.content}
         placeholder="무슨 생각을 하고 계신가요?"
@@ -117,13 +90,17 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
         </span>
         <span>
           <button className={styles.addFeedBtn} onClick={handleAddFeed}>
-            <PiArrowBendDownLeft /> e2baf217768fc0d3dd68d150b193eed37d825312
+            <PiArrowBendDownLeft />
           </button>
         </span>
       </div>
 
       {isUploadImageModalOpen && (
-        <UploadImageModal onClose={() => setIsUploadImageModalOpen(false)} />
+        <UploadImageModal
+          onGetJoiningData={onGetJoiningData}
+          onGetAllFeeds={onGetAllFeeds}
+          onClose={() => setIsUploadImageModalOpen(false)}
+        />
       )}
 
       {isGameModalOpen && (

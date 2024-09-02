@@ -1,47 +1,46 @@
-.imgModal {
-  position: relative;
-  width: 768px;
-  height: 768px;
+.main {
+  width: 960px;
+  height: 640px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-
 .dropzone {
-  border: 2px dashed #ccc;
+  border: 1px solid #ccc;
   text-align: center;
   color: #aaa;
   width: 640px;
   height: 640px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-md);
 }
 .dropzone.dragging {
   border-color: #000;
   color: #000;
 }
 
-.filebox .uploadName {
-  display: inline-block;
-  height: 40px;
-  padding: 0 10px;
-  vertical-align: middle;
-  border: 1px solid #dddddd;
-  width: 78%;
-  color: #999999;
+.dropzoneIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 6rem;
+  color: var(--color-black);
 }
 
-.filebox label {
+.dropzoneBtn label {
   display: inline-block;
   padding: 10px 20px;
   color: #fff;
   vertical-align: middle;
-  background-color: #999999;
+  background-color: var(--color-sunset);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   height: 40px;
-  margin-left: 10px;
 }
 
-.filebox input[type="file"] {
+.dropzoneBtn input[type="file"] {
   position: absolute;
   width: 0;
   height: 0;
@@ -50,8 +49,12 @@
   border: 0;
 }
 
+.preview {
+  position: relative;
+}
+
 .preview,
-img {
+.preview > img {
   width: 640px;
   height: 640px;
 }
@@ -72,4 +75,44 @@ img {
 }
 .rightArrow {
   right: var(--space-sm);
+}
+
+.addFeed {
+  width: 320px;
+  height: 100%;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.profileContainer {
+  width: 100%;
+  height: calc(40px + 2 * var(--space-md));
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+}
+.profileImg,
+.profileImg > img {
+  width: 40px;
+  height: 40px;
+}
+.profileImg > img {
+  border-radius: 50%;
+}
+.profileNick {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  width: 100%;
+  height: calc(100% - 40px - 2 * var(--space-md));
+  padding: var(--space-sm);
+  resize: none;
+  font-size: var(--font-md);
+  border: none;
+  outline: none;
 }
