@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
@@ -16,8 +16,22 @@ import { CiLogout } from "react-icons/ci";
 import axios from "axios";
 
 const LeftSidebar = () => {
+  const [familyNick, setFamilyNick] = useState("");
+  const userData = useSelector((state) => state.user.userData);
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
+
+  useEffect(() => {
+    if (userData) {
+      axios.get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
+        .then(response => {
+          setFamilyNick(response.data);
+        })
+        .catch(error => {
+          console.error("가족 이름을 가져오는 중 에러 발생:", error);
+        });
+    }
+  }, [userData]);
 
   // 쿠키 삭제 함수
 const deleteAllCookies = () => {
@@ -59,7 +73,7 @@ const handleLogout = async () => {
           src={profileThumbnail}
           alt="프로필"
         ></img>
-        <div className={styles.profileName}>구찌캣</div>
+        <div className={styles.profileName}>{familyNick}</div>
       </div>
 
       {/* 카테고리 */}
