@@ -70,7 +70,7 @@ const handleLogout = async () => {
       <div className={styles.profile}>
         <img
           className={styles.profileThumbnail}
-          src={profileThumbnail}
+          src={userData.profileImg}
           alt="프로필"
         ></img>
         <div className={styles.profileName}>{familyNick}</div>

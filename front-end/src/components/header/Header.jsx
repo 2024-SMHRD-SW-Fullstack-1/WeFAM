@@ -45,6 +45,8 @@ const Header = () => {
     .get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
     .then((response) => {
       setFamilyMotto(response.data);
+      console.log(response.data);
+      
     })
     .catch((error) => {
       console.error("가훈 가져오기 에러:", error);
