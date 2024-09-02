@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import modalStyles from "../modal/Modal.module.css";
 import styles from "./FeedDetailModal.module.css";
 import Preloader from "../preloader/Preloader";
+
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-const FeedDetailModal = ({ feed, onClose }) => {
+const FeedEditModal = ({ feed, onClose, onSave }) => {
+  // 부모 FeedItem에서 Feed는 받아지는 것을 확인 (feed 안에는 idx가 있음).
+  // idx를 통해 db에서 피드 데이터 가져오기.
   const [isLoading, setIsLoading] = useState(true);
   const [imagePreview, setImagePreview] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [profileImg, setProfileImg] = useState("");
-  const [writer, setWriter] = useState("");
-  const [content, setContent] = useState("");
+  const [writerProfileImg, setWriterProfileImg] = useState("");
+  const [writerNick, setWriterNick] = useState("");
+  const [feedContent, setFeedContent] = useState("");
+
+  // 현재 슬라이드 번호와 전체 슬라이드 수
+  const currentSlideNumber = currentSlide + 1;
+  const totalSlides = imagePreview.length;
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -44,9 +51,9 @@ const FeedDetailModal = ({ feed, onClose }) => {
         const feedResponse = await axios.get(
           `http://localhost:8089/wefam/get-feed-detail/${feed.idx}`
         );
-        setProfileImg(feedResponse.data.profileImg);
-        setWriter(feedResponse.data.nick);
-        setContent(feedResponse.data.feedContent);
+        setWriterProfileImg(feedResponse.data.profileImg);
+        setWriterNick(feedResponse.data.nick);
+        setFeedContent(feedResponse.data.feedContent);
       } catch (error) {
         console.error("수정할 피드의 데이터 요청 에러 :", error);
       }
@@ -67,9 +74,11 @@ const FeedDetailModal = ({ feed, onClose }) => {
     setCurrentSlide((prev) => Math.min(prev + 1, imagePreview.length - 1));
   };
 
-  // 현재 슬라이드 번호와 전체 슬라이드 수
-  const currentSlideNumber = currentSlide + 1;
-  const totalSlides = imagePreview.length;
+  // 저장 버튼 클릭하면 feed.idx와 content를 서버로 보내어 피드 업데이트.
+  const handleSaveClick = () => {
+    onSave(feed.idx, feedContent);
+    onClose();
+  };
 
   // 로딩 상태에 따라 렌더링
   return ReactDOM.createPortal(
@@ -120,16 +129,16 @@ const FeedDetailModal = ({ feed, onClose }) => {
             <div className={styles.contentContainer}>
               <div className={styles.profileContainer}>
                 <div className={styles.profileImg}>
-                  <img src={profileImg} alt="" />
+                  <img src={writerProfileImg} alt="" />
                 </div>
-                <div className={styles.profileNick}>{writer}</div>
+                <div className={styles.profileNick}>{writerNick}</div>
               </div>
               {/* 사용자 */}
               <textarea
                 className={styles.content}
-                name="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                name="feedContent"
+                value={feedContent}
+                onChange={(e) => setFeedContent(e.target.value)}
               ></textarea>
             </div>
           </div>
@@ -137,6 +146,12 @@ const FeedDetailModal = ({ feed, onClose }) => {
           <div className={modalStyles.modalFooter}>
             <button className={modalStyles.cancelButton} onClick={onClose}>
               취소
+            </button>
+            <button
+              className={modalStyles.saveButton}
+              onClick={handleSaveClick}
+            >
+              수정
             </button>
           </div>
         </div>
@@ -146,4 +161,4 @@ const FeedDetailModal = ({ feed, onClose }) => {
   );
 };
 
-export default FeedDetailModal;
+export default FeedEditModal;
