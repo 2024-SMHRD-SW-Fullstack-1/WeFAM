@@ -114,6 +114,11 @@ public class UserService {
 	            existingUser.setNick(userDTO.getNick()); // 카카오에서 받은 닉네임으로 업데이트
 	        }
 	        
+	        // 생년월이이 설정되있으면 그대로 유지
+	        if (existingUser.getBirth() == null || userDTO.getBirth() != null) {
+	        	existingUser.setBirth(userDTO.getBirth());
+	        }
+	        
 	        // 다른 필드들도 동일하게 필요에 따라 업데이트를 선택
 	        existingUser.setName(userDTO.getName());
 	        existingUser.setBirth(userDTO.getBirth());
