@@ -90,12 +90,12 @@ const MapSearchInput = ({
   return (
     <div className={styles.searchContainer}>
       <input
-        type="text"
+        type='text'
         className={styles.customInput} // customInput 클래스를 사용
         value={searchTerm}
         onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
-        // placeholder="장소를 입력하세요"
+        placeholder='장소를 입력하세요'
       />
       {searchTerm && (
         <button className={styles.clearButton} onClick={handleClearLocation}>
@@ -108,8 +108,7 @@ const MapSearchInput = ({
             <li
               key={index}
               onClick={() => handlePlaceSelect(place)}
-              className={selectedIndex === index ? styles.selected : ""}
-            >
+              className={selectedIndex === index ? styles.selected : ""}>
               <div className={styles.placeName}>{place.place_name}</div>
               <div className={styles.placeAddress}>{place.address_name}</div>
             </li>
