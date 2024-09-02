@@ -17,6 +17,7 @@ import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
 import { MapInModal } from "./LocationMap";
 import MapSearchInput from "./LocationSearch";
+import UploadImageModal from "../feed/UploadImageModal";
 
 const generateTimeOptions = () => {
   const options = [];
@@ -77,8 +78,9 @@ const EventModal = ({
     lat: event.latitude,
     lng: event.longitude,
   });
-
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const userProfile = familyUsers.find((user) => user.id === event.userId);
+  const [previewVisible, setPreviewVisible] = useState(false);
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -245,6 +247,23 @@ const EventModal = ({
     setIsAllDay((prev) => !prev);
   };
 
+  // 사진 추가
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    const newSelectedFiles = files.map((file) => ({
+      name: file.name,
+      url: URL.createObjectURL(file),
+    }));
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newSelectedFiles]);
+  };
+
+  // 사진 삭제
+  const handleRemoveFile = (indexToRemove) => {
+    setSelectedFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
   return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
@@ -253,9 +272,8 @@ const EventModal = ({
           <input
             className={styles.title}
             value={title || ""}
-            placeholder="제목"
-            onChange={handleTitleChange}
-          ></input>
+            placeholder='제목'
+            onChange={handleTitleChange}></input>
 
           <BsThreeDotsVertical className={styles.threeDots} />
         </div>
@@ -271,7 +289,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -279,8 +297,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -295,8 +312,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -308,7 +324,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
           </div>
@@ -323,7 +339,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -412,8 +428,7 @@ const EventModal = ({
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}
-                  >
+                    }}>
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}
@@ -448,7 +463,53 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <span>첨부파일</span>
+              <label htmlFor='file-upload'>
+                <span className={styles.commonBox}>사진 추가</span>
+              </label>
+              <input
+                id='file-upload'
+                type='file'
+                accept='image/*'
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className={styles.imgTextBox}>
+              {selectedFiles.map((file, index) => (
+                <div
+                  key={index}
+                  className={styles.previewWrapper}
+                  onMouseEnter={(e) => {
+                    const preview = e.currentTarget.querySelector(
+                      `.${styles.preview}`
+                    );
+                    if (preview) {
+                      preview.style.display = "block";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const preview = e.currentTarget.querySelector(
+                      `.${styles.preview}`
+                    );
+                    if (preview) {
+                      preview.style.display = "none";
+                    }
+                  }}>
+                  <span className={styles.fileNameWrapper}>
+                    <span className={styles.fileName}>{file.name}</span>
+                    <button
+                      type='button'
+                      className={styles.removeButton}
+                      onClick={() => handleRemoveFile(index)}>
+                      &times;
+                    </button>
+                  </span>
+                  <div className={styles.preview} style={{ display: "none" }}>
+                    <img src={file.url} alt='Selected file preview' />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
