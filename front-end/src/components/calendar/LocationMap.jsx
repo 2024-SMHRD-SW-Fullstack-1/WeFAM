@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./LocationMap.module.css";
+import { MdPadding } from "react-icons/md";
 
 // 공통 지도를 렌더링하는 컴포넌트
 const MapContainer = ({ coordinates, mapId }) => {

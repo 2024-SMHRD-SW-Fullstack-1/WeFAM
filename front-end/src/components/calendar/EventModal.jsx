@@ -17,7 +17,6 @@ import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
 import { MapInModal } from "./LocationMap";
 import MapSearchInput from "./LocationSearch";
-import UploadImageModal from "../feed/UploadImageModal";
 
 const generateTimeOptions = () => {
   const options = [];
@@ -81,6 +80,9 @@ const EventModal = ({
   const [selectedFiles, setSelectedFiles] = useState([]);
   const userProfile = familyUsers.find((user) => user.id === event.userId);
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
+  const [files, setFiles] = useState([]);
+  const [deletedFileIds, setDeletedFileIds] = useState([]);
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -88,16 +90,26 @@ const EventModal = ({
 
   const handleClearCoordinates = () => {
     setLocation(""); // 지명 초기화
-    setCoordinates(0); // 좌표를 초기화
+    setCoordinates({ lat: 0, lng: 0 }); // 좌표 초기화
   };
 
   useEffect(() => {
-    // 모달이 열릴 때, 기존 좌표를 설정
-    setCoordinates({
-      lat: event.latitude,
-      lng: event.longitude,
-    });
+    // event가 변경되고, coordinates가 초기화되지 않았을 때만 좌표를 설정
+    if (event && event.latitude && event.longitude && coordinates === 0) {
+      setCoordinates({
+        lat: event.latitude,
+        lng: event.longitude,
+      });
+    }
   }, [event]);
+
+  // 이벤트가 변경될 때마다 savedFiles 상태를 재설정하지 않도록 수정
+  useEffect(() => {
+    if (event && event.files) {
+      setSavedFiles(event.files);
+    }
+    // 의존성 배열에서 event를 제거하여, event가 변경될 때마다 초기화되지 않도록 합니다.
+  }, []); // 빈 배열을 의존성 배열로 전달하여, 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
 
   // 입력 변경 시 상태 업데이트
   const handleTitleChange = (e) => {
@@ -109,6 +121,7 @@ const EventModal = ({
     setAlarmText(`${time} ${unit}`); // 알림 텍스트 업데이트
   };
 
+  // 위치 저장
   const handlePlaceSelect = (place) => {
     setLocation(place.place_name);
     setCoordinates({ lat: parseFloat(place.y), lng: parseFloat(place.x) }); // 좌표 설정
@@ -116,8 +129,11 @@ const EventModal = ({
 
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
-    console.log("Saving event with color:", selectedColor); // 디버그용 로그
-    console.log("Saving event with location:", location); // 디버그용 로그
+    // 새로 추가된 파일
+    const newFiles = selectedFiles.filter(
+      (file) => !savedFiles.some((savedFile) => savedFile.name === file.name)
+    );
+
     onSave({
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
@@ -132,6 +148,8 @@ const EventModal = ({
       latitude: coordinates.lat, // 좌표 정보에서 위도 추출
       longitude: coordinates.lng, // 좌표 정보에서 경도 추출
       allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
+      newFiles, // 새로 추가된 파일만 전달
+      deletedFileIds, // 삭제된 파일 정보 전달
     });
   };
 
@@ -233,12 +251,22 @@ const EventModal = ({
     if (isAllDay) {
       // 종일 이벤트일 경우 시간을 자정으로 설정
       const newStartDate = new Date(startDate);
-      newStartDate.setHours(0, 0, 0, 0);
-      setStartDate(newStartDate);
-
       const newEndDate = new Date(endDate);
-      newEndDate.setHours(23, 59, 59, 999);
-      setEndDate(newEndDate);
+
+      // startDate와 endDate가 이미 설정된 값과 동일한지 확인
+      if (newStartDate.getHours() !== 0 || newStartDate.getMinutes() !== 0) {
+        newStartDate.setHours(0, 0, 0, 0);
+        setStartDate(newStartDate);
+      }
+
+      if (
+        newEndDate.getHours() !== 23 ||
+        newEndDate.getMinutes() !== 59 ||
+        newEndDate.getSeconds() !== 59
+      ) {
+        newEndDate.setHours(23, 59, 59, 999);
+        setEndDate(newEndDate);
+      }
     }
   }, [isAllDay, startDate, endDate]);
 
@@ -247,21 +275,45 @@ const EventModal = ({
     setIsAllDay((prev) => !prev);
   };
 
-  // 사진 추가
+  // 파일 선택 핸들러
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     const newSelectedFiles = files.map((file) => ({
+      file,
       name: file.name,
       url: URL.createObjectURL(file),
     }));
+
+    // 최대 10개의 파일로 제한
+    if (selectedFiles.length + newSelectedFiles.length > 10) {
+      alert("이미지는 최대 10개까지 업로드할 수 있습니다.");
+      return;
+    }
+
     setSelectedFiles((prevFiles) => [...prevFiles, ...newSelectedFiles]);
   };
 
-  // 사진 삭제
+  // 파일 제거 핸들러
   const handleRemoveFile = (indexToRemove) => {
-    setSelectedFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToRemove)
-    );
+    if (indexToRemove < savedFiles.length) {
+      // savedFiles에서 파일 삭제
+      const fileToRemove = savedFiles[indexToRemove];
+
+      // 삭제된 파일의 fileIdx를 저장
+      setDeletedFileIds((prev) => [...prev, fileToRemove.fileIdx]);
+
+      const updatedSavedFiles = savedFiles.filter(
+        (_, index) => index !== indexToRemove
+      );
+      setSavedFiles(updatedSavedFiles);
+    } else {
+      // selectedFiles에서 파일 삭제
+      const adjustedIndex = indexToRemove - savedFiles.length;
+      const updatedSelectedFiles = selectedFiles.filter(
+        (_, index) => index !== adjustedIndex
+      );
+      setSelectedFiles(updatedSelectedFiles);
+    }
   };
 
   return ReactDOM.createPortal(
@@ -272,8 +324,9 @@ const EventModal = ({
           <input
             className={styles.title}
             value={title || ""}
-            placeholder='제목'
-            onChange={handleTitleChange}></input>
+            placeholder="제목"
+            onChange={handleTitleChange}
+          ></input>
 
           <BsThreeDotsVertical className={styles.threeDots} />
         </div>
@@ -289,7 +342,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -297,7 +350,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -312,7 +366,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -324,7 +379,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
           </div>
@@ -339,7 +394,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type='checkbox'
+                type="checkbox"
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -428,7 +483,8 @@ const EventModal = ({
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}>
+                    }}
+                  >
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}
@@ -463,20 +519,20 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <label htmlFor='file-upload'>
+              <label htmlFor="file-upload">
                 <span className={styles.commonBox}>사진 추가</span>
               </label>
               <input
-                id='file-upload'
-                type='file'
-                accept='image/*'
+                id="file-upload"
+                type="file"
+                accept="image/*"
                 multiple
                 style={{ display: "none" }}
                 onChange={handleFileChange}
               />
             </div>
             <div className={styles.imgTextBox}>
-              {selectedFiles.map((file, index) => (
+              {savedFiles.concat(selectedFiles).map((file, index) => (
                 <div
                   key={index}
                   className={styles.previewWrapper}
@@ -495,18 +551,28 @@ const EventModal = ({
                     if (preview) {
                       preview.style.display = "none";
                     }
-                  }}>
+                  }}
+                >
                   <span className={styles.fileNameWrapper}>
-                    <span className={styles.fileName}>{file.name}</span>
+                    <span className={styles.fileName}>
+                      {file.fileRname || file.name}
+                    </span>
                     <button
-                      type='button'
+                      type="button"
                       className={styles.removeButton}
-                      onClick={() => handleRemoveFile(index)}>
+                      onClick={() => handleRemoveFile(index)}
+                    >
                       &times;
                     </button>
                   </span>
                   <div className={styles.preview} style={{ display: "none" }}>
-                    <img src={file.url} alt='Selected file preview' />
+                    <img
+                      src={
+                        file.url ||
+                        `data:image/${file.fileExtension};base64,${file.fileData}`
+                      }
+                      alt="Selected file preview"
+                    />
                   </div>
                 </div>
               ))}
