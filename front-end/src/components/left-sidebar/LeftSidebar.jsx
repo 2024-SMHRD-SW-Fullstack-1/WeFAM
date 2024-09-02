@@ -107,7 +107,7 @@ const handleLogout = async () => {
               style={{ cursor: "pointer" }}
             >
               <CiForkAndKnife className={styles.categoryItemLogo} />
-              <span>요리법</span>
+              <span>요리사</span>
             </span>
           </li>
           <li>
@@ -118,12 +118,12 @@ const handleLogout = async () => {
               style={{ cursor: "pointer" }}
             >
               <CiImageOn className={styles.categoryItemLogo} />
-              <span>사진첩</span>
+              <span>가족 앨범</span>
             </span>
           </li>
         </ul>
 
-        {/* 세팅 */}
+        {/* 가족 정보 */}
         <ul className={styles.set}>
           <li>
             <span
@@ -136,9 +136,7 @@ const handleLogout = async () => {
             </span>
           </li>
           <li>
-            <span
-              onClick={handleLogout}
-            >
+            <span onClick={handleLogout}>
               <CiLogout className={styles.categoryItemLogo} />
               <span>로그아웃</span>
             </span>

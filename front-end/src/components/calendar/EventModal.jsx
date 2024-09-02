@@ -13,11 +13,10 @@ import {
   BsThreeDotsVertical,
 } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
-
 import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
-import MapComponent from "./Map";
-import MapSearchInput from "./MapSearch";
+import { MapInModal } from "./LocationMap";
+import MapSearchInput from "./LocationSearch";
 
 const generateTimeOptions = () => {
   const options = [];
@@ -53,8 +52,15 @@ const colorOptions = [
   { value: "pale-blue", label: "페일 블루", color: "#b6cfe2" }, // --color-pale-blue
 ];
 
-const EventModal = ({ event, onClose, onSave, onMap }) => {
-  const [isDetailOpen, setIsDetailOpen] = useState(false); // 상세 설정 상태 관리
+const EventModal = ({
+  event,
+  onClose,
+  onSave,
+  isDetailOpen: initialIsDetailOpen,
+  familyUsers,
+  familyName,
+}) => {
+  const [isDetailOpen, setIsDetailOpen] = useState(initialIsDetailOpen); // 초기값을 prop으로 받음
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
   const [alarmText, setAlarmText] = useState("10분 전"); // 알림 텍스트 기본값
   const [selectedOption, setSelectedOption] = useState(null); // 색상 선택 상태
@@ -67,7 +73,29 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
   const [title, setTitle] = useState(event.title);
   const [location, setLocation] = useState("");
-  const [coordinates, setCoordinates] = useState(null); // 좌표 상태 추가
+  const [coordinates, setCoordinates] = useState({
+    lat: event.latitude,
+    lng: event.longitude,
+  });
+
+  const userProfile = familyUsers.find((user) => user.id === event.userId);
+
+  useEffect(() => {
+    setIsDetailOpen(initialIsDetailOpen);
+  }, [initialIsDetailOpen]);
+
+  const handleClearCoordinates = () => {
+    setLocation(""); // 지명 초기화
+    setCoordinates(0); // 좌표를 초기화
+  };
+
+  useEffect(() => {
+    // 모달이 열릴 때, 기존 좌표를 설정
+    setCoordinates({
+      lat: event.latitude,
+      lng: event.longitude,
+    });
+  }, [event]);
 
   // 입력 변경 시 상태 업데이트
   const handleTitleChange = (e) => {
@@ -99,8 +127,8 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
       backgroundColor: selectedColor,
       userId: event.userId,
       location: location,
-      latitude: coordinates?.lat, // 좌표 정보에서 위도 추출
-      longitude: coordinates?.lng, // 좌표 정보에서 경도 추출
+      latitude: coordinates.lat, // 좌표 정보에서 위도 추출
+      longitude: coordinates.lng, // 좌표 정보에서 경도 추출
       allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
     });
   };
@@ -152,7 +180,6 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
     } else if (hours === 0) {
       hours = 12;
     }
-
     return `${period} ${hours}:${minutes}`;
   };
 
@@ -200,11 +227,9 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
     setEndDate(newEndDate);
   };
 
-  // 종일 이벤트 토글
-  const toggleAllDay = () => {
-    setIsAllDay((prev) => !prev);
-    if (!isAllDay) {
-      // 종일 이벤트가 선택되면 시간을 제거하고, 시간을 자정으로 설정
+  useEffect(() => {
+    if (isAllDay) {
+      // 종일 이벤트일 경우 시간을 자정으로 설정
       const newStartDate = new Date(startDate);
       newStartDate.setHours(0, 0, 0, 0);
       setStartDate(newStartDate);
@@ -213,10 +238,14 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
       newEndDate.setHours(23, 59, 59, 999);
       setEndDate(newEndDate);
     }
+  }, [isAllDay, startDate, endDate]);
+
+  // 종일 이벤트 토글
+  const toggleAllDay = () => {
+    setIsAllDay((prev) => !prev);
   };
 
   return ReactDOM.createPortal(
-    // <MapComponent coordinates={coordinates} />
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
         {/* 제목 */}
@@ -310,7 +339,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             className={styles.icon}
             style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
           />
-          <span>작성자</span>
+          <div className={styles.commonBox}>{userProfile.name}</div>
         </div>
 
         {/**사용자 */}
@@ -319,7 +348,8 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             className={styles.icon}
             style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
           />
-          <span>그룹</span>
+
+          <div className={styles.commonBox}>{familyName}</div>
         </div>
 
         {/* 색상 선택 */}
@@ -394,15 +424,21 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             </div>
 
             {/*지도 설정 */}
-            <MapComponent coordinates={coordinates} />
+            <MapInModal coordinates={coordinates} />
             <br />
+
             <div className={styles.field}>
               <FiMapPin
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
               <div>
-                <MapSearchInput onPlaceSelect={handlePlaceSelect} />
+                <MapSearchInput
+                  onPlaceSelect={handlePlaceSelect}
+                  onCoordinatesClear={handleClearCoordinates}
+                  location={location} // location을 props로 전달
+                  event={event}
+                />
               </div>
             </div>
 

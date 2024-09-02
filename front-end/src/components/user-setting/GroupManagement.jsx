@@ -1,10 +1,8 @@
 // PersonalInfo.js
-import React, { useState, useEffect } from 'react';
-import styles from './GroupManagement.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./GroupManagement.module.css";
 import { useSelector } from "react-redux";
-import axios from 'axios';
-
-
+import axios from "axios";
 
 const GroupManagement = () => {
   const [userImages, setUserImages] = useState([]);
@@ -25,9 +23,6 @@ const GroupManagement = () => {
   //   }
   // }, [userData]); // userData가 변경될 때마다 실행
 
-
-
-
   return (
     <div className={styles.personalInfo}>
       <h1>그룹 관리</h1>
@@ -47,7 +42,8 @@ const GroupManagement = () => {
       <div className={styles.profileContainer}>
         <span>우리 가족 이름</span>
         <div>
-          <input type="text" className={styles.editNick} /> {/* value={userData.name} */ }
+          <input type="text" className={styles.editNick} />{" "}
+          {/* value={userData.name} */}
           <button className={styles.editNickButton}>수정</button>
         </div>
       </div>
@@ -57,6 +53,3 @@ const GroupManagement = () => {
 };
 
 export default GroupManagement;
-
-
-

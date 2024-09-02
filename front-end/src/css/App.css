@@ -202,7 +202,6 @@ p {
 /* fullCalendar tags */
 .fc .fc-day-sat a {
   color: #2f76f9;
-  
 }
 
 .fc .fc-day-sun a {
@@ -293,6 +292,7 @@ p {
 
 .fc-event:hover {
   background-color: #ececec;
+  
 }
 
 .fc- .fc-secrollgrid {
@@ -312,9 +312,16 @@ p {
   color: #ffffff !important;
 }
 
+/*오늘*/
+.fc .fc-button:disabled{
+  opacity: 1;
+  background-color: #d85156;
+}
+
 /*주 단위 */
 .fc .fc-timegrid-divider {
   padding: 0px;
+  
 }
 
 /* react select*/
@@ -328,3 +335,4 @@ p {
 .css-1wy0on6 .css-1u9des2-indicatorSeparator {
   display: none;
 }
+

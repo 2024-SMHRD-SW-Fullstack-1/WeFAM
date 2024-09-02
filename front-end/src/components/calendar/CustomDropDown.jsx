@@ -29,6 +29,10 @@ const CustomDropdown = ({ options, placeholder, onChange, value }) => {
       alignItems: "center",
       color: data.color,
     }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999, // 드롭다운 메뉴가 다른 요소들 위에 위치하도록 설정
+    }),
   };
 
   const formatOptionLabel = ({ label, color }) => (
