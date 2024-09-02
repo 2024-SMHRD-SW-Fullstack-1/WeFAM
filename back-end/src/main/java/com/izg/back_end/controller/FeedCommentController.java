@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,4 +44,17 @@ public class FeedCommentController {
 		System.out.println("Received feedIdx to show comments : " + feedIdx );
 		return feedCommentService.getCommentsByFeedIdx(feedIdx);
     }
+	
+	@GetMapping("/get-comment/{cmtIdx}")
+	public FeedCommentDto getComment(@PathVariable("cmtIdx") int cmtIdx) {
+		System.out.println("Received cmtIdx : " + cmtIdx);
+		return feedCommentService.getComment(cmtIdx);
+	}
+	
+	@DeleteMapping("/delete-comment/{cmtIdx}")
+	public void deleteComment(@PathVariable("cmtIdx") int cmtIdx) {
+		System.out.println("Received cmtIdx to delete comment : " + cmtIdx);
+		feedCommentService.deleteComment(cmtIdx);
+	}
+	
 }

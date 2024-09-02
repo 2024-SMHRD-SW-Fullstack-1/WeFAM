@@ -7,8 +7,8 @@ import FeedEditModal from "./FeedEditModal";
 import { BsSuitHeart, BsChatHeart, BsThreeDots } from "react-icons/bs";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { PiArrowBendDownLeft } from "react-icons/pi";
-import profileDefaultImage from "../../assets/images/profile-default-image.png";
 import { elapsedTime } from "../../elapsedTime";
+import FeedComment from "./FeedComment";
 
 const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -103,6 +103,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     getAllCmts();
   }, [getAllCmts]);
 
+  // 댓글 삭제하여 리렌더링 시키기
+  const handleDeleteCmt = (deletedCmtIdx) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.cmtIdx !== deletedCmtIdx)
+    );
+  };
+
   // 옵션
   const toggleOptions = useCallback(() => {
     if (!isOptionsVisible) {
@@ -183,7 +190,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.header}>
         <div className={styles.feedInfoContainer}>
           <div className={styles.profileImg}>
-            <img src={writerProfileImg || profileDefaultImage} alt="Profile" />
+            <img src={writerProfileImg} alt="Profile" />
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
@@ -309,25 +316,16 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         {isLoading ? (
           <p>Loading...</p>
         ) : comments.length > 0 ? (
-          <ul>
+          <ul className={styles.cmtContainer}>
             {comments.map((comment) => (
-              <li key={comment.cmtIdx} className={styles.cmt}>
-                <img
-                  className={styles.cmtProfileImg}
-                  src={comment.profileImg}
-                  alt=""
-                />
-                <div>
-                  <span className={styles.cmtWriterNick}>{comment.nick}</span>
-                  <span>{elapsedTime(comment.postedAt)}</span>
-                  <div>{comment.cmtContent}</div>
-                </div>
-              </li>
+              <FeedComment
+                key={comment.cmtIdx}
+                comment={comment}
+                onDeleteCmt={handleDeleteCmt}
+              />
             ))}
           </ul>
-        ) : (
-          <p>No comments yet.</p>
-        )}
+        ) : null}
       </div>
 
       {isEditModalOpen && (
