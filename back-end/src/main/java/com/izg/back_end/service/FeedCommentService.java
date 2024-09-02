@@ -42,21 +42,36 @@ public class FeedCommentService {
 
     // FeedComment를 FeedCommentDto로 변환
     private FeedCommentDto convertToDto(FeedCommentModel comment) {
-    	FeedCommentDto dto = new FeedCommentDto();
-    	dto.setCmtIdx(comment.getCmtIdx());
-        dto.setUserId(comment.getUserId());
-        dto.setCmtContent(comment.getCmtContent());
-        dto.setPostedAt(comment.getPostedAt());
-    	
-    	// userId를 통해 User 정보를 조회하고 프사와 닉네임을 DTO에 추가
         UserModel user = userRepository.findById(comment.getUserId())
-        		.orElseThrow(() -> new IllegalArgumentException("댓글 작성자를 찾을 수 없습니다."));
-        if (user != null) {
-        	dto.setProfileImg(user.getProfileImg());
-            dto.setNick(user.getNick());
-        }
+            .orElseThrow(() -> new IllegalArgumentException("댓글 작성자를 찾을 수 없습니다."));
         
-        
-        return dto;
+        return new FeedCommentDto(
+            comment.getCmtIdx(),
+            comment.getFeedIdx(),
+            user.getProfileImg(),
+            comment.getUserId(),
+            user.getNick(),
+            comment.getCmtContent(),
+            comment.getPostedAt()
+        );
     }
+    
+    // 댓글 ID로 댓글 조회
+    public FeedCommentDto getComment(int cmtIdx) {
+    	FeedCommentModel fcm = feedCommentRepository.findByCmtIdx(cmtIdx);
+    	
+    	if (fcm != null) {
+    		// DTO 변환
+    		return convertToDto(fcm);
+    	} else {
+    		// 댓글이 존재하지 않는 경우 처리
+    		return null;
+    	}
+    }
+    
+    // 댓글 ID로 댓글 삭제
+    @Transactional
+	public void deleteComment(int cmtIdx) {
+		feedCommentRepository.deleteById(cmtIdx);
+	}
 }
