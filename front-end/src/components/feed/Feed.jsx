@@ -79,7 +79,7 @@ const Feed = () => {
     [familyIdx, getAllFeeds]
   );
 
-  // 피드 작성자 ID 가져오는 함수
+  // 피드 디테일 정보 가져오는 함수
   const fetchWriter = useCallback(async (feedIdx) => {
     try {
       // GET 요청을 보내어 feed 데이터를 가져오기
@@ -199,7 +199,11 @@ const Feed = () => {
           <Preloader isLoading={isLoading} />
         ) : (
           <div className={styles.feedContent}>
-            <AddFeed onAddFeed={addFeed} onGetJoiningData={getJoiningData} />
+            <AddFeed
+              onAddFeed={addFeed}
+              onGetJoiningData={getJoiningData}
+              onGetAllFeeds={getAllFeeds}
+            />
             <FeedList
               feeds={feeds}
               onGetFeedDetail={getFeedDetail}
