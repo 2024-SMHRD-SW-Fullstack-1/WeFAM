@@ -33,6 +33,7 @@ const AlbumFolder = () => {
       prevFiles.filter((file) => file.name !== fileName)
     );
   };
+
   // 이미지 로컬 상태에 추가 (브라우저에서 미리보기)
   const inputImages = () => {
     const newImages = selectedFiles.map((file) => ({
@@ -46,54 +47,55 @@ const AlbumFolder = () => {
   };
 
   // 이미지 저장
-  const saveImages = async () => {
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append("image", file);
+const saveImages = () => {
+  const formData = new FormData();
+
+  selectedFiles.forEach((file) => {
+    formData.append("images", file);
+    formData.append("fileNames", file.name);
+    formData.append("fileExtensions", file.name.split(".").pop());
+    formData.append("fileSizes", file.size);
+  });
+
+  formData.append("familyIdx", 1);  // 예시로 familyIdx 1을 사용
+  formData.append("userId", userId);
+  formData.append("entityIdx", 1); // 예시로 albumId 1을 사용
+
+  axios
+    .post("http://localhost:8089/wefam/add-album-img", formData)
+    .then((response) => {
+      console.log("이미지 저장 성공:", response.data);
+      // 이미지를 성공적으로 저장한 후 로컬 상태 초기화
+      setSelectedFiles([]);
+      setImages([]);  // 저장 후 이미지 리스트를 다시 불러오는 게 좋음
+      closeModal();   // 모달 닫기
+      window.location.reload();  // 이미지가 추가된 후 화면을 새로고침
+    })
+    .catch((error) => {
+      console.error("이미지 저장 실패:", error);
     });
-    formData.append("userId", userId);
+};
 
-    try {
-      const response = await axios.post("http://localhost:8089/album/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.status === 200) {
-        alert("이미지 업로드 성공!");
-        fetchImages(); // 업로드 후 이미지를 다시 불러옴
-        setSelectedFiles([]);
-        closeModal();
-      } else {
-        alert("이미지 업로드 실패");
-      }
-    } catch (error) {
-      console.error("이미지 업로드 중 오류 발생:", error);
-    }
-  };
 
   // 이미지 초기 로드
-  const fetchImages = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8089/album/user/${userId}`);
-      if (response.status === 200) {
-        setImages(response.data.map((img) => ({
-          id: img.albumId,
-          url: img.imageUrl,
-          name: img.imageName,
-        })));
-      } else {
-        console.error("이미지 가져오기 실패");
-      }
-    } catch (error) {
-      console.error("이미지 가져오기 중 오류 발생:", error);
-    }
+  const loadImages = () => {
+    axios.get(`http://localhost:8089/wefam/get-album-img`) // 앨범 ID, 필요에 따라 설정
+      .then(response => {
+        const loadedImages = response.data.map((img, index) => ({
+          id: img.fileIdx,
+          url: `data:image/jpeg;base64,${img.fileData}`, // Base64로 인코딩된 이미지
+          selected: false,
+        }));
+        setImages(loadedImages);
+      })
+      .catch(error => {
+        console.error('이미지 로드 실패:', error);
+      });
   };
 
   useEffect(() => {
     if (userId) {
-      fetchImages();
+      loadImages();
     }
   }, [userId]);
 
@@ -106,10 +108,17 @@ const AlbumFolder = () => {
   };
 
   const deleteSelectedImages = () => {
-    setImages((prevImages) =>
-      prevImages.filter((image) => !selectedImages.includes(image.id))
-    );
-    setSelectedImages([]);
+    const deleteIds = selectedImages.map(id => images.find(img => img.id === id).fileIdx);
+
+    axios.post('http://localhost:8089/wefam/delete-album-img', { ids: deleteIds })
+      .then(response => {
+        console.log('이미지 삭제 성공:', response.data);
+        setImages(prevImages => prevImages.filter(img => !selectedImages.includes(img.id)));
+        setSelectedImages([]);
+      })
+      .catch(error => {
+        console.error('이미지 삭제 실패:', error);
+      });
   };
 
   const toggleAllImages = (event) => {
