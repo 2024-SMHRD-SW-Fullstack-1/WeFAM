@@ -27,6 +27,9 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
   const [familyUsers, setFamilyUsers] = useState([]);
   const [familyName, setFamilyName] = useState("");
+  const [familyFiles, setFamilyFiles] = useState([]);
+  const [familyIdx, setFamilyIdx] = useState(null); // familyIdx 상태 추가
+  const [eventFiles, setEventFiles] = useState([]);
 
   let clickTimeout = null;
 
@@ -37,10 +40,11 @@ const Calendar = () => {
     const fetchFamilyData = async () => {
       try {
         // 패밀리 이름 가져오기
-        const familyNameResponse = await axios.get(
+        const familyResponse = await axios.get(
           `http://localhost:8089/wefam/family-name/${userData.id}`
         );
-        setFamilyName(familyNameResponse.data);
+        setFamilyName(familyResponse.data.familyName);
+        setFamilyIdx(familyResponse.data.familyIdx);
 
         // 패밀리 사용자 목록 가져오기
         const familyUsersResponse = await axios.get(
@@ -55,13 +59,40 @@ const Calendar = () => {
     fetchFamilyData();
   }, [userData.id]);
 
+  const fetchFamilyFiles = async () => {
+    try {
+      const familyFilesResponse = await axios.get(
+        `http://localhost:8089/wefam/event/files/family/${familyIdx}`
+      );
+      setFamilyFiles(familyFilesResponse.data);
+      console.log(familyFilesResponse.data);
+    } catch (error) {
+      console.error("Error fetching family files:", error);
+    }
+  };
+
+  // selectedEvent가 변경될 때마다 관련 파일을 업데이트
   useEffect(() => {
-    console.log("1: Updated Family Name", familyName);
-  }, [familyName]);
+    if (!selectedEvent || familyFiles.length === 0) return;
+
+    const selectedEventId = Number(selectedEvent.id);
+    const filteredFiles = familyFiles.filter(
+      (file) =>
+        file.entityType === "event" &&
+        Number(file.entityIdx) === selectedEventId
+    );
+
+    setEventFiles(filteredFiles);
+  }, [selectedEvent, familyFiles]);
 
   useEffect(() => {
-    console.log("2: Updated Family Users", familyUsers);
-  }, [familyUsers]);
+    if (selectedEvent) {
+      setSelectedEvent((prevEvent) => ({
+        ...prevEvent,
+        files: eventFiles,
+      }));
+    }
+  }, [eventFiles]);
 
   //요일에 따른 날짜 색상
   const renderDayCellContent = (info) => {
@@ -126,6 +157,7 @@ const Calendar = () => {
   };
 
   useEffect(() => {
+    fetchFamilyFiles();
     fetchEvents();
   }, []);
 
@@ -239,11 +271,12 @@ const Calendar = () => {
       longitude: updatedEvent.longitude,
     };
 
-    const eventIdx = updatedEvent.id;
     try {
-      if (eventIdx) {
+      let savedEvent;
+
+      if (updatedEvent.id) {
         const response = await axios.post(
-          `http://localhost:8089/wefam/update-event/${eventIdx}`,
+          `http://localhost:8089/wefam/update-event/${updatedEvent.id}`,
           eventToSave,
           {
             headers: {
@@ -255,9 +288,10 @@ const Calendar = () => {
           ...selectedEvent,
           ...updatedEvent,
         }); // 변경된 이벤트로 selectedEvent 업데이트
-        await fetchEvents();
         toast.success("일정이 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
+        await fetchEvents();
         setIsModalOpen(false);
+        savedEvent = response.data;
       } else {
         const response = await axios.post(
           `http://localhost:8089/wefam/add-event`,
@@ -272,9 +306,52 @@ const Calendar = () => {
           ...selectedEvent,
           ...updatedEvent,
         }); // 변경된 이벤트로 selectedEvent 업데이트
-        await fetchEvents();
-        setIsModalOpen(false);
+        savedEvent = response.data;
       }
+      // savedEvent가 undefined인 경우를 처리
+      if (!savedEvent) {
+        throw new Error("Event could not be saved.");
+      }
+      console.log("savedEvent", savedEvent);
+
+      // 이벤트가 저장된 후, 파일 업로드 처리
+      if (updatedEvent.newFiles && updatedEvent.newFiles.length > 0) {
+        const formData = new FormData();
+        updatedEvent.newFiles.forEach((fileWrapper) => {
+          formData.append("files", fileWrapper.file);
+        });
+        formData.append("familyIdx", savedEvent.familyIdx);
+        formData.append("userId", savedEvent.userId);
+        formData.append("entityIdx", savedEvent.eventIdx); // 저장된 이벤트의 ID를 사용
+        console.log([...formData.entries()]);
+        await axios.post(
+          `http://localhost:8089/wefam/event/image/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+      console.log(updatedEvent.deletedFileIds);
+
+      // 삭제된 파일 처리
+      if (
+        updatedEvent.deletedFileIds &&
+        updatedEvent.deletedFileIds.length > 0
+      ) {
+        await Promise.all(
+          updatedEvent.deletedFileIds.map(async (fileIdx) => {
+            await axios.delete(
+              `http://localhost:8089/wefam/event/files/delete/${fileIdx}`
+            );
+          })
+        );
+      }
+      await fetchFamilyFiles();
+      await fetchEvents();
+      setIsModalOpen(false);
     } catch (error) {
       console.error("Error updating event:", error); // 에러 처리}
     }
@@ -375,7 +452,7 @@ const Calendar = () => {
       backgroundColor: "#FF4D4D",
       allDay: false,
       userId: userData.id,
-      familyIdx: 1,
+      familyIdx: familyIdx,
     });
     setIsDeatilOpen(false);
     setIsModalOpen(true);
@@ -393,7 +470,7 @@ const Calendar = () => {
         backgroundColor: "#FF4D4D",
         allDay: false,
         userId: userData.id,
-        familyIdx: 1,
+        familyIdx: familyIdx,
       });
       setIsDeatilOpen(false);
       setIsEventOpen(false);
@@ -569,17 +646,6 @@ const Calendar = () => {
               isSearchVisible ? styles["active"] : ""
             }`} // 애니메이션 클래스 적용
           />
-          {/*
-          {/*검색 아이콘 */}
-          {/* <BsSearch
-            style={{ fontSize: "24px", cursor: "pointer" }}
-            onClick={() => setIsSearchVisible(!isSearchVisible)} // 클릭 시 검색창 보이기/숨기기
-          /> */}
-          {/*일정 추가 아이콘 */}
-          {/* <BsCalendarPlus
-            style={{ fontSize: "24px" }}
-            onClick={handleAddEventClick}
-          /> */}
         </div>
         <FullCalendar
           ref={calendarRef} // ref 연결
@@ -608,7 +674,6 @@ const Calendar = () => {
           weekends={true}
           eventTimeFormat={true}
           events={[...holidays, ...events]}
-          // eventClick={handleEventClick}
           // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
           eventClick={handleEventClick}
           // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
