@@ -39,4 +39,9 @@ public class EventService {
 	public Optional<EventModel> getEventById(int eventIdx) {
 		return eventRepository.findById(eventIdx);
 	}
+	
+	//일정 삭제
+	public void deleteEvent(int eventIdx) {
+        eventRepository.deleteById(eventIdx);
+    }
 }

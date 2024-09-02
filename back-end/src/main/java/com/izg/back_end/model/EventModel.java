@@ -1,6 +1,7 @@
 package com.izg.back_end.model;
 
 import java.math.BigDecimal;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -74,5 +75,4 @@ public class EventModel {
     @Column(name = "longitude")
     @JsonProperty("longitude")
     private BigDecimal longitude = BigDecimal.ZERO; // 기본값 0
-
 }

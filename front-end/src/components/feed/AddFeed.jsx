@@ -1,7 +1,6 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import styles from "./AddFeed.module.css";
-import RouletteModal from "./game/RouletteModal";
-import { BsArrowReturnLeft } from "react-icons/bs";
 import UploadImageModal from "./UploadImageModal";
 import GameModal from "./game/GameModal";
 import { PiArrowBendDownLeft } from "react-icons/pi";
@@ -9,36 +8,90 @@ import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsArchive } from "react-icons/bs";
 import { PiGameControllerLight } from "react-icons/pi";
-import axios from "axios";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-const AddFeed = React.memo(({ onAddFeed }) => {
+const AddFeed = React.memo(({ onAddFeed, onGetJoiningData }) => {
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
+  const [isUploadImageModalOpen, setIsUploadImageModalOpen] = useState(false);
+  const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [isUploadImageModalOpen, setIsUploadImageModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
-  const [isGameModalOpen, setIsGameModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
+  // Redux에서 로그인한 사용자 데이터 및 이미지를 가져오기
+  const userData = useSelector((state) => state.user.userData);
+  const images = useSelector((state) => state.imagesOnFeed);
 
-  // 새로운 피드 작성 클릭
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex + 5 < images.length) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
   const handleAddFeed = async () => {
     if (content.trim() === "") {
-      // 경고창을 띄워서 내용을 입력하게 하자
       alert("내용을 입력하세요.");
       return;
     }
-    const newFeed = {
-      familyIdx: 1, // 필요한 경우, 실제 데이터로 수정
-      id: "jgod", // 필요한 경우, 실제 데이터로 수정
-      feedContent: content,
-      feedLocation: location,
-    };
-    await onAddFeed(newFeed); // 상위 컴포넌트의 함수 호출
-    setContent("");
-    setLocation("");
+    try {
+      const joiningData = await onGetJoiningData(userData.id);
+      const newFeed = {
+        familyIdx: joiningData.familyIdx,
+        userId: userData.id,
+        feedContent: content,
+        feedLocation: location,
+      };
+
+      await onAddFeed(newFeed);
+      setContent("");
+      setLocation("");
+    } catch (error) {
+      console.error("AddFeed 함수에서 오류 발생:", error);
+    }
   };
 
   return (
     <div className={styles.addFeed}>
+      <div className={styles.imagePreviewWrapper}>
+        {images.length > 0 ? (
+          <div className={styles.imagePreviewContainer}>
+            {currentIndex > 0 && (
+              <button className={styles.arrowButton} onClick={handlePrev}>
+                <MdKeyboardArrowLeft />
+              </button>
+            )}
+
+            <div className={styles.imagePreview}>
+              {images.map((image, index) => (
+                <img
+                  key={index}
+                  src={image.url}
+                  alt={`preview-${index}`}
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`,
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+              ))}
+            </div>
+
+            {currentIndex + 5 < images.length && (
+              <button className={styles.arrowButton} onClick={handleNext}>
+                <MdKeyboardArrowRight />
+              </button>
+            )}
+          </div>
+        ) : (
+          <p>이미지가 없습니다.</p>
+        )}
+      </div>
+
       <textarea
         className={styles.content}
         placeholder="무슨 생각을 하고 계신가요?"
@@ -63,8 +116,8 @@ const AddFeed = React.memo(({ onAddFeed }) => {
           </button>
         </span>
         <span>
-          <button onClick={handleAddFeed}>
-            <BsArrowReturnLeft />
+          <button className={styles.addFeedBtn} onClick={handleAddFeed}>
+            <PiArrowBendDownLeft /> e2baf217768fc0d3dd68d150b193eed37d825312
           </button>
         </span>
       </div>
@@ -74,7 +127,7 @@ const AddFeed = React.memo(({ onAddFeed }) => {
       )}
 
       {isGameModalOpen && (
-        <RouletteModal onClose={() => setIsGameModalOpen(false)} />
+        <GameModal onClose={() => setIsGameModalOpen(false)} />
       )}
     </div>
   );

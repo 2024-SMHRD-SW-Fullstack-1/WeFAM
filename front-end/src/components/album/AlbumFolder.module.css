@@ -8,7 +8,7 @@
   margin-bottom: 20px; /* 컨테이너와 약간의 간격 추가 */
 }
 
-.albumWrapper{
+.albumWrapper {
   width: 100%;
 }
 
@@ -218,7 +218,6 @@
   cursor: pointer; /* 포인터 커서 */
   width: 150px; /* 고정된 너비 */
 }
-
 
 .imageModal {
   position: fixed;

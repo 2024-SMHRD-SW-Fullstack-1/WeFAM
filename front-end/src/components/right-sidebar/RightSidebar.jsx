@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styles from "./RightSidebar.module.css";
 
-import karina from '../../assets/images/karina.png'
-import winter from '../../assets/images/winter.png'
-import iu from '../../assets/images/iu.png'
-import madong from '../../assets/images/madong.png'
-import { useSelector } from 'react-redux';
+import karina from "../../assets/images/karina.png";
+import winter from "../../assets/images/winter.png";
+import iu from "../../assets/images/iu.png";
+import madong from "../../assets/images/madong.png";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import FamilyModal from "./FamilyModal";
 
-const RightSidebar = () => { 
+const RightSidebar = () => {
   const [users, setUsers] = useState([]);
   const userData = useSelector((state) => state.user.userData);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,10 +18,10 @@ const RightSidebar = () => {
   useEffect(() => {
     if (userData) {
       // 실제 사용자 데이터를 가져오는 axios 요청
-
-      axios.get('http://localhost:8089/wefam/get-family')
-        .then(response => {
-          const loadedUsers = response.data.map(user => ({
+      axios
+        .get("http://localhost:8089/wefam/get-family")
+        .then((response) => {
+          const loadedUsers = response.data.map((user) => ({
             name: user.name,
             image: user.profileImg,
             nick: user.nick,
@@ -30,7 +30,7 @@ const RightSidebar = () => {
           }));
           setUsers(loadedUsers);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("가져오기 에러!!", error);
         });
     } else {
@@ -39,8 +39,7 @@ const RightSidebar = () => {
         { name: "원터", image: winter, online: true },
         { name: "카리나", image: karina, online: true },
         { name: "아이유", image: iu, online: false },
-        { name: "마블리", image: madong, online: false }
-
+        { name: "마블리", image: madong, online: false },
       ];
       setUsers(exampleUsers);
     }

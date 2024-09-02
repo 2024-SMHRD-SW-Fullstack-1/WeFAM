@@ -33,7 +33,6 @@ const AlbumFolder = () => {
       prevFiles.filter((file) => file.name !== fileName)
     );
   };
-
   // 이미지 로컬 상태에 추가 (브라우저에서 미리보기)
   const inputImages = () => {
     const newImages = selectedFiles.map((file) => ({

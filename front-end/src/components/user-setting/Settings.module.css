@@ -30,7 +30,8 @@
   text-overflow: ellipsis; /* 넘치는 텍스트를 '...'로 표시 */
 }
 
-.menu li.active { /* 선택됬을 때 색상 */
+.menu li.active {
+  /* 선택됬을 때 색상 */
   background-color: #ddd;
 }
 

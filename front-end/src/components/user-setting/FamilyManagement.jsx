@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styles from './FamilyManagement.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./FamilyManagement.module.css";
 import { useSelector } from "react-redux";
 import axios from 'axios';
 import ProfileModal from './ProfileModal';
@@ -16,7 +16,7 @@ const FamilyManagement = () => {
         .then(response => {
           setUsers(response.data); // 사용자 정보 업데이트
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("가져오기 에러!!", error);
         });
     }
