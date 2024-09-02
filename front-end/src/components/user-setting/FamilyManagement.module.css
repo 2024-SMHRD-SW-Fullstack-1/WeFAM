@@ -29,6 +29,13 @@
     border-radius: 50%;
     object-fit: cover;
     margin-right: 20px;
+    cursor: pointer;
+  }
+
+  .nickname{
+    font-size: 0.9em !important; /* 여기에서 원하는 크기로 설정하세요 */
+    color : #666; /* 필요에 따라 색상도 조절할 수 있습니다 */
+    margin-left: 10px;
   }
   
   .editButton {

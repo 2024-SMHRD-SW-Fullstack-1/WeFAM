@@ -12,16 +12,20 @@ import com.izg.back_end.repository.HouseworkRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class HouseworkService {
 
    private final HouseworkRepository houseWorkRepository;
+
+   @Autowired
+   public HouseworkService(HouseworkRepository houseWorkRepository) {
+       this.houseWorkRepository = houseWorkRepository;
+   }
    
    // 집안일 추가 또는 수정
    public HouseworkModel saveOrUpdateWork(HouseworkModel houseWorkModel) {
       return houseWorkRepository.save(houseWorkModel);
    }
-   
+
    // 모든 작업 조회
     public List<HouseworkModel> getAllWorks() {
         return houseWorkRepository.findAll();

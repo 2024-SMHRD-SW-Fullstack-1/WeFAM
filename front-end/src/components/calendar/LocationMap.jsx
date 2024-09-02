@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Map.module.css";
+import styles from "./LocationMap.module.css";
 
-const MapComponent = ({ coordinates }) => {
+// 공통 지도를 렌더링하는 컴포넌트
+const MapContainer = ({ coordinates, mapId }) => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [userPosition, setUserPosition] = useState(null);
@@ -15,7 +16,7 @@ const MapComponent = ({ coordinates }) => {
 
     script.onload = () => {
       window.kakao.maps.load(() => {
-        const container = document.getElementById("map");
+        const container = document.getElementById(mapId); // mapId를 사용해 각 컴포넌트의 ID를 다르게 설정
         const initialPosition = userPosition
           ? new window.kakao.maps.LatLng(userPosition.lat, userPosition.lng)
           : new window.kakao.maps.LatLng(35.1595, 126.8526); // 기본 위치: 광주시청
@@ -32,7 +33,7 @@ const MapComponent = ({ coordinates }) => {
     return () => {
       document.head.removeChild(script);
     };
-  }, [userPosition]);
+  }, [userPosition, mapId]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -79,9 +80,19 @@ const MapComponent = ({ coordinates }) => {
 
   return (
     <div className={styles.mapContainer}>
-      <div id="map" style={{ width: "100%", height: "200px" }}></div>
+      <div id={mapId} style={{ width: "100%", height: "200px" }}></div>
     </div>
   );
 };
 
-export default MapComponent;
+// 모달용 지도 컴포넌트
+const MapInModal = ({ coordinates }) => {
+  return <MapContainer coordinates={coordinates} mapId="modalMap" />;
+};
+
+// 디테일용 지도 컴포넌트
+const MapInDetail = ({ coordinates }) => {
+  return <MapContainer coordinates={coordinates} mapId="detailMap" />;
+};
+
+export { MapInModal, MapInDetail };
