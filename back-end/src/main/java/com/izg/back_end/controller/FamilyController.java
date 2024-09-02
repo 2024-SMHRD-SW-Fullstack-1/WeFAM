@@ -52,7 +52,7 @@ public class FamilyController {
 
 	// 가족 가훈 조회 엔드포인트
 	@GetMapping("/get-family-motto/{userId}")
-	public ResponseEntity<String> getFamilyMotto(@PathVariable String userId) {
+	public ResponseEntity<String> getFamilyMotto(@PathVariable("userId") String userId) {
 		try {
 			String familyMotto = familyService.getFamilyMottoByUserId(userId);
 			return ResponseEntity.ok(familyMotto);
