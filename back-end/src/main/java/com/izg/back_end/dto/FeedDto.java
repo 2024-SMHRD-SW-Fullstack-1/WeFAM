@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class FeedDto {
     private int feedIdx;
-    private int familyIdx0;
-    private String id;
+    private int familyIdx;
+    private String userId;
     private LocalDateTime postedAt;
     private String feedLocation;
     private String feedType;
