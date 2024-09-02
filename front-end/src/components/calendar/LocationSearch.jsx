@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
-import styles from "./MapSearchInput.module.css"; // CSS 모듈 사용
+import styles from "./LocationSearchInput.module.css"; // CSS 모듈 사용
 
-const MapSearchInput = ({ onPlaceSelect }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+const MapSearchInput = ({
+  onPlaceSelect,
+  event,
+  onCoordinatesClear,
+  location,
+}) => {
+  const [searchTerm, setSearchTerm] = useState(event?.location || ""); // 초기 location 값을 가져옴
   const [searchResults, setSearchResults] = useState([]);
   const [map, setMap] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  useEffect(() => {
+    setSearchTerm(location || event.location || ""); // location을 초기값으로 설정하고, location이 변경될 때마다 searchTerm을 업데이트
+  }, [location, event.location]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -30,6 +39,12 @@ const MapSearchInput = ({ onPlaceSelect }) => {
     };
   }, []);
 
+  const handleClearLocation = () => {
+    setSearchTerm(""); // 입력 필드 초기화
+    onCoordinatesClear(); // 좌표 삭제 함수 호출
+  };
+
+  // 입력된 검색어가 변경되면 searchTerm 업데이트
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
 
@@ -80,8 +95,13 @@ const MapSearchInput = ({ onPlaceSelect }) => {
         value={searchTerm}
         onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
-        placeholder="장소를 입력하세요"
+        // placeholder="장소를 입력하세요"
       />
+      {searchTerm && (
+        <button className={styles.clearButton} onClick={handleClearLocation}>
+          ×
+        </button>
+      )}
       {searchResults.length > 0 && (
         <ul className={styles.searchResults}>
           {searchResults.map((place, index) => (

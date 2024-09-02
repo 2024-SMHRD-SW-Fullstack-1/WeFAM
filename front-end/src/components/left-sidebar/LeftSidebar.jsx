@@ -19,21 +19,36 @@ const LeftSidebar = () => {
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
 
-  const handleLogout = async () => {
-    try {
-      // 로그아웃 API 호출 (예: 세션 삭제)
-      await axios.post("http://localhost:8089/wefam/logout");
+  // 쿠키 삭제 함수
+const deleteAllCookies = () => {
+  const cookies = document.cookie.split(";");
 
-      // 세션 삭제 후 카카오 로그인 동의 화면으로 돌아가기 위해
-      window.localStorage.clear(); // 로컬 스토리지 삭제
-      window.sessionStorage.clear(); // 세션 스토리지 삭제
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  }
+};
 
-      // 홈 화면으로 리디렉션
-      nav("/");
-    } catch (error) {
-      console.error("로그아웃 중 에러 발생:", error);
-    }
-  };
+const handleLogout = async () => {
+  try {
+    // 서버에 로그아웃 요청
+    await axios.post('http://localhost:8089/wefam/logout');
+
+    // 모든 쿠키 삭제
+    deleteAllCookies();
+
+    // 로컬 스토리지와 세션 스토리지 삭제
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+
+    // 로그인 페이지로 리다이렉트
+    nav("/");
+  } catch (error) {
+    console.error("로그아웃 중 에러 발생:", error);
+  }
+};
 
   return (
     <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
@@ -117,7 +132,7 @@ const LeftSidebar = () => {
               }}
             >
               <CiSettings className={styles.categoryItemLogo} />
-              <span>가족 정보</span>
+              <span>가족정보</span>
             </span>
           </li>
           <li>

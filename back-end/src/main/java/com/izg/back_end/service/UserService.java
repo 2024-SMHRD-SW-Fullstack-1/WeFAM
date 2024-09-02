@@ -1,8 +1,10 @@
 package com.izg.back_end.service;
 
 import com.izg.back_end.dto.UserDto;
+import com.izg.back_end.model.JoiningModel;
 import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
+import com.izg.back_end.repository.JoiningRepository;
 import com.izg.back_end.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -20,11 +22,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private JoiningRepository joiningRepository;
 
 	// 인가 코드를 사용하여 액세스 토큰을 가져옴
 	public String getKakaoAccessToken(String code) {
@@ -78,39 +85,87 @@ public class UserService {
 		userDTO.setLoginSource("kakao");
 		userDTO.setJoinedAt(LocalDateTime.now());
 
-      if (kakaoAccount.get("birthday") != null) {
-         String birthday = kakaoAccount.get("birthday").toString();
-         int currentYear = LocalDate.now().getYear();
-         userDTO.setBirth(
-               LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
-      }
+		if (kakaoAccount.get("birthday") != null) {
+			String birthday = kakaoAccount.get("birthday").toString();
+			int currentYear = LocalDate.now().getYear();
+			userDTO.setBirth(
+					LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
+		}
 
-      return userDTO;
-   }
-
-    // 유저 정보를 데이터베이스에 저장
-    public void saveUser(UserDto userDTO) {
-        if (userDTO.getBirth() == null) {
-            userDTO.setBirth(LocalDate.now()); // 기본값 설정 또는 예외 처리
-        }
-
-		UserModel user = new UserModel();
-		user.setId(userDTO.getId());
-		user.setName(userDTO.getName());
-		user.setNick(userDTO.getNick());
-		user.setBirth(userDTO.getBirth());
-		user.setProfileImg(userDTO.getProfileImg());
-		user.setJoinedAt(userDTO.getJoinedAt());
-		user.setLoginSource(userDTO.getLoginSource());
-
-		userRepository.save(user);
+		return userDTO;
 	}
-	
-	public List<UserModel> getFamily(){
-		return userRepository.findAll();
+
+	// 유저 정보를 데이터베이스에 저장
+	public void saveUser(UserDto userDTO) {
+	    if (userDTO.getBirth() == null) {
+	        userDTO.setBirth(LocalDate.now()); // 기본값 설정 또는 예외 처리
+	    }
+
+	    // 기존 사용자 확인
+	    UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
+
+	    if (existingUser != null) {
+	        // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트하는 것이 적절한지 확인)
+	        
+	        // 카카오에서 받은 닉네임이 기존 닉네임과 다르다면 업데이트하지 않음
+	        if (!existingUser.getNick().equals(userDTO.getNick())) {
+	            existingUser.setNick(existingUser.getNick()); // 기존 닉네임 유지
+	        } else {
+	            existingUser.setNick(userDTO.getNick()); // 카카오에서 받은 닉네임으로 업데이트
+	        }
+	        
+	        // 다른 필드들도 동일하게 필요에 따라 업데이트를 선택
+	        existingUser.setName(userDTO.getName());
+	        existingUser.setBirth(userDTO.getBirth());
+	        existingUser.setProfileImg(userDTO.getProfileImg());
+	        existingUser.setLoginSource(userDTO.getLoginSource());
+	        // joined_at 필드는 업데이트하지 않음 (처음 가입된 시간 유지)
+	    } else {
+	        // 새로운 사용자 저장
+	        UserModel newUser = new UserModel();
+	        newUser.setId(userDTO.getId());
+	        newUser.setName(userDTO.getName());
+	        newUser.setNick(userDTO.getNick());
+	        newUser.setBirth(userDTO.getBirth());
+	        newUser.setProfileImg(userDTO.getProfileImg());
+	        newUser.setJoinedAt(userDTO.getJoinedAt());
+	        newUser.setLoginSource(userDTO.getLoginSource());
+
+	        userRepository.save(newUser);
+	    }
+
+	    // 기존 사용자도 업데이트를 진행한 후 저장
+	    if (existingUser != null) {
+	        userRepository.save(existingUser);
+	    }
 	}
-	
+
+	 public List<UserModel> getUsersInJoining() {
+	        // Joining 테이블의 모든 항목을 가져옴
+	        List<JoiningModel> joiningList = joiningRepository.findAll();
+	        
+	        // User 테이블에서 user_id와 일치하는 사용자 정보 가져오기
+	        return joiningList.stream()
+	                .map(joining -> userRepository.findById(joining.getUserId()).orElse(null))
+	                .filter(user -> user != null)  // null 값 필터링
+	                .collect(Collectors.toList());
+	    }
+
 //	public List<LogModel> getFamilyStaus(){
 //		return userRepository.findAll();
 //	}
+	 
+	 // 닉네임 수정하면 db에 저장하기위한거
+	 public UserModel updateUserProfile(UserModel updatedUser) {
+	        // 기존 사용자 정보를 가져와서 업데이트
+	        UserModel user = userRepository.findById(updatedUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+	        
+	        user.setName(updatedUser.getName());
+	        user.setNick(updatedUser.getNick());
+	        user.setBirth(updatedUser.getBirth());
+	        user.setProfileImg(updatedUser.getProfileImg());
+
+	        return userRepository.save(user);
+	    }
+
 }

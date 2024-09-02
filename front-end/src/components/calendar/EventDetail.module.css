@@ -35,7 +35,7 @@
   margin-top: 10px; /* 추가: 제목과 날짜 사이의 간격 */
   padding: 14px 0px 20px;
   border-bottom: 1px solid beige;
-  gap: 10px;
+  gap: 5px;
   /* 아이콘과 날짜 시간 그룹 사이의 간격 */
 }
 
@@ -122,8 +122,14 @@
 }
 
 .arrow {
-  font-size: 1.5em;
+  font-size: 3em;
 }
+
+.smallArrow {
+  font-size: 2em;
+  /* 크기를 줄임 */
+}
+
 .arrow-container {
   display: flex;
   justify-content: center;
@@ -199,4 +205,51 @@
   font-size: 20px !important;
   vertical-align: middle;
   /* 아이콘과 텍스트가 수평으로 정렬되도록 */
+}
+
+.profileContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.profileImageWrapper {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+.profileImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nicknameTooltip {
+  visibility: hidden;
+  /* 기본 상태에서는 보이지 않음 */
+  background-color: rgba(0, 0, 0, 0.7);
+  /* 배경색 설정 */
+  color: #fff;
+  /* 텍스트 색상 */
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: -30px;
+  /* 이미지 아래에 표시 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profileImageWrapper:hover .nicknameTooltip {
+  visibility: visible;
+  opacity: 1;
 }
