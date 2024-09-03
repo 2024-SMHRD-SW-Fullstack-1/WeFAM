@@ -12,4 +12,3 @@ public interface HouseworkRepository extends JpaRepository<HouseworkModel, Integ
 
 	void deleteById(int workIdx);
 }
-
