@@ -17,6 +17,7 @@ public class FamilyController {
 	@Autowired
 	private FamilyService familyService;
 
+
 	// 가족 이름 업데이트
 	@PutMapping("/update-family-nick")
 	public ResponseEntity<FamilyModel> updateFamilyNick(@RequestBody FamilyModel updatedFamily) {

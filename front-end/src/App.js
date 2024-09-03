@@ -3,11 +3,11 @@ import Home from "./components/Home";
 import Feed from "./components/feed/Feed";
 import Calendar from "./components/calendar/Calendar";
 import HouseWork from "./components/housework/HouseWork";
-import Album from "./components/album/Album";
 import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
 import RightSidebar from "./components/right-sidebar/RightSidebar";
 import Settings from "./components/user-setting/Settings";
+import HouseWork2 from "./components/housework/HouseWork2";
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
@@ -21,6 +21,7 @@ function App() {
           <Route path="housework" element={<HouseWork />} />
           <Route path="album" element={<AlbumFolder />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="housework2" element={<HouseWork2 />} />
         </Route>
       </Routes>
     </div>

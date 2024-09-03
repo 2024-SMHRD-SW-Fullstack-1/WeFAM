@@ -1,7 +1,9 @@
 package com.izg.back_end.service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +55,27 @@ public class FamilyService {
         return userRepository.findUsersByFamilyIdx(familyIdx);
     }
     
-    // 가족 이름 업데이트 
+    public Map<String, Object> getFamilyInfoByUserId(String userId) {
+        List<Integer> familyIdxList = joiningRepository.findFamilyIdxByUserId(userId);
+
+        if (familyIdxList.isEmpty()) {
+            return null; // 가족이 없는 경우 null 반환
+        }
+
+        Integer familyIdx = familyIdxList.get(0);
+
+        FamilyModel family = familyRepository.findById(familyIdx).orElse(null);
+        if (family != null) {
+            Map<String, Object> familyInfo = new HashMap<>();
+            familyInfo.put("familyIdx", familyIdx);
+            familyInfo.put("familyName", family.getFamilyNick());
+            return familyInfo;
+        } else {
+            return null;
+        }
+    }
+    
+ // 가족 이름 업데이트 
     public FamilyModel updateFamilyNick(FamilyModel updatedFamily) {
         FamilyModel family = familyRepository.findById(updatedFamily.getFamilyIdx())
             .orElseThrow(() -> new RuntimeException("Family not found"));
@@ -83,5 +105,7 @@ public class FamilyService {
         family.setFamilyMotto(updatedFamily.getFamilyMotto());
         return familyRepository.save(family);
     }
+    
+    
 }
 

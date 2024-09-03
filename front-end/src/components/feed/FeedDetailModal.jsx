@@ -13,8 +13,10 @@ const FeedDetailModal = ({ feed, onClose }) => {
   const [profileImg, setProfileImg] = useState("");
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
+  const [hasContent, setHasContent] = useState(false);
 
   useEffect(() => {
+    console.log(feed);
     const fetchImages = async () => {
       if (!feed || !feed.idx) {
         console.warn("Invalid feed or feed.idx");
@@ -44,9 +46,15 @@ const FeedDetailModal = ({ feed, onClose }) => {
         const feedResponse = await axios.get(
           `http://localhost:8089/wefam/get-feed-detail/${feed.idx}`
         );
+        console.log(feedResponse);
         setProfileImg(feedResponse.data.profileImg);
         setWriter(feedResponse.data.nick);
         setContent(feedResponse.data.feedContent);
+        if (feedResponse.data.feedContent === "") {
+          setHasContent(false);
+        } else {
+          setHasContent(true);
+        }
       } catch (error) {
         console.error("수정할 피드의 데이터 요청 에러 :", error);
       }
@@ -74,7 +82,7 @@ const FeedDetailModal = ({ feed, onClose }) => {
   // 로딩 상태에 따라 렌더링
   return ReactDOM.createPortal(
     isLoading ? (
-      <div className={modalStyles.modal} onClick={onClose}>
+      <div className={modalStyles.modal}>
         <Preloader isLoading={isLoading} />
       </div>
     ) : (
@@ -83,7 +91,9 @@ const FeedDetailModal = ({ feed, onClose }) => {
           className={modalStyles["modal-content"]}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className={styles.main}>
+          <div
+            className={`${styles.main} ${!hasContent ? styles.noContent : ""}`}
+          >
             {/* 이미지 프리뷰 */}
             <div className={styles.preview}>
               {imagePreview.length > 0 && (
@@ -117,21 +127,18 @@ const FeedDetailModal = ({ feed, onClose }) => {
             </div>
 
             {/* 텍스트 내용 */}
-            <div className={styles.contentContainer}>
-              <div className={styles.profileContainer}>
-                <div className={styles.profileImg}>
-                  <img src={profileImg} alt="" />
+            {hasContent ? (
+              <div className={styles.contentContainer}>
+                <div className={styles.profileContainer}>
+                  <div className={styles.profileImg}>
+                    <img src={profileImg} alt="" />
+                  </div>
+                  <div className={styles.profileNick}>{writer}</div>
                 </div>
-                <div className={styles.profileNick}>{writer}</div>
+                {/* 사용자 */}
+                <div className={styles.content}>{content}</div>
               </div>
-              {/* 사용자 */}
-              <textarea
-                className={styles.content}
-                name="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              ></textarea>
-            </div>
+            ) : null}
           </div>
           {/* 푸터 */}
           <div className={modalStyles.modalFooter}>
