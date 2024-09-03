@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   row-gap: var(--space-lg);
-  padding: var(--space-sm) var(--space-sm) var(--space-2xl) var(--space-sm);
-  margin-bottom: var(--space-2xl);
+  padding: var(--space-sm) var(--space-sm) var(--space-xl) var(--space-sm);
+  margin-bottom: var(--space-xl);
   border-bottom: 1px solid;
   border-bottom-color: rgb(var(--color-separator));
 }
@@ -130,6 +130,7 @@
   background-color: var(--color-sunset-hover);
 }
 .cmtContainer {
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
@@ -268,4 +269,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.hidden {
+  display: none;
 }
