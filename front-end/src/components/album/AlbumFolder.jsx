@@ -10,93 +10,139 @@ Modal.setAppElement("#root");
 
 const AlbumFolder = () => {
   const { name } = useParams();
+  const userId = useSelector((state) => state.user.userData.id);
+  const userData = useSelector((state) => state.user.userData);
+  
   const [images, setImages] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const userId = useSelector((state) => state.user.userData.id);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
+  const imagesPerPage = 10;
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // 초기 이미지 불러오기
+  useEffect(() => {
+    fetchImages();
+  }, []);
+
+  // 이미지 조회 함수
+  const fetchImages = (start = '', end = '') => {
+    const effectiveEndDate = end || new Date().toISOString().split('T')[0];
+    const url = start 
+      ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
+      : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
+
+    axios.get(url)
+      .then(response => {
+        if (response.data.length === 0) {
+          alert("해당 기간에 이미지가 없습니다.");
+          setImages([]);
+        } else {
+          const fetchedImages = response.data.map(image => ({
+            id: image.fileIdx,
+            url: `data:image/${image.fileExtension};base64,${image.fileData}`,
+          }));
+          setImages(fetchedImages);
+        }
+      })
+      .catch(error => {
+        console.error("이미지를 불러오는 중 오류 발생:", error);
+      });
+  };
+
+  // 페이지네이션 처리
+  const handleNextPage = () => {
+    if ((currentPage + 1) * imagesPerPage < images.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // react-dropzone 설정
   const onDrop = (acceptedFiles) => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    setCurrentImageIndex(0);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+  });
 
   const removeFile = (fileName) => {
     setSelectedFiles((prevFiles) =>
       prevFiles.filter((file) => file.name !== fileName)
     );
   };
-  // 이미지 로컬 상태에 추가 (브라우저에서 미리보기)
-  const inputImages = () => {
-    const newImages = selectedFiles.map((file) => ({
-      id: images.length + 1 + Math.random(),
-      url: URL.createObjectURL(file),
-      selected: false,
-    }));
-    setImages([...images, ...newImages]);
-    setSelectedFiles([]);
-    closeModal();
-  };
 
   // 이미지 저장
   const saveImages = async () => {
     const formData = new FormData();
+
     selectedFiles.forEach((file) => {
-      formData.append("image", file);
+      formData.append("images", file);
+      formData.append("fileNames", file.name);
+      formData.append("fileExtensions", file.name.split(".").pop());
+      formData.append("fileSizes", file.size);
     });
+
+    formData.append("familyIdx", userData.familyIdx);
     formData.append("userId", userId);
+    formData.append("entityType", "album");
+    formData.append("entityIdx", 0);
 
     try {
-      const response = await axios.post("http://localhost:8089/album/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await axios.post(
+        "http://localhost:8089/wefam/add-album-img",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("이미지 저장이 완료되었습니다.");
+        window.location.reload();
+      } else {
+        console.error("이미지 저장 실패:", response);
+      }
+    } catch (error) {
+      console.error("이미지 저장 중 오류 발생:", error);
+    }
+  };
+
+  // 이미지 삭제
+  const deleteSelectedImages = () => {
+    axios.delete('http://localhost:8089/wefam/delete-album-images', {
+      data: selectedImages,
+    })
+      .then(response => {
+        alert('이미지가 성공적으로 삭제되었습니다.');
+        setImages(images.filter(image => !selectedImages.includes(image.id)));
+        setSelectedImages([]);
+      })
+      .catch(error => {
+        console.error('이미지 삭제 중 오류 발생:', error);
       });
-
-      if (response.status === 200) {
-        alert("이미지 업로드 성공!");
-        fetchImages(); // 업로드 후 이미지를 다시 불러옴
-        setSelectedFiles([]);
-        closeModal();
-      } else {
-        alert("이미지 업로드 실패");
-      }
-    } catch (error) {
-      console.error("이미지 업로드 중 오류 발생:", error);
-    }
   };
 
-  // 이미지 초기 로드
-  const fetchImages = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8089/album/user/${userId}`);
-      if (response.status === 200) {
-        setImages(response.data.map((img) => ({
-          id: img.albumId,
-          url: img.imageUrl,
-          name: img.imageName,
-        })));
-      } else {
-        console.error("이미지 가져오기 실패");
-      }
-    } catch (error) {
-      console.error("이미지 가져오기 중 오류 발생:", error);
-    }
-  };
+  // 날짜 선택 핸들러
+  const handleStartDateChange = (event) => setStartDate(event.target.value);
+  const handleEndDateChange = (event) => setEndDate(event.target.value || new Date().toISOString().split('T')[0]);
 
-  useEffect(() => {
-    if (userId) {
-      fetchImages();
-    }
-  }, [userId]);
-
+  // 이미지 선택 처리
   const toggleImageSelection = (id) => {
     setSelectedImages((prevSelected) =>
       prevSelected.includes(id)
@@ -105,19 +151,8 @@ const AlbumFolder = () => {
     );
   };
 
-  const deleteSelectedImages = () => {
-    setImages((prevImages) =>
-      prevImages.filter((image) => !selectedImages.includes(image.id))
-    );
-    setSelectedImages([]);
-  };
-
   const toggleAllImages = (event) => {
-    if (event.target.checked) {
-      setSelectedImages(images.map((image) => image.id));
-    } else {
-      setSelectedImages([]);
-    }
+    setSelectedImages(event.target.checked ? images.map(image => image.id) : []);
   };
 
   const openImageModal = (index) => {
@@ -125,9 +160,7 @@ const AlbumFolder = () => {
     setIsImageModalOpen(true);
   };
 
-  const closeImageModal = () => {
-    setIsImageModalOpen(false);
-  };
+  const closeImageModal = () => setIsImageModalOpen(false);
 
   const showNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -141,6 +174,18 @@ const AlbumFolder = () => {
     );
   };
 
+  const showNextFile = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === selectedFiles.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const showPreviousFile = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? selectedFiles.length - 1 : prevIndex - 1
+    );
+  };
+
   return (
     <div className="main">
       <div className={styles.albumWrapper}>
@@ -151,62 +196,81 @@ const AlbumFolder = () => {
               <p className={styles.folderNameText}>{name}</p>
             </div>
             <div className={styles.imgArray}>
-              <p>날짜</p>
-              <input type="date" />
-              <p>정렬순서</p>
-              <select>
-                <option>최신 순</option>
-                <option>오래된 순</option>
-              </select>
+              <p>시작일</p>
+              <input
+                type="date"
+                onChange={handleStartDateChange}
+                value={startDate}
+              />
+              <p>종료일</p>
+              <input
+                type="date"
+                onChange={handleEndDateChange}
+                value={endDate}
+              />
+              <button onClick={() => fetchImages(startDate, endDate)}>조회</button>
+              <button onClick={() => fetchImages()}>전체 이미지 보기</button>
             </div>
           </div>
 
           <div className={styles.imgSetting}>
-            <button className={styles.btnDelete} onClick={deleteSelectedImages}>
-              삭제
-            </button>
+            <button className={styles.btnDelete} onClick={deleteSelectedImages}>삭제</button>
             <div className={styles.saveAndCheckbox}>
-              <button className={styles.btnAdd} onClick={saveImages}>저장</button>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   onChange={toggleAllImages}
-                  checked={
-                    selectedImages.length === images.length && images.length > 0
-                  }
+                  checked={selectedImages.length === images.length && images.length > 0}
                 />
                 전체선택
               </label>
             </div>
-            <button className={styles.btnPlus} onClick={openModal}>
+            <button className={styles.btnPlus} onClick={() => setIsModalOpen(true)}>
               +
             </button>
           </div>
         </div>
 
         <div className={styles.folderContainer}>
-          {images.map((image, index) => (
-            <div key={image.id} className={styles.folder}>
-              <input
-                type="checkbox"
-                className={styles.folderCheckbox}
-                checked={selectedImages.includes(image.id)}
-                onChange={() => toggleImageSelection(image.id)}
-              />
-              <img
-                src={image.url}
-                alt={`img-${image.id}`}
-                className={styles.image}
-                onClick={() => openImageModal(index)}
-              />
+          {images.length > 0 ? (
+            <div className={styles.imageGrid}>
+              {images.slice(currentPage * imagesPerPage, (currentPage + 1) * imagesPerPage).map((image, index) => (
+                <div key={image.id} className={styles.folder}>
+                  <input
+                    type="checkbox"
+                    className={styles.folderCheckbox}
+                    checked={selectedImages.includes(image.id)}
+                    onChange={() => toggleImageSelection(image.id)}
+                  />
+                  <img
+                    src={image.url}
+                    alt={`img-${image.id}`}
+                    className={styles.image}
+                    onClick={() => openImageModal(index)}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <p>이미지가 없습니다.</p>
+          )}
+
+          {images.length > imagesPerPage && (
+            <div className={styles.slider}>
+              <button className={styles.prevButton} onClick={handlePrevPage}>
+                &lt;
+              </button>
+              <button className={styles.nextButton} onClick={handleNextPage}>
+                &gt;
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 이미지 추가 모달 */}
         <Modal
           isOpen={isModalOpen}
-          onRequestClose={closeModal}
+          onRequestClose={() => setIsModalOpen(false)}
           contentLabel="이미지 등록"
           className={styles.folderModal}
           overlayClassName={styles.folderOverlay}
@@ -214,22 +278,48 @@ const AlbumFolder = () => {
           <h1>이미지 추가</h1>
           <div {...getRootProps({ className: styles.dropzone })}>
             <input {...getInputProps()} />
-            <p>이곳에 파일을 드롭해주세요</p>
-            <button>이미지 추가</button>
+            {selectedFiles.length === 0 ? (
+              <p onClick={open} style={{ cursor: "pointer" }}>
+                여기를 클릭하거나 파일을 드롭해주세요
+              </p>
+            ) : (
+              <div className={styles.previewArea}>
+                <img
+                  src={URL.createObjectURL(selectedFiles[currentImageIndex])}
+                  alt={selectedFiles[currentImageIndex].name}
+                  className={styles.previewImage}
+                />
+                {selectedFiles.length > 1 && (
+                  <div className={styles.slideButtons}>
+                    <button onClick={showPreviousFile}>{"<"}</button>
+                    <button onClick={showNextFile}>{">"}</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <ul className={styles.fileList}>
             {selectedFiles.map((file) => (
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
+                <button
+                  onClick={open}
+                  className={styles.inputButton}
+                >
+                  추가
+                </button>
                 <button onClick={() => removeFile(file.name)}>삭제</button>
               </li>
             ))}
           </ul>
 
-          <div>
-            <button className={styles.modalButton} onClick={inputImages}>
-              추가
+          <div className={styles.modalButtons}>
+            <button className={styles.modalButton} onClick={saveImages}>
+              저장
+            </button>
+            <button className={styles.modalButton} onClick={() => setIsModalOpen(false)}>
+              취소
             </button>
           </div>
         </Modal>

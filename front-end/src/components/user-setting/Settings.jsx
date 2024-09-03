@@ -32,7 +32,7 @@ const Settings = () => {
               onClick={() => setActiveMenu('group-management')} 
               className={activeMenu === 'group-management' ? styles.active : ''}
             >
-              그룹 관리
+              가족 정보 관리
             </li>
           </ul>
         </div>

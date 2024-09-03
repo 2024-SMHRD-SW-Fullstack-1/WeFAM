@@ -6,6 +6,7 @@
   height: calc(100% - var(--header-height));
   background-color: #fff;
   transition: all var(--animation-duration);
+  font-size: 24px;
 }
 
 .leftSidebar.closed {

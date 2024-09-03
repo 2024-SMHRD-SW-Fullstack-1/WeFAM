@@ -14,11 +14,7 @@ import AddCircle from "./AddCircle";
 const Header = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
-
-  const address = "광주광역시 동구 중앙로 196";
-
-  // getCoordinates(address);
-
+  const [familyMotto, setFamilyMotto] = useState("");
   const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [userImages, setUserImages] = useState([]);
@@ -32,25 +28,9 @@ const Header = () => {
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
 
-  const openGroup = () => {
-    setIsGroupOpen(true);
-  };
-
-  const closeGroup = () => {
-    setIsGroupOpen(false);
-  };
-
-  const openAddCircle = () => {
-    setIsAddCircleOpen(true);
-  };
-
-  const closeAddCircle = () => {
-    setIsAddCircleOpen(false);
-  };
-
   useEffect(() => {
     if (userData) {
-      // 실제 사용자 데이터를 가져오는 axios 요청
+      // 첫 번째 GET 요청: 가족 데이터를 가져옴
       axios
         .get("http://localhost:8089/wefam/get-family")
         .then((response) => {
@@ -60,8 +40,43 @@ const Header = () => {
         .catch((error) => {
           console.error("가져오기 에러!!", error);
         });
+        // 두 번째 GET 요청: 가족 가훈을 가져옴
+    axios
+    .get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
+    .then((response) => {
+      setFamilyMotto(response.data);
+      console.log(response.data);
+      
+    })
+    .catch((error) => {
+      console.error("가훈 가져오기 에러:", error);
+    });
     }
   }, [userData]); // userData가 변경될 때마다 실행
+
+  const handleMottoChange = (e) => {
+    setFamilyMotto(e.target.value);
+  };
+
+  const updateFamilyMotto = () => {
+    if (!familyMotto) {
+      alert("가훈을 입력하세요.");
+      return;
+    }
+    const updatedFamily = {
+      familyIdx: 1, 
+      familyMotto: familyMotto,
+      userId: userData.id
+    };
+
+    axios.put('http://localhost:8089/wefam/update-family-motto', updatedFamily)
+      .then(response => {
+        console.log('가훈 업데이트 성공:', response.data);
+      })
+      .catch(error => {
+        console.error('가훈 업데이트 실패:', error);
+      });
+  };
 
   return (
     <div>
@@ -85,45 +100,17 @@ const Header = () => {
           {/* WeFAM로고 */}
           <img className={styles.logo} src={logo}></img>
         </div>
+        <div className={styles.groupContainer}>
+        {familyMotto}
+          </div> 
         {/* <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
           </button>
         </div> */}
 
-        <Modal
-          isOpen={isGroupOpen}
-          onRequestClose={closeGroup}
-          className={styles.modalContent}
-          overlayClassName={styles.modalOverlay}
-        >
-          <div className={styles.modalHeader}>
-            <div className={styles.modalHeaderTop}>
-              <button onClick={closeGroup} className={styles.closeGroupButton}>
-                <h2>{groupName} ▲</h2>
-              </button>
-              <div className={styles.groupProfileContainer}>
-                {/* 카카오 프로필 이미지 */}
-                {userImages.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    className={styles.groupProfileContainer}
-                    alt={`user-${index}`}
-                  />
-                ))}
-                <img
-                  className={styles.profileImage}
-                  src={add_group}
-                  alt="add-group"
-                  onClick={openAddCircle}
-                />
-              </div>
-            </div>
-          </div>
-        </Modal>
+        
 
-        <AddCircle isOpen={isAddCircleOpen} onRequestClose={closeAddCircle} />
       </nav>
     </div>
   );

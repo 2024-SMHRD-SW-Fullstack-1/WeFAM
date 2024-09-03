@@ -6,9 +6,8 @@ import WorkModal from "./WorkModal";
 import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 
 const HouseWork2 = () => {
-  const familyMembers = useSelector((state) => state.family.members);
   const userData = useSelector((state) => state.user.userData);
-  const [localFamilyMembers, setFamilyMembers] = useState(familyMembers || []);
+  const [localFamilyMembers, setFamilyMembers] = useState([]); // 초기값을 빈 배열로 설정
   const [tasks, setTasks] = useState({ daily: [], shortTerm: [] });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskType, setTaskType] = useState("daily");
@@ -53,8 +52,6 @@ const HouseWork2 = () => {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
   };
-
-  console.log("gdgd", familyMembers);
 
   useEffect(() => {
     fetchTasks();
@@ -300,6 +297,7 @@ const HouseWork2 = () => {
           </div>
         </div>
       </div>
+      {/*오른쪽 그리드 */}
       <div styles={styles.board}>
         <div className={styles.column_header}>
           <h3>매일 할 일</h3>
@@ -314,6 +312,7 @@ const HouseWork2 = () => {
           </div>
         </div>
       </div>
+
       <WorkModal
         isModalOpen={isModalOpen}
         closeModal={closeModal}
