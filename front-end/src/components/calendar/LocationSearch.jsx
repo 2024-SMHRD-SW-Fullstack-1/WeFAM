@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./LocationSearchInput.module.css"; // CSS 모듈 사용
+import Login from "../login/Login";
 
 const MapSearchInput = ({
   onPlaceSelect,
@@ -7,13 +8,14 @@ const MapSearchInput = ({
   onCoordinatesClear,
   location,
 }) => {
-  const [searchTerm, setSearchTerm] = useState(event?.location || ""); // 초기 location 값을 가져옴
+  const [searchTerm, setSearchTerm] = useState(event.location || ""); // 초기 location 값을 가져옴
   const [searchResults, setSearchResults] = useState([]);
   const [map, setMap] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => {
     setSearchTerm(location || event.location || ""); // location을 초기값으로 설정하고, location이 변경될 때마다 searchTerm을 업데이트
+    console.log(location, event.location);
   }, [location, event.location]);
 
   useEffect(() => {
@@ -95,7 +97,7 @@ const MapSearchInput = ({
         value={searchTerm}
         onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
-        // placeholder="장소를 입력하세요"
+        placeholder="장소를 입력하세요"
       />
       {searchTerm && (
         <button className={styles.clearButton} onClick={handleClearLocation}>

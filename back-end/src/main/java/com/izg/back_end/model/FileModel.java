@@ -53,4 +53,5 @@ public class FileModel {
     
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간
+
 }
