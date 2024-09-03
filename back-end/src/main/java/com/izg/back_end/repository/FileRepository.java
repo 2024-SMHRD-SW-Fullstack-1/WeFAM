@@ -14,4 +14,8 @@ public interface FileRepository extends JpaRepository<FileModel, Integer> {
     @Query("DELETE FROM FileModel f WHERE f.entityType = :entityType AND f.entityIdx = :entityIdx")
     void deleteByEntityTypeAndEntityIdx(@Param("entityType") String entityType, @Param("entityIdx") Integer entityIdx);
 	List<FileModel> findByEntityTypeAndEntityIdx(String entityType, int entityIdx);
+	
+	
+	// familyIdx와 entityType을 기준으로 파일 리스트를 가져오는 메서드
+    List<FileModel> findByFamilyIdxAndEntityType(int familyIdx, String entityType);
 }
