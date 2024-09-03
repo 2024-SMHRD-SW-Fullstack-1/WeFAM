@@ -97,6 +97,8 @@ const AddFeed = React.memo(({ onAddFeed, onGetJoiningData, onGetAllFeeds }) => {
 
       {isUploadImageModalOpen && (
         <UploadImageModal
+          content={content}
+          onHandleAddFeed={handleAddFeed}
           onGetJoiningData={onGetJoiningData}
           onGetAllFeeds={onGetAllFeeds}
           onClose={() => setIsUploadImageModalOpen(false)}

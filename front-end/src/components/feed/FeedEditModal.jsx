@@ -83,7 +83,7 @@ const FeedEditModal = ({ feed, onClose, onSave }) => {
   // 로딩 상태에 따라 렌더링
   return ReactDOM.createPortal(
     isLoading ? (
-      <div className={modalStyles.modal} onClick={onClose}>
+      <div className={modalStyles.modal}>
         <Preloader isLoading={isLoading} />
       </div>
     ) : (
