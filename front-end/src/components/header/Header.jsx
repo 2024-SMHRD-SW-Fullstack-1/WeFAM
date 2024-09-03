@@ -85,11 +85,11 @@ const Header = () => {
           {/* WeFAM로고 */}
           <img className={styles.logo} src={logo}></img>
         </div>
-        <div className={styles.groupContainer}>
+        {/* <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
           </button>
-        </div>
+        </div> */}
 
         <Modal
           isOpen={isGroupOpen}

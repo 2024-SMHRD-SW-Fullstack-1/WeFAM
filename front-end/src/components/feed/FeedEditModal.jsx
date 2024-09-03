@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import modalStyles from "../modal/Modal.module.css";
 import styles from "./FeedDetailModal.module.css";
 import Preloader from "../preloader/Preloader";
+
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-const FeedDetailModal = ({ feed, onClose }) => {
+const FeedEditModal = ({ feed, onClose, onSave }) => {
+  // 부모 FeedItem에서 Feed는 받아지는 것을 확인 (feed 안에는 idx가 있음).
+  // idx를 통해 db에서 피드 데이터 가져오기.
   const [isLoading, setIsLoading] = useState(true);
   const [imagePreview, setImagePreview] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [profileImg, setProfileImg] = useState("");
-  const [writer, setWriter] = useState("");
-  const [content, setContent] = useState("");
-  const [hasContent, setHasContent] = useState(false);
+  const [writerProfileImg, setWriterProfileImg] = useState("");
+  const [writerNick, setWriterNick] = useState("");
+  const [feedContent, setFeedContent] = useState("");
+
+  // 현재 슬라이드 번호와 전체 슬라이드 수
+  const currentSlideNumber = currentSlide + 1;
+  const totalSlides = imagePreview.length;
 
   useEffect(() => {
-    console.log(feed);
     const fetchImages = async () => {
       if (!feed || !feed.idx) {
         console.warn("Invalid feed or feed.idx");
@@ -46,15 +51,9 @@ const FeedDetailModal = ({ feed, onClose }) => {
         const feedResponse = await axios.get(
           `http://localhost:8089/wefam/get-feed-detail/${feed.idx}`
         );
-        console.log(feedResponse);
-        setProfileImg(feedResponse.data.profileImg);
-        setWriter(feedResponse.data.nick);
-        setContent(feedResponse.data.feedContent);
-        if (feedResponse.data.feedContent === "") {
-          setHasContent(false);
-        } else {
-          setHasContent(true);
-        }
+        setWriterProfileImg(feedResponse.data.profileImg);
+        setWriterNick(feedResponse.data.nick);
+        setFeedContent(feedResponse.data.feedContent);
       } catch (error) {
         console.error("수정할 피드의 데이터 요청 에러 :", error);
       }
@@ -75,9 +74,11 @@ const FeedDetailModal = ({ feed, onClose }) => {
     setCurrentSlide((prev) => Math.min(prev + 1, imagePreview.length - 1));
   };
 
-  // 현재 슬라이드 번호와 전체 슬라이드 수
-  const currentSlideNumber = currentSlide + 1;
-  const totalSlides = imagePreview.length;
+  // 저장 버튼 클릭하면 feed.idx와 content를 서버로 보내어 피드 업데이트.
+  const handleSaveClick = () => {
+    onSave(feed.idx, feedContent);
+    onClose();
+  };
 
   // 로딩 상태에 따라 렌더링
   return ReactDOM.createPortal(
@@ -91,9 +92,7 @@ const FeedDetailModal = ({ feed, onClose }) => {
           className={modalStyles["modal-content"]}
           onClick={(e) => e.stopPropagation()}
         >
-          <div
-            className={`${styles.main} ${!hasContent ? styles.noContent : ""}`}
-          >
+          <div className={styles.main}>
             {/* 이미지 프리뷰 */}
             <div className={styles.preview}>
               {imagePreview.length > 0 && (
@@ -127,23 +126,32 @@ const FeedDetailModal = ({ feed, onClose }) => {
             </div>
 
             {/* 텍스트 내용 */}
-            {hasContent ? (
-              <div className={styles.contentContainer}>
-                <div className={styles.profileContainer}>
-                  <div className={styles.profileImg}>
-                    <img src={profileImg} alt="" />
-                  </div>
-                  <div className={styles.profileNick}>{writer}</div>
+            <div className={styles.contentContainer}>
+              <div className={styles.profileContainer}>
+                <div className={styles.profileImg}>
+                  <img src={writerProfileImg} alt="" />
                 </div>
-                {/* 사용자 */}
-                <div className={styles.content}>{content}</div>
+                <div className={styles.profileNick}>{writerNick}</div>
               </div>
-            ) : null}
+              {/* 사용자 */}
+              <textarea
+                className={styles.content}
+                name="feedContent"
+                value={feedContent}
+                onChange={(e) => setFeedContent(e.target.value)}
+              ></textarea>
+            </div>
           </div>
           {/* 푸터 */}
           <div className={modalStyles.modalFooter}>
             <button className={modalStyles.cancelButton} onClick={onClose}>
               취소
+            </button>
+            <button
+              className={modalStyles.saveButton}
+              onClick={handleSaveClick}
+            >
+              수정
             </button>
           </div>
         </div>
@@ -153,4 +161,4 @@ const FeedDetailModal = ({ feed, onClose }) => {
   );
 };
 
-export default FeedDetailModal;
+export default FeedEditModal;
