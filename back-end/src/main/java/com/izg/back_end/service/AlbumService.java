@@ -9,7 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -47,8 +50,25 @@ public class AlbumService {
 		}
 	}
 	
+	// 이미지 불러오기
 	 public List<FileModel> getImagesByFamilyIdx(int familyIdx) {
-	        return fileRepository.findByFamilyIdxAndEntityType(familyIdx, "album");
-	
+	        return fileRepository.findByFamilyIdx(familyIdx);
 	 }	
+	 
+	 // 이미지 삭제하기
+	 public void deleteImages(List<Integer> imageIds) {
+	        for (Integer id : imageIds) {
+	            fileRepository.deleteById(id);
+	        }
+	    }
+	 
+	 // 달력에서 사진 찾아오기
+	  public List<FileModel> getImagesByDateRange(int familyIdx, String startDate, String endDate) {
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	        LocalDate start = LocalDate.parse(startDate, formatter);
+	        LocalDate end = LocalDate.parse(endDate, formatter).plusDays(1); // endDate를 포함하기 위해 하루 더한다.
+
+	        return fileRepository.findByFamilyIdxAndUploadedAtBetween(familyIdx, start.atStartOfDay(), end.atStartOfDay());
+	    }
 }

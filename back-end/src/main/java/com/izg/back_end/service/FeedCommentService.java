@@ -74,4 +74,9 @@ public class FeedCommentService {
 	public void deleteComment(int cmtIdx) {
 		feedCommentRepository.deleteById(cmtIdx);
 	}
+    
+    @Transactional
+    public int countComments(int feedIdx) {
+    	return feedCommentRepository.countByFeedIdx(feedIdx);
+    }
 }

@@ -57,4 +57,11 @@ public class FeedCommentController {
 		feedCommentService.deleteComment(cmtIdx);
 	}
 	
+	@GetMapping("/count-comments/{feedIdx}")
+	public int getMethodName(@PathVariable("feedIdx") int feedIdx) {
+		System.out.println("Received feedIdx to count comments");
+		return feedCommentService.countComments(feedIdx);
+	}
+	
+	
 }

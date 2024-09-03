@@ -105,7 +105,7 @@ const handleLogout = async () => {
           <li>
             <span
               onClick={() => {
-                nav("/main/housework");
+                nav("/main/housework2");
               }}
               style={{ cursor: "pointer" }}
             >

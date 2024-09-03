@@ -4,7 +4,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    userData: null,
+    userData: {
+      familyIdx: null, // 카카오 로그인에서 받은 값에 새로 추가
+    },
   },
   reducers: {
     setUserData: (state, action) => {

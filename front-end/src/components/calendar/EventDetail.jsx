@@ -7,11 +7,17 @@ import {
   BsThreeDotsVertical,
   BsChevronCompactRight,
   BsPinMap,
+  BsImages,
 } from "react-icons/bs";
 import { RiArrowRightWideLine } from "react-icons/ri";
+import { MdOutlineEditNote } from "react-icons/md";
 import { FiMapPin } from "react-icons/fi";
 import { MapInDetail } from "./LocationMap";
 import { useSelector } from "react-redux";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick"; // react-slick 임포트
+
 const EventDetail = ({
   event,
   onClose,
@@ -37,7 +43,9 @@ const EventDetail = ({
       });
     }
   }, [event]);
+
   const userProfile = familyUsers.find((user) => user.id === event.userId);
+
   useEffect(() => {
     if (event && event.start && !(event.start instanceof Date)) {
       event.start = new Date(event.start);
@@ -47,6 +55,10 @@ const EventDetail = ({
       event.end = new Date(event.end);
     }
 
+    setEventData(event); // event prop이 변경될 때마다 eventData를 업데이트
+  }, [event]);
+
+  useEffect(() => {
     setEventData(event); // event prop이 변경될 때마다 eventData를 업데이트
   }, [event]);
 
@@ -98,6 +110,18 @@ const EventDetail = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
+
+  // Slider 설정
+  const settings = {
+    dots: true,
+    infinite: event.files && event.files.length > 1, // 이미지가 1개일 때 무한 스크롤 비활성화
+    speed: 500,
+    slidesToShow: 1, // 한 번에 하나의 슬라이드만 표시
+    slidesToScroll: 1,
+    // centerMode: event.files.length > 1, // 이미지가 1개일 때 centerMode 비활성화
+    centerPadding: "0", // 여백 없이 슬라이드를 중앙에 맞춤
+    arrow: true,
+  };
 
   return ReactDOM.createPortal(
     <div className={styles.EventDetail} onClick={(e) => e.stopPropagation()}>
@@ -189,6 +213,23 @@ const EventDetail = ({
         </div>
       </div>
 
+      {/*Content 부분*/}
+      <div className={styles.memoContainer}>
+        <div className={styles.field}>
+          <MdOutlineEditNote
+            className={styles.icon}
+            style={{ color: eventColor, width: 26, height: 26 }}
+          />
+          <div>
+            <h3 className={styles.locationName}>메모</h3>
+          </div>
+        </div>
+        <div style={{ padding: "0 18px" }}>
+          <p>{event.content}</p>
+          <span>일정을 등록했습니다</span>
+        </div>
+      </div>
+
       {/* 지도  */}
       {coordinates && (
         <div className={styles.locationContainer}>
@@ -208,22 +249,37 @@ const EventDetail = ({
         </div>
       )}
 
-      {/* Content 부분 */}
-      <div className={styles.content}>
-        <p>{event.content}</p>
-      </div>
-
-      {/*Comment 부분*/}
-      {/* <div className={styles.commentSection}>
-        <div className={styles.comment}>
-          <span>작성자: {event.userId}</span>
-          <span>일정을 등록했습니다</span>
-          <span>
-            {new Date(event.start).toLocaleDateString()}{" "}
-            {new Date(event.start).toLocaleTimeString()}
-          </span>
-        </div>
-      </div> */}
+      {/* 이미지 슬라이더 부분 */}
+      {event.files && event.files.length > 0 && (
+        <>
+          <div className={styles.field}>
+            <BsImages className={styles.icon} style={{ color: eventColor }} />
+            <div>
+              <h3 className={styles.locationName}>추억의 순간</h3>
+            </div>
+          </div>
+          <div className={styles.sliderContainer}>
+            <Slider {...settings}>
+              {event.files.map((file, index) => (
+                <div key={index}>
+                  <img
+                    src={
+                      file.url ||
+                      `data:image/${file.fileExtension};base64,${file.fileData}`
+                    }
+                    alt={`Event file ${index}`}
+                    className={styles.image}
+                    onClick={(e) => {
+                      e.preventDefault(); // 기본 동작 방지
+                      e.stopPropagation(); // 이벤트 전파 차단
+                    }}
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
+        </>
+      )}
     </div>,
 
     document.body // 모달을 body에 추가
