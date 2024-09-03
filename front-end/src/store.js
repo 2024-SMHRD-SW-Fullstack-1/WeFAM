@@ -4,6 +4,7 @@ import userReducer from "./features/userSlice";
 import familyReducer from "./features/familySlice";
 import leftSidebarReducer from "./features/leftSidebarSlice";
 import imagesOnFeedReducer from "./features/imagesOnFeedSlice";
+import pollReducer from "./features/pollSlice";
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 import { combineReducers } from "redux";
@@ -17,9 +18,10 @@ const persistConfig = {
 // rootReducer 설정
 const rootReducer = combineReducers({
   user: userReducer,
-  family: familyReducer,
+  // family: familyReducer,
   leftSidebar: leftSidebarReducer,
-  imagesOnFeed: imagesOnFeedReducer,
+  // imagesOnFeed: imagesOnFeedReducer,
+  poll: pollReducer,
 });
 
 // persistReducer로 감싸기

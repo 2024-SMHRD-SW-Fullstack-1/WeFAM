@@ -17,13 +17,14 @@ const UploadImageModal = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector((state) => state.user.userData);
+  const dispatch = useDispatch();
   const [images, setImages] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalContent, setModalContent] = useState("");
   const [location, setLocation] = useState("");
-  const dispatch = useDispatch();
+
   const maxImageCnt = 10;
 
   // content 프롭스가 변경될 때마다 상태를 업데이트
@@ -84,12 +85,10 @@ const UploadImageModal = ({
   const onSave = async () => {
     setIsLoading(true);
 
-    const joiningData = await onGetJoiningData(userData.id);
-
     if (images.length > 0) {
       // 이미지가 있는 경우
       const formData = new FormData();
-      formData.append("familyIdx", joiningData.familyIdx);
+      formData.append("familyIdx", userData.familyIdx);
       formData.append("userId", userData.id);
       formData.append("entityType", "feed");
       formData.append("entityIdx", 0); // 우선 feed 저장 전 테스트용
@@ -124,7 +123,7 @@ const UploadImageModal = ({
     } else {
       // 이미지가 없는 경우
       const newFeed = {
-        familyIdx: joiningData.familyIdx,
+        familyIdx: userData.familyIdx,
         userId: userData.id,
         feedContent: modalContent,
         feedLocation: location,
@@ -151,8 +150,8 @@ const UploadImageModal = ({
     }
 
     try {
-      if (joiningData.familyIdx) {
-        await onGetAllFeeds(joiningData.familyIdx);
+      if (userData.familyIdx) {
+        await onGetAllFeeds(userData.familyIdx);
       }
     } catch (error) {
       console.error("피드를 가져오는 중 오류 발생:", error);

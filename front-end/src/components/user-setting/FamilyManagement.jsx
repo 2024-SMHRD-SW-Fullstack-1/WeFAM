@@ -45,7 +45,7 @@ const FamilyManagement = () => {
     .then(response => {
       console.log('프로필 업데이트 성공:', response.data);
       closeModal(); // 모달 닫기
-      window.location.reload(); // 페이지 새로고침
+      // window.location.reload(); // 페이지 새로고침
     })
     .catch(error => {
       console.error('프로필 업데이트 실패:', error);
