@@ -24,9 +24,14 @@ const AlbumFolder = () => {
   // react-dropzone 설정
   const onDrop = (acceptedFiles) => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    setCurrentImageIndex(0); // 이미지 슬라이드를 처음으로 초기화
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: true, // 자동으로 열리지 않도록 설정
+    noKeyboard: true,
+  });
 
   const removeFile = (fileName) => {
     setSelectedFiles((prevFiles) =>
@@ -46,79 +51,12 @@ const AlbumFolder = () => {
     closeModal();
   };
 
-  // 이미지 저장
-const saveImages = () => {
-  const formData = new FormData();
-
-  selectedFiles.forEach((file) => {
-    formData.append("images", file);
-    formData.append("fileNames", file.name);
-    formData.append("fileExtensions", file.name.split(".").pop());
-    formData.append("fileSizes", file.size);
-  });
-
-  formData.append("familyIdx", 1);  // 예시로 familyIdx 1을 사용
-  formData.append("userId", userId);
-  formData.append("entityIdx", 1); // 예시로 albumId 1을 사용
-
-  axios
-    .post("http://localhost:8089/wefam/add-album-img", formData)
-    .then((response) => {
-      console.log("이미지 저장 성공:", response.data);
-      // 이미지를 성공적으로 저장한 후 로컬 상태 초기화
-      setSelectedFiles([]);
-      setImages([]);  // 저장 후 이미지 리스트를 다시 불러오는 게 좋음
-      closeModal();   // 모달 닫기
-      window.location.reload();  // 이미지가 추가된 후 화면을 새로고침
-    })
-    .catch((error) => {
-      console.error("이미지 저장 실패:", error);
-    });
-};
-
-
-  // 이미지 초기 로드
-  const loadImages = () => {
-    axios.get(`http://localhost:8089/wefam/get-album-img`) // 앨범 ID, 필요에 따라 설정
-      .then(response => {
-        const loadedImages = response.data.map((img, index) => ({
-          id: img.fileIdx,
-          url: `data:image/jpeg;base64,${img.fileData}`, // Base64로 인코딩된 이미지
-          selected: false,
-        }));
-        setImages(loadedImages);
-      })
-      .catch(error => {
-        console.error('이미지 로드 실패:', error);
-      });
-  };
-
-  useEffect(() => {
-    if (userId) {
-      loadImages();
-    }
-  }, [userId]);
-
   const toggleImageSelection = (id) => {
     setSelectedImages((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((imageId) => imageId !== id)
         : [...prevSelected, id]
     );
-  };
-
-  const deleteSelectedImages = () => {
-    const deleteIds = selectedImages.map(id => images.find(img => img.id === id).fileIdx);
-
-    axios.post('http://localhost:8089/wefam/delete-album-img', { ids: deleteIds })
-      .then(response => {
-        console.log('이미지 삭제 성공:', response.data);
-        setImages(prevImages => prevImages.filter(img => !selectedImages.includes(img.id)));
-        setSelectedImages([]);
-      })
-      .catch(error => {
-        console.error('이미지 삭제 실패:', error);
-      });
   };
 
   const toggleAllImages = (event) => {
@@ -150,6 +88,18 @@ const saveImages = () => {
     );
   };
 
+  const showNextFile = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === selectedFiles.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const showPreviousFile = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? selectedFiles.length - 1 : prevIndex - 1
+    );
+  };
+
   return (
     <div className="main">
       <div className={styles.albumWrapper}>
@@ -171,11 +121,8 @@ const saveImages = () => {
           </div>
 
           <div className={styles.imgSetting}>
-            <button className={styles.btnDelete} onClick={deleteSelectedImages}>
-              삭제
-            </button>
+            <button className={styles.btnDelete}>삭제</button>
             <div className={styles.saveAndCheckbox}>
-              <button className={styles.btnAdd} onClick={saveImages}>저장</button>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -223,22 +170,48 @@ const saveImages = () => {
           <h1>이미지 추가</h1>
           <div {...getRootProps({ className: styles.dropzone })}>
             <input {...getInputProps()} />
-            <p>이곳에 파일을 드롭해주세요</p>
-            <button>이미지 추가</button>
+            {selectedFiles.length === 0 ? (
+              <p onClick={open} style={{ cursor: "pointer" }}>
+                여기를 클릭하거나 파일을 드롭해주세요
+              </p>
+            ) : (
+              <div className={styles.previewArea}>
+                <img
+                  src={URL.createObjectURL(selectedFiles[currentImageIndex])}
+                  alt={selectedFiles[currentImageIndex].name}
+                  className={styles.previewImage}
+                />
+                {selectedFiles.length > 1 && (
+                  <div className={styles.slideButtons}>
+                    <button onClick={showPreviousFile}>{"<"}</button>
+                    <button onClick={showNextFile}>{">"}</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <ul className={styles.fileList}>
-            {selectedFiles.map((file) => (
+            {selectedFiles.map((file, index) => (
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
+                <button
+                  onClick={open} // 파일 선택 창을 다시 열기
+                  className={styles.inputButton}
+                >
+                  추가
+                </button>
                 <button onClick={() => removeFile(file.name)}>삭제</button>
               </li>
             ))}
           </ul>
 
-          <div>
+          <div className={styles.modalButtons}>
             <button className={styles.modalButton} onClick={inputImages}>
-              추가
+              저장
+            </button>
+            <button className={styles.modalButton} onClick={closeModal}>
+              취소
             </button>
           </div>
         </Modal>
