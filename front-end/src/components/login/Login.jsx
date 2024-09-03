@@ -61,8 +61,19 @@ const Login = () => {
 
       if (response.status === 200) {
         const userData = response.data;
-        console.log("카카오 사용자 정보: ", userData);
-        dispatch(setUserData(userData)); // Redux에 사용자 데이터 저장
+
+        // 내가 속한 가족 데이터 받기
+        const familyData = await axios.get(
+          `http://localhost:8089/wefam/get-joiningData/${userData.id}`
+        );
+
+        // 가족 정보에서 familyIdx를 userData에 추가
+        userData.familyIdx = familyData.data.familyIdx;
+
+        // 가족 정보를 추가한 후에 Redux에 사용자 데이터를 저장
+        dispatch(setUserData(userData));
+
+        console.log("가족 정보를 추가한 카카오 사용자 정보: ", userData);
 
         nav("/main", { state: { userData } });
       } else {
