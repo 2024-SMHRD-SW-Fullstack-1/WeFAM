@@ -155,7 +155,7 @@ const Feed = () => {
   }, [getAllFeeds, userData.familyIdx]);
 
   return (
-    <div className="main">
+    <div className='main'>
       <div className={styles.feed}>
         {isLoading ? (
           <Preloader isLoading={isLoading} />
