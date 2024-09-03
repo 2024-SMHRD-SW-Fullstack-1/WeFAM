@@ -49,6 +49,11 @@
   outline: none;
 }
 
+.imageContent,
+.pollContent {
+  width: 100%;
+}
+
 .customHr {
   width: 96%;
   height: 1px;
