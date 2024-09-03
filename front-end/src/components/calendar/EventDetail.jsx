@@ -73,12 +73,24 @@ const EventDetail = ({
 
   // 날짜 포맷팅 함수
   const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString(); // 월은 0부터 시작하므로 +1
-    const day = date.getDate().toString();
-    const weekday = date.toLocaleDateString("ko-KR", { weekday: "short" });
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
 
-    return `${year}/${month}/${day} (${weekday})`;
+    if (isNaN(date.getTime())) {
+      console.error("Invalid date format:", date);
+      return ""; // 유효하지 않은 Date 객체인 경우 빈 문자열 반환
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    // 요일을 가져오는 부분 추가
+    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+    const dayOfWeek = daysOfWeek[date.getDay()];
+
+    return `${year}/${month}/${day}(${dayOfWeek})`;
   };
 
   // 시간을 "11:00" 형식으로 반환 (오전/오후 없이)
@@ -151,8 +163,7 @@ const EventDetail = ({
                   color: editHovered ? eventColor : "inherit",
                   fontWeight: editHovered ? "bold" : "normal",
                   backgroundColor: editHovered ? "#f0f0f0" : "transparent",
-                }}
-              >
+                }}>
                 수정
               </div>
               <div
@@ -163,8 +174,7 @@ const EventDetail = ({
                   color: deleteHovered ? eventColor : "inherit",
                   fontWeight: deleteHovered ? "bold" : "normal",
                   backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
-                }}
-              >
+                }}>
                 삭제
               </div>
             </div>
@@ -179,8 +189,7 @@ const EventDetail = ({
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}
-      >
+        } ${event.allDay ? styles.allDay : ""}`}>
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
