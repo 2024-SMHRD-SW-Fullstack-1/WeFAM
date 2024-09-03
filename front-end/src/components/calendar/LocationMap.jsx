@@ -88,12 +88,12 @@ const MapContainer = ({ coordinates, mapId }) => {
 
 // 모달용 지도 컴포넌트
 const MapInModal = ({ coordinates }) => {
-  return <MapContainer coordinates={coordinates} mapId="modalMap" />;
+  return <MapContainer coordinates={coordinates} mapId='modalMap' />;
 };
 
 // 디테일용 지도 컴포넌트
 const MapInDetail = ({ coordinates }) => {
-  return <MapContainer coordinates={coordinates} mapId="detailMap" />;
+  return <MapContainer coordinates={coordinates} mapId='detailMap' />;
 };
 
 export { MapInModal, MapInDetail };
