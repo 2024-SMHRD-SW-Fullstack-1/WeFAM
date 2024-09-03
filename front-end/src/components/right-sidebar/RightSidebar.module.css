@@ -1,0 +1,104 @@
+.rightSidebar {
+  position: fixed;
+  top: 72px;
+  right: 0;
+  width: var(--rightSidebar-width);
+  height: 100%;
+  background-color: var(--color-maize);
+  transition: all var(--animation-duration);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 767px) {
+  /* 모바일 스타일 */
+  .rightSidebar {
+    right: calc(-1 * var(--rightSidebar-width));
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  /* 태블릿 세로 스타일 */
+  .rightSidebar {
+    right: calc(-1 * var(--rightSidebar-width));
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  /* 태블릿 가로 스타일 */
+  .rightSidebar {
+    right: 0px;
+  }
+}
+@media (min-width: 1200px) {
+  /* 데스크탑 스타일 */
+  .rightSidebar {
+    right: 0px;
+  }
+}
+
+.onlineFamily {
+  border: none;
+  border-radius: 10px;
+  padding: 10%;
+  box-shadow: 0px 12px 24.8px 0px rgba(0, 0, 0, 0.20);
+}
+
+.rightSidebar {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 250px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 10px 0;
+}
+
+.userList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.userImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.userName {
+  flex-grow: 1;
+}
+
+.status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative; /* 현재 위치를 기준으로 이동 */
+  right: 125px; /* 왼쪽으로 5cm 이동 */
+  top: 15px;
+}
+
+.online {
+  background-color: green;
+}
+
+.offline {
+  background-color: red;
+}
