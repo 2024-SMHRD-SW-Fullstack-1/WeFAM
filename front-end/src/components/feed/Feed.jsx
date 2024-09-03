@@ -5,6 +5,7 @@ import styles from "./Feed.module.css";
 import AddFeed from "./AddFeed";
 import FeedList from "./FeedList";
 import Preloader from "../preloader/Preloader";
+
 const Feed = () => {
   // 현재 getAllFeeds로 가족 피드들을 모두 불러와서 피드 데이터가 feed에 들어옴
   // feed 변수로 FeedItem에 뿌려서 출력 중
@@ -14,7 +15,6 @@ const Feed = () => {
   const [familyIdx, setFamilyIdx] = useState(0);
 
   // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기.
-  // 이 데이터는 state.user.userData에 저장되어 있음.
   const userData = useSelector((state) => state.user.userData);
 
   console.log("userData : ", userData);
@@ -34,8 +34,6 @@ const Feed = () => {
       );
       console.log("나의 가족 정보 : ", response.data);
       return response.data;
-      // dispatch(setFamilyData(familyData)); // Redux에 가족 데이터 저장
-      // nav("/", { state: { familyData } });
     } catch (error) {
       console.error("가족 정보 요청 에러", error);
     }
@@ -45,7 +43,6 @@ const Feed = () => {
   const getAllFeeds = useCallback(async (familyIdx) => {
     try {
       setIsLoading(true);
-      // API 호출하여 피드 데이터 가져오기
       const response = await axios.get(
         `http://localhost:8089/wefam/get-all-feeds/${familyIdx}`
       );
@@ -82,7 +79,7 @@ const Feed = () => {
     [familyIdx, getAllFeeds]
   );
 
-  // 피드 작성자 ID 가져오는 함수
+  // 피드 디테일 정보 가져오는 함수
   const fetchWriter = useCallback(async (feedIdx) => {
     try {
       // GET 요청을 보내어 feed 데이터를 가져오기
@@ -103,14 +100,12 @@ const Feed = () => {
   const getFeedDetail = useCallback(async (feedIdx) => {
     try {
       setIsLoading(true);
-      // API 호출하여 피드 데이터 가져오기
       const response = await axios.get(
         `http://localhost:8089/wefam/get-feed-detail/${feedIdx}`
       );
       console.log("getFeedDetail 함수 실행 : ", response.data);
-      return response; // 올바른 구조로 반환해야 함
+      return response;
     } catch (error) {
-      // 에러 발생 시 콘솔에 에러 메시지 출력
       console.error("getFeedDetail 함수 에러 : ", error);
     } finally {
       setIsLoading(false);
@@ -200,12 +195,15 @@ const Feed = () => {
   return (
     <div className="main">
       <div className={styles.feed}>
-        {/* Preloader태그 쪽에 Feed를 같이 넣으면 같이 리렌더링되는 불상사... */}
         {isLoading ? (
           <Preloader isLoading={isLoading} />
         ) : (
           <div className={styles.feedContent}>
-            <AddFeed onAddFeed={addFeed} onGetJoiningData={getJoiningData} />
+            <AddFeed
+              onAddFeed={addFeed}
+              onGetJoiningData={getJoiningData}
+              onGetAllFeeds={getAllFeeds}
+            />
             <FeedList
               feeds={feeds}
               onGetFeedDetail={getFeedDetail}

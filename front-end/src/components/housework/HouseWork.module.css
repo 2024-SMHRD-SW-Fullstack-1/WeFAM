@@ -7,13 +7,21 @@
     padding: 20px;
 }
 
+.workList {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    width: 100%;
+    margin: 30px;
+}
+
 .houseworkTitle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1100px;
-    margin-bottom: 20px;
+    max-width: 1300px;
+    margin: 30px;
 }
 
 .addButton {
@@ -31,10 +39,17 @@
 }
 
 .taskSection {
-    width: 100%;
-    max-width: 1200px;
+    width: 30%;
+    max-width: 30%;
     margin-bottom: 30px;
     padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .taskSection h2 {

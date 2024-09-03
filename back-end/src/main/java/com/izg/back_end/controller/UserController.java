@@ -7,16 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
 import com.izg.back_end.dto.UserDto;
+import com.izg.back_end.service.FamilyService;
 import com.izg.back_end.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
+import com.izg.back_end.model.FamilyModel;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
@@ -52,21 +56,32 @@ public class UserController {
     // 로그아웃 엔드포인트
     
     @PostMapping("/logout")
+    @CrossOrigin(methods = { RequestMethod.POST }) // 이 엔드포인트도 POST만 허용
     public ResponseEntity<Void> logout(HttpSession session) {
-    	session.invalidate(); // 세션 무효화
-    	return ResponseEntity.ok().build();
+        session.invalidate(); // 세션 무효화
+        return ResponseEntity.ok().build();
     }
     
-    
-    // 새로운 엔드포인트 추가
+    // 가족만 보여주기
     @GetMapping("/get-family")
-	public List<UserModel> getFamily() {
-		System.out.println("Gotten all users in my family : " + userService.getFamily());
-		return userService.getFamily();
-	}
-    
+    public List<UserModel> getFamily() {
+        return userService.getUsersInJoining();
+    }
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
 //    	return userService.getFamilyStaus();
 //    }
+//    
+ // 프로필 업데이트를 위한 엔드포인트 추가
+    @PutMapping("/update-profile")
+    public ResponseEntity<UserModel> updateProfile(@RequestBody UserModel updatedUser) {
+        try {
+            // 서비스 레이어에서 유저 프로필 업데이트
+            UserModel savedUser = userService.updateUserProfile(updatedUser);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    
 }
