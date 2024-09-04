@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 
 const Calendar = () => {
   const calendarRef = useRef(null); // FullCalendar를 가리킬 ref
+  const clickTimeout = useRef(null);
   const [holidays, setHolidays] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
@@ -30,7 +31,7 @@ const Calendar = () => {
   const [familyIdx, setFamilyIdx] = useState(null); // familyIdx 상태 추가
   const [eventFiles, setEventFiles] = useState([]);
 
-  let clickTimeout = null;
+  // let clickTimeout = null;
 
   const userData = useSelector((state) => state.user.userData);
 
@@ -179,7 +180,7 @@ const Calendar = () => {
           {
             params: {
               solYear: year,
-              numOfRows: 0, // 최대 0개의 공휴일 데이터를 가져옴
+              numOfRows: 100, // 최대 0개의 공휴일 데이터를 가져옴
               _type: "json",
               ServiceKey:
                 "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
@@ -255,9 +256,18 @@ const Calendar = () => {
     };
 
     const formatTime = (date) => {
+      // date가 Date 객체가 아니면 변환 시도
+      if (!(date instanceof Date)) {
+        date = new Date(date); // date가 문자열이면 Date 객체로 변환
+      }
+
+      if (isNaN(date.getTime())) {
+        // 유효한 날짜가 아닐 경우 null 반환
+        return "00:00:00"; // 기본값으로 00:00 반환
+      }
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
+      return `${hours}:${minutes}:00`;
     };
 
     // 날짜와 시간으로 분리
@@ -403,12 +413,25 @@ const Calendar = () => {
   };
 
   const handleEventClick = (clickInfo) => {
+    if (clickInfo.event.extendedProps.isHoliday) {
+      return;
+    }
+
     // start와 end 시간이 존재할 경우 시간을 추출하여 문자열로 변환
     const formatTime = (date) => {
-      if (!date) return null; // date가 없으면 null 반환
+      // date가 Date 객체가 아니면 변환 시도
+      if (!(date instanceof Date)) {
+        date = new Date(date); // 문자열이나 다른 유형의 데이터가 들어오면 Date 객체로 변환
+      }
+
+      // 변환 후에도 유효한 Date 객체가 아니면 기본값을 반환
+      if (isNaN(date.getTime())) {
+        return "00:00:00"; // 기본값으로 00:00 반환
+      }
+
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
+      return `${hours}:${minutes}:00`;
     };
 
     const { extendedProps } = clickInfo.event; // extendedProps에서 추가 데이터 추출
@@ -467,9 +490,9 @@ const Calendar = () => {
 
   // 날짜 셀을 더블클릭했을 때 이벤트 추가를 위한 모달 열기 함수
   const handleDateDoubleClick = (info) => {
-    if (clickTimeout) {
-      clearTimeout(clickTimeout);
-      clickTimeout = null;
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+      clickTimeout.current = null;
 
       setSelectedEvent({
         start: info.date,
@@ -483,8 +506,8 @@ const Calendar = () => {
       setIsEventOpen(false);
       setIsModalOpen(true);
     } else {
-      clickTimeout = setTimeout(() => {
-        clickTimeout = null;
+      clickTimeout.current = setTimeout(() => {
+        clickTimeout.current = null;
       }, 300); // 더블클릭을 감지하기 위한 300ms 대기
     }
   };
