@@ -27,7 +27,6 @@
   color: var(--color-primary);
 }
 
-
 .details {
   display: flex;
   flex-direction: row;
@@ -59,8 +58,8 @@
 
 .memoContainer {
   border-top: 1px solid var(--color-border);
-  padding-top: 10px;
-  padding-bottom: 10px;
+  /* padding-top: 10px; */
+  /* padding-bottom: 10px; */
   border-bottom: 1px solid beige;
 }
 
@@ -161,7 +160,7 @@
 .menu div:hover {
   background-color: #f0f0f0;
   font-weight: bold;
-    /* 텍스트 굵게 처리 */
+  /* 텍스트 굵게 처리 */
 }
 
 .locationContainer {
@@ -194,9 +193,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
   width: 100%;
-  padding : 0 10px
+  padding: 0 10px;
 }
 
 .icon {
@@ -271,7 +269,7 @@
 .image {
   width: 100%;
   height: auto;
-  max-height: 190px;
+  max-height: 200px;
   padding: 0 18px;
   /* 이미지의 최대 높이 조정 */
   object-fit: contain;

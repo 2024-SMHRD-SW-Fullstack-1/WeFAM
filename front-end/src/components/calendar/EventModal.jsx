@@ -10,7 +10,7 @@ import {
   BsPaperclip,
   BsAlarm,
   BsPersonCircle,
-  BsThreeDotsVertical,
+  TbSearch,
 } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
 import CustomDropdown from "./CustomDropDown";
@@ -23,7 +23,7 @@ import AiModal from "./AiModal";
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-}
+};
 
 const generateTimeOptions = () => {
   const options = [];
@@ -88,6 +88,7 @@ const EventModal = ({
   const userProfile = familyUsers.find((user) => user.id === event.userId);
   const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
   const [deletedFileIds, setDeletedFileIds] = useState([]);
+  const [content, setContent] = useState(event.content);
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -535,7 +536,7 @@ const EventModal = ({
               />
               <div className={styles.commonBox}>
                 <span className={styles.memoWrapper}>
-                  <span>작성</span>
+                  <span className={styles.memoText}>{content}</span>
                   <button type='button' className={styles.removeButton}>
                     &times;
                   </button>
@@ -598,6 +599,7 @@ const EventModal = ({
                     }
                   }}>
                   <span className={styles.fileNameWrapper}>
+                    <FiMapPin /> 바꿀 부분//...
                     <span className={styles.fileName}>
                       {file.fileRname || file.name}
                     </span>
