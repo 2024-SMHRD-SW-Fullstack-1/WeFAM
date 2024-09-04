@@ -108,6 +108,18 @@ const EventModal = ({
     setMemoContent("");
   };
 
+  // AiModal 상태 관리
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
   }, [initialIsDetailOpen]);
@@ -379,7 +391,7 @@ const EventModal = ({
             />
           </div>
           {isDetailOpen && (
-            <div className={styles.ai}>
+            <div className={styles.ai} onClick={openModal}>
               <IoSparklesOutline style={{ color: selectedColor }} />
               <div
                 className={styles.tooltip}
@@ -681,6 +693,7 @@ const EventModal = ({
             저장
           </button>
         </div>
+        {isModalOpen && <AiModal onClose={closeModal} />}
       </div>
     </div>,
     document.body // 모달을 body에 추가

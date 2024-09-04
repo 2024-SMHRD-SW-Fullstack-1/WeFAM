@@ -19,9 +19,9 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
 
       <div className={styles.profileContainer}>
         <img src={profile.profileImg} alt="Profile" className={styles.profileImage} />
-        <div>
-          <div>
-            <label className={styles.modalLabel}>이름 :</label>
+        <div className={styles.profile}>
+          <div className={styles.profileInfoRow}>
+            <label className={styles.modalLabel}>이름  :</label>
             {isEditing ? (
               <input
                 type="text"
@@ -34,8 +34,8 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
               <p>{profile.name}</p>
             )}
           </div>
-          <div>
-            <label className={styles.modalLabel}>생년월일 :</label>
+          <div className={styles.profileInfoRow}>
+            <label className={styles.modalLabel}>생년월일  :</label>
             {isEditing ? (
               <input
                 type="date"
@@ -48,7 +48,7 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
               <p>{profile.birth}</p>
             )}
           </div>
-          <div>
+          <div className={styles.profileInfoRow}>
             <label className={styles.modalLabel}>닉네임 :</label>
             {isEditing ? (
               <input
