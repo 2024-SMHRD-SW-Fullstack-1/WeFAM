@@ -86,6 +86,7 @@ const EventModal = ({
   const [deletedFileIds, setDeletedFileIds] = useState([]);
 
   // AiModal 상태 관리
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -372,8 +373,10 @@ const EventModal = ({
                 일정 추천
               </div>
             </div>
+            
           )}
         </div>
+        
 
         {/* 날짜 및 시간 */}
         <div className={styles.dateTimeSection}>
@@ -647,6 +650,7 @@ const EventModal = ({
             저장
           </button>
         </div>
+        {isModalOpen && <AiModal onClose={closeModal} />}
       </div>
     </div>,
     document.body // 모달을 body에 추가
