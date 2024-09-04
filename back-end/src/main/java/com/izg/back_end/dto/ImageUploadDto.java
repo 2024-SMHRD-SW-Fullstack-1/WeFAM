@@ -18,4 +18,5 @@ public class ImageUploadDto {
     private List<String> fileNames;
     private List<String> fileExtensions;
     private List<Long> fileSizes;
+    private String fileData;
 }
