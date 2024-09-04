@@ -42,14 +42,14 @@ const FamilyManagement = () => {
   // 바뀐 값을 DB에 저장하기
   const handleSaveChanges = () => {
     axios.put('http://localhost:8089/wefam/update-profile', selectedProfile)
-    .then(response => {
-      console.log('프로필 업데이트 성공:', response.data);
-      closeModal(); // 모달 닫기
-      window.location.reload(); // 페이지 새로고침
-    })
-    .catch(error => {
-      console.error('프로필 업데이트 실패:', error);
-    });
+      .then(response => {
+        console.log('프로필 업데이트 성공:', response.data);
+        closeModal(); // 모달 닫기
+        // window.location.reload(); // 페이지 새로고침
+      })
+      .catch(error => {
+        console.error('프로필 업데이트 실패:', error);
+      });
   };
 
   return (
@@ -59,16 +59,23 @@ const FamilyManagement = () => {
       {users.map((user, index) => (
         <div key={index} className={styles.profileContainer}>
           <div className={styles.profileInfo}>
-            <img 
-              src={user.profileImg} 
-              alt="Profile" 
-              className={styles.profileImg} 
-              onClick={() => openModal(user)} 
+            <img
+              src={user.profileImg}
+              alt="Profile"
+              className={styles.profileImg}
             />
-            <span>{user.name}</span>
+            <span className={styles.username}>{user.name}</span>
             <span className={styles.nickname}>({user.nick})</span>
+            <button
+              className={styles.editButton}
+              onClick={() => openModal(user)}
+            >
+              {user.id === userData.id ? "정보 수정하기" : "정보 확인하기"}
+            </button>
           </div>
-          <hr />
+            <hr className={styles.hrLine} /> {/* 줄어든 hr 태그 */}
+          <div>
+          </div>
         </div>
       ))}
 

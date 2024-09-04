@@ -35,6 +35,7 @@ const Login = () => {
   const NaverLogin = () => {
     console.log("네이버 로그인 버튼 클릭됨");
     window.location.href = naverToken;
+    nav('/main');
   };
 
   useEffect(() => {
@@ -60,6 +61,8 @@ const Login = () => {
 
       if (response.status === 200) {
         const userData = response.data;
+        // 카카오 액세스 토큰을 로컬 스토리지에 저장
+      window.localStorage.setItem("kakaoAccessToken", userData.accessToken);
 
         // 내가 속한 가족 데이터 받기
         const familyData = await axios.get(
@@ -72,9 +75,11 @@ const Login = () => {
         // 가족 정보를 추가한 후에 Redux에 사용자 데이터를 저장
         dispatch(setUserData(userData));
 
-        console.log("가족 정보를 추가한 카카오 사용자 정보: ", userData);
+        console.log("내 정보: ", userData);
 
         nav("/main", { state: { userData } });
+        console.log("엑세스" , userData.accessToken);
+        
       } else {
         console.log("카카오 백 요청 실패", response.statusText);
       }
@@ -85,6 +90,8 @@ const Login = () => {
       );
     }
   };
+
+  
 
   const sendNaverTokenToBackend = async (code) => {
     console.log("네이버 토큰 백엔드로 전송 시작");

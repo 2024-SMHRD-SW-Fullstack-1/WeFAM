@@ -10,4 +10,5 @@ public class FamilyDto {
     private String familyNick;
     private String id;
     private LocalDateTime createdAt;
+    private String familyMotto;
 }

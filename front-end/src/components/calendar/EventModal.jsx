@@ -17,6 +17,13 @@ import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
 import { MapInModal } from "./LocationMap";
 import MapSearchInput from "./LocationSearch";
+import { IoSparklesOutline } from "react-icons/io5";
+import { MdOutlineEditNote } from "react-icons/md";
+import AiModal from "./AiModal";
+
+const AiEventModal = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+}
 
 const generateTimeOptions = () => {
   const options = [];
@@ -79,9 +86,7 @@ const EventModal = ({
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
   const userProfile = familyUsers.find((user) => user.id === event.userId);
-  const [previewVisible, setPreviewVisible] = useState(false);
   const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
-  const [files, setFiles] = useState([]);
   const [deletedFileIds, setDeletedFileIds] = useState([]);
 
   useEffect(() => {
@@ -190,7 +195,15 @@ const EventModal = ({
 
   // ISO 8601 형식의 시간을 "오전/오후" 형식으로 변환하는 함수
   const formatTimeForSelect = (isoString) => {
+    if (!isoString) return "오전 12:00"; // isoString이 없는 경우 기본값 반환
+
     const date = new Date(isoString);
+
+    if (isNaN(date.getTime())) {
+      // 유효하지 않은 날짜일 경우 기본값 반환
+      return "오전 12:00";
+    }
+
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const period = hours >= 12 ? "오후" : "오전";
@@ -219,6 +232,7 @@ const EventModal = ({
 
     const newStartDate = new Date(startDate);
     newStartDate.setHours(hour, minute);
+    newStartDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setStartDate(newStartDate);
@@ -242,6 +256,7 @@ const EventModal = ({
 
     const newEndDate = new Date(endDate);
     newEndDate.setHours(hour, minute);
+    newEndDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setEndDate(newEndDate);
@@ -264,7 +279,7 @@ const EventModal = ({
         newEndDate.getMinutes() !== 59 ||
         newEndDate.getSeconds() !== 59
       ) {
-        newEndDate.setHours(23, 59, 59, 999);
+        newEndDate.setHours(23, 50, 59, 999);
         setEndDate(newEndDate);
       }
     }
@@ -273,6 +288,18 @@ const EventModal = ({
   // 종일 이벤트 토글
   const toggleAllDay = () => {
     setIsAllDay((prev) => !prev);
+    // allDay가 false로 바뀔 때, 시간을 초기화
+    if (isAllDay) {
+      const newStartDate = new Date(startDate);
+      const newEndDate = new Date(endDate);
+
+      // 기본적으로 시작 시간을 00:00, 종료 시간을 23:59로 설정
+      newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
+      newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+
+      setStartDate(newStartDate);
+      setEndDate(newEndDate);
+    }
   };
 
   // 파일 선택 핸들러
@@ -321,14 +348,24 @@ const EventModal = ({
       <div className={styles["modal-content"]}>
         {/* 제목 */}
         <div className={styles.titleContainer}>
-          <input
-            className={styles.title}
-            value={title || ""}
-            placeholder="제목"
-            onChange={handleTitleChange}
-          ></input>
-
-          <BsThreeDotsVertical className={styles.threeDots} />
+          <div>
+            <input
+              className={styles.title}
+              value={title || ""}
+              placeholder='제목'
+              onChange={handleTitleChange}
+            />
+          </div>
+          {isDetailOpen && (
+            <div className={styles.ai}>
+              <IoSparklesOutline style={{ color: selectedColor }} />
+              <div
+                className={styles.tooltip}
+                style={{ backgroundColor: selectedColor }}>
+                일정 추천
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 날짜 및 시간 */}
@@ -342,7 +379,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -350,8 +387,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -366,8 +402,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -379,7 +414,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
           </div>
@@ -394,7 +429,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -466,11 +501,11 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }}
               />
+              {/* 클릭 시 알림 설정 UI */}
               <div className={styles.contentField}>
                 <span style={{ width: "100%" }} onClick={toggleAlarmSetting}>
                   {alarmText}
                 </span>
-                {/* 클릭 시 알림 설정 UI */}
                 {showAlarmSetting && (
                   <div
                     style={{
@@ -483,8 +518,7 @@ const EventModal = ({
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}
-                  >
+                    }}>
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}
@@ -493,11 +527,22 @@ const EventModal = ({
                 )}
               </div>
             </div>
-
+            {/* 메모 작성 */}
+            <div className={styles.field}>
+              <MdOutlineEditNote
+                className={styles.icon}
+                style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
+              />
+              <div className={styles.commonBox}>
+                <span className={styles.memoWrapper}>
+                  <span>작성</span>
+                  <button type='button' className={styles.removeButton}>
+                    &times;
+                  </button>
+                </span>
+              </div>
+            </div>
             {/*지도 설정 */}
-            <MapInModal coordinates={coordinates} />
-            <br />
-
             <div className={styles.field}>
               <FiMapPin
                 className={styles.icon}
@@ -512,20 +557,20 @@ const EventModal = ({
                 />
               </div>
             </div>
-
+            <MapInModal coordinates={coordinates} /> <br />
             {/*파일 첨부 */}
             <div className={styles.field}>
               <BsPaperclip
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <label htmlFor="file-upload">
+              <label htmlFor='file-upload'>
                 <span className={styles.commonBox}>사진 추가</span>
               </label>
               <input
-                id="file-upload"
-                type="file"
-                accept="image/*"
+                id='file-upload'
+                type='file'
+                accept='image/*'
                 multiple
                 style={{ display: "none" }}
                 onChange={handleFileChange}
@@ -551,17 +596,15 @@ const EventModal = ({
                     if (preview) {
                       preview.style.display = "none";
                     }
-                  }}
-                >
+                  }}>
                   <span className={styles.fileNameWrapper}>
                     <span className={styles.fileName}>
                       {file.fileRname || file.name}
                     </span>
                     <button
-                      type="button"
+                      type='button'
                       className={styles.removeButton}
-                      onClick={() => handleRemoveFile(index)}
-                    >
+                      onClick={() => handleRemoveFile(index)}>
                       &times;
                     </button>
                   </span>
@@ -571,7 +614,7 @@ const EventModal = ({
                         file.url ||
                         `data:image/${file.fileExtension};base64,${file.fileData}`
                       }
-                      alt="Selected file preview"
+                      alt='Selected file preview'
                     />
                   </div>
                 </div>
