@@ -42,7 +42,7 @@ const Header = () => {
         });
         // 두 번째 GET 요청: 가족 가훈을 가져옴
     axios
-    .get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
+    .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
     .then((response) => {
       setFamilyMotto(response.data);
       console.log(response.data);

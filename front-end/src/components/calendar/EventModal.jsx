@@ -19,6 +19,11 @@ import { MapInModal } from "./LocationMap";
 import MapSearchInput from "./LocationSearch";
 import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
+import AiModal from "./AiModal";
+
+const AiEventModal = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+}
 
 const generateTimeOptions = () => {
   const options = [];

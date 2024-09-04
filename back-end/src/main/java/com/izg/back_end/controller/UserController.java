@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +46,7 @@ public class UserController {
             UserDto userDTO = userService.getUserInforFromKakao(accessToken);
 
             // 유저 정보를 데이터베이스에 저장
-            userService.saveUser(userDTO);
+            userService.saveUser(userDTO, accessToken);
 
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
@@ -55,19 +56,26 @@ public class UserController {
         }
     }
     
-    // 로그아웃 엔드포인트
-    
     @PostMapping("/logout")
-    @CrossOrigin(methods = { RequestMethod.POST }) // 이 엔드포인트도 POST만 허용
-    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response) {
-        session.invalidate(); // 세션 무효화
-     // 쿠키 무효화
-        Cookie cookie = new Cookie("JSESSIONID", null); // JSESSIONID 쿠키 삭제
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0); // 쿠키 만료
-        response.addCookie(cookie);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response,  String accessToken) {
+        try {
+            // 1. 카카오 로그아웃 API 호출
+            userService.kakaoLogout(accessToken);
+            
+            // 2. 세션 무효화
+            session.invalidate();
+
+            // 3. 쿠키 삭제
+            Cookie cookie = new Cookie("JSESSIONID", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0); 
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
     
     // 가족만 보여주기
