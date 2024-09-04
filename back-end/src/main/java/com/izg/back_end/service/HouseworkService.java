@@ -1,12 +1,19 @@
 package com.izg.back_end.service;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.izg.back_end.dto.HouseworkDTO;
+import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkModel;
+import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.repository.HouseworkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +24,7 @@ public class HouseworkService {
 
 	private final HouseworkRepository houseworkRepository;
 	private final ParticipantService participantService;
+	private final FileRepository fileRepository;
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
@@ -31,7 +39,7 @@ public class HouseworkService {
 		}
 	}
 
-	// 작업 업데이트
+	// 집안일 수정
 	public HouseworkDTO updateHousework(int workIdx, HouseworkDTO houseworkDTO) {
 		HouseworkModel existingWork = houseworkRepository.findById(workIdx)
 				.orElseThrow(() -> new RuntimeException("작업을 찾을 수 없습니다."));
@@ -57,6 +65,7 @@ public class HouseworkService {
 	}
 
 	// 집안일 삭제
+	@Transactional
 	public void deleteWorkById(int workIdx) {
 		Optional<HouseworkModel> workOptional = houseworkRepository.findById(workIdx);
 
@@ -71,6 +80,42 @@ public class HouseworkService {
 			}
 		} else {
 			throw new RuntimeException("삭제할 작업을 찾을 수 없습니다.");
+		}
+	}
+
+	// 미션 완료 처리 및 파일 업로드
+	@Transactional
+	public void completeHouseworkWithFiles(int familyIdx, String userId, String entityType, int entityIdx,
+			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
+			boolean completed) throws IOException {
+
+		// 1. 작업 완료 처리
+		HouseworkModel housework = houseworkRepository.findByWorkIdx(entityIdx); // entityIdx를 workIdx로 사용
+		if (housework != null) {
+			housework.setCompleted(completed);
+			houseworkRepository.save(housework);
+		}
+
+		// 2. 파일 저장 처리
+		for (int i = 0; i < images.size(); i++) {
+			MultipartFile file = images.get(i);
+			String fileExtension = fileExtensions.get(i);
+			Long fileSize = fileSizes.get(i);
+
+
+			FileModel fileModel = new FileModel();
+			fileModel.setFamilyIdx(familyIdx);
+			fileModel.setUserId(userId);
+			fileModel.setEntityType("work"); // 작업 유형 설정
+			fileModel.setEntityIdx(entityIdx); // entityIdx를 사용하여 파일과 작업을 연결
+			fileModel.setFileRname(file.getOriginalFilename());
+			fileModel.setFileUname(file.getOriginalFilename() + "_" + Instant.now().toEpochMilli());
+			fileModel.setFileSize(fileSize);
+			fileModel.setFileExtension(fileExtension);
+			fileModel.setFileData(file.getBytes());
+			fileModel.setUploadedAt(LocalDateTime.now());
+
+			fileRepository.save(fileModel); // 파일 정보 저장
 		}
 	}
 
