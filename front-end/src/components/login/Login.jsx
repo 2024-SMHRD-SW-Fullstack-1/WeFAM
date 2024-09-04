@@ -8,7 +8,6 @@ import axios from "axios";
 import RightSidebar from "../right-sidebar/RightSidebar";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../features/userSlice";
-import { setFamilyData } from "../../features/familySlice";
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
