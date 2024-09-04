@@ -9,9 +9,11 @@ import RightSidebar from "./components/right-sidebar/RightSidebar";
 import Settings from "./components/user-setting/Settings";
 import HouseWork2 from "./components/housework/HouseWork2";
 import DailyMission from "./components/housework/DailyMission";
+import {MemoModal} from "./components/calendar/MemoModal";
 
 import "./css/App.css";
 import "./css/Test.css";
+
 function App() {
   return (
     <div className='App'>
@@ -25,6 +27,7 @@ function App() {
           <Route path='settings' element={<Settings />} />
           <Route path='housework2' element={<HouseWork2 />} />
           <Route path='dailyMission' element={<DailyMission />} />
+          <Route path='memo' element={<MemoModal/>} />
         </Route>
       </Routes>
     </div>
