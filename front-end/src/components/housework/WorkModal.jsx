@@ -8,21 +8,21 @@ import styles from "./WorkModal.module.css";
 Modal.setAppElement("#root");
 
 const WorkModal = ({
-  isModalOpen,           // 모달의 열림/닫힘 상태
-  closeModal,            // 모달을 닫는 함수
-  taskType,              // 작업 유형
-  taskName,              // 작업 이름
-  taskContent,           // 작업 내용
-  taskPoint,             // 작업 포인트
-  warningMessages,       // 경고 메시지들
-  familyMembers,         // 가족 구성원 목록
-  handleTaskTypeChange,  // 작업 유형 변경 핸들러
-  handleTaskNameChange,  // 작업 이름 변경 핸들러
+  isModalOpen, // 모달의 열림/닫힘 상태
+  closeModal, // 모달을 닫는 함수
+  taskType, // 작업 유형
+  taskName, // 작업 이름
+  taskContent, // 작업 내용
+  taskPoint, // 작업 포인트
+  warningMessages, // 경고 메시지들
+  familyMembers, // 가족 구성원 목록
+  handleTaskTypeChange, // 작업 유형 변경 핸들러
+  handleTaskNameChange, // 작업 이름 변경 핸들러
   handleTaskContentChange, // 작업 내용 변경 핸들러
   handleTaskPointChange, // 작업 포인트 변경 핸들러
-  addOrUpdateTask,       // 작업 추가/수정 함수
-  editTaskIndex,         // 수정 중인 작업의 인덱스
-  handleWorkUserChange,  // 선택된 담당자 변경 핸들러
+  addOrUpdateTask, // 작업 추가/수정 함수
+  editTaskIndex, // 수정 중인 작업의 인덱스
+  handleWorkUserChange, // 선택된 담당자 변경 핸들러
 }) => {
   const [selectedMembers, setSelectedMembers] = useState([]); // 선택된 담당자들
   const [availableMembers, setAvailableMembers] = useState(familyMembers); // 선택 가능한 담당자들
@@ -76,10 +76,10 @@ const WorkModal = ({
 
   return (
     <Modal
-      isOpen={isModalOpen}          // 모달 열림/닫힘 여부
-      onRequestClose={closeModal}   // 모달 닫기 요청 시 호출되는 함수
-      contentLabel="집안일 추가"   // 모달의 접근성 라벨
-      className={styles.houseworkModal}   // 모달의 CSS 클래스
+      isOpen={isModalOpen} // 모달 열림/닫힘 여부
+      onRequestClose={closeModal} // 모달 닫기 요청 시 호출되는 함수
+      contentLabel="집안일 추가" // 모달의 접근성 라벨
+      className={styles.houseworkModal} // 모달의 CSS 클래스
       overlayClassName={styles.houseworkOverlay} // 모달 오버레이의 CSS 클래스
     >
       <h2>{editTaskIndex !== null ? "집안일 수정" : "집안일 추가"}</h2>
@@ -109,11 +109,15 @@ const WorkModal = ({
         <div className={styles.inputContainer}>
           <FiUser className={styles.icon} />
           <div style={{ width: "100%" }}>
-            <div className={styles.customSelect} onClick={() => setDropdownOpen(!isDropdownOpen)}>
+            <div
+              className={styles.customSelect}
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+            >
               <div className={styles.selectBox}>
                 {selectedMembers.length > 0
                   ? selectedMembers.map((user) => user.name).join(", ")
-                  : "담당자 선택"} {/* 선택된 담당자가 없으면 기본 문구 표시 */}
+                  : "담당자 선택"}{" "}
+                {/* 선택된 담당자가 없으면 기본 문구 표시 */}
                 <span className={styles.arrow}></span>
               </div>
               {isDropdownOpen && (
