@@ -47,7 +47,7 @@ public class FileService {
         return fileRepository.findByFamilyIdx(familyIdx);
     }
     
- // 파일 삭제 메서드
+    // 파일 삭제 메서드
     public void deleteFilesByIds(List<Integer> fileIdxList) {
         for (Integer fileIdx : fileIdxList) {
             fileRepository.deleteById(fileIdx);

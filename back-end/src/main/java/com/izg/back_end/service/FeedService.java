@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.izg.back_end.dto.FeedDetailDto;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.model.PollModel;
 import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.FeedRepository;
 import com.izg.back_end.repository.FileRepository;
