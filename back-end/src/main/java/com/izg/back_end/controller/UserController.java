@@ -18,6 +18,8 @@ import com.izg.back_end.dto.UserDto;
 import com.izg.back_end.service.FamilyService;
 import com.izg.back_end.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.izg.back_end.model.FamilyModel;
@@ -57,8 +59,14 @@ public class UserController {
     
     @PostMapping("/logout")
     @CrossOrigin(methods = { RequestMethod.POST }) // 이 엔드포인트도 POST만 허용
-    public ResponseEntity<Void> logout(HttpSession session) {
+    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response) {
         session.invalidate(); // 세션 무효화
+     // 쿠키 무효화
+        Cookie cookie = new Cookie("JSESSIONID", null); // JSESSIONID 쿠키 삭제
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // 쿠키 만료
+        response.addCookie(cookie);
         return ResponseEntity.ok().build();
     }
     
