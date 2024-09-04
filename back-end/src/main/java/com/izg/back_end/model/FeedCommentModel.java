@@ -38,5 +38,4 @@ public class FeedCommentModel {
     @Column(name = "posted_at")
     @JsonProperty("postedAt")
     private LocalDateTime postedAt = LocalDateTime.now(); // Default to current date and time
-    
 }

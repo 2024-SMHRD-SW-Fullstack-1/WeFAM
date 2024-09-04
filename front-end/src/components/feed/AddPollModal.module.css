@@ -63,16 +63,3 @@
 .addOptionBtn:hover {
   color: var(--color-sunset-hover);
 }
-
-/* AddPollModal.module.css */
-.option {
-  margin-bottom: 10px;
-}
-
-.option input[type="radio"] {
-  margin-right: 10px;
-}
-
-.option.selected {
-  background-color: #d3ffd3; /* 예: 선택된 항목의 배경색 */
-}

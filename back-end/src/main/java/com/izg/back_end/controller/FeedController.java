@@ -1,8 +1,6 @@
 package com.izg.back_end.controller;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,17 +15,20 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.izg.back_end.dto.FeedDetailDto;
 import com.izg.back_end.dto.FeedDto;
 import com.izg.back_end.dto.ImageUploadDto;
+import com.izg.back_end.dto.PollDto;
+import com.izg.back_end.dto.PollOptionDto;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.repository.FeedRepository;
 import com.izg.back_end.service.FeedService;
+import com.izg.back_end.service.PollService;
+
+import jakarta.transaction.Transactional;
 
 @RestController
 @CrossOrigin
@@ -36,11 +37,45 @@ public class FeedController {
 	@Autowired
 	private FeedService feedService;
 
+	@Autowired
+	private FeedRepository feedRepository;
+
+	@Autowired
+	private PollService pollService;
+
+	// 기본 피드 추가
+//	@PostMapping("/add-feed")
+//	public FeedModel addFeed(@RequestBody FeedModel fm) {
+//		System.out.println("Received feed : " + fm);
+//		FeedModel addedFeed = feedService.addFeed(fm);
+//		return addedFeed;
+//	}
+
+	// 투표 피드 추가
+	@Transactional
 	@PostMapping("/add-feed")
-	public FeedModel addFeed(@RequestBody FeedModel fm) {
-		System.out.println("Received feed : " + fm);
-		FeedModel addedFeed = feedService.addFeed(fm);
-		return addedFeed;
+	public FeedModel addFeed(@RequestBody FeedModel feed) {
+	    System.out.println("요청받은 FeedModel : " + feed);
+
+	    // 피드를 저장합니다.
+	    FeedModel savedFeed = feedRepository.save(feed);
+
+	    // 피드에 관련된 폴이 있는 경우, 폴을 저장합니다.
+	    if (feed.getPolls() != null && !feed.getPolls().isEmpty()) {
+	        for (PollDto pollDto : feed.getPolls()) {
+	            // 폴 DTO의 feedIdx를 설정합니다.
+	            pollDto.setFeedIdx(savedFeed.getFeedIdx());
+	            pollDto.setUserId(savedFeed.getUserId());
+
+	            // PollOptions를 변환할 필요는 없고, DTO의 pollOptions 필드에 이미 배열이 포함되어 있으므로
+	            // 그대로 사용하면 됩니다.
+
+	            System.out.println("투표 제목 : " + pollDto.getPollTitle());
+	            pollService.addPolls(pollDto);
+	        }
+	    }
+
+	    return savedFeed;
 	}
 
 	@PostMapping("/add-feed-img")
@@ -63,6 +98,7 @@ public class FeedController {
 		return feedService.getAllFeeds(familyIdx);
 	}
 
+	// 피드에 있는 이미지 가져오기
 	@GetMapping("/get-feed-img/{feedIdx}")
 	public List<FileModel> getFeedImg(@PathVariable("feedIdx") Integer feedIdx) {
 		try {
@@ -96,6 +132,4 @@ public class FeedController {
 		feedService.deleteFeed(feedIdx);
 		// return "redirect:/";
 	}
-
-
 }
