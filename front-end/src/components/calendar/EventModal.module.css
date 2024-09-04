@@ -146,7 +146,11 @@
   margin-left: 35px;
   font-size: 1.3rem;
 }
-
+.previewIcon{
+  display: flex;
+  justify-content: center;
+  padding-right: 6px;
+}
 .ai {
   position: relative;
   display: inline-block;
@@ -225,18 +229,32 @@
 .memoWrapper {
   display: flex;
   align-items: center;
-  max-width: 100%; /* 부모 요소의 크기에 맞춤 */
+  width: 100%; /* 부모 요소의 크기에 맞춤 */
   background-color: #f8f8f8;
   border: transparent;
   justify-content: space-between;
 }
 .memoText {
+  display: flex;
+  align-items: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1; /* 텍스트가 가능한 공간을 최대한 차지하게 함 */
-  max-width: 445px;
+  flex-grow: 1;
+  /* 텍스트가 가능한 공간을 최대한 차지하게 함 */
+  width: 100%;
+  min-height: 38px;
+  /* 최소 높이 설정 (commonBox와 동일한 높이) */
+  padding: 8px 0px;
+  /* 클릭 가능한 영역을 더 넓게 설정 */
+  background-color: #f8f8f8;
+  /* 배경색을 추가해 클릭할 수 있는 영역을 강조 */
+  cursor: pointer;
+  /* 커서를 포인터로 변경해 클릭 가능하다는 힌트 제공 */
+  white-space: normal;
+    /* 자동 줄바꿈 방지 */
 }
+
 
 .removeButton {
   background: none;

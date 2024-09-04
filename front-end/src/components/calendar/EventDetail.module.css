@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: row;
   padding: 0px 10px;
-  margin-bottom: 20px; /* 추가: 헤더와 내용 사이의 간격 */
+  margin-bottom: 10px; /* 추가: 헤더와 내용 사이의 간격 */
 }
 
 .title h2 {
@@ -33,7 +33,8 @@
   justify-content: center;
   align-items: center;
 
-  margin-top: 10px; /* 추가: 제목과 날짜 사이의 간격 */
+  /* margin-top: 10px;  */
+  /* 추가: 제목과 날짜 사이의 간격 */
   padding: 14px 0px 20px;
   border-bottom: 1px solid beige;
   gap: 5px;
@@ -164,7 +165,6 @@
 }
 
 .locationContainer {
-  margin-top: 10px;
   padding-bottom: 10px;
   /* 지도의 상단 여백 */
   border-bottom: 1px solid beige;
@@ -173,7 +173,6 @@
 .locationName {
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 8px;
   /* 이름과 지도의 간격 */
   text-align: center;
   /* 가운데 정렬 */
@@ -195,6 +194,7 @@
   align-items: center;
   width: 100%;
   padding: 0 10px;
+  margin-bottom: 5px;
 }
 
 .icon {
@@ -287,4 +287,29 @@
   align-items: center;
   overflow: hidden;
   /* 슬라이드 내부의 넘침 방지 */
+}
+
+.slick-prev,
+.slick-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  cursor: pointer;
+  font-size: 24px;
+  color: #000;
+}
+
+.slick-prev {
+  left: 10px;
+}
+
+.slick-next {
+  right: 10px;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  color: #ff4d4d;
+  /* 호버 시 색상 변경 */
 }
