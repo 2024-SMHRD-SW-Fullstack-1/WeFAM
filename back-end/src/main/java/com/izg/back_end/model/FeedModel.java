@@ -1,8 +1,10 @@
 package com.izg.back_end.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.izg.back_end.dto.PollDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
@@ -51,4 +54,8 @@ public class FeedModel {
     @Column(name = "feed_likes")
     @JsonProperty("feedLikes")
     private int feedLikes = 0; // 기본값 0
+    
+    // 폴 데이터와 연관짓기 위한 필드 추가
+    @Transient
+    private List<PollDto> polls;
 }

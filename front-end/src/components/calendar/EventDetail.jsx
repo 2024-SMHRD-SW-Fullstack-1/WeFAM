@@ -95,6 +95,14 @@ const EventDetail = ({
 
   // 시간을 "11:00" 형식으로 반환 (오전/오후 없이)
   const formatTime = (date, includeAMPM = true) => {
+    if (!(date instanceof Date)) {
+      date = new Date(date); // date가 Date 객체가 아니면 변환
+    }
+
+    if (isNaN(date.getTime())) {
+      // 유효하지 않은 날짜일 경우 기본값 반환
+      return "00:00"; // 기본값으로 00:00 반환
+    }
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
@@ -102,6 +110,14 @@ const EventDetail = ({
 
   // 오전/오후를 반환
   const formatAMPM = (date) => {
+    if (!(date instanceof Date)) {
+      date = new Date(date); // date가 Date 객체가 아니면 변환
+    }
+
+    if (isNaN(date.getTime())) {
+      // 유효하지 않은 날짜일 경우 기본값 반환
+      return ""; // 기본값으로 빈 문자열 반환
+    }
     const hours = date.getHours();
     return hours >= 12 ? "오후" : "오전";
   };

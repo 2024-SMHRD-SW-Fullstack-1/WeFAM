@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.model.PollModel;
 
 import jakarta.transaction.Transactional;
 
@@ -30,5 +31,4 @@ public interface FeedRepository extends JpaRepository<FeedModel, Integer> {
     @Transactional
     @Query("UPDATE FeedModel f SET f.feedLikes = f.feedLikes + :delta WHERE f.feedIdx = :feedIdx")
     void updateLikes(@Param("feedIdx") int feedIdx, @Param("delta") int delta);
-
 }

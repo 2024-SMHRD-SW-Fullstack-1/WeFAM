@@ -15,15 +15,23 @@ import { CiSettings } from "react-icons/ci";
 import { CiLogout } from "react-icons/ci";
 import axios from "axios";
 
+// 카카오 로그인
+const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
+const REDIRECT_URI = "http://localhost:3000";
+const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+
 const LeftSidebar = () => {
   const [familyNick, setFamilyNick] = useState("");
   const userData = useSelector((state) => state.user.userData);
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
 
+  const accessToken1 = userData.accessToken;
+
+
   useEffect(() => {
     if (userData) {
-      axios.get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
+      axios.get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
         .then(response => {
           setFamilyNick(response.data);
         })
@@ -33,36 +41,67 @@ const LeftSidebar = () => {
     }
   }, [userData]);
 
-  // 쿠키 삭제 함수
-const deleteAllCookies = () => {
-  const cookies = document.cookie.split(";");
 
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  }
-};
 
-const handleLogout = async () => {
-  try {
-    // 서버에 로그아웃 요청
-    await axios.post('http://localhost:8089/wefam/logout');
+  // 로그아웃 처리 함수
+  const handleLogout = async () => {
+    const accessToken = window.localStorage.getItem("kakaoAccessToken");
 
-    // 모든 쿠키 삭제
-    deleteAllCookies();
+    // 1. 로컬 스토리지에서 토큰 삭제
+    window.localStorage.removeItem("kakaoAccessToken");
 
-    // 로컬 스토리지와 세션 스토리지 삭제
-    window.localStorage.clear();
-    window.sessionStorage.clear();
+    // 2. 백엔드에 로그아웃 요청, 카카오 로그아웃 API 호출
+    console.log("된거아님?");
+    try {
+      const response = await axios.post('http://localhost:8089/wefam/logout', {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      if (response.status === 200) {
+        console.log("로그아웃 성공");
+        window.localStorage.removeItem("kakaoAccessToken");
+        nav("/");
+        
+      } else {
+        console.error("로그아웃 실패");
+      }
+    } catch (error) {
+      console.error("로그아웃 요청 중 에러 발생:", error);
+    }
 
-    // 로그인 페이지로 리다이렉트
+    // 3. 로그인 페이지로 리디렉트
     nav("/");
-  } catch (error) {
-    console.error("로그아웃 중 에러 발생:", error);
-  }
-};
+    console.log("토큰값?", userData.accessToken);
+
+    console.log("카카오 토큰 삭제 및 로그아웃 처리 완료");
+  };
+
+  // 카카오 로그아웃 API 호출 함수
+  // const kakaoLogout = async () => {
+  //   try {
+  //     await axios.post(`https://kapi.kakao.com/v1/user/logout`, null, {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
+  //     console.log("카카오 로그아웃 성공");
+  //   } catch (error) {
+  //     console.error("카카오 로그아웃 중 에러 발생:", error);
+  //   }
+  // };
+
+  // 쿠키 삭제 함수
+  const deleteAllCookies = () => {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  };
 
   return (
     <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>

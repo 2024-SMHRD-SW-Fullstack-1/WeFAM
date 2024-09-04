@@ -1,58 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import modalStyles from "../modal/Modal.module.css";
-import styles from "./PollModal.module.css";
+import styles from "./AddPollModal.module.css";
 import Preloader from "../preloader/Preloader";
-import { addPoll } from "../../features/pollSlice";
-import { BsDot } from "react-icons/bs";
-import { BsTrash } from "react-icons/bs";
+import axios from "axios";
 
-const PollModal = ({ onClose }) => {
+const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState(""); // 투표 제목
-  const [options, setOptions] = useState(["", ""]); // 투표 항목 기본 2개
+  const [isVoted, setIsVoted] = useState(false);
+  const [title, setTitle] = useState("");
+  const [options, setOptions] = useState(["", ""]);
+  const [selectedOptionNum, setSelectedOptionNum] = useState(null);
+  const [voteResult, setVoteResult] = useState(null); // 추가: 투표 결과 상태
+  const userData = useSelector((state) => state.user.userData);
 
-  // 투표 항목 추가
-  const addOption = () => {
-    if (options.length < 5) {
-      setOptions([...options, ""]);
-    }
-  };
+  useEffect(() => {
+    const fetchPollData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:8089/wefam/get-polls/${feed.feedIdx}`
+        );
+        const data = response.data;
+        if (data.length > 0) {
+          const pollData = data.find((p) => p.pollIdx === poll.pollIdx);
+          if (pollData) {
+            console.log("투표 모달창 투표 데이터 : ", pollData);
+            setTitle(pollData.pollTitle);
+            setOptions(
+              pollData.pollOptions.map((opt) => opt.pollOptionContent)
+            );
+            setSelectedOptionNum(pollData.selectedOptionIdx);
+          }
+        }
+        console.log(userData.id);
+        const voteStatus = await axios.get(
+          `http://localhost:8089/wefam/get-poll/${poll.pollIdx}/user/${userData.id}/status`
+        );
+        console.log(poll.pollIdx);
+        console.log(voteStatus.data.hasVoted);
+        setIsVoted(voteStatus.data.hasVoted);
+        onVoteResult();
+      } catch (error) {
+        console.error(`피드 ${feed.feedIdx}번 투표 요청 에러:`, error);
+      }
+      setIsLoading(false);
+    };
 
-  // 투표 항목 삭제
-  const deleteOption = (index) => {
-    if (options.length > 2) {
-      setOptions(options.filter((_, i) => i !== index));
-    }
-  };
+    fetchPollData();
+  }, [feed.feedIdx, poll.pollIdx, userData.id]);
 
-  // 투표 항목 변경 핸들러
   const handleOptionChange = (index, value) => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
   };
 
-  // 저장 버튼
-  const onSave = async () => {
+  const onVote = async () => {
+    if (selectedOptionNum === null) {
+      alert("투표를 선택해주세요.");
+      return;
+    }
+
     setIsLoading(true);
-
-    // 새로운 투표 객체 생성
-    const newPoll = {
-      id: Date.now(), // 고유한 ID를 생성하기 위해 현재 시간을 사용
-      title,
-      options: options.filter((option) => option.trim() !== ""),
-    };
-
-    // 투표 데이터를 Redux에 저장
-    dispatch(addPoll(newPoll));
-
+    try {
+      const voteDto = {
+        pollIdx: poll.pollIdx,
+        userId: userData.id,
+        selectedOptionNum: selectedOptionNum,
+      };
+      console.log("voteDto : ", voteDto);
+      await axios.post("http://localhost:8089/wefam/vote", voteDto);
+      setIsVoted(true); // 투표한 사람 완료
+      // 투표 결과를 가져오기
+      await onVoteResult();
+    } catch (error) {
+      console.error("투표 제출 실패", error);
+    }
     setIsLoading(false);
-    onClose();
-    setIsLoading(false);
-    onClose();
+  };
+
+  // 투표 결과를 가져오는 메서드
+  const onVoteResult = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-vote-result/${poll.pollIdx}`
+      );
+      console.log("투표 결과 : ", response.data);
+      setVoteResult(response.data); // 결과 저장
+    } catch (error) {
+      console.error("투표 결과 가져오기 실패", error);
+    }
   };
 
   return ReactDOM.createPortal(
@@ -73,45 +113,60 @@ const PollModal = ({ onClose }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={styles.inputTitle}
+              readOnly={true}
             />
             <div className={styles.optionsContainer}>
               {options.map((option, index) => (
-                <div key={index} className={styles.option}>
-                  <BsDot />
+                <div
+                  key={index}
+                  className={`${styles.option} ${
+                    selectedOptionNum === index ? styles.selected : ""
+                  }`}
+                >
                   <input
                     type="text"
                     placeholder={`투표 항목 ${index + 1}`}
                     value={option}
                     onChange={(e) => handleOptionChange(index, e.target.value)}
                     className={styles.inputOption}
+                    readOnly={true}
                   />
-                  <button
-                    onClick={() => deleteOption(index)}
-                    className={`${styles.deleteOptionBtn} ${
-                      options.length <= 2 ? styles.disabled : styles.abled
-                    }`} // 길이가 2 이하일 때 .disabled 클래스 추가
-                    disabled={options.length <= 2} // 길이가 2 이하일 때 버튼 비활성화
-                  >
-                    <BsTrash />
-                  </button>
+                  <input
+                    type="radio"
+                    checked={selectedOptionNum === index}
+                    onChange={() => setSelectedOptionNum(index)}
+                  />
                 </div>
               ))}
             </div>
 
-            {options.length < 5 && (
-              <button onClick={addOption} className={styles.addOptionBtn}>
-                항목 추가
-              </button>
-            )}
-
-            {/* 푸터 */}
             <div className={modalStyles.modalFooter}>
               <button className={modalStyles.cancelButton} onClick={onClose}>
                 취소
               </button>
-              <button className={modalStyles.saveButton} onClick={onSave}>
-                등록
-              </button>
+              {isVoted ? (
+                <>
+                  <div>
+                    투표 결과:
+                    {voteResult && voteResult.length > 0
+                      ? voteResult.map((result, index) => (
+                          <div key={index}>
+                            {`투표 항목 ${result.choiceIndex + 1} : ${
+                              result.voteCount
+                            }표`}
+                          </div>
+                        ))
+                      : "결과 없음"}
+                  </div>
+                  <button className={modalStyles.saveButton} onClick={onVote}>
+                    다시 투표하기
+                  </button>
+                </>
+              ) : (
+                <button className={modalStyles.saveButton} onClick={onVote}>
+                  투표하기
+                </button>
+              )}
             </div>
           </div>
         </div>
