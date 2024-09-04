@@ -63,7 +63,8 @@ const DailyMissions = () => {
     <div className='main'>
       <div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          남은 시간 {new Date().toLocaleTimeString()} {/* 현재 시간만 표시 */}
+          남은 시간 {new Date() + 1 - new Date().toLocaleTimeString()}{" "}
+          {/* 현재 시간만 표시 */}
         </div>
         <div
           style={{
