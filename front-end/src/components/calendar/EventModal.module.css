@@ -223,17 +223,19 @@
   color: #333;
 }
 .memoWrapper {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  width: 100%;
+  max-width: 100%; /* 부모 요소의 크기에 맞춤 */
   background-color: #f8f8f8;
   border: transparent;
   justify-content: space-between;
 }
-.eventContent {
-  margin-right: 8px;
-
-  color: #333;
+.memoText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1; /* 텍스트가 가능한 공간을 최대한 차지하게 함 */
+  max-width: 445px;
 }
 
 .removeButton {
@@ -247,6 +249,7 @@
   align-items: center;
   justify-content: center;
   margin-left: auto;
+  flex-shrink: 1;
 }
 
 .removeButton:hover {
