@@ -55,6 +55,9 @@
 .circleShortTerm {
   background-color: #ff9203;
 }
+.circleZero {
+  color: white;
+}
 
 .taskList {
   margin-top: 10px;

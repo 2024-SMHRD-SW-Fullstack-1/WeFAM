@@ -260,7 +260,11 @@ const HouseWork2 = () => {
             <div className={styles.column_header}>
               <h3>매일 할 일</h3>
               <span
-                className={tasks.daily.length > 0 ? styles.circleDaily : ""}>
+                className={
+                  tasks.daily.length > 0
+                    ? styles.circleDaily
+                    : styles.circleZero
+                }>
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openModal}>
@@ -280,7 +284,9 @@ const HouseWork2 = () => {
               <h3>오늘의 미션</h3>
               <span
                 className={
-                  tasks.shortTerm.length > 0 ? styles.circleShortTerm : ""
+                  tasks.shortTerm.length > 0
+                    ? styles.circleShortTerm
+                    : styles.circleZero
                 }>
                 {tasks.shortTerm.length}
               </span>
@@ -299,17 +305,25 @@ const HouseWork2 = () => {
       </div>
       {/*오른쪽 그리드 */}
       <div styles={styles.board}>
-        <div className={styles.column_header}>
-          <h3>매일 할 일</h3>
-          <span className={tasks.daily.length > 0 ? styles.circleDaily : ""}>
-            {tasks.daily.length}
-          </span>
-          <div className={styles.add_task} onClick={openModal}>
-            <BsPlusCircle
-              styles={styles.icon}
-              style={{ color: "#e74c3c", fontSize: "24px" }}
-            />
+        <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>매일 할 일</h3>
+            <span
+              className={
+                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
+              }>
+              {tasks.daily.length}
+            </span>
+            <div className={styles.add_task} onClick={openModal}>
+              <BsPlusCircle
+                styles={styles.icon}
+                style={{ color: "#e74c3c", fontSize: "24px" }}
+              />
+            </div>
           </div>
+          <ul className={styles.taskList}>
+            {renderTaskList(tasks.daily, "daily")}
+          </ul>
         </div>
       </div>
 
