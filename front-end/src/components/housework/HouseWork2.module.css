@@ -1,112 +1,126 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 1:1 비율로 두 개의 컬럼 생성 */
+  grid-template-rows: 1fr 1fr; /* 1:1 비율로 두 개의 행 생성 */
+  gap: 10px; /* 섹션 사이의 간격 */
+  width: 100%;
+  height: 100%;
+}
+
 .board {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .column {
-    display: flex;
-    flex-direction: column;
-    padding: 5px 6px;
-    width: 300px;
-    margin-left: 10px;
-  }
-  
-  .column_header {
-    display: flex;
-    /* justify-content: space-between;
-    align-items: center; */
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .column:first-child .column_header {
-    border-bottom: 3px solid #ff4d4d; /* 첫 번째 컬럼의 하단 선 빨간색 */
-  }
-  
-  .column:nth-child(2) .column_header {
-    border-bottom: 3px solid #ff9203; /* 두 번째 컬럼의 하단 선 초록색 */
-  }
-  
-  .circleDaily,
-  .circleShortTerm {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    font-size: 14px;
-  }
-  .circleDaily {
-    background-color: #ff4d4d;
-  }
-  .circleShortTerm {
-    background-color: #ff9203;
-  }
-  
-  .taskList {
-    margin-top: 10px;
-    max-height: 650px;
-    overflow-y: auto; /* 리스트가 5개 이상일 경우 스크롤 활성화 */
-  }
-  
-  .taskItem {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    position: relative;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .taskContent {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column; /* 텍스트를 세로로 쌓이도록 함 */
-    margin-right: 40px; /* 포인트와 아이콘과의 간격 확보 */
-  }
-  
-  .taskTitle {
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  
-  .taskDescription {
-    margin-bottom: 4px;
-    color: #666;
-    font-size: 14px;
-  }
-  
-  .taskUser {
-    font-size: 12px;
-    color: #999;
-  }
-  
-  .taskPoints {
-    position: absolute;
-    bottom: 12px; /* 하단에 배치 */
-    right: 10px; /* 우측에 배치 */
-    font-size: 14px;
-    color: #e74c3c; /* 포인트의 색상을 빨간색으로 설정 */
-  }
-  
-  .taskIcon {
-    position: absolute;
-    top: 12px; /* 상단에 배치 */
-    right: 10px; /* 우측에 배치 */
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .add_task {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: auto;
-  }
-  
+  display: flex;
+  justify-content: center;
+  width: 580px;
+  padding: 0 10px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 6px;
+  width: 300px;
+  margin-left: 10px;
+}
+
+.column_header {
+  display: flex;
+  /* justify-content: space-between;
+  align-items: center; */
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.column:first-child .column_header {
+  border-bottom: 3px solid #ff4d4d; /* 첫 번째 컬럼의 하단 선 빨간색 */
+}
+
+.column:nth-child(2) .column_header {
+  border-bottom: 3px solid #ff9203; /* 두 번째 컬럼의 하단 선 초록색 */
+}
+
+.circleDaily,
+.circleShortTerm {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+}
+.circleDaily {
+  background-color: #ff4d4d;
+}
+.circleShortTerm {
+  background-color: #ff9203;
+}
+.circleZero {
+  color: white;
+}
+
+.taskList {
+  margin-top: 10px;
+  max-height: 675px;
+  overflow-y: auto; /* 리스트가 5개 이상일 경우 스크롤 활성화 */
+}
+
+.taskItem {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.taskContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column; /* 텍스트를 세로로 쌓이도록 함 */
+  margin-right: 40px; /* 포인트와 아이콘과의 간격 확보 */
+}
+
+.taskTitle {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.taskDescription {
+  margin-bottom: 4px;
+  color: #666;
+  font-size: 14px;
+}
+
+.taskUser {
+  font-size: 12px;
+  color: #999;
+}
+
+.taskPoints {
+  position: absolute;
+  bottom: 12px; /* 하단에 배치 */
+  right: 10px; /* 우측에 배치 */
+  font-size: 14px;
+  color: #e74c3c; /* 포인트의 색상을 빨간색으로 설정 */
+}
+
+.taskIcon {
+  position: absolute;
+  top: 12px; /* 상단에 배치 */
+  right: 10px; /* 우측에 배치 */
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.add_task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: auto;
+}

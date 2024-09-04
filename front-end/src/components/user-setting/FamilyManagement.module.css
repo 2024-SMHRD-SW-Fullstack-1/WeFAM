@@ -9,6 +9,7 @@
   .profileContainer {
     margin-top: 20px;
     margin-bottom: 20px;
+    
   }
   
   .profileContainer span {
@@ -21,6 +22,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-start; /* 이미지와 버튼을 왼쪽 정렬 */
+    width: 900px; /* 이름과 닉네임 영역의 고정 너비 */
   }
   
   .profileImg {
@@ -29,15 +31,19 @@
     border-radius: 50%;
     object-fit: cover;
     margin-right: 20px;
-    cursor: pointer;
   }
 
   .nickname{
     font-size: 0.9em !important; /* 여기에서 원하는 크기로 설정하세요 */
     color : #666; /* 필요에 따라 색상도 조절할 수 있습니다 */
     margin-left: 10px;
+    width: 70px;
   }
-  
+  .username{
+    width: 70px;
+  }
+
+
   .editButton {
     background-color: #A0D6B4;
     color: white;
@@ -45,6 +51,7 @@
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 230px;
     
   }
   
@@ -80,3 +87,12 @@
     margin-top: 30px;
     margin-left: 30px;
   }
+
+  .hrLine {
+    width: 50%; /* hr 태그의 너비를 절반으로 설정 */
+    margin: 0;
+    border: none;
+    border-top: 1px solid #ccc; /* hr 모양을 유지하되 줄이 짧아지게 */
+    margin-top: 20px;
+  }
+  

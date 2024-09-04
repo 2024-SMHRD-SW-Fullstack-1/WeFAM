@@ -32,6 +32,7 @@
 
 /* 모달 하단 취소 및 저장 버튼 */
 .modalFooter {
+  width: 100%;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
