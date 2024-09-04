@@ -44,4 +44,6 @@ public class UserModel {
     @Column(name = "login_source")
     @JsonProperty("loginSource")
     private String loginSource = ""; // 기본값 빈 문자열
+    
+    
 }

@@ -39,13 +39,13 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
             {isEditing ? (
               <input
                 type="date"
-                name="birthdate"
-                value={profile.birthdate}
+                name="birth"
+                value={profile.birth}
                 onChange={handleInputChange}
                 className={styles.modalInputDate}
               />
             ) : (
-              <p>{profile.birthdate}</p>
+              <p>{profile.birth}</p>
             )}
           </div>
           <div>

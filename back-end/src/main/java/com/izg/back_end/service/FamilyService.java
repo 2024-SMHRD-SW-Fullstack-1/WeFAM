@@ -27,7 +27,8 @@ public class FamilyService {
         this.userRepository = userRepository;
         this.joiningRepository = joiningRepository;
     }
-
+    
+    // 가족이름 조회
     public String getFamilyNameByUserId(String userId) {
         List<Integer> familyIdxList = joiningRepository.findFamilyIdxByUserId(userId);
 
@@ -73,4 +74,38 @@ public class FamilyService {
             return null;
         }
     }
+    
+ // 가족 이름 업데이트 
+    public FamilyModel updateFamilyNick(FamilyModel updatedFamily) {
+        FamilyModel family = familyRepository.findById(updatedFamily.getFamilyIdx())
+            .orElseThrow(() -> new RuntimeException("Family not found"));
+
+        family.setFamilyNick(updatedFamily.getFamilyNick());
+        return familyRepository.save(family);
+    }
+    
+    // 가족 가훈
+    public String getFamilyMottoByUserId(String userId) {
+        List<Integer> familyIdxList = joiningRepository.findFamilyIdxByUserId(userId);
+
+        if (familyIdxList.isEmpty()) {
+            return null; // 가족이 없는 경우 null 반환
+        }
+
+        Integer familyIdx = familyIdxList.get(0);
+        FamilyModel family = familyRepository.findById(familyIdx).orElse(null);
+
+        return family != null ? family.getFamilyMotto() : null;
+    }
+
+    public FamilyModel updateFamilyMotto(FamilyModel updatedFamily) {
+        FamilyModel family = familyRepository.findById(updatedFamily.getFamilyIdx())
+            .orElseThrow(() -> new RuntimeException("Family not found"));
+        
+        family.setFamilyMotto(updatedFamily.getFamilyMotto());
+        return familyRepository.save(family);
+    }
+    
+    
 }
+

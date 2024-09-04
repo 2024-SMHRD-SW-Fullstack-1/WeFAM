@@ -54,7 +54,7 @@ public class UserService {
 			Map<String, Object> responseBody = response.getBody();
 			return responseBody != null ? (String) responseBody.get("access_token") : null;
 		} else {
-			throw new RuntimeException("Failed to get access token");
+			throw new RuntimeException("엑세스 토큰 얻기 실패");
 		}
 	}
 
@@ -91,12 +91,15 @@ public class UserService {
 			userDTO.setBirth(
 					LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
 		}
+		
+		 // 액세스 토큰을 DTO에 추가
+        userDTO.setAccessToken(accessToken);
 
 		return userDTO;
 	}
 
 	// 유저 정보를 데이터베이스에 저장
-	public void saveUser(UserDto userDTO) {
+	public void saveUser(UserDto userDTO, String accessToken) {
 	    if (userDTO.getBirth() == null) {
 	        userDTO.setBirth(LocalDate.now()); // 기본값 설정 또는 예외 처리
 	    }
@@ -112,6 +115,17 @@ public class UserService {
 	            existingUser.setNick(existingUser.getNick()); // 기존 닉네임 유지
 	        } else {
 	            existingUser.setNick(userDTO.getNick()); // 카카오에서 받은 닉네임으로 업데이트
+	        }
+	        
+	        if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
+	        	existingUser.setProfileImg(existingUser.getProfileImg()); // 
+	        } else {
+	        	existingUser.setProfileImg(userDTO.getProfileImg()); // 
+	        }
+	        
+	        // 생년월이이 설정되있으면 그대로 유지
+	        if (existingUser.getBirth() == null || userDTO.getBirth() != null) {
+	        	existingUser.setBirth(userDTO.getBirth());
 	        }
 	        
 	        // 다른 필드들도 동일하게 필요에 따라 업데이트를 선택
@@ -130,6 +144,7 @@ public class UserService {
 	        newUser.setProfileImg(userDTO.getProfileImg());
 	        newUser.setJoinedAt(userDTO.getJoinedAt());
 	        newUser.setLoginSource(userDTO.getLoginSource());
+	      
 
 	        userRepository.save(newUser);
 	    }
@@ -167,5 +182,21 @@ public class UserService {
 
 	        return userRepository.save(user);
 	    }
+	 
+	// 카카오 로그아웃 API 호출
+	 public void kakaoLogout(String accessToken) {
+	     String logoutUri = "https://kapi.kakao.com/v1/user/logout";
+	     RestTemplate restTemplate = new RestTemplate();
+
+	     HttpHeaders headers = new HttpHeaders();
+	     headers.set("Authorization", "Bearer " + accessToken);
+
+	     HttpEntity<String> entity = new HttpEntity<>(headers);
+	     ResponseEntity<Map> response = restTemplate.exchange(logoutUri, HttpMethod.POST, entity, Map.class);
+
+	     if (response.getStatusCode() != HttpStatus.OK) {
+	         throw new RuntimeException("카카오 로그아웃 실패");
+	     }
+	 }
 
 }

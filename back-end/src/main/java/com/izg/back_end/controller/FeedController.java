@@ -78,7 +78,6 @@ public class FeedController {
 	    return savedFeed;
 	}
 
-
 	@PostMapping("/add-feed-img")
 	public ResponseEntity<String> addFeedImg(@ModelAttribute ImageUploadDto dto) {
 		try {
