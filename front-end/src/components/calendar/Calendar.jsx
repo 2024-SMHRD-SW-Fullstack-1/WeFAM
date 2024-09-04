@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import EventModal from "./EventModal";
-import { BsSearch, BsCalendarPlus } from "react-icons/bs";
+import { BsSearch, BsCalendarPlus, BsPlus } from "react-icons/bs";
 import styles from "./Calendar.module.css";
 import EventDetail from "./EventDetail";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,17 +16,90 @@ import { useSelector } from "react-redux";
 
 const Calendar = () => {
   const calendarRef = useRef(null); // FullCalendar를 가리킬 ref
+  const clickTimeout = useRef(null);
   const [holidays, setHolidays] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 창 열림/닫힘 상태
   const [isEventOpen, setIsEventOpen] = useState(false); // 일정 창 열림/닫힘 상태
-  const [searchTerm, setSearchTerm] = useState("");
+  const [isDetailOpen, setIsDeatilOpen] = useState(false); // 모달 상세 창 열림/닫힘 상태
+  const [searchTerm, setSearchTerm] = useState(""); // 검색 창
   const [isSearchVisible, setIsSearchVisible] = useState(false); // 검색창 보임 여부 상태
   const [events, setEvents] = useState([]);
-  const [coordinates, setCoordinates] = useState(null); // 좌표 상태
-  let clickTimeout = null;
+  const [familyUsers, setFamilyUsers] = useState([]);
+  const [familyName, setFamilyName] = useState("");
+  const [familyFiles, setFamilyFiles] = useState([]);
+  const [familyIdx, setFamilyIdx] = useState(null); // familyIdx 상태 추가
+  const [eventFiles, setEventFiles] = useState([]);
+
+  // let clickTimeout = null;
 
   const userData = useSelector((state) => state.user.userData);
+
+  useEffect(() => {
+    // 패밀리 데이터를 가져오는 함수
+    const fetchFamilyData = async () => {
+      try {
+        // 패밀리 이름 가져오기
+        const familyResponse = await axios.get(
+          `http://localhost:8089/wefam/family-name/${userData.id}`
+        );
+        setFamilyName(familyResponse.data.familyName);
+        setFamilyIdx(familyResponse.data.familyIdx);
+
+        // 패밀리 사용자 목록 가져오기
+        const familyUsersResponse = await axios.get(
+          `http://localhost:8089/wefam/family-users/${userData.id}`
+        );
+        setFamilyUsers(familyUsersResponse.data);
+      } catch (error) {
+        console.error("Error fetching family data:", error);
+      }
+    };
+
+    fetchFamilyData();
+  }, [userData.id]);
+
+  const fetchFamilyFiles = async () => {
+    if (familyIdx != null) {
+      try {
+        const familyFilesResponse = await axios.get(
+          `http://localhost:8089/wefam/event/files/family/${familyIdx}`
+        );
+        setFamilyFiles(familyFilesResponse.data);
+      } catch (error) {
+        console.error("Error fetching family files:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (familyIdx !== null && familyIdx !== undefined) {
+      fetchFamilyFiles();
+    }
+  }, [familyIdx]);
+
+  // selectedEvent가 변경될 때마다 관련 파일을 업데이트
+  useEffect(() => {
+    if (!selectedEvent || familyFiles.length === 0) return;
+
+    const selectedEventId = Number(selectedEvent.id);
+    const filteredFiles = familyFiles.filter(
+      (file) =>
+        file.entityType === "event" &&
+        Number(file.entityIdx) === selectedEventId
+    );
+
+    setEventFiles(filteredFiles);
+  }, [selectedEvent, familyFiles]);
+
+  useEffect(() => {
+    if (selectedEvent) {
+      setSelectedEvent((prevEvent) => ({
+        ...prevEvent,
+        files: eventFiles,
+      }));
+    }
+  }, [eventFiles]);
 
   //요일에 따른 날짜 색상
   const renderDayCellContent = (info) => {
@@ -89,6 +164,7 @@ const Calendar = () => {
   };
 
   useEffect(() => {
+    fetchFamilyFiles();
     fetchEvents();
   }, []);
 
@@ -104,7 +180,7 @@ const Calendar = () => {
           {
             params: {
               solYear: year,
-              numOfRows: 0, // 최대 0개의 공휴일 데이터를 가져옴
+              numOfRows: 100, // 최대 0개의 공휴일 데이터를 가져옴
               _type: "json",
               ServiceKey:
                 "I3GsqBPcPMRFC5X+f4CwHDDAlbrdlj4xF8U9EmfWAJwkMQI7tm9rbSrPfo4lm1QdvIBcWBwU5375scGyeT/hiA==",
@@ -147,7 +223,7 @@ const Calendar = () => {
               start: start, // 시작 날짜
               end: endDate.toISOString().split("T")[0], // 종료 날짜 (포함되도록 다음 날로 설정)
               allDay: true,
-              backgroundColor: "#FF4D4D",
+              backgroundColor: "#FF0000",
               editable: false,
               isHoliday: true, // 공휴일 여부 플래그 추가
             };
@@ -168,6 +244,11 @@ const Calendar = () => {
   const saveEvent = async (updatedEvent) => {
     // 날짜와 시간을 분리하여 서버에 보낼 형식으로 변환
     const formatDate = (date) => {
+      // date가 Date 객체가 아닐 경우, Date 객체로 변환
+      if (!(date instanceof Date)) {
+        date = new Date(date);
+      }
+
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const day = date.getDate().toString().padStart(2, "0");
@@ -175,12 +256,19 @@ const Calendar = () => {
     };
 
     const formatTime = (date) => {
+      // date가 Date 객체가 아니면 변환 시도
+      if (!(date instanceof Date)) {
+        date = new Date(date); // date가 문자열이면 Date 객체로 변환
+      }
+
+      if (isNaN(date.getTime())) {
+        // 유효한 날짜가 아닐 경우 null 반환
+        return "00:00:00"; // 기본값으로 00:00 반환
+      }
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
+      return `${hours}:${minutes}:00`;
     };
-
-    console.log("업데이트 확인", updatedEvent);
 
     // 날짜와 시간으로 분리
     const eventToSave = {
@@ -199,11 +287,12 @@ const Calendar = () => {
       longitude: updatedEvent.longitude,
     };
 
-    const eventIdx = updatedEvent.id;
     try {
-      if (eventIdx) {
+      let savedEvent;
+
+      if (updatedEvent.id) {
         const response = await axios.post(
-          `http://localhost:8089/wefam/update-event/${eventIdx}`,
+          `http://localhost:8089/wefam/update-event/${updatedEvent.id}`,
           eventToSave,
           {
             headers: {
@@ -211,12 +300,14 @@ const Calendar = () => {
             },
           }
         );
-
-        await fetchEvents();
+        setSelectedEvent({
+          ...selectedEvent,
+          ...updatedEvent,
+        }); // 변경된 이벤트로 selectedEvent 업데이트
         toast.success("일정이 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
+        await fetchEvents();
         setIsModalOpen(false);
-        console.log("응답 데이터", response.data);
-        console.log("업데이트된 이벤트", updatedEvent);
+        savedEvent = response.data;
       } else {
         const response = await axios.post(
           `http://localhost:8089/wefam/add-event`,
@@ -227,35 +318,123 @@ const Calendar = () => {
             },
           }
         );
-        setSelectedEvent(updatedEvent);
-        await fetchEvents();
-        setIsModalOpen(false);
-        console.log("응답 데이터", response.data);
-        console.log("업데이트된 이벤트", updatedEvent);
+        setSelectedEvent({
+          ...selectedEvent,
+          ...updatedEvent,
+        }); // 변경된 이벤트로 selectedEvent 업데이트
+        savedEvent = response.data;
       }
+      // savedEvent가 undefined인 경우를 처리
+      if (!savedEvent) {
+        throw new Error("Event could not be saved.");
+      }
+      console.log("savedEvent", savedEvent);
+
+      // 이벤트가 저장된 후, 파일 업로드 처리
+      if (updatedEvent.newFiles && updatedEvent.newFiles.length > 0) {
+        const formData = new FormData();
+        updatedEvent.newFiles.forEach((fileWrapper) => {
+          formData.append("files", fileWrapper.file);
+        });
+        formData.append("familyIdx", savedEvent.familyIdx);
+        formData.append("userId", savedEvent.userId);
+        formData.append("entityIdx", savedEvent.eventIdx); // 저장된 이벤트의 ID를 사용
+        console.log([...formData.entries()]);
+        await axios.post(
+          `http://localhost:8089/wefam/event/image/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+      console.log(updatedEvent.deletedFileIds);
+
+      // 삭제된 파일 처리
+      if (
+        updatedEvent.deletedFileIds &&
+        updatedEvent.deletedFileIds.length > 0
+      ) {
+        await Promise.all(
+          updatedEvent.deletedFileIds.map(async (fileIdx) => {
+            await axios.delete(
+              `http://localhost:8089/wefam/event/files/delete/${fileIdx}`
+            );
+          })
+        );
+      }
+      await fetchFamilyFiles();
+      await fetchEvents();
+      setIsModalOpen(false);
     } catch (error) {
       console.error("Error updating event:", error); // 에러 처리}
     }
   };
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = async () => {
+    if (!selectedEvent || !selectedEvent.id) {
+      console.error("선택된 이벤트가 없습니다.");
+      return;
+    }
+    const userConfirmed = window.confirm("정말 삭제하시겠습니까?");
+
+    // 사용자가 '취소'를 클릭하면 함수 종료
+    if (!userConfirmed) {
+      return;
+    }
+
     const eventIdx = selectedEvent.id;
-    console.log(eventIdx);
+    try {
+      // 서버에 삭제 요청 보내기
+      const response = await axios.delete(
+        `http://localhost:8089/wefam/delete-event/${selectedEvent.id}`
+      );
+
+      if (response.status === 200) {
+        toast.success("일정이 성공적으로 삭제되었습니다!"); // 삭제 성공 메시지 표시
+
+        // 이벤트 목록에서 삭제된 이벤트 제거
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== eventIdx)
+        );
+        await fetchEvents();
+        // 모달 닫기
+        setIsEventOpen(false);
+        setIsDeatilOpen(false);
+      } else {
+        toast.error("일정 삭제에 실패했습니다."); // 삭제 실패 메시지 표시
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("일정 삭제 중 오류가 발생했습니다."); // 에러 메시지 표시
+    }
   };
 
   const handleEventClick = (clickInfo) => {
+    if (clickInfo.event.extendedProps.isHoliday) {
+      return;
+    }
+
     // start와 end 시간이 존재할 경우 시간을 추출하여 문자열로 변환
     const formatTime = (date) => {
-      if (!date) return null; // date가 없으면 null 반환
+      // date가 Date 객체가 아니면 변환 시도
+      if (!(date instanceof Date)) {
+        date = new Date(date); // 문자열이나 다른 유형의 데이터가 들어오면 Date 객체로 변환
+      }
+
+      // 변환 후에도 유효한 Date 객체가 아니면 기본값을 반환
+      if (isNaN(date.getTime())) {
+        return "00:00:00"; // 기본값으로 00:00 반환
+      }
+
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
+      return `${hours}:${minutes}:00`;
     };
 
     const { extendedProps } = clickInfo.event; // extendedProps에서 추가 데이터 추출
-    const eventEnd = clickInfo.event.end;
-
-    console.log("이벤트 종료 시간:", eventEnd); // 종료 시간 확인
 
     setSelectedEvent({
       id: clickInfo.event.id,
@@ -278,6 +457,7 @@ const Calendar = () => {
       location: extendedProps.location,
     });
 
+    setIsDeatilOpen(false);
     setIsEventOpen(true);
   };
 
@@ -288,12 +468,9 @@ const Calendar = () => {
       return;
     }
 
+    setIsDeatilOpen(true);
     setIsModalOpen(true);
   };
-
-  useEffect(() => {
-    console.log("업데이트된 selectedEvent 상태:", selectedEvent);
-  }, [selectedEvent]);
 
   //추가
   const handleAddEventClick = () => {
@@ -303,34 +480,39 @@ const Calendar = () => {
 
       backgroundColor: "#FF4D4D",
       allDay: false,
-      // userId: UserId,
-      // familyIdx: familyIdx,
+      userId: userData.id,
+      familyIdx: familyIdx,
     });
+    setIsDeatilOpen(false);
     setIsModalOpen(true);
     setIsEventOpen(false);
   };
 
   // 날짜 셀을 더블클릭했을 때 이벤트 추가를 위한 모달 열기 함수
   const handleDateDoubleClick = (info) => {
-    if (clickTimeout) {
-      clearTimeout(clickTimeout);
-      clickTimeout = null;
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+      clickTimeout.current = null;
+
       setSelectedEvent({
         start: info.date,
         end: info.date,
         backgroundColor: "#FF4D4D",
         allDay: false,
-        familyIdx: 1,
+        userId: userData.id,
+        familyIdx: familyIdx,
       });
-      setIsModalOpen(true);
+      setIsDeatilOpen(false);
       setIsEventOpen(false);
+      setIsModalOpen(true);
     } else {
-      clickTimeout = setTimeout(() => {
-        clickTimeout = null;
+      clickTimeout.current = setTimeout(() => {
+        clickTimeout.current = null;
       }, 300); // 더블클릭을 감지하기 위한 300ms 대기
     }
   };
 
+  //풀캘린터 차트 CSS
   const renderEventContent = (eventInfo) => {
     const { event } = eventInfo;
     const startDate = new Date(event.start);
@@ -352,8 +534,7 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}
-      >
+        }}>
         {/* allDay가 true이거나 날짜가 다를 때 바 형태로 표시 */}
         {event.allDay || !sameDate ? (
           <>
@@ -364,8 +545,7 @@ const Calendar = () => {
                 backgroundColor: event.backgroundColor || "#FF4D4D",
                 borderRadius: "2px",
                 position: "relative",
-              }}
-            >
+              }}>
               <span
                 style={{
                   position: "relative",
@@ -377,8 +557,7 @@ const Calendar = () => {
                   textOverflow: "ellipsis",
                   lineHeight: "8px",
                   color: "#fff", // 바 형태에서는 흰색 글씨로 표시
-                }}
-              >
+                }}>
                 {event.title}
               </span>
             </div>
@@ -402,8 +581,7 @@ const Calendar = () => {
                 whiteSpace: "nowrap",
                 flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
                 minWidth: "0",
-              }}
-            >
+              }}>
               {event.title}
             </span>
             <span
@@ -412,8 +590,7 @@ const Calendar = () => {
                 fontSize: "0.9em",
                 color: "#666",
                 flexShrink: 0,
-              }}
-            >
+              }}>
               {startTime}
             </span>
           </>
@@ -422,11 +599,48 @@ const Calendar = () => {
     );
   };
 
+  useEffect(() => {
+    const searchButton = document.querySelector(".fc-customSearch-button");
+    const addButton = document.querySelector(".fc-customAddEvent-button");
+
+    if (searchButton) {
+      if (!searchButton._root) {
+        searchButton._root = createRoot(searchButton);
+      }
+      searchButton._root.render(
+        <BsSearch
+          style={{
+            fontSize: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />
+      );
+    }
+
+    if (addButton) {
+      if (!addButton._root) {
+        addButton._root = createRoot(addButton);
+      }
+      addButton._root.render(
+        <BsCalendarPlus
+          style={{
+            fontSize: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />
+      );
+    }
+  }, []);
+
   return (
-    <div className="main">
+    <div className='main'>
       {/* ToastContainer는 루트 컴포넌트에 포함 */}
       <ToastContainer
-        position="bottom-center"
+        position='bottom-center'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
@@ -435,8 +649,8 @@ const Calendar = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
-        z-index="100"
+        theme='light'
+        z-index='100'
       />
       {/* 검색 기능 */}
       <div style={{ width: "90%" }}>
@@ -446,39 +660,28 @@ const Calendar = () => {
             justifyContent: "flex-end",
             gap: "6px",
             padding: "5px",
-          }}
-        >
+          }}>
           <input
-            type="text"
-            placeholder="일정 검색"
+            type='text'
+            placeholder='일정 검색'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
               isSearchVisible ? styles["active"] : ""
             }`} // 애니메이션 클래스 적용
           />
-          {/*검색 아이콘 */}
-          <BsSearch
-            style={{ fontSize: "24px", cursor: "pointer" }}
-            onClick={() => setIsSearchVisible(!isSearchVisible)} // 클릭 시 검색창 보이기/숨기기
-          />
-          {/*일정 추가 아이콘 */}
-          <BsCalendarPlus
-            style={{ fontSize: "24px" }}
-            onClick={handleAddEventClick}
-          />
         </div>
         <FullCalendar
           ref={calendarRef} // ref 연결
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView="dayGridMonth"
-          locale="ko"
+          initialView='dayGridMonth'
+          locale='ko'
           nowIndicator={true}
           selectable={true}
           headerToolbar={{
             left: "title",
             center: "prev,today,next",
-            right: "dayGridMonth,timeGridWeek",
+            right: "customSearch,customAddEvent", // 커스텀 버튼 추가
           }}
           editable={true}
           buttonText={{
@@ -488,21 +691,30 @@ const Calendar = () => {
             day: "일간",
             allDay: "하루종일",
           }}
-          height="85vh"
+          height='85vh'
           dayCellContent={renderDayCellContent}
           allDaySlot={true}
           droppable={true}
           weekends={true}
           eventTimeFormat={true}
           events={[...holidays, ...events]}
-          // eventClick={handleEventClick}
           // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
           eventClick={handleEventClick}
           // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
           dateClick={handleDateDoubleClick}
           dayMaxEvents={3}
-          moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+          moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
           eventContent={renderEventContent}
+          customButtons={{
+            customSearch: {
+              text: "", // 텍스트 비움
+              click: () => setIsSearchVisible(!isSearchVisible),
+            },
+            customAddEvent: {
+              text: "", // 텍스트 비움
+              click: handleAddEventClick,
+            },
+          }}
         />
 
         {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
@@ -510,7 +722,10 @@ const Calendar = () => {
           <EventModal
             event={selectedEvent}
             onSave={saveEvent}
+            familyName={familyName}
+            familyUsers={familyUsers}
             onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
+            isDetailOpen={isDetailOpen} // isDetailOpen 상태 전달
           />
         )}
 
@@ -519,13 +734,14 @@ const Calendar = () => {
           <EventDetail
             key={selectedEvent.id}
             event={selectedEvent}
+            familyName={familyName}
+            familyUsers={familyUsers}
             onEdit={handleEditClick} // 수정 버튼에 사용할 함수
             onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
             onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
           />
         )}
       </div>
-      {/* 지도는 장소가 설정된 경우에만 모달 외부에 표시 */}
     </div>
   );
 };

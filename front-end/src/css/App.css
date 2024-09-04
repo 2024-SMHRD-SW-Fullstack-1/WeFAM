@@ -311,6 +311,12 @@ p {
   color: #ffffff !important;
 }
 
+/*오늘*/
+.fc .fc-button:disabled {
+  opacity: 1;
+  background-color: #d85156;
+}
+
 /*주 단위 */
 .fc .fc-timegrid-divider {
   padding: 0px;
@@ -318,6 +324,14 @@ p {
 
 /* react select*/
 .css-b62m3t-container .css-piclje-control {
+  border-color: transparent;
+  border: 0px;
+}
+.css-piclje-control {
+  outline: none;
+}
+
+.css-b62m3t-container .css-piclje-control:focus {
   border-color: transparent;
 }
 

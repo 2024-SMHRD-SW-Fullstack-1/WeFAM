@@ -3,7 +3,7 @@
   justify-content: space-between; /* 요소들을 양쪽 끝에 배치 */
   align-items: center;
   width: 100%; /* 앨범헤드가 전체 폭을 차지하게 함 */
-  padding: 50px;
+  padding: 30px;
   box-sizing: border-box; /* 패딩 포함된 width 계산 */
   margin-bottom: 20px; /* 컨테이너와 약간의 간격 추가 */
 }
@@ -29,6 +29,8 @@
   border: 1px solid #8a8a8a;
   color: #8a8a8a;
   border-radius: 10px;
+  position: relative;
+  left: 60px;
 }
 
 .btnAdd {
@@ -50,6 +52,9 @@
   height: 30px;
   border-radius: 50%;
   border: 1px solid #8a8a8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .imgArray {
@@ -90,8 +95,9 @@
 }
 
 .checkboxLabel {
-  margin-top: 10px;
-  /* 간격 조절 */
+  margin-top: 30px;
+  position: relative;
+  right: 20px;
 }
 
 .folderContainer {
@@ -99,9 +105,9 @@
   flex-wrap: wrap;
   /* 한 줄에 4개씩만 배치되고, 넘으면 다음 줄로 이동 */
   justify-content: flex-start;
-  width: 72%;
+  width: 90%;
   /* 너비를 75%로 설정하여 폴더가 줄바꿈되도록 유도 */
-  margin: 40px auto 0;
+  margin: 50px auto 0;
   padding: 0 60px;
 }
 
@@ -130,6 +136,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
 
 .folderModal {
@@ -169,6 +176,9 @@
   cursor: pointer;
   margin-bottom: 20px;
   background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropzone p {
@@ -190,6 +200,7 @@
 
 .fileItem {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 8px;
   background-color: #f5f5f5;
@@ -203,7 +214,12 @@
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
+  margin-left: 5px;
   cursor: pointer;
+}
+
+fileItem button:last-child {
+  margin-left: 10px;
 }
 
 .modalButton {
@@ -219,28 +235,49 @@
   width: 150px; /* 고정된 너비 */
 }
 
+.inputButton{
+  margin-left: auto;
+  margin-right: 10px;
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .imageModal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 800px;
+  width: 80%;  /* 너비를 고정된 퍼센티지로 설정 */
+  max-width: 800px;  /* 최대 너비를 설정 */
+  height: 80%;  /* 높이를 고정된 퍼센티지로 설정 */
+  max-height: 600px;  /* 최대 높이를 설정 */
   padding: 20px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* 모달이 넘치지 않도록 설정 */
 }
 
 .imageModalContent {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* 이미지가 넘칠 경우 스크롤 가능하게 설정 */
 }
 
 .modalImage {
-  max-width: 100%;
-  max-height: 80vh;
+  max-width: 90%;  /* 모달의 너비에 맞게 이미지 크기 조정 */
+  max-height: 100%;  /* 모달의 높이에 맞게 이미지 크기 조정 */
+  object-fit: contain;  /* 이미지의 비율을 유지하면서 크기 조정 */
 }
 
 .imageModalContent button {
@@ -248,4 +285,92 @@
   border: none;
   font-size: 2rem;
   cursor: pointer;
+}
+
+.previewArea{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.previewImage{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  position: relative;
+}
+
+.modalButtons{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.slider{
+ 
+}
+
+@media (max-width: 768px) {
+  .folder {
+    width: 150px;
+    height: 150px;
+  }
+
+  .slideButtons {
+    top: 3px;
+    right: 3px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .folder {
+    width: 100px;
+    height: 100px;
+  }
+
+  .slideButtons {
+    top: 2px;
+    right: 2px;
+    padding: 6px;
+  }
+}
+
+.slideButtons button:hover {
+  opacity: 1;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5개의 열로 변경 */
+  gap: 10px; /* 이미지 간격 */
+}
+
+@media (max-width: 1600px) {
+  .imageGrid  {
+    grid-template-columns: repeat(4, 1fr); /* 화면 너비가 1200px 이하일 때 4개의 열 */
+  }
+}
+
+@media (max-width: 1400px) {
+  .imageGrid {
+    grid-template-columns: repeat(3, 1fr); /* 화면 너비가 992px 이하일 때 3개의 열 */
+  }
+}
+
+@media (max-width: 768px) {
+  .imageGrid {
+    grid-template-columns: repeat(2, 1fr); /* 화면 너비가 768px 이하일 때 2개의 열 */
+  }
+}
+
+@media (max-width: 576px) {
+  .imageGrid {
+    grid-template-columns: 1fr; /* 화면 너비가 576px 이하일 때 1개의 열 */
+  }
 }

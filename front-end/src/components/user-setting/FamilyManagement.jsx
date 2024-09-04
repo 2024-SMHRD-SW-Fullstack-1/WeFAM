@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styles from "./FamilyManagement.module.css";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import axios from 'axios';
+import ProfileModal from './ProfileModal';
 
 const FamilyManagement = () => {
-  const [userImages, setUserImages] = useState([]);
   const [users, setUsers] = useState([]);
   const userData = useSelector((state) => state.user.userData);
-  const [nickname, setNickname] = useState(userData ? userData.name : "");
-
-  // 전역 변수로 설정된 loadedImages
-  const [loadedImages, setLoadedImages] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
     if (userData) {
-      axios
-        .get("http://localhost:8089/wefam/get-family")
-        .then((response) => {
-          const images = response.data.map((user) => user.profileImg);
-          setLoadedImages(images); // loadedImages 상태 업데이트
-          setUsers(response.data); // 사용자 정보도 업데이트
+      axios.get('http://localhost:8089/wefam/get-family')
+        .then(response => {
+          setUsers(response.data); // 사용자 정보 업데이트
         })
         .catch((error) => {
           console.error("가져오기 에러!!", error);
@@ -27,23 +22,39 @@ const FamilyManagement = () => {
     }
   }, [userData]);
 
+  const openModal = (user) => {
+    setSelectedProfile(user);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProfile(null);
+  };
+
+  const handleInputChange = (e) => {
+    setSelectedProfile({
+      ...selectedProfile,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // 바뀐 값을 DB에 저장하기
+  const handleSaveChanges = () => {
+    axios.put('http://localhost:8089/wefam/update-profile', selectedProfile)
+      .then(response => {
+        console.log('프로필 업데이트 성공:', response.data);
+        closeModal(); // 모달 닫기
+        // window.location.reload(); // 페이지 새로고침
+      })
+      .catch(error => {
+        console.error('프로필 업데이트 실패:', error);
+      });
+  };
+
   return (
     <div className={styles.personalInfo}>
-      <h1>가족 구성원 관리</h1>
-      <hr />
-      <div className={styles.profileContainer}>
-        <div className={styles.profileInfo}>
-          {
-            <img
-              src={userData.profileImg}
-              alt="Profile"
-              className={styles.profileImg}
-            />
-          }
-          <span>{userData.name}</span> {/* 사용자 이름 표시 */}
-          <button>구성원 떠나기</button>
-        </div>
-      </div>
+      <h1>가족 구성원 정보</h1>
       <hr />
       {users.map((user, index) => (
         <div key={index} className={styles.profileContainer}>
@@ -53,11 +64,31 @@ const FamilyManagement = () => {
               alt="Profile"
               className={styles.profileImg}
             />
-            <span>{user.name}</span>
+            <span className={styles.username}>{user.name}</span>
+            <span className={styles.nickname}>({user.nick})</span>
+            <button
+              className={styles.editButton}
+              onClick={() => openModal(user)}
+            >
+              {user.id === userData.id ? "정보 수정하기" : "정보 확인하기"}
+            </button>
           </div>
-          <hr />
+            <hr className={styles.hrLine} /> {/* 줄어든 hr 태그 */}
+          <div>
+          </div>
         </div>
       ))}
+
+      {selectedProfile && (
+        <ProfileModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          profile={selectedProfile}
+          isEditing={selectedProfile.id === userData.id} // 본인의 프로필인지 확인
+          handleInputChange={handleInputChange}
+          handleSaveChanges={handleSaveChanges}
+        />
+      )}
     </div>
   );
 };

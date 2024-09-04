@@ -15,8 +15,15 @@ import {
 import { FiMapPin } from "react-icons/fi";
 import CustomDropdown from "./CustomDropDown";
 import AlarmSetting from "./AlarmSetting";
-import MapComponent from "./Map";
-import MapSearchInput from "./MapSearch";
+import { MapInModal } from "./LocationMap";
+import MapSearchInput from "./LocationSearch";
+import { IoSparklesOutline } from "react-icons/io5";
+import { MdOutlineEditNote } from "react-icons/md";
+import AiModal from "./AiModal";
+
+const AiEventModal = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+}
 
 const generateTimeOptions = () => {
   const options = [];
@@ -52,8 +59,15 @@ const colorOptions = [
   { value: "pale-blue", label: "페일 블루", color: "#b6cfe2" }, // --color-pale-blue
 ];
 
-const EventModal = ({ event, onClose, onSave, onMap }) => {
-  const [isDetailOpen, setIsDetailOpen] = useState(false); // 상세 설정 상태 관리
+const EventModal = ({
+  event,
+  onClose,
+  onSave,
+  isDetailOpen: initialIsDetailOpen,
+  familyUsers,
+  familyName,
+}) => {
+  const [isDetailOpen, setIsDetailOpen] = useState(initialIsDetailOpen); // 초기값을 prop으로 받음
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
   const [alarmText, setAlarmText] = useState("10분 전"); // 알림 텍스트 기본값
   const [selectedOption, setSelectedOption] = useState(null); // 색상 선택 상태
@@ -66,7 +80,41 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
   const [title, setTitle] = useState(event.title);
   const [location, setLocation] = useState("");
-  const [coordinates, setCoordinates] = useState(null); // 좌표 상태 추가
+  const [coordinates, setCoordinates] = useState({
+    lat: event.latitude,
+    lng: event.longitude,
+  });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const userProfile = familyUsers.find((user) => user.id === event.userId);
+  const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
+  const [deletedFileIds, setDeletedFileIds] = useState([]);
+
+  useEffect(() => {
+    setIsDetailOpen(initialIsDetailOpen);
+  }, [initialIsDetailOpen]);
+
+  const handleClearCoordinates = () => {
+    setLocation(""); // 지명 초기화
+    setCoordinates({ lat: 0, lng: 0 }); // 좌표 초기화
+  };
+
+  useEffect(() => {
+    // event가 변경되고, coordinates가 초기화되지 않았을 때만 좌표를 설정
+    if (event && event.latitude && event.longitude && coordinates === 0) {
+      setCoordinates({
+        lat: event.latitude,
+        lng: event.longitude,
+      });
+    }
+  }, [event]);
+
+  // 이벤트가 변경될 때마다 savedFiles 상태를 재설정하지 않도록 수정
+  useEffect(() => {
+    if (event && event.files) {
+      setSavedFiles(event.files);
+    }
+    // 의존성 배열에서 event를 제거하여, event가 변경될 때마다 초기화되지 않도록 합니다.
+  }, []); // 빈 배열을 의존성 배열로 전달하여, 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
 
   // 입력 변경 시 상태 업데이트
   const handleTitleChange = (e) => {
@@ -78,6 +126,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
     setAlarmText(`${time} ${unit}`); // 알림 텍스트 업데이트
   };
 
+  // 위치 저장
   const handlePlaceSelect = (place) => {
     setLocation(place.place_name);
     setCoordinates({ lat: parseFloat(place.y), lng: parseFloat(place.x) }); // 좌표 설정
@@ -85,8 +134,11 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
 
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
-    console.log("Saving event with color:", selectedColor); // 디버그용 로그
-    console.log("Saving event with location:", location); // 디버그용 로그
+    // 새로 추가된 파일
+    const newFiles = selectedFiles.filter(
+      (file) => !savedFiles.some((savedFile) => savedFile.name === file.name)
+    );
+
     onSave({
       start: startDate, // 업데이트된 시작 날짜
       end: endDate, // 업데이트된 종료 날짜
@@ -98,9 +150,11 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
       backgroundColor: selectedColor,
       userId: event.userId,
       location: location,
-      latitude: coordinates?.lat, // 좌표 정보에서 위도 추출
-      longitude: coordinates?.lng, // 좌표 정보에서 경도 추출
+      latitude: coordinates.lat, // 좌표 정보에서 위도 추출
+      longitude: coordinates.lng, // 좌표 정보에서 경도 추출
       allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
+      newFiles, // 새로 추가된 파일만 전달
+      deletedFileIds, // 삭제된 파일 정보 전달
     });
   };
 
@@ -141,7 +195,15 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
 
   // ISO 8601 형식의 시간을 "오전/오후" 형식으로 변환하는 함수
   const formatTimeForSelect = (isoString) => {
+    if (!isoString) return "오전 12:00"; // isoString이 없는 경우 기본값 반환
+
     const date = new Date(isoString);
+
+    if (isNaN(date.getTime())) {
+      // 유효하지 않은 날짜일 경우 기본값 반환
+      return "오전 12:00";
+    }
+
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const period = hours >= 12 ? "오후" : "오전";
@@ -170,6 +232,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
 
     const newStartDate = new Date(startDate);
     newStartDate.setHours(hour, minute);
+    newStartDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setStartDate(newStartDate);
@@ -193,40 +256,116 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
 
     const newEndDate = new Date(endDate);
     newEndDate.setHours(hour, minute);
+    newEndDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setEndDate(newEndDate);
   };
 
+  useEffect(() => {
+    if (isAllDay) {
+      // 종일 이벤트일 경우 시간을 자정으로 설정
+      const newStartDate = new Date(startDate);
+      const newEndDate = new Date(endDate);
+
+      // startDate와 endDate가 이미 설정된 값과 동일한지 확인
+      if (newStartDate.getHours() !== 0 || newStartDate.getMinutes() !== 0) {
+        newStartDate.setHours(0, 0, 0, 0);
+        setStartDate(newStartDate);
+      }
+
+      if (
+        newEndDate.getHours() !== 23 ||
+        newEndDate.getMinutes() !== 59 ||
+        newEndDate.getSeconds() !== 59
+      ) {
+        newEndDate.setHours(23, 50, 59, 999);
+        setEndDate(newEndDate);
+      }
+    }
+  }, [isAllDay, startDate, endDate]);
+
   // 종일 이벤트 토글
   const toggleAllDay = () => {
     setIsAllDay((prev) => !prev);
-    if (!isAllDay) {
-      // 종일 이벤트가 선택되면 시간을 제거하고, 시간을 자정으로 설정
+    // allDay가 false로 바뀔 때, 시간을 초기화
+    if (isAllDay) {
       const newStartDate = new Date(startDate);
-      newStartDate.setHours(0, 0, 0, 0);
-      setStartDate(newStartDate);
-
       const newEndDate = new Date(endDate);
-      newEndDate.setHours(23, 59, 59, 999);
+
+      // 기본적으로 시작 시간을 00:00, 종료 시간을 23:59로 설정
+      newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
+      newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+
+      setStartDate(newStartDate);
       setEndDate(newEndDate);
     }
   };
 
+  // 파일 선택 핸들러
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    const newSelectedFiles = files.map((file) => ({
+      file,
+      name: file.name,
+      url: URL.createObjectURL(file),
+    }));
+
+    // 최대 10개의 파일로 제한
+    if (selectedFiles.length + newSelectedFiles.length > 10) {
+      alert("이미지는 최대 10개까지 업로드할 수 있습니다.");
+      return;
+    }
+
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newSelectedFiles]);
+  };
+
+  // 파일 제거 핸들러
+  const handleRemoveFile = (indexToRemove) => {
+    if (indexToRemove < savedFiles.length) {
+      // savedFiles에서 파일 삭제
+      const fileToRemove = savedFiles[indexToRemove];
+
+      // 삭제된 파일의 fileIdx를 저장
+      setDeletedFileIds((prev) => [...prev, fileToRemove.fileIdx]);
+
+      const updatedSavedFiles = savedFiles.filter(
+        (_, index) => index !== indexToRemove
+      );
+      setSavedFiles(updatedSavedFiles);
+    } else {
+      // selectedFiles에서 파일 삭제
+      const adjustedIndex = indexToRemove - savedFiles.length;
+      const updatedSelectedFiles = selectedFiles.filter(
+        (_, index) => index !== adjustedIndex
+      );
+      setSelectedFiles(updatedSelectedFiles);
+    }
+  };
+
   return ReactDOM.createPortal(
-    // <MapComponent coordinates={coordinates} />
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
         {/* 제목 */}
         <div className={styles.titleContainer}>
-          <input
-            className={styles.title}
-            value={title || ""}
-            placeholder="제목"
-            onChange={handleTitleChange}
-          ></input>
-
-          <BsThreeDotsVertical className={styles.threeDots} />
+          <div>
+            <input
+              className={styles.title}
+              value={title || ""}
+              placeholder='제목'
+              onChange={handleTitleChange}
+            />
+          </div>
+          {isDetailOpen && (
+            <div className={styles.ai}>
+              <IoSparklesOutline style={{ color: selectedColor }} />
+              <div
+                className={styles.tooltip}
+                style={{ backgroundColor: selectedColor }}>
+                일정 추천
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 날짜 및 시간 */}
@@ -240,7 +379,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -248,8 +387,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -264,8 +402,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -277,7 +414,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
           </div>
@@ -292,7 +429,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -308,7 +445,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             className={styles.icon}
             style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
           />
-          <span>작성자</span>
+          <div className={styles.commonBox}>{userProfile.name}</div>
         </div>
 
         {/**사용자 */}
@@ -317,7 +454,8 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
             className={styles.icon}
             style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
           />
-          <span>그룹</span>
+
+          <div className={styles.commonBox}>{familyName}</div>
         </div>
 
         {/* 색상 선택 */}
@@ -363,11 +501,11 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
                 className={styles.icon}
                 style={{ color: selectedColor }}
               />
+              {/* 클릭 시 알림 설정 UI */}
               <div className={styles.contentField}>
                 <span style={{ width: "100%" }} onClick={toggleAlarmSetting}>
                   {alarmText}
                 </span>
-                {/* 클릭 시 알림 설정 UI */}
                 {showAlarmSetting && (
                   <div
                     style={{
@@ -380,8 +518,7 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
                       marginTop: "25px",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
                       width: "100%", // 필드 너비에 맞추기
-                    }}
-                  >
+                    }}>
                     <AlarmSetting
                       onAlarmChange={handleAlarmChange}
                       color={selectedColor}
@@ -390,27 +527,98 @@ const EventModal = ({ event, onClose, onSave, onMap }) => {
                 )}
               </div>
             </div>
-
+            {/* 메모 작성 */}
+            <div className={styles.field}>
+              <MdOutlineEditNote
+                className={styles.icon}
+                style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
+              />
+              <div className={styles.commonBox}>
+                <span className={styles.memoWrapper}>
+                  <span>작성</span>
+                  <button type='button' className={styles.removeButton}>
+                    &times;
+                  </button>
+                </span>
+              </div>
+            </div>
             {/*지도 설정 */}
-            <MapComponent coordinates={coordinates} />
-            <br />
             <div className={styles.field}>
               <FiMapPin
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
               <div>
-                <MapSearchInput onPlaceSelect={handlePlaceSelect} />
+                <MapSearchInput
+                  onPlaceSelect={handlePlaceSelect}
+                  onCoordinatesClear={handleClearCoordinates}
+                  location={location} // location을 props로 전달
+                  event={event}
+                />
               </div>
             </div>
-
+            <MapInModal coordinates={coordinates} /> <br />
             {/*파일 첨부 */}
             <div className={styles.field}>
               <BsPaperclip
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <span>첨부파일</span>
+              <label htmlFor='file-upload'>
+                <span className={styles.commonBox}>사진 추가</span>
+              </label>
+              <input
+                id='file-upload'
+                type='file'
+                accept='image/*'
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className={styles.imgTextBox}>
+              {savedFiles.concat(selectedFiles).map((file, index) => (
+                <div
+                  key={index}
+                  className={styles.previewWrapper}
+                  onMouseEnter={(e) => {
+                    const preview = e.currentTarget.querySelector(
+                      `.${styles.preview}`
+                    );
+                    if (preview) {
+                      preview.style.display = "block";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const preview = e.currentTarget.querySelector(
+                      `.${styles.preview}`
+                    );
+                    if (preview) {
+                      preview.style.display = "none";
+                    }
+                  }}>
+                  <span className={styles.fileNameWrapper}>
+                    <span className={styles.fileName}>
+                      {file.fileRname || file.name}
+                    </span>
+                    <button
+                      type='button'
+                      className={styles.removeButton}
+                      onClick={() => handleRemoveFile(index)}>
+                      &times;
+                    </button>
+                  </span>
+                  <div className={styles.preview} style={{ display: "none" }}>
+                    <img
+                      src={
+                        file.url ||
+                        `data:image/${file.fileExtension};base64,${file.fileData}`
+                      }
+                      alt='Selected file preview'
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

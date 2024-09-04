@@ -9,7 +9,9 @@
   border: 1px solid beige;
   border-radius: 8px;
   margin-right: 10px;
+  overflow-y: auto;
 }
+
 .header {
   margin-top: 10px;
   display: flex;
@@ -35,7 +37,7 @@
   margin-top: 10px; /* 추가: 제목과 날짜 사이의 간격 */
   padding: 14px 0px 20px;
   border-bottom: 1px solid beige;
-  gap: 10px;
+  gap: 5px;
   /* 아이콘과 날짜 시간 그룹 사이의 간격 */
 }
 
@@ -55,10 +57,11 @@
   color: var(--color-text);
 }
 
-.commentSection {
-  margin-top: 10px; /* 추가: 댓글 부분과 위 내용 사이의 여백 */
+.memoContainer {
   border-top: 1px solid var(--color-border);
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid beige;
 }
 
 .comment {
@@ -122,8 +125,14 @@
 }
 
 .arrow {
-  font-size: 1.5em;
+  font-size: 3em;
 }
+
+.smallArrow {
+  font-size: 2em;
+  /* 크기를 줄임 */
+}
+
 .arrow-container {
   display: flex;
   justify-content: center;
@@ -156,14 +165,16 @@
 }
 
 .locationContainer {
-  margin-top: 20px;
+  margin-top: 10px;
+  padding-bottom: 10px;
   /* 지도의 상단 여백 */
+  border-bottom: 1px solid beige;
 }
 
 .locationName {
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   /* 이름과 지도의 간격 */
   text-align: center;
   /* 가운데 정렬 */
@@ -176,10 +187,7 @@
   /* 지도의 높이 지정 */
   background-color: white;
   /* 지도 배경을 흰색으로 설정 */
-  border-radius: 8px;
-  /* 지도의 모서리를 둥글게 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  /* 그림자 추가 */
+  padding: 0 18px;
 }
 
 .field {
@@ -194,9 +202,91 @@
 .icon {
   width: 20px;
   height: 20px;
-  margin-right: 12px;
+  margin: 0 8px;
   color: rgb(143, 143, 143);
-  font-size: 20px !important;
+  /* font-size: 20px !important; */
   vertical-align: middle;
   /* 아이콘과 텍스트가 수평으로 정렬되도록 */
+}
+
+.profileContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.profileImageWrapper {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+.profileImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nicknameTooltip {
+  visibility: hidden;
+  /* 기본 상태에서는 보이지 않음 */
+  background-color: rgba(0, 0, 0, 0.7);
+  /* 배경색 설정 */
+  color: #fff;
+  /* 텍스트 색상 */
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: -30px;
+  /* 이미지 아래에 표시 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profileImageWrapper:hover .nicknameTooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* EventDetail.module.css */
+
+.sliderContainer {
+  width: 100%;
+  max-width: 310px;
+  /* 슬라이더의 최대 너비 설정 */
+  margin: 0 auto;
+  justify-content: center;
+  /* overflow: hidden; */
+  /* 슬라이더 내부의 넘침 방지 */
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  max-height: 190px;
+  padding: 0 18px;
+  /* 이미지의 최대 높이 조정 */
+  object-fit: contain;
+  /* 이미지 비율을 유지하면서 크기 조정 */
+}
+
+.slick-track {
+  display: flex;
+  align-items: center;
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  /* 슬라이드 내부의 넘침 방지 */
 }
