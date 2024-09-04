@@ -37,27 +37,6 @@ const Feed = () => {
     }
   }, []);
 
-  // 새로운 피드 작성 함수
-  const addFeed = useCallback(
-    async (newFeed) => {
-      try {
-        console.log("addFeed 함수 실행 ");
-        setIsLoading(true);
-        await axios.post("http://localhost:8089/wefam/add-feed", newFeed, {
-          headers: {
-            "Content-Type": "application/json", // 서버가 JSON 형식을 기대할 경우
-          },
-        });
-        await getAllFeeds(userData.familyIdx);
-      } catch (error) {
-        console.error("addFeed 함수 에러 : ", error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [userData.familyIdx, getAllFeeds]
-  );
-
   // 피드 디테일 정보 가져오는 함수
   const fetchWriter = useCallback(async (feedIdx) => {
     try {
@@ -161,7 +140,7 @@ const Feed = () => {
           <Preloader isLoading={isLoading} />
         ) : (
           <div className={styles.feedContent}>
-            <AddFeed onAddFeed={addFeed} onGetAllFeeds={getAllFeeds} />
+            <AddFeed onGetAllFeeds={getAllFeeds} />
             <FeedList
               feeds={feeds}
               onGetFeedDetail={getFeedDetail}

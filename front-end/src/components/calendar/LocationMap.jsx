@@ -45,7 +45,7 @@ const MapContainer = ({ coordinates, mapId }) => {
           setUserPosition({ lat, lng });
         },
         (error) => {
-          console.error("Geolocation error:", error);
+          // console.error("Geolocation error:", error);
           setUserPosition({ lat: 35.1595, lng: 126.8526 }); // 위치 오류 시 기본 위치
         }
       );
