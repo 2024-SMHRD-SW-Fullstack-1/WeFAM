@@ -160,7 +160,7 @@ const EventDetail = ({
   // Slider 설정
   const settings = {
     dots: true,
-    infinite: event.files && event.files.length > 0, // 이미지가 1개일 때 무한 스크롤 비활성화
+    infinite: event.files && event.files.length > 1, // 이미지가 1개일 때 무한 스크롤 비활성화
     speed: 500,
     slidesToShow: 1, // 한 번에 하나의 슬라이드만 표시
     slidesToScroll: 1,
@@ -197,7 +197,8 @@ const EventDetail = ({
                   color: editHovered ? eventColor : "inherit",
                   fontWeight: editHovered ? "bold" : "normal",
                   backgroundColor: editHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 수정
               </div>
               <div
@@ -208,7 +209,8 @@ const EventDetail = ({
                   color: deleteHovered ? eventColor : "inherit",
                   fontWeight: deleteHovered ? "bold" : "normal",
                   backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 삭제
               </div>
             </div>
@@ -223,7 +225,8 @@ const EventDetail = ({
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}>
+        } ${event.allDay ? styles.allDay : ""}`}
+      >
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
@@ -272,7 +275,8 @@ const EventDetail = ({
               justifyContent: "center",
               padding: "5px",
               color: eventColor,
-            }}>
+            }}
+          >
             {event.content !== "" && !isMemoOpen && (
               <BsChevronDown onClick={handleMemoClick} />
             )}
@@ -283,7 +287,14 @@ const EventDetail = ({
         </div>
         {isMemoOpen && (
           <div style={{ padding: "0 18px", marginBottom: "10px" }}>
-            <p>{event.content}</p>
+            <p>
+              {event.content.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
           </div>
         )}
       </div>
