@@ -5,16 +5,15 @@ import familyPT from "../../assets/images/famaily.png"; // 가족 프로필 사�
 import axios from "axios";
 
 const GroupManagement = () => {
-  // 상태 설정
-  const [userImages, setUserImages] = useState([]);
-  const [nickname, setNickname] = useState(""); // 사용자 닉네임 (현재 사용되지 않음)
+  // Redux에서 사용자 정보 가져오기
+  const userData = useSelector((state) => state.user.userData);
   const [familyNick, setFamilyNick] = useState(""); // 현재 가족 이름
   const [newFamilyNick, setNewFamilyNick] = useState(""); // 수정할 가족 이름 상태
   const [familyMotto, setFamilyMotto] = useState(""); // 현재 가족 가훈
   const [newFamilyMotto, setNewFamilyMotto] = useState(""); // 수정할 가족 가훈 상태
+  const [profileImage, setProfileImage] = useState(null); // 프로필 이미지 상태
+  const [selectedImage, setSelectedImage] = useState(null); // 선택된 이미지 파일 상태
 
-  // Redux에서 사용자 정보 가져오기
-  const userData = useSelector((state) => state.user.userData);
 
   // 사용자 정보가 로드된 후 가족 이름과 가훈을 서버에서 불러오기 위한 useEffect
   useEffect(() => {
@@ -38,6 +37,15 @@ const GroupManagement = () => {
         .catch(error => {
           console.error("가훈을 가져오는 중 에러 발생:", error);
         });
+
+        // 프로필 이미지 불러오기
+      axios.get(`http://localhost:8089/wefam/get-family-profile-photo/${userData.id}`)
+      .then(response => {
+        setProfileImage(`data:image/jpeg;base64,${response.data}`); // 서버에서 받은 이미지 설정
+      })
+      .catch(error => {
+        console.error("프로필 이미지를 가져오는 중 에러 발생:", error);
+      });
     }
   }, [userData]);
 
@@ -50,6 +58,13 @@ const GroupManagement = () => {
   const handleFamilyMottoChange = (e) => {
     setNewFamilyMotto(e.target.value); // 입력된 가훈을 상태로 설정
   };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+    setProfileImage(URL.createObjectURL(file)); // 미리보기로 설정
+  };
+
 
   // 가족 이름을 서버에 업데이트하는 함수
   const updateFamilyNick = () => {
@@ -94,6 +109,28 @@ const GroupManagement = () => {
       });
   };
 
+  // 가족 프로필을 업데이트하는 함수
+  const updateProfileImage =() => {
+    if(!selectedImage){
+      alert("이미지를 선택하세요");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("profileImage", selectedImage);
+    formData.append("familyIdx", userData.familyIdx);
+    formData.append("userId", userData.id);
+
+    axios.post('http://localhost:8089/wefam/update-family-profile-photo', formData)
+    .then(response => {
+      alert("프로필 사진이 변경되었습니다!");
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error('프로필 사진 업데이트 실패:', error);
+    });
+};
+
   return (
     <div className={styles.personalInfo}>
       <h1>가족 정보 관리</h1>
@@ -103,8 +140,17 @@ const GroupManagement = () => {
       <div className={styles.profileContainer}>
         <span>가족 프로필 사진</span>
         <div className={styles.profileInfo}>
-          <img src={familyPT} className={styles.profileImg} alt="Family" />
-          <button className={styles.editImgButton}>수정</button>
+        <img src={profileImage} className={styles.profileImg} alt="Family" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: 'none' }} 
+            id="profileImageInput"
+          />
+          <label htmlFor="profileImageInput" className={styles.editImgButton}>
+            수정
+          </label>
         </div>
       </div>
       <hr />
@@ -143,6 +189,8 @@ const GroupManagement = () => {
           </button>
         </div>
       </div>
+      <hr />
+
     </div>
   );
 };

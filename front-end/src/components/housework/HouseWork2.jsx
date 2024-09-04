@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import styles from "./Housework2.module.css";
+import styles from "./HouseWork2.module.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import WorkModal from "./WorkModal";
+import CompleteModal from "./CompleteModal";
 import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 
 const Housework2 = () => {
@@ -11,7 +12,7 @@ const Housework2 = () => {
   const [localFamilyMembers, setFamilyMembers] = useState([]); // 초기값을 빈 배열로 설정
   const [tasks, setTasks] = useState({ daily: [], shortTerm: [] });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskType, setTaskType] = useState("daily");
+  const [taskType, setTaskType] = useState("daily"); // 작업 유형을 구분하는 상태값
   const [taskName, setTaskName] = useState("");
   const [taskContent, setTaskContent] = useState("");
   const [taskPoint, setTaskPoint] = useState("");
@@ -20,8 +21,23 @@ const Housework2 = () => {
     workUser: "",
     taskPoint: "",
   });
-  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(null); // 드롭다운 토글 상태
   const [editTaskIndex, setEditTaskIndex] = useState(null);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false); // 완료 모달 상태 추가
+  const [selectedTask, setSelectedTask] = useState(null); // 완료하려는 작업 선택
+  const [selectedFiles, setSelectedFiles] = useState([]); // 이미지 파일을 저장할 상태
+
+  // 매일 할 일 모달을 여는 함수
+  const openDailyModal = () => {
+    setTaskType("daily"); // taskType을 daily로 설정
+    openModal();
+  };
+
+  // 오늘의 미션 모달을 여는 함수
+  const openShortTermModal = () => {
+    setTaskType("shortTerm"); // taskType을 shortTerm으로 설정
+    openModal();
+  };
 
   const openModal = () => setIsModalOpen(true);
 
@@ -43,12 +59,17 @@ const Housework2 = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:8089/wefam/get-works");
-      const tasks = response.data;
+      // userId를 query로 넘겨줌
+      const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
+  
+      const { works, totalPoints } = response.data;  // 총 포인트와 작업 데이터를 분리
+  
       setTasks({
-        daily: tasks.filter((task) => task.taskType === "daily"),
-        shortTerm: tasks.filter((task) => task.taskType === "shortTerm"),
+        daily: works.filter((task) => task.taskType === "daily"),
+        shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
+  
+      console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -64,15 +85,11 @@ const Housework2 = () => {
           );
           const members = response.data.map((member) => ({
             id: member.userId,
-            name: member.name, // Assuming 'name' is a field in your JoiningModel
+            name: member.name,
           }));
           setFamilyMembers(members);
-          console.log(members);
         } catch (error) {
-          console.error(
-            "가족 구성원 정보를 불러오는 중 오류가 발생했습니다:",
-            error
-          );
+          console.error("가족 구성원 정보를 불러오는 중 오류 발생:", error);
         }
       }
     };
@@ -114,7 +131,7 @@ const Housework2 = () => {
       workUserIds:
         taskType === "daily" && workUser.length > 0
           ? workUser.map((user) => user.id)
-          : [], // 오늘의 미션일 경우 빈 배열, 매일 할 일일 경우 배열로 전송
+          : [],
     };
 
     try {
@@ -130,10 +147,10 @@ const Housework2 = () => {
           "http://localhost:8089/wefam/add-work",
           task
         );
-        console.log(task.workUserIds);
         addTaskToState(response.data, taskType);
       }
       closeModal();
+      fetchTasks();
     } catch (error) {
       console.error("작업 추가 또는 수정 중 오류 발생:", error);
     }
@@ -155,29 +172,10 @@ const Housework2 = () => {
     }));
   };
 
-  const toggleTaskCompletion = async (taskList, setTaskList, index) => {
-    const task = taskList[index];
-
-    try {
-      const updatedTask = { ...task, completed: !task.completed };
-      await axios.put(
-        `http://localhost:8089/wefam/update-work/${task.workIdx}`,
-        updatedTask
-      );
-
-      setTaskList(
-        taskList.map((t) => (t.workIdx === task.workIdx ? updatedTask : t))
-      );
-    } catch (error) {
-      console.error("작업 완료 상태 업데이트 중 오류 발생:", error);
-    }
-  };
-
   const deleteSelectedTasks = async (index, taskType) => {
     try {
       const taskList = tasks[taskType];
       const taskToDelete = taskList[index];
-
       await axios.delete(
         `http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`
       );
@@ -186,9 +184,24 @@ const Housework2 = () => {
         ...prevTasks,
         [taskType]: taskList.filter((t) => t.workIdx !== taskToDelete.workIdx),
       }));
+
+      fetchTasks();
     } catch (error) {
       console.error("작업 삭제 중 오류 발생:", error);
     }
+  };
+
+  const handleOutsideClick = (e) => {
+    if (!e.target.closest(`.${styles.dropdownContainer}`)) {
+      setDropdownOpen(null);
+    }
+  };
+
+  // 미션 완료 모달 열기
+  const handleMissionComplete = (task) => {
+    console.log("선택된 작업:", task); // task 객체가 제대로 전달되는지 확인
+    setSelectedTask(task); // 완료하려는 작업 설정
+    setIsCompleteModalOpen(true); // 완료 모달 열기
   };
 
   const toggleDropdown = (index) => {
@@ -200,39 +213,43 @@ const Housework2 = () => {
 
     setTaskName(task.workTitle);
     setTaskContent(task.workContent);
-    setWorkUser(task.workUser.split(", "));
+
+    if (typeof task.participantNames === "string") {
+      setWorkUser(task.participantNames.split(", "));
+    } else {
+      setWorkUser([]);
+    }
     setTaskPoint(task.points.toString());
     setTaskType(taskType);
     setEditTaskIndex(task.workIdx);
     setIsModalOpen(true);
   };
 
-  const handleOutsideClick = (e) => {
-    if (!e.target.closest(`.${styles.dropdownContainer}`)) {
-      setDropdownOpen(null);
-    }
-  };
-
   const renderTaskList = (tasks, taskType) => {
     const formatDateTime = (dateTime) => {
       if (!dateTime) return "";
       const date = new Date(dateTime);
-
-      const formattedDate = date.toLocaleString("ko-KR", {
+      return date.toLocaleString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
       });
-
-      return formattedDate;
     };
 
     return tasks.map((task, index) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
+          {/* 이미지가 있을 경우 출력 */}
+          {task.images && task.images.length > 0 && (
+            <div className={styles.imageContainer}>
+              <img
+                src={task.images[0]} // 첫 번째 이미지를 렌더링
+                alt={`작업 이미지 ${index}`}
+                className={styles.taskImage}
+              />
+            </div>
+          )}
+
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span className={styles.taskContent}>{task.workContent}</span>
@@ -264,7 +281,9 @@ const Housework2 = () => {
             </div>
             {dropdownOpen === `${taskType}-${index}` && (
               <div className={styles.dropdownMenu}>
-                <button>미션 성공</button>
+                <button onClick={() => handleMissionComplete(task)}>
+                  미션 성공
+                </button>
                 <button onClick={() => handleTaskEdit(index, tasks, taskType)}>
                   수정
                 </button>
@@ -281,39 +300,73 @@ const Housework2 = () => {
 
   return (
     <div className="main" onClick={handleOutsideClick}>
-      <div className={styles.board}>
+      <div styles={styles.gridContainer}>
+        <div className={styles.board}>
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>매일 할 일</h3>
+              <span
+                className={
+                  tasks.daily.length > 0
+                    ? styles.circleDaily
+                    : styles.circleZero
+                }
+              >
+                {tasks.daily.length}
+              </span>
+              <div className={styles.add_task} onClick={openDailyModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#e74c3c", fontSize: "24px" }}
+                />
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.daily, "daily")}
+            </ul>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>오늘의 미션</h3>
+              <span
+                className={
+                  tasks.shortTerm.length > 0
+                    ? styles.circleShortTerm
+                    : styles.circleZero
+                }
+              >
+                {tasks.shortTerm.length}
+              </span>
+              <div className={styles.add_task} onClick={openShortTermModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#ff9203", fontSize: "24px" }}
+                />
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.shortTerm, "shortTerm")}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {/*오른쪽 그리드 */}
+      <div styles={styles.board}>
         <div className={styles.column}>
           <div className={styles.column_header}>
             <h3>매일 할 일</h3>
-            <span className={tasks.daily.length > 0 ? styles.circleDaily : ""}>
+            <span
+              className={
+                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
+              }
+            >
               {tasks.daily.length}
             </span>
             <div className={styles.add_task} onClick={openModal}>
               <BsPlusCircle
                 styles={styles.icon}
                 style={{ color: "#e74c3c", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.daily, "daily")}
-          </ul>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>오늘의 미션</h3>
-            <span
-              className={
-                tasks.shortTerm.length > 0 ? styles.circleShortTerm : ""
-              }
-            >
-              {tasks.shortTerm.length}
-            </span>
-            <div className={styles.add_task} onClick={openModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#ff9203", fontSize: "24px" }}
               />
             </div>
           </div>
@@ -340,6 +393,20 @@ const Housework2 = () => {
         handleWorkUserChange={handleWorkUserChange}
         addOrUpdateTask={addOrUpdateTask}
         editTaskIndex={editTaskIndex}
+      />
+
+      {/* 미션 성공 모달 */}
+      <CompleteModal
+        isOpen={isCompleteModalOpen}
+        onRequestClose={() => setIsCompleteModalOpen(false)}
+        taskName={selectedTask?.workTitle || ""}
+        selectedTask={selectedTask} // 선택된 작업 전달
+        selectedFiles={selectedFiles} // 파일 리스트 전달
+        setSelectedFiles={setSelectedFiles} // 파일 설정 함수 전달
+        onComplete={() => {
+          setIsCompleteModalOpen(false);
+          fetchTasks(); // 완료 후 목록 새로고침
+        }}
       />
     </div>
   );

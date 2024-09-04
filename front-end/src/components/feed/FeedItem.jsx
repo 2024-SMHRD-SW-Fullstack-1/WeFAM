@@ -6,7 +6,9 @@ import styles from "./FeedItem.module.css";
 import FeedDetailModal from "./FeedDetailModal";
 import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
+import PollModal from "./PollModal";
 import { elapsedTime } from "../../elapsedTime";
+import { LuVote } from "react-icons/lu";
 
 import {
   BsSuitHeart,
@@ -21,8 +23,10 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null);
+  const [selectedPoll, setSelectedPoll] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isPollModalOpen, setIsPollModalOpen] = useState(false);
   const [writerProfileImg, setWriterProfileImg] = useState("");
   const [writerId, setWriterId] = useState("");
   const [writerNick, setWriterNick] = useState("");
@@ -30,6 +34,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const imageMaxCount = 9;
   const imagePreCount = 3;
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 투표
+  const [polls, setPolls] = useState([]);
   // 좋아요
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(feed.feedLikes || 0);
@@ -77,7 +83,20 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       );
       setImages(response.data);
     } catch (error) {
-      console.error("이미지 요청 에러:", error);
+      console.error(`피드 ${feed.feedIdx}번 이미지 요청 에러 :`, error);
+    }
+  }, [feed.feedIdx]);
+
+  // getPolls를 useCallback으로 메모이제이션
+  const getPolls = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-polls/${feed.feedIdx}`
+      );
+      console.log(response.data);
+      setPolls(Array.from(response.data));
+    } catch (error) {
+      console.error(`피드 ${feed.feedIdx}번 투표 요청 에러 :`, error);
     }
   }, [feed.feedIdx]);
 
@@ -126,7 +145,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   useEffect(() => {
     fetchWriter();
     fetchImages();
-  }, [fetchWriter, fetchImages]);
+    getPolls();
+  }, [fetchWriter, fetchImages, getPolls]);
 
   useEffect(() => {
     getAllCmts();
@@ -182,6 +202,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     if (window.confirm(`${feed.feedIdx}번 피드를 삭제하시겠습니까?`)) {
       await onDeleteFeed(feed.feedIdx);
     }
+  };
+
+  // 피드 투표 클릭!
+  const handleOpenPoll = (pollIdx) => {
+    setSelectedFeed({ feedIdx: feed.feedIdx });
+    setSelectedPoll({ pollIdx }); // 선택된 pollIdx로 상태를 설정
+    setIsPollModalOpen(true);
   };
 
   // 좋아요 누르기
@@ -374,6 +401,24 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </div>
         )}
 
+        {/* 내용 - 투표 */}
+        <div className={styles.pollsContent}>
+          {polls.length > 0 ? (
+            <div>
+              {polls.map((poll, index) => (
+                <span key={index}>
+                  <button onClick={() => handleOpenPoll(poll.pollIdx)}>
+                    {" "}
+                    {/* pollIdx 전달 */}
+                    <LuVote />
+                    <span>{poll.pollTitle}</span>
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
         {(() => {
           let content;
           switch (feed.feedType) {
@@ -446,6 +491,15 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           feed={selectedFeed}
           onShow={onGetFeedDetail}
           onClose={() => setIsDetailModalOpen(false)}
+        />
+      )}
+
+      {isPollModalOpen && (
+        <PollModal
+          feed={selectedFeed}
+          poll={selectedPoll}
+          onShow={onGetFeedDetail}
+          onClose={() => setIsPollModalOpen(false)}
         />
       )}
     </div>
