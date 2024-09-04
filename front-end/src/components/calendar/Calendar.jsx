@@ -223,7 +223,7 @@ const Calendar = () => {
               start: start, // 시작 날짜
               end: endDate.toISOString().split("T")[0], // 종료 날짜 (포함되도록 다음 날로 설정)
               allDay: true,
-              backgroundColor: "#FF4D4D",
+              backgroundColor: "#FF0000",
               editable: false,
               isHoliday: true, // 공휴일 여부 플래그 추가
             };
