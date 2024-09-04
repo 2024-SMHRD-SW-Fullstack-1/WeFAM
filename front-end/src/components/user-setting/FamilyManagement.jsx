@@ -57,24 +57,24 @@ const FamilyManagement = () => {
       <h1>가족 구성원 정보</h1>
       <hr />
       {users.map((user, index) => (
-        <div key={index} className={styles.profileContainer}>
-          <div className={styles.profileInfo}>
-            <img
-              src={user.profileImg}
-              alt="Profile"
-              className={styles.profileImg}
-            />
-            <span className={styles.username}>{user.name}</span>
-            <span className={styles.nickname}>({user.nick})</span>
-            <button
-              className={styles.editButton}
-              onClick={() => openModal(user)}
-            >
-              {user.id === userData.id ? "정보 수정하기" : "정보 확인하기"}
-            </button>
-          </div>
+        <div>
+          <div key={index} className={styles.profileContainer}>
+            <div className={styles.profileInfo}>
+              <img
+                src={user.profileImg}
+                alt="Profile"
+                className={styles.profileImg}
+              />
+              <span className={styles.username}>{user.name}</span>
+              <span className={styles.nickname}>({user.nick})</span>
+              <button
+                className={styles.editButton}
+                onClick={() => openModal(user)}
+              >
+                {user.id === userData.id ? "정보 수정" : "가족 정보"}
+              </button>
+            </div>
             <hr className={styles.hrLine} /> {/* 줄어든 hr 태그 */}
-          <div>
           </div>
         </div>
       ))}

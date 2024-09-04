@@ -36,7 +36,7 @@ const AiModal = ({ onClose }) => {
         <div className={styles.modal}>
             <div className={style.aimodal}>
                 <div className={style.themeHead}>
-                    <h1>원하는 여행 테마를 1개 선택해 주세요.</h1>
+                    <h1>가족이 원하는 여행 테마를 1개 선택해 주세요.</h1>
                 </div>
                 <div className={style.themeContainer}>
                     {themes.map((theme) => (
