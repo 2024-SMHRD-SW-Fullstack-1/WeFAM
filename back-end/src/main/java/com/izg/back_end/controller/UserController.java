@@ -1,6 +1,5 @@
 package com.izg.back_end.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,39 +10,34 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
 import com.izg.back_end.dto.UserDto;
-import com.izg.back_end.service.FamilyService;
 import com.izg.back_end.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import com.izg.back_end.model.FamilyModel;
-import com.izg.back_end.model.FeedModel;
-import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
-        System.out.println("카카오 로그인 요청 수신. 인가 코드: " + code);
-        try {
-            // 인가 코드를 사용해 액세스 토큰을 얻음
-            String accessToken = userService.getKakaoAccessToken(code);
+	@PostMapping("/login")
+	public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
+		System.out.println("카카오 로그인 요청 수신. 인가 코드: " + code);
+		try {
+			// 인가 코드를 사용해 액세스 토큰을 얻음
+			String accessToken = userService.getKakaoAccessToken(code);
 
-            // 액세스 토큰을 이용해 사용자 정보 가져오기
-            UserDto userDTO = userService.getUserInforFromKakao(accessToken);
+			// 액세스 토큰을 이용해 사용자 정보 가져오기
+			UserDto userDTO = userService.getUserInforFromKakao(accessToken);
 
             // 유저 정보를 데이터베이스에 저장
             userService.saveUser(userDTO, accessToken);
@@ -88,16 +82,16 @@ public class UserController {
 //    	return userService.getFamilyStaus();
 //    }
 //    
- // 프로필 업데이트를 위한 엔드포인트 추가
-    @PutMapping("/update-profile")
-    public ResponseEntity<UserModel> updateProfile(@RequestBody UserModel updatedUser) {
-        try {
-            // 서비스 레이어에서 유저 프로필 업데이트
-            UserModel savedUser = userService.updateUserProfile(updatedUser);
-            return ResponseEntity.ok(savedUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
-    
+	// 프로필 업데이트를 위한 엔드포인트 추가
+	@PutMapping("/update-profile")
+	public ResponseEntity<UserModel> updateProfile(@RequestBody UserModel updatedUser) {
+		try {
+			// 서비스 레이어에서 유저 프로필 업데이트
+			UserModel savedUser = userService.updateUserProfile(updatedUser);
+			return ResponseEntity.ok(savedUser);
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(null);
+		}
+	}
+
 }
