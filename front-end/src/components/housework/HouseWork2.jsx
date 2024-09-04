@@ -196,52 +196,10 @@ const Housework2 = () => {
 
   // 미션 완료 모달 열기
   const handleMissionComplete = (task) => {
+    console.log("선택된 작업:", task); // task 객체가 제대로 전달되는지 확인
     setSelectedTask(task); // 완료하려는 작업 설정
     setIsCompleteModalOpen(true); // 완료 모달 열기
   };
-
-  // 작업 완료 처리
-  // const handleCompleteConfirm = async () => {
-  //   if (selectedTask) {
-  //     const formData = new FormData();
-
-  //     // 이미지 파일들을 FormData에 추가
-  //     selectedFiles.forEach((file) => {
-  //       formData.append("images", file); // 'images'라는 키로 파일 추가
-  //       formData.append("fileNames", file.name); // 파일명
-  //       formData.append("fileExtensions", file.name.split(".").pop()); // 확장자
-  //       formData.append("fileSizes", file.size); // 파일 크기
-  //     });
-
-  //     // 추가로 필요한 데이터
-  //     formData.append("workIdx", selectedTask.workIdx); // 작업의 ID를 workIdx로 설정
-  //     formData.append("familyIdx", userData.familyIdx); // 사용자 familyIdx
-  //     formData.append("userId", userData.id); // 로그인된 사용자의 ID
-  //     formData.append("completed", true); // 작업 완료 여부 전달
-
-  //     try {
-  //       const response = await fetch(
-  //         "http://localhost:8089/wefam/complete-with-files", // 파일과 작업 완료 처리 백엔드 엔드포인트
-  //         {
-  //           method: "POST",
-  //           body: formData,
-  //         }
-  //       );
-
-  //       if (response.ok) {
-  //         const result = await response.json();
-  //         alert("작업 완료 및 이미지 저장이 완료되었습니다.");
-  //         fetchTasks(); // 작업 목록 갱신
-  //         setIsCompleteModalOpen(false); // 모달 닫기
-  //       } else {
-  //         console.error("서버 오류:", response.statusText);
-  //       }
-  //     } catch (error) {
-  //       console.error("작업 완료 및 이미지 저장 중 오류 발생:", error);
-  //     }
-  //   }
-  // };
-
 
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
@@ -278,6 +236,17 @@ const Housework2 = () => {
     return tasks.map((task, index) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
+          {/* 이미지가 있을 경우 출력 */}
+          {task.images && task.images.length > 0 && (
+            <div className={styles.imageContainer}>
+              <img
+                src={task.images[0]} // 첫 번째 이미지를 렌더링
+                alt={`작업 이미지 ${index}`}
+                className={styles.taskImage}
+              />
+            </div>
+          )}
+
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span className={styles.taskContent}>{task.workContent}</span>
@@ -339,7 +308,7 @@ const Housework2 = () => {
                 }>
                 {tasks.daily.length}
               </span>
-              <div className={styles.add_task} onClick={openModal}>
+              <div className={styles.add_task} onClick={openDailyModal}>
                 <BsPlusCircle
                   styles={styles.icon}
                   style={{ color: "#e74c3c", fontSize: "24px" }}
@@ -362,7 +331,7 @@ const Housework2 = () => {
                 }>
                 {tasks.shortTerm.length}
               </span>
-              <div className={styles.add_task} onClick={openModal}>
+              <div className={styles.add_task} onClick={openShortTermModal}>
                 <BsPlusCircle
                   styles={styles.icon}
                   style={{ color: "#ff9203", fontSize: "24px" }}
@@ -373,7 +342,7 @@ const Housework2 = () => {
               {renderTaskList(tasks.shortTerm, "shortTerm")}
             </ul>
           </div>
-        
+
         </div>
       </div>
       {/*오른쪽 그리드 */}
@@ -424,9 +393,13 @@ const Housework2 = () => {
         isOpen={isCompleteModalOpen}
         onRequestClose={() => setIsCompleteModalOpen(false)}
         taskName={selectedTask?.workTitle || ""}
+        selectedTask={selectedTask} // 선택된 작업 전달
         selectedFiles={selectedFiles} // 파일 리스트 전달
         setSelectedFiles={setSelectedFiles} // 파일 설정 함수 전달
-        onComplete={() => setIsCompleteModalOpen(false)} // 모달 닫기만 처리
+        onComplete={() => {
+          setIsCompleteModalOpen(false);
+          fetchTasks(); // 완료 후 목록 새로고침
+        }}
       />
     </div>
   );
