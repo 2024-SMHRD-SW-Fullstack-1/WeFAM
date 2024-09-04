@@ -195,7 +195,15 @@ const EventModal = ({
 
   // ISO 8601 형식의 시간을 "오전/오후" 형식으로 변환하는 함수
   const formatTimeForSelect = (isoString) => {
+    if (!isoString) return "오전 12:00"; // isoString이 없는 경우 기본값 반환
+
     const date = new Date(isoString);
+
+    if (isNaN(date.getTime())) {
+      // 유효하지 않은 날짜일 경우 기본값 반환
+      return "오전 12:00";
+    }
+
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const period = hours >= 12 ? "오후" : "오전";
@@ -224,6 +232,7 @@ const EventModal = ({
 
     const newStartDate = new Date(startDate);
     newStartDate.setHours(hour, minute);
+    newStartDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setStartDate(newStartDate);
@@ -247,6 +256,7 @@ const EventModal = ({
 
     const newEndDate = new Date(endDate);
     newEndDate.setHours(hour, minute);
+    newEndDate.setSeconds(0, 0); // 초와 밀리초 초기화
 
     // ISO로 변환하지 않고 Date 객체로 저장
     setEndDate(newEndDate);
@@ -269,7 +279,7 @@ const EventModal = ({
         newEndDate.getMinutes() !== 59 ||
         newEndDate.getSeconds() !== 59
       ) {
-        newEndDate.setHours(23, 59, 59, 999);
+        newEndDate.setHours(23, 50, 59, 999);
         setEndDate(newEndDate);
       }
     }
@@ -278,6 +288,18 @@ const EventModal = ({
   // 종일 이벤트 토글
   const toggleAllDay = () => {
     setIsAllDay((prev) => !prev);
+    // allDay가 false로 바뀔 때, 시간을 초기화
+    if (isAllDay) {
+      const newStartDate = new Date(startDate);
+      const newEndDate = new Date(endDate);
+
+      // 기본적으로 시작 시간을 00:00, 종료 시간을 23:59로 설정
+      newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
+      newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+
+      setStartDate(newStartDate);
+      setEndDate(newEndDate);
+    }
   };
 
   // 파일 선택 핸들러
