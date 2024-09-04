@@ -28,6 +28,13 @@ const WorkModal = ({
   const [availableMembers, setAvailableMembers] = useState(familyMembers); // 선택 가능한 담당자들
   const [isDropdownOpen, setDropdownOpen] = useState(false); // 드롭다운 열림 상태
 
+  // 모달이 닫힐 때 선택된 담당자 초기화
+  useEffect(() => {
+    if (!isModalOpen) {
+      setSelectedMembers([]);
+    }
+  }, [isModalOpen]);
+
   // selectedMembers 또는 familyMembers가 변경될 때마다 availableMembers를 업데이트합니다.
   useEffect(() => {
     setAvailableMembers(

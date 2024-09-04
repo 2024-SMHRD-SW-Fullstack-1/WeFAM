@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.izg.back_end.model.ParticipantModel;
 import com.izg.back_end.repository.ParticipantRepository;
@@ -35,8 +36,10 @@ public class ParticipantService {
 		});
 	}
 
+	@Transactional
 	// 특정 작업의 모든 참여자 삭제
 	public void deleteParticipantsByEntityIdx(int workIdx) {
+	    System.out.println("Deleting participants for workIdx: " + workIdx);
 		participantRepository.deleteByEntityIdxAndEntityType(workIdx, "housework");
 	}
 
