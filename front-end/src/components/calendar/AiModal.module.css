@@ -1,0 +1,92 @@
+.modal {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.aimodal{
+    position: relative;
+    bottom: 180px;
+    background-color: antiquewhite;
+    padding: 50px;
+    border-radius: 10px;
+}
+
+
+.themeContainer {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    gap: 20px; /* 테마 사이의 간격 */
+    flex-wrap: wrap; /* 여러 줄로 테마 배치 */
+    margin-bottom: 20px;
+}
+
+.theme {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.themeImage {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%; /* 이미지를 동그랗게 만듦 */
+    object-fit: cover; /* 이미지 크기에 맞춰 잘라내기 */
+    margin-bottom: 5px;
+  }
+  
+  .themeName {
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+  }
+
+.theme:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;  
+  margin-top: 20px;
+}
+
+.completeButton, .cancelButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px; 
+}
+
+.completeButton:hover {
+  background-color: #0056b3;
+}
+
+.themeHead h1{
+    color: black;
+    margin-bottom: 30px;
+}

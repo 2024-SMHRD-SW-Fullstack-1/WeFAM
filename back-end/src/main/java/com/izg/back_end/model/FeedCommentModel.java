@@ -38,8 +38,4 @@ public class FeedCommentModel {
     @Column(name = "posted_at")
     @JsonProperty("postedAt")
     private LocalDateTime postedAt = LocalDateTime.now(); // Default to current date and time
-       
-    @Column(name = "cmt_likes")
-    @JsonProperty("cmtLikes")
-    private int cmtLikes = 0; // Default to 0
 }
