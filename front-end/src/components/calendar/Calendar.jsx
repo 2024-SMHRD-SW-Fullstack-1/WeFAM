@@ -13,7 +13,6 @@ import EventDetail from "./EventDetail";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import Login from "../login/Login";
 
 const Calendar = () => {
   const calendarRef = useRef(null); // FullCalendar를 가리킬 ref
@@ -60,14 +59,15 @@ const Calendar = () => {
   }, [userData.id]);
 
   const fetchFamilyFiles = async () => {
-    try {
-      const familyFilesResponse = await axios.get(
-        `http://localhost:8089/wefam/event/files/family/${familyIdx}`
-      );
-      setFamilyFiles(familyFilesResponse.data);
-      console.log(familyFilesResponse.data);
-    } catch (error) {
-      console.error("Error fetching family files:", error);
+    if (familyIdx != null) {
+      try {
+        const familyFilesResponse = await axios.get(
+          `http://localhost:8089/wefam/event/files/family/${familyIdx}`
+        );
+        setFamilyFiles(familyFilesResponse.data);
+      } catch (error) {
+        console.error("Error fetching family files:", error);
+      }
     }
   };
 
@@ -470,6 +470,7 @@ const Calendar = () => {
     if (clickTimeout) {
       clearTimeout(clickTimeout);
       clickTimeout = null;
+
       setSelectedEvent({
         start: info.date,
         end: info.date,
