@@ -85,37 +85,34 @@ public class HouseworkService {
 
 	// 미션 완료 처리 및 파일 업로드
 	@Transactional
-	public void completeHouseworkWithFiles(int familyIdx, String userId, String entityType, int entityIdx,
-			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
+	public void completeHouseworkWithFiles(int workIdx, List<MultipartFile> images, int familyIdx, String userId,
 			boolean completed) throws IOException {
-
 		// 1. 작업 완료 처리
-		HouseworkModel housework = houseworkRepository.findByWorkIdx(entityIdx); // entityIdx를 workIdx로 사용
+		HouseworkModel housework = houseworkRepository.findByWorkIdx(workIdx);
 		if (housework != null) {
 			housework.setCompleted(completed);
 			houseworkRepository.save(housework);
 		}
 
 		// 2. 파일 저장 처리
-		for (int i = 0; i < images.size(); i++) {
-			MultipartFile file = images.get(i);
-			String fileExtension = fileExtensions.get(i);
-			Long fileSize = fileSizes.get(i);
-
+		for (MultipartFile image : images) {
+			String fileName = image.getOriginalFilename();
+			String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
+			long fileSize = image.getSize();
 
 			FileModel fileModel = new FileModel();
 			fileModel.setFamilyIdx(familyIdx);
 			fileModel.setUserId(userId);
-			fileModel.setEntityType("work"); // 작업 유형 설정
-			fileModel.setEntityIdx(entityIdx); // entityIdx를 사용하여 파일과 작업을 연결
-			fileModel.setFileRname(file.getOriginalFilename());
-			fileModel.setFileUname(file.getOriginalFilename() + "_" + Instant.now().toEpochMilli());
+			fileModel.setEntityType("work");
+			fileModel.setEntityIdx(workIdx);
+			fileModel.setFileRname(fileName);
+			fileModel.setFileUname(fileName + "_" + Instant.now().toEpochMilli());
 			fileModel.setFileSize(fileSize);
 			fileModel.setFileExtension(fileExtension);
-			fileModel.setFileData(file.getBytes());
+			fileModel.setFileData(image.getBytes());
 			fileModel.setUploadedAt(LocalDateTime.now());
 
-			fileRepository.save(fileModel); // 파일 정보 저장
+			fileRepository.save(fileModel);
 		}
 	}
 

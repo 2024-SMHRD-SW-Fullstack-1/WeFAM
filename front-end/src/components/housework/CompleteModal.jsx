@@ -4,10 +4,11 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { useSelector } from 'react-redux'; // Redux에서 사용자 정보를 가져오기 위한 import
 import styles from './CompleteModal.module.css';
+import styles2 from '../modal/Modal.module.css';
 
 Modal.setAppElement('#root');
 
-const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
+const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete, selectedTask }) => {
   const userId = useSelector((state) => state.user.userData.id); // Redux에서 userId를 가져옴
   const familyIdx = useSelector((state) => state.user.userData.familyIdx); // Redux에서 familyIdx를 가져옴
   const [selectedFiles, setSelectedFiles] = useState([]); // 파일을 저장할 상태
@@ -41,11 +42,11 @@ const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
       formData.append("fileSizes", file.size);
     });
 
-    formData.append("familyIdx", familyIdx); // Redux에서 가져온 familyIdx
-    formData.append("userId", userId); // Redux에서 가져온 userId
+    formData.append("familyIdx", familyIdx); // familyIdx 설정
+    formData.append("userId", userId); // userId 설정
     formData.append("entityType", "work");
-    formData.append("entityIdx", 1); // 작업 ID
-    formData.append("completed", true);
+    formData.append("entityIdx", selectedTask.workIdx); // 선택된 작업의 workIdx를 entityIdx로 사용
+    formData.append("completed", true); // 작업 완료 여부
 
     try {
       const response = await axios.post(

@@ -19,5 +19,6 @@ public class HouseworkDTO {
 	private LocalDateTime postedAt;
 	private List<String> workUserIds; // 참여자 목록
     private List<String> participantNames; // 추가된 필드
+    private List<String> images; // 작업과 연관된 이미지들의 Base64 문자열 리스트 추가
 
 }
