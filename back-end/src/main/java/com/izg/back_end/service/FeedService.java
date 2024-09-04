@@ -129,48 +129,4 @@ public class FeedService {
 		// 이후 피드를 삭제
 		feedRepository.deleteById(feedIdx);
 	}
-
-	// 앨범 이미지 업로드 로직 추가
-	@Transactional
-	public void addAlbumImages(int familyIdx, String userId, String entityType, int entityIdx,
-			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
-			String content, String location) throws IOException {
-		
-		FeedModel feed = new FeedModel();
-		feed.setFamilyIdx(familyIdx);
-		feed.setUserId(userId);
-		feed.setFeedContent(content);
-		feed.setFeedLocation(location);
-		feed = feedRepository.save(feed);
-
-		entityIdx = feed.getFeedIdx(); // 저장된 FeedModel에서 기본키 가져오기
-
-		for (int i = 0; i < images.size(); i++) {
-			MultipartFile file = images.get(i);
-
-			String fileName = fileNames.get(i);
-			String fileExtension = fileExtensions.get(i);
-			Long fileSize = fileSizes.get(i);
-
-
-			FileModel fileModel = new FileModel();
-			fileModel.setFamilyIdx(familyIdx);
-			fileModel.setUserId(userId);
-			fileModel.setEntityType(entityType);
-			fileModel.setEntityIdx(entityIdx);
-			fileModel.setFileRname(fileName);
-			fileModel.setFileUname(fileName + "_" + Instant.now().toEpochMilli());
-			fileModel.setFileSize(fileSize);
-			fileModel.setFileExtension(fileExtension);
-			fileModel.setFileData(file.getBytes()); // LONG BLOB 데이터
-
-			fileRepository.save(fileModel);
-		}
-	}
-
-	// 앨범 이미지 가져오기 로직 추가
-	@Transactional(readOnly = true)
-	public List<FileModel> getFilesByAlbumId(int albumId) throws IOException {
-		return fileRepository.findByEntityTypeAndEntityIdx("album", albumId);
-	}
 }

@@ -1,6 +1,7 @@
 package com.izg.back_end.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,17 +70,17 @@ public class EventController {
 	}
 
 	// 특정 유저의 패밀리 이름을 가져오는 API
-	@GetMapping("/family-name/{LoginId}")
-	public ResponseEntity<String> getFamilyName(@PathVariable("LoginId") String LoginId) {
-		String familyName = familyService.getFamilyNameByUserId(LoginId);
-		if (familyName != null) {
-			return ResponseEntity.ok(familyName);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
+    @GetMapping("/family-name/{LoginId}")
+    public ResponseEntity<Map<String, Object>> getFamilyInfo(@PathVariable("LoginId") String LoginId) {
+        Map<String, Object> familyInfo = familyService.getFamilyInfoByUserId(LoginId);
+        if (familyInfo != null) {
+            return ResponseEntity.ok(familyInfo);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	// 특정 유저의 패밀리에 속한 작성자 리스트를 가져오는 API
+	// 특정 유저의 패밀리에 속한 리스트를 가져오는 API
 	@GetMapping("/family-users/{LoginId}")
 	public ResponseEntity<List<UserModel>> getUsersByFamilyIdx(@PathVariable("LoginId") String LoginId) {
 		List<UserModel> users = familyService.getUsersByFamilyIdx(LoginId);

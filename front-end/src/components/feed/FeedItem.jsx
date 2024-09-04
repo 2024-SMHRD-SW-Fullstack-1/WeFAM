@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+
 import styles from "./FeedItem.module.css";
 import FeedDetailModal from "./FeedDetailModal";
 import FeedEditModal from "./FeedEditModal";
-import { BsSuitHeart, BsChatHeart, BsThreeDots } from "react-icons/bs";
+import FeedComment from "./FeedComment";
+import { elapsedTime } from "../../elapsedTime";
+
+import {
+  BsSuitHeart,
+  BsSuitHeartFill,
+  BsChatHeart,
+  BsThreeDots,
+} from "react-icons/bs";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { PiArrowBendDownLeft } from "react-icons/pi";
-import { elapsedTime } from "../../elapsedTime";
-import FeedComment from "./FeedComment";
 
 const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +27,14 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [writerId, setWriterId] = useState("");
   const [writerNick, setWriterNick] = useState("");
   const [images, setImages] = useState([]);
+  const imageMaxCount = 9;
+  const imagePreCount = 3;
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 좋아요
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(feed.feedLikes || 0);
+  // 댓글 개수
+  const [cmtCount, setCmtCount] = useState(0);
   // 새로운 댓글
   const [newCmtContent, setNewCmtContent] = useState("");
   // 보여줄 댓글
@@ -78,6 +92,21 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       Math.min(prev + 1, Math.ceil(Math.min(images.length, 9) / 3) - 1)
     );
   };
+
+  // 댓글 개수 가져오는 함수
+  const countCmt = useCallback(async () => {
+    try {
+      // 현재 사용자가 좋아요를 눌렀는지 확인하는 API 호출 (옵션)
+      // 예를 들어 현재 좋아요 상태를 가져오는 API가 있다면 사용
+      const response = await axios.get(
+        `http://localhost:8089/wefam/count-comments/${feed.feedIdx}`
+      );
+      console.log("현재 댓글의 개수 : ", response.data);
+      setCmtCount(response.data);
+    } catch (error) {
+      console.error("Error fetching like status", error);
+    }
+  }, [feed.feedIdx]);
 
   // 댓글 가져오기
   const getAllCmts = useCallback(async () => {
@@ -155,6 +184,68 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     }
   };
 
+  // 좋아요 누르기
+  const handleHeart = async () => {
+    try {
+      await toggleLike();
+    } catch (error) {
+      console.error("좋아요 클릭 에러", error);
+    }
+  };
+
+  // 좋아요를 체크하는 함수
+  const checkLike = useCallback(async () => {
+    try {
+      console.log(userData.id);
+      console.log(feed.feedIdx);
+      const response = await axios.get(
+        "http://localhost:8089/wefam/check-like",
+        {
+          params: {
+            userId: userData.id,
+            feedIdx: feed.feedIdx,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(`${feed.feedIdx} + ${response.data}`);
+      setIsLiked(response.data); // 응답 결과로 상태 초기화
+    } catch (error) {
+      console.error("Error checking like", error);
+    }
+  }, [feed.feedIdx]);
+
+  useEffect(() => {
+    countCmt();
+    checkLike();
+  }, [checkLike, countCmt]);
+
+  // 좋아요를 토글하는 함수
+  const toggleLike = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8089/wefam/toggle-like",
+        {
+          userId: userData.id,
+          feedIdx: feed.feedIdx,
+        }
+      );
+      if (response.data) {
+        // Liked
+        setIsLiked(true);
+        setLikeCount((prev) => prev + 1);
+      } else {
+        // Unliked
+        setIsLiked(false);
+        setLikeCount((prev) => prev - 1);
+      }
+    } catch (error) {
+      console.error("Error toggling like", error);
+    }
+  }, [feed.feedIdx]);
+
   // 새로운 댓글 작성 함수
   const addCmt = useCallback(async () => {
     try {
@@ -175,12 +266,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       );
       setNewCmtContent(""); // 댓글 추가 후 상태 초기화
       getAllCmts(); // 댓글 추가 후 다시 가져오기
+      countCmt();
     } catch (error) {
       console.error("댓글 추가 에러 : ", error);
     } finally {
       setIsLoading(false);
     }
-  }, [feed.feedIdx, userData.id, newCmtContent, getAllCmts]);
+  }, [feed.feedIdx, userData.id, newCmtContent, getAllCmts, countCmt]);
 
   // 현재 슬라이드 번호와 전체 슬라이드 수
   const currentSlideNumber = currentSlide + 1;
@@ -242,8 +334,11 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 <MdKeyboardArrowLeft />
               </button>
               {images
-                .slice(currentSlide * 3, (currentSlide + 1) * 3)
-                .slice(0, 9) // 최대 9개의 이미지만 표시
+                .slice(
+                  currentSlide * imagePreCount,
+                  (currentSlide + 1) * imagePreCount
+                )
+                .slice(0, imageMaxCount) // 최대 9개의 이미지만 표시
                 .map((image, index) => (
                   <div key={index} className={styles.imageWrapper}>
                     <img
@@ -254,7 +349,11 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 ))}
               <button
                 className={`${styles.rightArrowBtn} ${
-                  currentSlide >= Math.ceil(Math.min(images.length, 9) / 3) - 1
+                  currentSlide >=
+                  Math.ceil(
+                    Math.min(images.length, imageMaxCount) / imagePreCount
+                  ) -
+                    1
                     ? styles.hidden
                     : ""
                 }`}
@@ -265,8 +364,12 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             </div>
 
             {/* 현재 이미지 번호와 전체 이미지 번호 표시 */}
-            <div className={styles.slideNumber}>
-              {currentSlideNumber} / {totalSlides}
+            <div
+              className={`${styles.slideNumber} ${
+                totalSlides === 1 ? styles.hidden : ""
+              }`}
+            >
+              {totalSlides > 1 && `${currentSlideNumber} / ${totalSlides}`}
             </div>
           </div>
         )}
@@ -290,11 +393,14 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.footer}>
         <div className={styles.iconbar}>
           <span>
-            <BsSuitHeart />
-            {feed.feedLikes || 0}
+            <button onClick={handleHeart}>
+              {isLiked ? <BsSuitHeartFill /> : <BsSuitHeart />}
+            </button>
+            {likeCount || 0}
           </span>
           <span>
-            <BsChatHeart />0
+            <BsChatHeart />
+            {cmtCount || 0}
           </span>
         </div>
         <div className={styles.comment}>
@@ -313,9 +419,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             <PiArrowBendDownLeft />
           </button>
         </div>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : comments.length > 0 ? (
+        {comments.length > 0 ? (
           <ul className={styles.cmtContainer}>
             {comments.map((comment) => (
               <FeedComment

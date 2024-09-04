@@ -97,30 +97,5 @@ public class FeedController {
 		// return "redirect:/";
 	}
 
-	// 앨범 이미지 업로드 엔드포인트 추가
-	@PostMapping("/add-album-img")
-	public ResponseEntity<String> addAlbumImg(@ModelAttribute ImageUploadDto dto) {
-		try {
-			System.out.println("이미지를 포함한 피드 업로드 중, 작성자 아이디 : " + dto.getUserId());
-			System.out.println("이미지를 포함한 피드 업로드 중, 개 종류 : " + dto.getEntityType());
-			feedService.addFeedWithImages(dto.getFamilyIdx(), dto.getUserId(), dto.getEntityType(), dto.getEntityIdx(),
-					dto.getFileNames(), dto.getFileExtensions(), dto.getFileSizes(), dto.getImages(),
-					dto.getFeedContent(), dto.getFeedLocation());
-			return ResponseEntity.ok("이미지 저장 완료");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 중 오류 발생");
-		}
-	}
-
-	// 앨범 이미지 가져오기 엔드포인트 추가
-	 @GetMapping("/get-album-img/{albumId}")
-	    public ResponseEntity<List<FileModel>> getAlbumImg(@PathVariable("albumId") Integer albumId) {
-	        try {
-	            List<FileModel> albumImages = feedService.getFilesByAlbumId(albumId);
-	            return ResponseEntity.ok(albumImages);
-	        } catch (IOException e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	        }
-	    }
 
 }

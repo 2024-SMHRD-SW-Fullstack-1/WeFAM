@@ -5,7 +5,9 @@
   justify-content: center;
   align-items: center;
 }
-
+.main.noContent {
+  width: 640px;
+}
 .preview {
   position: relative;
 }
@@ -76,7 +78,6 @@
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
-
 .profileContainer {
   width: 100%;
   height: calc(40px + 2 * var(--space-md));
