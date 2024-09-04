@@ -49,11 +49,26 @@
   outline: none;
 }
 
-.imageContent,
-.pollContent {
+.imagesContent,
+.pollsContent {
   width: 100%;
+  background-color: var(--color-light-grey);
 }
-
+.pollsContent > div {
+  margin: 0;
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.pollsContent > div > span {
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: 1px solid var(--color-sunset);
+  border-radius: var(--radius-sm);
+}
 .customHr {
   width: 96%;
   height: 1px;

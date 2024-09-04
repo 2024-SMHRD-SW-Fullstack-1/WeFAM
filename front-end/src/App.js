@@ -7,7 +7,9 @@ import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
 import RightSidebar from "./components/right-sidebar/RightSidebar";
 import Settings from "./components/user-setting/Settings";
-import Housework2 from "./components/housework/Housework2";
+import HouseWork2 from "./components/housework/HouseWork2";
+import DailyMission from "./components/housework/DailyMission";
+
 import "./css/App.css";
 import "./css/Test.css";
 function App() {
@@ -21,7 +23,8 @@ function App() {
           <Route path='housework' element={<HouseWork />} />
           <Route path='album' element={<AlbumFolder />} />
           <Route path='settings' element={<Settings />} />
-          <Route path='housework2' element={<Housework2 />} />
+          <Route path='housework2' element={<HouseWork2 />} />
+          <Route path='dailyMission' element={<DailyMission />} />
         </Route>
       </Routes>
     </div>

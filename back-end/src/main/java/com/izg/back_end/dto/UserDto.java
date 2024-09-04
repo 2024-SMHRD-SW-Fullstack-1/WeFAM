@@ -14,4 +14,5 @@ public class UserDto {
     private String profileImg;
     private LocalDateTime joinedAt;
     private String loginSource;
+    private String accessToken;
 }

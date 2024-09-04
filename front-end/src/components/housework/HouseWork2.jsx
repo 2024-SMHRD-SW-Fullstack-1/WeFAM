@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./Housework2.module.css";
+import styles from "./HouseWork2.module.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import WorkModal from "./WorkModal";
@@ -188,6 +188,12 @@ const Housework2 = () => {
     }
   };
 
+  const handleOutsideClick = (e) => {
+    if (!e.target.closest(`.${styles.dropdownContainer}`)) {
+      setDropdownOpen(null);
+    }
+  };
+
   // 미션 완료 모달 열기
   const handleMissionComplete = (task) => {
     setSelectedTask(task); // 완료하려는 작업 설정
@@ -319,40 +325,72 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main">
-      <div className={styles.board}>
+    <div className='main' onClick={handleOutsideClick}>
+      <div styles={styles.gridContainer}>
+        <div className={styles.board}>
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>매일 할 일</h3>
+              <span
+                className={
+                  tasks.daily.length > 0
+                    ? styles.circleDaily
+                    : styles.circleZero
+                }>
+                {tasks.daily.length}
+              </span>
+              <div className={styles.add_task} onClick={openModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#e74c3c", fontSize: "24px" }}
+                />
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.daily, "daily")}
+            </ul>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>오늘의 미션</h3>
+              <span
+                className={
+                  tasks.shortTerm.length > 0
+                    ? styles.circleShortTerm
+                    : styles.circleZero
+                }>
+                {tasks.shortTerm.length}
+              </span>
+              <div className={styles.add_task} onClick={openModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#ff9203", fontSize: "24px" }}
+                />
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.shortTerm, "shortTerm")}
+            </ul>
+          </div>
+        
+        </div>
+      </div>
+      {/*오른쪽 그리드 */}
+      <div styles={styles.board}>
         <div className={styles.column}>
           <div className={styles.column_header}>
             <h3>매일 할 일</h3>
-            <span className={tasks.daily.length > 0 ? styles.circleDaily : ""}>
+            <span
+              className={
+                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
+              }>
               {tasks.daily.length}
             </span>
-            <div className={styles.add_task} onClick={openDailyModal}>
+            <div className={styles.add_task} onClick={openModal}>
               <BsPlusCircle
                 styles={styles.icon}
                 style={{ color: "#e74c3c", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.daily, "daily")}
-          </ul>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>오늘의 미션</h3>
-            <span
-              className={
-                tasks.shortTerm.length > 0 ? styles.circleShortTerm : ""
-              }
-            >
-              {tasks.shortTerm.length}
-            </span>
-            <div className={styles.add_task} onClick={openShortTermModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#ff9203", fontSize: "24px" }}
               />
             </div>
           </div>
