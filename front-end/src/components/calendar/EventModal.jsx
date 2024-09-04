@@ -21,10 +21,6 @@ import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
 
-const AiEventModal = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-}
-
 const generateTimeOptions = () => {
   const options = [];
   let period = "오전";
@@ -88,6 +84,17 @@ const EventModal = ({
   const userProfile = familyUsers.find((user) => user.id === event.userId);
   const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
   const [deletedFileIds, setDeletedFileIds] = useState([]);
+
+  // AiModal 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -357,7 +364,7 @@ const EventModal = ({
             />
           </div>
           {isDetailOpen && (
-            <div className={styles.ai}>
+            <div className={styles.ai} onClick={openModal}>
               <IoSparklesOutline style={{ color: selectedColor }} />
               <div
                 className={styles.tooltip}
