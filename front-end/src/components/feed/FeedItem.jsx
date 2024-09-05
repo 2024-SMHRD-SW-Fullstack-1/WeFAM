@@ -393,9 +393,9 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         )}
 
         {/* 내용 - 투표 */}
-        <div className={styles.pollsContent}>
-          {polls.length > 0 ? (
-            <div>
+        {polls.length > 0 ? (
+          <div className={styles.pollsContent}>
+            <div className={styles.poll}>
               {polls.map((poll, index) => (
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
@@ -407,8 +407,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 </span>
               ))}
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {(() => {
           let content;
@@ -429,13 +429,21 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.footer}>
         <div className={styles.iconbar}>
           <span>
-            <button onClick={handleHeart}>
-              {isLiked ? <BsSuitHeartFill /> : <BsSuitHeart />}
+            <button className={styles.likeBtn} onClick={handleHeart}>
+              {isLiked ? (
+                <BsSuitHeartFill style={{ color: "red" }} />
+              ) : (
+                <BsSuitHeart />
+              )}
             </button>
             {likeCount || 0}
           </span>
           <span>
-            <BsChatHeart />
+            {cmtCount > 0 ? (
+              <BsChatHeart style={{ color: "red" }} />
+            ) : (
+              <BsChatHeart />
+            )}
             {cmtCount || 0}
           </span>
         </div>
