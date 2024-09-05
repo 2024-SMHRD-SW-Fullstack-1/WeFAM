@@ -93,7 +93,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       const response = await axios.get(
         `http://localhost:8089/wefam/get-polls/${feed.feedIdx}`
       );
-      console.log(response.data);
       setPolls(Array.from(response.data));
     } catch (error) {
       console.error(`피드 ${feed.feedIdx}번 투표 요청 에러 :`, error);
@@ -120,7 +119,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       const response = await axios.get(
         `http://localhost:8089/wefam/count-comments/${feed.feedIdx}`
       );
-      console.log("현재 댓글의 개수 : ", response.data);
       setCmtCount(response.data);
     } catch (error) {
       console.error("Error fetching like status", error);
@@ -223,8 +221,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   // 좋아요를 체크하는 함수
   const checkLike = useCallback(async () => {
     try {
-      console.log(userData.id);
-      console.log(feed.feedIdx);
       const response = await axios.get(
         "http://localhost:8089/wefam/check-like",
         {
@@ -237,7 +233,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           },
         }
       );
-      console.log(`${feed.feedIdx} + ${response.data}`);
       setIsLiked(response.data); // 응답 결과로 상태 초기화
     } catch (error) {
       console.error("Error checking like", error);
@@ -402,9 +397,9 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         )}
 
         {/* 내용 - 투표 */}
-        <div className={styles.pollsContent}>
-          {polls.length > 0 ? (
-            <div>
+        {polls.length > 0 ? (
+          <div className={styles.pollsContent}>
+            <div className={styles.poll}>
               {polls.map((poll, index) => (
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
@@ -416,8 +411,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 </span>
               ))}
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {(() => {
           let content;
@@ -438,13 +433,21 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.footer}>
         <div className={styles.iconbar}>
           <span>
-            <button onClick={handleHeart}>
-              {isLiked ? <BsSuitHeartFill /> : <BsSuitHeart />}
+            <button className={styles.likeBtn} onClick={handleHeart}>
+              {isLiked ? (
+                <BsSuitHeartFill style={{ color: "red" }} />
+              ) : (
+                <BsSuitHeart />
+              )}
             </button>
             {likeCount || 0}
           </span>
           <span>
-            <BsChatHeart />
+            {cmtCount > 0 ? (
+              <BsChatHeart style={{ color: "red" }} />
+            ) : (
+              <BsChatHeart />
+            )}
             {cmtCount || 0}
           </span>
         </div>

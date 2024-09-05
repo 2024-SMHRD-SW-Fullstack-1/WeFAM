@@ -85,6 +85,28 @@
   height: 100%;
 }
 
+.pollsContent {
+  display: flex;
+  flex-wrap: wrap; /* 자동으로 줄 바꿈 */
+  width: 100%;
+}
+.pollsContent > .poll {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.pollsContent > .poll button {
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--space-xs);
+  font-size: var(--font-md);
+  color: var(--color-white);
+  background-color: var(--color-sunset);
+  border-radius: var(--radius-md);
+}
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -99,10 +121,19 @@
   align-items: center;
   gap: var(--space-xs);
 }
+
+.likeBtn {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--font-md);
+}
+
 .comment {
   min-height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 .comment textarea {
   width: 90%;
@@ -115,7 +146,7 @@
 }
 
 .comment .addCommentBtn {
-  width: 56px;
+  width: 36px;
   height: 28px;
   font-size: var(--font-2xl);
   color: var(--color-white);
@@ -209,7 +240,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .leftArrowBtn,
