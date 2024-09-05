@@ -10,6 +10,7 @@ import Settings from "./components/user-setting/Settings";
 import HouseWork2 from "./components/housework/HouseWork2";
 import DailyMission from "./components/housework/DailyMission";
 import {MemoModal} from "./components/calendar/MemoModal";
+import Chatbot from "./components/chatbot/Chatbot";
 
 import "./css/App.css";
 import "./css/Test.css";
@@ -29,6 +30,7 @@ function App() {
           <Route path='dailyMission' element={<DailyMission />} />
           <Route path='memo' element={<MemoModal/>} />
         </Route>
+          <Route path="chatbot" element={<Chatbot />} />
       </Routes>
     </div>
   );
