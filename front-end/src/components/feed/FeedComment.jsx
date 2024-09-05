@@ -60,8 +60,6 @@ const FeedComment = ({ comment, onDeleteCmt }) => {
   const deleteCmt = async () => {
     try {
       if (userData.id === writerId) {
-        console.log("댓글 삭제하려는 userData.id : ", userData.id);
-        console.log("댓글 작성한 writerId : ", writerId);
         await axios.delete(
           `http://localhost:8089/wefam/delete-comment/${comment.cmtIdx}`
         );
@@ -90,7 +88,7 @@ const FeedComment = ({ comment, onDeleteCmt }) => {
         <img
           className={styles.cmtProfileImg}
           src={comment.profileImg}
-          alt="Profile"
+          alt='Profile'
         />
       </div>
       <div className={styles.cmtMain}>
@@ -105,13 +103,12 @@ const FeedComment = ({ comment, onDeleteCmt }) => {
             <div
               onClick={toggleOptions}
               ref={optionsRef}
-              className={styles.optionsContainer}
-            >
+              className={styles.optionsContainer}>
               <BsThreeDots />
               {isOptionsVisible && (
                 <ul className={styles.options}>
                   <li>
-                    <button className="option" onClick={handleDeleteCmt}>
+                    <button className='option' onClick={handleDeleteCmt}>
                       삭제
                     </button>
                   </li>
