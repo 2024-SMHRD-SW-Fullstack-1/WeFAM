@@ -131,8 +131,7 @@
 .titleContainer {
   display: flex;
   justify-content: space-between;
-  align-items: end;
-
+  align-items: center;
   padding-bottom: 24px;
   width: 100%;
 }
@@ -145,6 +144,7 @@
   flex-grow: 1;
   margin-left: 35px;
   font-size: 1.3rem;
+  align-items: center;
 }
 .previewIcon {
   display: flex;
