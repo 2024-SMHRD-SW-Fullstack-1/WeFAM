@@ -1,9 +1,11 @@
 package com.izg.back_end.service;
 
 import com.izg.back_end.dto.UserDto;
+import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.JoiningModel;
 import com.izg.back_end.model.LogModel;
 import com.izg.back_end.model.UserModel;
+import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.repository.JoiningRepository;
 import com.izg.back_end.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,24 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+<<<<<<< HEAD
    @Autowired
    private UserRepository userRepository;
 
    @Autowired
    private JoiningRepository joiningRepository;
+=======
+	
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private JoiningRepository joiningRepository;
+	
+	 @Autowired
+	    private FileRepository fileRepository;  // FileRepository 주입
+	
+>>>>>>> 627da22 (jae)
 
    // 인가 코드를 사용하여 액세스 토큰을 가져옴
    public String getKakaoAccessToken(String code) {
@@ -85,6 +100,7 @@ public class UserService {
       userDTO.setLoginSource("kakao");
       userDTO.setJoinedAt(LocalDateTime.now());
 
+<<<<<<< HEAD
       if (kakaoAccount.get("birthday") != null) {
          String birthday = kakaoAccount.get("birthday").toString();
          int currentYear = LocalDate.now().getYear();
@@ -95,20 +111,41 @@ public class UserService {
       }
       
        // 액세스 토큰을 DTO에 추가
+=======
+		if (kakaoAccount.get("birthday") != null) {
+			String birthday = kakaoAccount.get("birthday").toString();
+			int currentYear = LocalDate.now().getYear();
+			userDTO.setBirth(
+					LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
+		} else {
+			userDTO.setBirth(null);
+		}
+		
+		 // 액세스 토큰을 DTO에 추가
+>>>>>>> 627da22 (jae)
         userDTO.setAccessToken(accessToken);
 
       return userDTO;
    }
 
+<<<<<<< HEAD
    // 유저 정보를 데이터베이스에 저장
    public void saveUser(UserDto userDTO, String accessToken) {
        if (userDTO.getBirth() == null) {
           // 생년월일이 없는 경우 기존 값을 유지 (업데이트하지 않음)
        }
+=======
+	// 유저 정보를 데이터베이스에 저장
+	public void saveUser(UserDto userDTO, String accessToken) {
+	    if (userDTO.getBirth() == null) {
+	    	// 생년월일이 없는 경우 기존 값을 유지 (업데이트하지 않음)
+	    }
+>>>>>>> 627da22 (jae)
 
        // 기존 사용자 확인
        UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
 
+<<<<<<< HEAD
        if (existingUser != null) {
            // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트하는 것이 적절한지 확인)
            if(existingUser != null) {
@@ -151,6 +188,58 @@ public class UserService {
            newUser.setJoinedAt(userDTO.getJoinedAt());
            newUser.setLoginSource(userDTO.getLoginSource());
          
+=======
+	    if (existingUser != null) {
+	        // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트하는 것이 적절한지 확인)
+	        if(existingUser != null) {
+	        	// 생년월일이 null이 아닌 경우에만 업데이트
+	        	if (userDTO.getBirth() != null) {
+	        		existingUser.setBirth(userDTO.getBirth());
+	        	}
+	        }
+	    	
+	        // 카카오에서 받은 닉네임이 기존 닉네임과 다르다면 업데이트하지 않음
+	        if (!existingUser.getNick().equals(userDTO.getNick())) {
+	            existingUser.setNick(existingUser.getNick()); // 기존 닉네임 유지
+	        } else {
+	            existingUser.setNick(userDTO.getNick()); // 카카오에서 받은 닉네임으로 업데이트
+	        }
+	        if (!existingUser.getName().equals(userDTO.getName())) {
+	        	existingUser.setName(existingUser.getName()); // 기존 닉네임 유지
+	        } else {
+	        	existingUser.setName(userDTO.getName()); // 카카오에서 받은 닉네임으로 업데이트
+	        }
+	        
+	        if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
+	        	existingUser.setProfileImg(existingUser.getProfileImg()); // 
+	        } else {
+	        	existingUser.setProfileImg(userDTO.getProfileImg()); // 
+	        }
+	        
+//	        if (userDTO.getName() != null && !existingUser.getName().equals(userDTO.getName())) {
+//	            existingUser.setName(userDTO.getName());
+//	        }
+//	        // 생년월이이 설정되있으면 그대로 유지
+//	        if (existingUser.getBirth() == null || userDTO.getBirth() != null) {
+//	        	existingUser.setBirth(userDTO.getBirth());
+//	        }
+	        
+	        // 다른 필드들도 동일하게 필요에 따라 업데이트를 선택
+	        existingUser.setName(userDTO.getName());
+	        existingUser.setLoginSource(userDTO.getLoginSource());
+	        // joined_at 필드는 업데이트하지 않음 (처음 가입된 시간 유지)
+	    } else {
+	        // 새로운 사용자 저장
+	        UserModel newUser = new UserModel();
+	        newUser.setId(userDTO.getId());
+	        newUser.setName(userDTO.getName());
+	        newUser.setNick(userDTO.getNick());
+	        newUser.setBirth(userDTO.getBirth());
+	        newUser.setProfileImg(userDTO.getProfileImg());
+	        newUser.setJoinedAt(userDTO.getJoinedAt());
+	        newUser.setLoginSource(userDTO.getLoginSource());
+	      
+>>>>>>> 627da22 (jae)
 
            userRepository.save(newUser);
        }
@@ -186,6 +275,7 @@ public class UserService {
            user.setBirth(updatedUser.getBirth());
            user.setProfileImg(updatedUser.getProfileImg());
 
+<<<<<<< HEAD
            return userRepository.save(user);
        }
     
@@ -205,4 +295,31 @@ public class UserService {
         }
     }
 
+=======
+	        return userRepository.save(user);
+	    }
+//	 
+//	// 카카오 로그아웃 API 호출
+//	 public void kakaoLogout(String accessToken) {
+//	     String logoutUri = "https://kapi.kakao.com/v1/user/logout";
+//	     RestTemplate restTemplate = new RestTemplate();
+//
+//	     HttpHeaders headers = new HttpHeaders();
+//	     headers.set("Authorization", "Bearer " + accessToken);
+//
+//	     HttpEntity<String> entity = new HttpEntity<>(headers);
+//	     ResponseEntity<Map> response = restTemplate.exchange(logoutUri, HttpMethod.POST, entity, Map.class);
+//
+//	     if (response.getStatusCode() != HttpStatus.OK) {
+//	         throw new RuntimeException("카카오 로그아웃 실패");
+//	     }
+//	 }
+
+	 // 가족 프로필 사진 가져오기
+	    public FileModel getProfileImageByFamilyIdx(int familyIdx, String entityType) {
+	        return fileRepository.findLatestByFamilyIdxAndEntityType(familyIdx, entityType);
+	    }
+	 
+	 
+>>>>>>> 627da22 (jae)
 }

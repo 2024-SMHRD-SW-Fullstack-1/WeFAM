@@ -21,6 +21,7 @@ import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
 import { MemoModal } from "./MemoModal";
+import AiBtn from "../../assets/images/Aibtn.png"
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -392,11 +393,12 @@ const EventModal = ({
           </div>
           {isDetailOpen && (
             <div className={styles.ai} onClick={openModal}>
-              <IoSparklesOutline style={{ color: selectedColor }} />
+             <img src={AiBtn} alt="AI 버튼" className={styles.aiBtn} />
               <div
                 className={styles.tooltip}
-                style={{ backgroundColor: selectedColor }}>
-                일정 추천
+                style={{ backgroundColor: selectedColor }}
+              >
+                AI 일정 추천
               </div>
             </div>
           )}
