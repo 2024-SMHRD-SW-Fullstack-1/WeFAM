@@ -8,6 +8,8 @@ import {
   BsChevronCompactRight,
   BsPinMap,
   BsImages,
+  BsChevronDown,
+  BsChevronUp,
 } from "react-icons/bs";
 import { RiArrowRightWideLine } from "react-icons/ri";
 import { MdOutlineEditNote } from "react-icons/md";
@@ -33,6 +35,7 @@ const EventDetail = ({
   const [coordinates, setCoordinates] = useState(null);
   const [editHovered, setEditHovered] = useState(false);
   const [deleteHovered, setDeleteHovered] = useState(false);
+  const [isMemoOpen, setIsMemoOpen] = useState(false);
 
   useEffect(() => {
     // event가 변경될 때마다 coordinates와 location을 설정
@@ -69,6 +72,11 @@ const EventDetail = ({
     console.log(event);
 
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // 메모 클릭 핸들러
+  const handleMemoClick = () => {
+    setIsMemoOpen(!isMemoOpen);
   };
 
   // 날짜 포맷팅 함수
@@ -120,6 +128,16 @@ const EventDetail = ({
     }
     const hours = date.getHours();
     return hours >= 12 ? "오후" : "오전";
+  };
+  const [clicked, setClicked] = useState(false);
+
+  const handleImageClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!clicked) {
+      setClicked(true); // 조건에 맞는 상태 변경
+    }
   };
 
   // 메뉴 외부 클릭 시 메뉴 닫기
@@ -179,7 +197,8 @@ const EventDetail = ({
                   color: editHovered ? eventColor : "inherit",
                   fontWeight: editHovered ? "bold" : "normal",
                   backgroundColor: editHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 수정
               </div>
               <div
@@ -190,7 +209,8 @@ const EventDetail = ({
                   color: deleteHovered ? eventColor : "inherit",
                   fontWeight: deleteHovered ? "bold" : "normal",
                   backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 삭제
               </div>
             </div>
@@ -205,7 +225,8 @@ const EventDetail = ({
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}>
+        } ${event.allDay ? styles.allDay : ""}`}
+      >
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
@@ -248,11 +269,34 @@ const EventDetail = ({
           <div>
             <h3 className={styles.locationName}>메모</h3>
           </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "5px",
+              color: eventColor,
+            }}
+          >
+            {event.content !== "" && !isMemoOpen && (
+              <BsChevronDown onClick={handleMemoClick} />
+            )}
+            {event.content !== "" && isMemoOpen && (
+              <BsChevronUp onClick={handleMemoClick} />
+            )}
+          </div>
         </div>
-        <div style={{ padding: "0 18px" }}>
-          <p>{event.content}</p>
-          <span>일정을 등록했습니다</span>
-        </div>
+        {isMemoOpen && (
+          <div style={{ padding: "0 18px", marginBottom: "10px" }}>
+            <p>
+              {event.content.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 지도  */}
@@ -294,10 +338,7 @@ const EventDetail = ({
                     }
                     alt={`Event file ${index}`}
                     className={styles.image}
-                    onClick={(e) => {
-                      e.preventDefault(); // 기본 동작 방지
-                      e.stopPropagation(); // 이벤트 전파 차단
-                    }}
+                    onClick={(e) => handleImageClick(e)}
                   />
                 </div>
               ))}

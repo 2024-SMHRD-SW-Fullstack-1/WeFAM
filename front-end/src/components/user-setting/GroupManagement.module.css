@@ -44,7 +44,7 @@
   }
   
   .editImgButton{
-    background-color: #A0D6B4;
+    background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -54,10 +54,10 @@
     margin-top: 100px;
   }
   .editImgButton:hover {
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
   .editNickButton:hover{
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
   
   .editNick{
@@ -66,7 +66,7 @@
   }
 
   .editNickButton{
-    background-color: #A0D6B4;
+    background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
