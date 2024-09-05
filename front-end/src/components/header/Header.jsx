@@ -70,7 +70,7 @@ const Header = () => {
     axios
       .put("http://localhost:8089/wefam/update-family-motto", updatedFamily)
       .then((response) => {
-        console.log("가훈 업데이트 성공:", response.data);
+        console.log("가훈 업데이트 성공:");
       })
       .catch((error) => {
         console.error("가훈 업데이트 실패:", error);
@@ -94,8 +94,7 @@ const Header = () => {
           onClick={() => {
             nav("/");
           }}
-          style={{ cursor: "pointer" }}
-        >
+          style={{ cursor: "pointer" }}>
           {/* WeFAM로고 */}
           <img className={styles.logo} src={logo}></img>
         </div>

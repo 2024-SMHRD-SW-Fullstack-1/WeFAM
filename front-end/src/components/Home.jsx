@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 import Header from "./header/Header";
@@ -8,6 +8,8 @@ import RightSidebar from "./right-sidebar/RightSidebar";
 const Home = () => {
   const location = useLocation();
   const userData = location.state?.userData || null;
+
+  useEffect(() => {}, [userData]);
   return (
     <div>
       <Header />
