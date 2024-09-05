@@ -6,9 +6,12 @@
   height: calc(100% - var(--header-height));
   background-color: var(--color-background);
   transition: all var(--animation-duration);
-  font-size: 24px;
+  font-size: 30px;
 }
-
+.leftSidebar p{
+  font-size: 30px;
+  color: #fff;
+}
 .leftSidebar.closed {
   left: 0px;
   width: var(--leftSidebarSmall-width);
@@ -23,15 +26,19 @@
   align-items: center;
   padding: var(--space-lg) 0;
   gap: var(--space-md);
-  background-image: url(../../assets/images/profile-background-image.png);
+  background-image: url(../../assets/images/famaily.png);
+  background-size: cover;
+  background-position: center;
 }
 
 .profileThumbnail {
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   border: 0.5px solid var(--color-white);
   background-color: var(--color-white);
+  position: relative;
+  top: 2px;
 }
 
 .category {
@@ -51,6 +58,7 @@
   align-items: center;
   gap: var(--space-md);
   font-size: var(--font-lg);
+  
 }
 
 .category ul li {
@@ -101,17 +109,18 @@
     width: var(--leftSidebarSmall-width);
   }
 
-  .profile {
+  /* .profile {
     width: var(--leftSidebarSmall-width);
     height: var(--leftSidebarSmall-width);
     padding: 0;
-  }
-  .profileThumbnail {
-    width: 50px;
-    height: 50px;
-  }
+  } */
+  
   .profileName {
-    display: none;
+    color: #fff !important; /* 글씨 색을 흰색으로 변경 */
+  font-weight: bold; /* 글씨 두껍게 변경 */
+  font-size: var(--font-lg); /* 원하는 크기로 조정 가능 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 텍스트에 그림자 추가 (옵션) */
+    
   }
   .category ul li span span {
     display: none;

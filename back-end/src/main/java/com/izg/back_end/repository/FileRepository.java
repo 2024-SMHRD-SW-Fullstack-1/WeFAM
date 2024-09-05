@@ -27,5 +27,8 @@ public interface FileRepository extends JpaRepository<FileModel, Integer> {
     List<FileModel> findByFamilyIdx(int familyIdx);
     //날짜별 이미지 검색 메서드
     List<FileModel> findByFamilyIdxAndUploadedAtBetween(int familyIdx, LocalDateTime startDate, LocalDateTime endDate);
+    
+ // 최신의 가족 프로필 사진을 가져오는 메서드 (업로드 날짜 기준)
+    FileModel findLatestByFamilyIdxAndEntityType(int familyIdx, String entityType);
 
 }

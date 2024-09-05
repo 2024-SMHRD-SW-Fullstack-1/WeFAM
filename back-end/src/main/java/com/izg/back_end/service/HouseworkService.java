@@ -12,9 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.izg.back_end.dto.HouseworkDTO;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.model.HouseworkLogModel;
 import com.izg.back_end.model.HouseworkModel;
+import com.izg.back_end.model.PointLogModel;
 import com.izg.back_end.repository.FileRepository;
+import com.izg.back_end.repository.HouseworkLogRepository;
 import com.izg.back_end.repository.HouseworkRepository;
+import com.izg.back_end.repository.PointLogRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,8 +27,10 @@ import lombok.RequiredArgsConstructor;
 public class HouseworkService {
 
 	private final HouseworkRepository houseworkRepository;
+    private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
+	private final PointLogRepository pointLogRepository;
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
@@ -71,8 +77,12 @@ public class HouseworkService {
 
 		if (workOptional.isPresent()) {
 			try {
-				// 먼저 참여자를 삭제
+				// 참여자를 먼저 삭제
 				participantService.deleteParticipantsByEntityIdx(workIdx);
+
+				// 집안일과 연관된 파일 삭제 (entityType은 "work"로 고정)
+				fileRepository.deleteByEntityTypeAndEntityIdx("work", workIdx);
+
 				// 그 다음 작업을 삭제
 				houseworkRepository.deleteById(workIdx);
 			} catch (Exception e) {
@@ -83,39 +93,68 @@ public class HouseworkService {
 		}
 	}
 
-	// 미션 완료 처리 및 파일 업로드
+	// 미션 완료 처리 및 파일 업로드, 포인트 저장
 	@Transactional
-	public void completeHouseworkWithFiles(int familyIdx, String userId, String entityType, int entityIdx,
-			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
-			boolean completed) throws IOException {
-
+	public void completeHouseworkWithFiles(int workIdx, List<MultipartFile> images, int familyIdx, String userId,
+			boolean completed, String entityType) throws IOException {
 		// 1. 작업 완료 처리
-		HouseworkModel housework = houseworkRepository.findByWorkIdx(entityIdx); // entityIdx를 workIdx로 사용
+		HouseworkModel housework = houseworkRepository.findByWorkIdx(workIdx);
 		if (housework != null) {
 			housework.setCompleted(completed);
 			houseworkRepository.save(housework);
 		}
+		
+		// 2. 완료된 작업을 housework_log 테이블에 저장
+        if (completed) {
+            // housework_log로 복사
+            HouseworkLogModel log = new HouseworkLogModel();
+            log.setWorkIdx(housework.getWorkIdx());
+            log.setFamilyIdx(housework.getFamilyIdx());
+            log.setUserId(housework.getUserId());
+            log.setTaskType(housework.getTaskType());
+            log.setWorkTitle(housework.getWorkTitle());
+            log.setWorkContent(housework.getWorkContent());
+            log.setDeadline(housework.getDeadline());
+            log.setPoints(housework.getPoints());
+            log.setCompleted(true);  // 완료 상태로 저장
+            log.setPostedAt(housework.getPostedAt());
+            log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
 
-		// 2. 파일 저장 처리
-		for (int i = 0; i < images.size(); i++) {
-			MultipartFile file = images.get(i);
-			String fileExtension = fileExtensions.get(i);
-			Long fileSize = fileSizes.get(i);
+            houseworkLogRepository.save(log);
+        }
 
+		// 3. 포인트 저장 처리
+		if (completed) {
+			int points = housework.getPoints(); // 해당 작업의 포인트 가져오기
+			PointLogModel pointLog = new PointLogModel();
+			pointLog.setUserId(userId);
+			pointLog.setEntityType(entityType); // daily 또는 shortTerm을 여기서 저장
+			pointLog.setEntityIdx(workIdx);
+			pointLog.setPoints(points);
+			pointLog.setPointedAt(LocalDateTime.now()); // 포인트 적립 시간 설정
+
+			pointLogRepository.save(pointLog); // 포인트 로그 저장
+		}
+
+		// 4. 파일 저장 처리
+		for (MultipartFile image : images) {
+			String fileName = image.getOriginalFilename();
+			String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
+			long fileSize = image.getSize();
 
 			FileModel fileModel = new FileModel();
 			fileModel.setFamilyIdx(familyIdx);
 			fileModel.setUserId(userId);
-			fileModel.setEntityType("work"); // 작업 유형 설정
-			fileModel.setEntityIdx(entityIdx); // entityIdx를 사용하여 파일과 작업을 연결
-			fileModel.setFileRname(file.getOriginalFilename());
-			fileModel.setFileUname(file.getOriginalFilename() + "_" + Instant.now().toEpochMilli());
+			fileModel.setEntityType("work");
+			fileModel.setEntityIdx(workIdx);
+			fileModel.setFileRname(fileName);
+			fileModel.setFileUname(fileName + "_" + Instant.now().toEpochMilli());
 			fileModel.setFileSize(fileSize);
 			fileModel.setFileExtension(fileExtension);
-			fileModel.setFileData(file.getBytes());
+			fileModel.setFileData(image.getBytes());
 			fileModel.setUploadedAt(LocalDateTime.now());
 
-			fileRepository.save(fileModel); // 파일 정보 저장
+			fileRepository.save(fileModel);
 		}
 	}
 
