@@ -128,23 +128,21 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
           <div className={styles.imagesContent}></div>
-          <div className={styles.pollsContent}>
-            {polls.length > 0 ? (
-              <div>
-                {polls.map((poll, index) => (
-                  <span key={index}>
-                    <button>
-                      <LuVote />
-                      <span>{poll.title}</span>
-                    </button>
-                    <button onClick={() => handleDeletePoll(poll.id)}>
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </div>
+          {polls.length > 0 ? (
+            <div className={styles.pollsContent}>
+              {polls.map((poll, index) => (
+                <div key={index} className={styles.poll}>
+                  <button>
+                    <LuVote />
+                    <span>{poll.title}</span>
+                  </button>
+                  <button onClick={() => handleDeletePoll(poll.id)}>
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
           <hr className={styles.customHr}></hr>
           <div className={styles.footer}>
             <span>

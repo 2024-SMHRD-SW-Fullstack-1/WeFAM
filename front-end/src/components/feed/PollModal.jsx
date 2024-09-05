@@ -90,6 +90,12 @@ const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
       );
       console.log("투표 결과 : ", response.data);
       setVoteResult(response.data); // 결과 저장
+
+      const myVoteResult = await axios.get(
+        `http://localhost:8089/wefam/get-my-vote-result/poll/${poll.pollIdx}/user/${userData.id}`
+      );
+      console.log("나의 투표 결과 : ", myVoteResult.data);
+      setSelectedOptionNum(myVoteResult.data);
     } catch (error) {
       console.error("투표 결과 가져오기 실패", error);
     }
@@ -149,13 +155,17 @@ const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
                   <div>
                     투표 결과:
                     {voteResult && voteResult.length > 0
-                      ? voteResult.map((result, index) => (
-                          <div key={index}>
-                            {`투표 항목 ${result.choiceIndex + 1} : ${
-                              result.voteCount
-                            }표`}
-                          </div>
-                        ))
+                      ? // choiceIndex를 기준으로 오름차순 정렬
+                        voteResult
+                          .slice() // 원본 배열을 변경하지 않도록 복사
+                          .sort((a, b) => a.choiceIndex - b.choiceIndex) // 오름차순 정렬
+                          .map((result, index) => (
+                            <div key={index}>
+                              {`투표 항목 ${result.choiceIndex + 1} : ${
+                                result.voteCount
+                              }표`}
+                            </div>
+                          ))
                       : "결과 없음"}
                   </div>
                   <button className={modalStyles.saveButton} onClick={onVote}>
