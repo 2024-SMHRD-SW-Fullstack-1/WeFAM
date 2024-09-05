@@ -54,6 +54,9 @@
     margin-left: 230px;
     
   }
+  .editButton:hover{
+    background-color: #ff4d4d;
+  }
   
   .editImgButton{
     background-color: #ff4d4d;

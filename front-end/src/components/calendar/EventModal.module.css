@@ -297,3 +297,10 @@
   max-height: 150px;
   overflow-y: scroll;
 }
+
+.aiBtn {
+  width: 60px; /* 원하는 너비 */
+  height: 60px; /* 원하는 높이 */
+  cursor: pointer; /* 클릭 가능하게 포인터 변경 */
+  border-radius: 50%;
+}

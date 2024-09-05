@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
 
 import profileThumbnail from "../../assets/images/gucci-cat.png";
+import familyPT from "../../assets/images/famaily.png"
+
 
 import { CiHome } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
@@ -112,7 +114,7 @@ const LeftSidebar = () => {
           src={userData.profileImg}
           alt="프로필"
         ></img>
-        <div className={styles.profileName}>{familyNick}</div>
+        <div className={styles.profileName}><p>{familyNick}</p></div>
       </div>
 
       {/* 카테고리 */}
