@@ -8,7 +8,7 @@ import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
 import PollModal from "./PollModal";
 import { elapsedTime } from "../../elapsedTime";
-import { LuVote } from "react-icons/lu";
+import { CiSquareCheck } from "react-icons/ci";
 
 import {
   BsSuitHeart,
@@ -401,7 +401,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
                     {" "}
                     {/* pollIdx 전달 */}
-                    <LuVote />
+                    <CiSquareCheck />
                     <span>{poll.pollTitle}</span>
                   </button>
                 </span>

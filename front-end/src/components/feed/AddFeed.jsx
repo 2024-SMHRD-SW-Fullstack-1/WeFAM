@@ -8,9 +8,8 @@ import AddPollModal from "./AddPollModal";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 import { CiImageOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
-import { BsArchive } from "react-icons/bs";
+import { CiSquareCheck } from "react-icons/ci";
 import { PiGameControllerLight } from "react-icons/pi";
-import { LuVote } from "react-icons/lu";
 import { clearImages } from "../../features/imagesOnFeedSlice";
 import { deletePoll, clearPolls } from "../../features/pollsSlice";
 import Preloader from "../preloader/Preloader";
@@ -42,6 +41,7 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
 
   useEffect(() => {
     setPolls(pollsData); // Redux에서 가져온 polls를 상태에 설정
+    console.log(polls);
   }, [pollsData]);
 
   // const handlePrev = () => {
@@ -133,10 +133,13 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
               {polls.map((poll, index) => (
                 <div key={index} className={styles.poll}>
                   <button>
-                    <LuVote />
-                    <span>{poll.title}</span>
+                    <CiSquareCheck />
+                    <span>{poll.pollTitle}</span>
                   </button>
-                  <button onClick={() => handleDeletePoll(poll.id)}>
+                  <button
+                    className={styles.pollDeleteBtn}
+                    onClick={() => handleDeletePoll(poll.id)}
+                  >
                     &times;
                   </button>
                 </div>
@@ -156,7 +159,7 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
                 <PiGameControllerLight />
               </button>
               <button onClick={() => setIsPollModalOpen(true)}>
-                <BsArchive />
+                <CiSquareCheck />
               </button>
             </span>
             <span>
