@@ -36,6 +36,7 @@ const EventDetail = ({
   const [editHovered, setEditHovered] = useState(false);
   const [deleteHovered, setDeleteHovered] = useState(false);
   const [isMemoOpen, setIsMemoOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // 모달 열림/닫힘 상태 관리
 
   useEffect(() => {
     // event가 변경될 때마다 coordinates와 location을 설정
@@ -169,12 +170,23 @@ const EventDetail = ({
     arrow: true,
   };
 
+  useEffect(() => {
+    setIsOpen(true); // 컴포넌트가 마운트되면 모달을 열림 상태로 설정
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false); // 닫힘 상태로 변경
+    setTimeout(onClose, 300); // 애니메이션이 끝난 후에 onClose 호출
+  };
+
   return ReactDOM.createPortal(
-    <div className={styles.EventDetail} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${styles.EventDetail} ${isOpen ? styles.enter : styles.exit}`} // enter와 exit 클래스 적용
+      onClick={(e) => e.stopPropagation()}>
       {/* Header 부분 */}
       <div className={styles.header}>
         <div className={styles.icon}>
-          <BsXLg onClick={onClose} />
+          <BsXLg onClick={handleClose} />
         </div>
 
         <div className={styles.profileContainer}>
@@ -197,8 +209,7 @@ const EventDetail = ({
                   color: editHovered ? eventColor : "inherit",
                   fontWeight: editHovered ? "bold" : "normal",
                   backgroundColor: editHovered ? "#f0f0f0" : "transparent",
-                }}
-              >
+                }}>
                 수정
               </div>
               <div
@@ -209,8 +220,7 @@ const EventDetail = ({
                   color: deleteHovered ? eventColor : "inherit",
                   fontWeight: deleteHovered ? "bold" : "normal",
                   backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
-                }}
-              >
+                }}>
                 삭제
               </div>
             </div>
@@ -225,8 +235,7 @@ const EventDetail = ({
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}
-      >
+        } ${event.allDay ? styles.allDay : ""}`}>
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
@@ -275,8 +284,7 @@ const EventDetail = ({
               justifyContent: "center",
               padding: "5px",
               color: eventColor,
-            }}
-          >
+            }}>
             {event.content !== "" && !isMemoOpen && (
               <BsChevronDown onClick={handleMemoClick} />
             )}

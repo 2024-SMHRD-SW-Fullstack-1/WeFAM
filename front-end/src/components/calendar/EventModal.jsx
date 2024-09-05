@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styles from "./EventModal.module.css"; // 모달 관련 CSS
 import DatePicker from "react-datepicker";
+import ai from "../../assets/images/ai.png";
 import "react-datepicker/dist/react-datepicker.css"; // DatePicker 스타일
 import {
   BsEyedropper,
@@ -21,7 +22,6 @@ import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
 import { MemoModal } from "./MemoModal";
-import AiBtn from "../../assets/images/Aibtn.png"
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -166,6 +166,8 @@ const EventModal = ({
 
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
+    // 만약 location이 빈 문자열이면 기존 값 유지
+    const finalLocation = location !== "" ? location : event.location;
     // 새로 추가된 파일
     const newFiles = selectedFiles.filter(
       (file) => !savedFiles.some((savedFile) => savedFile.name === file.name)
@@ -181,7 +183,7 @@ const EventModal = ({
       content: memoContent,
       backgroundColor: selectedColor,
       userId: event.userId,
-      location: location,
+      location: finalLocation,
       latitude: coordinates.lat, // 좌표 정보에서 위도 추출
       longitude: coordinates.lng, // 좌표 정보에서 경도 추출
       allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
@@ -393,7 +395,7 @@ const EventModal = ({
           </div>
           {isDetailOpen && (
             <div className={styles.ai} onClick={openModal}>
-             <img src={AiBtn} alt="AI 버튼" className={styles.aiBtn} />
+              <img src={ai} alt='AI 버튼' style={{ height: 48, width: 48 }} />
               <div
                 className={styles.tooltip}
                 style={{ backgroundColor: selectedColor }}>
