@@ -48,7 +48,7 @@ const AiModal = ({ onClose }) => {
                             {theme.image && (
                                 <img src={theme.image} alt={theme.name} className={style.themeImage} />
                             )}
-                            {/* <div className={style.themeName}>{theme.name}</div> */}
+                            {<div className={style.themeName}>{theme.name}</div>}
                         </div>
                     ))}
                 </div>
