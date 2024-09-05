@@ -2,6 +2,7 @@ package com.izg.back_end.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.izg.back_end.dto.HouseworkDTO;
 import com.izg.back_end.dto.ImageUploadDto;
+import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkModel;
+import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.service.HouseworkService;
 import com.izg.back_end.service.ParticipantService;
+import com.izg.back_end.service.PointLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +37,8 @@ public class HouseworkController {
 
 	private final HouseworkService houseworkService;
 	private final ParticipantService participantService;
+	private final FileRepository fileRepository;
+	private final PointLogService pointLogService;
 
 	// 집안일 추가
 	@PostMapping("/add-work")
@@ -48,19 +54,41 @@ public class HouseworkController {
 
 	// 집안일 불러오기
 	@GetMapping("/get-works")
-	public List<HouseworkDTO> getAllWorks() {
+	public ResponseEntity<Map<String, Object>> getAllWorks(@RequestParam("userId") String userId) {
 		List<HouseworkModel> works = houseworkService.getAllWorks();
 		List<HouseworkDTO> result = new ArrayList<>();
 
 		for (HouseworkModel work : works) {
 			List<String> participantIds = participantService.findParticipantsByWorkIdx(work.getWorkIdx());
 			List<String> participantNames = participantService.findParticipantNamesByWorkIdx(work.getWorkIdx());
+
+			// 작업과 연관된 파일(이미지)을 불러옴
+			List<FileModel> files = fileRepository.findByEntityTypeAndEntityIdx("work", work.getWorkIdx());
+
+			// 이미지를 Base64로 변환
+			List<String> images = new ArrayList<>();
+			for (FileModel file : files) {
+				String base64File = Base64.getEncoder().encodeToString(file.getFileData());
+				images.add("data:image/" + file.getFileExtension() + ";base64," + base64File);
+			}
+
+			// DTO로 변환
 			HouseworkDTO dto = houseworkService.convertModelToDto(work, participantIds);
 			dto.setParticipantNames(participantNames); // DTO에 이름 목록 추가
+			dto.setImages(images); // DTO에 이미지 목록 추가
+
 			result.add(dto);
 		}
 
-		return result;
+		// 사용자별 총 포인트 계산 (포인트 로그 서비스 사용)
+		Integer totalPoints = pointLogService.getTotalPointsByUserId(userId);
+
+		// 집안일 리스트와 총 포인트를 함께 반환
+		Map<String, Object> response = new HashMap<>();
+		response.put("works", result);
+		response.put("totalPoints", totalPoints); // 총 포인트 추가
+
+		return ResponseEntity.ok(response);
 	}
 
 	// 집안일 삭제
@@ -81,18 +109,19 @@ public class HouseworkController {
 	public ResponseEntity<String> completeHouseworkWithFiles(@ModelAttribute ImageUploadDto dto,
 			@RequestParam("completed") boolean completed) {
 		try {
-			System.out.println("작업 완료 및 파일 업로드 중, 작성자 아이디: " + dto.getUserId());
+			System.out.println("entityIdx: " + dto.getEntityIdx());
+			System.out.println("entityType: " + dto.getEntityType()); // entityType 확인용 출력
 
-			// 파일 업로드 및 작업 완료 처리 메서드 호출
-			houseworkService.completeHouseworkWithFiles(dto.getFamilyIdx(), // familyIdx
+			// MultipartFile로 변환된 이미지들만 추출
+			List<MultipartFile> images = dto.getImages();
+
+			// Service 호출
+			houseworkService.completeHouseworkWithFiles(dto.getEntityIdx(), // 작업 ID
+					images, // 이미지 리스트 (List<MultipartFile>)
+					dto.getFamilyIdx(), // familyIdx
 					dto.getUserId(), // userId
-					dto.getEntityType(), // entityType
-					dto.getEntityIdx(), // entityIdx (workIdx로 사용)
-					dto.getFileNames(), // 파일 이름 리스트
-					dto.getFileExtensions(), // 파일 확장자 리스트
-					dto.getFileSizes(), // 파일 크기 리스트
-					dto.getImages(), // 파일 이미지 리스트
-					completed // 작업 완료 여부
+					completed, // 작업 완료 여부
+					dto.getEntityType() // entityType 전달
 			);
 
 			return ResponseEntity.ok("작업 완료 및 이미지 저장 완료");

@@ -7,12 +7,14 @@ import axios from "axios";
 const GroupManagement = () => {
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
+  const userId = useSelector((state) => state.user.userData.id);
   const [familyNick, setFamilyNick] = useState(""); // 현재 가족 이름
   const [newFamilyNick, setNewFamilyNick] = useState(""); // 수정할 가족 이름 상태
   const [familyMotto, setFamilyMotto] = useState(""); // 현재 가족 가훈
   const [newFamilyMotto, setNewFamilyMotto] = useState(""); // 수정할 가족 가훈 상태
   const [profileImage, setProfileImage] = useState(null); // 프로필 이미지 상태
   const [selectedImage, setSelectedImage] = useState(null); // 선택된 이미지 파일 상태
+  const [selectedFiles, setSelectedFiles] = useState([]); // 여러 파일을 저장할 배열 상태 추가
 
 
   // 사용자 정보가 로드된 후 가족 이름과 가훈을 서버에서 불러오기 위한 useEffect
@@ -38,14 +40,7 @@ const GroupManagement = () => {
           console.error("가훈을 가져오는 중 에러 발생:", error);
         });
 
-        // 프로필 이미지 불러오기
-      axios.get(`http://localhost:8089/wefam/get-family-profile-photo/${userData.id}`)
-      .then(response => {
-        setProfileImage(`data:image/jpeg;base64,${response.data}`); // 서버에서 받은 이미지 설정
-      })
-      .catch(error => {
-        console.error("프로필 이미지를 가져오는 중 에러 발생:", error);
-      });
+      fetchProfileImage();
     }
   }, [userData]);
 
@@ -60,11 +55,10 @@ const GroupManagement = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedImage(file);
-    setProfileImage(URL.createObjectURL(file)); // 미리보기로 설정
+    const files = Array.from(e.target.files);  // 여러 파일을 배열로 저장
+    setSelectedFiles(files);                   // 선택한 파일들을 상태로 저장
+    setProfileImage(URL.createObjectURL(files[0])); // 첫 번째 파일 미리보기
   };
-
 
   // 가족 이름을 서버에 업데이트하는 함수
   const updateFamilyNick = () => {
@@ -109,28 +103,71 @@ const GroupManagement = () => {
       });
   };
 
-  // 가족 프로필을 업데이트하는 함수
-  const updateProfileImage =() => {
-    if(!selectedImage){
-      alert("이미지를 선택하세요");
+  // 가족 프로필 사진 저장 함수
+  const saveProfileImage = async () => {
+    if (selectedFiles.length === 0) {
+      alert("이미지를 선택하세요.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("profileImage", selectedImage);
-    formData.append("familyIdx", userData.familyIdx);
-    formData.append("userId", userData.id);
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+      formData.append("fileNames", file.name);
+      formData.append("fileExtensions", file.name.split(".").pop());
+      formData.append("fileSizes", file.size);
+    });
 
-    axios.post('http://localhost:8089/wefam/update-family-profile-photo', formData)
-    .then(response => {
-      alert("프로필 사진이 변경되었습니다!");
-      window.location.reload();
+    formData.append("familyIdx", userData.familyIdx);
+    formData.append("userId", userId);
+    formData.append("entityType", "family");  // 'family' 타입으로 변경
+    formData.append("entityIdx", 0);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8089/wefam/add-album-img", // 엔드포인트는 그대로
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("프로필 사진 저장이 완료되었습니다.");
+        window.location.reload();
+      } else {
+        console.error("프로필 사진 저장 실패:", response);
+      }
+    } catch (error) {
+      console.error("프로필 사진 저장 중 오류 발생:", error);
+    }
+  };
+
+  // 가족 프로필 불러오기
+  const fetchProfileImage = () => {
+    const url = `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}?entityType=family`;
+
+    axios
+    .get(url)
+    .then((response) => {
+      if (response.data.length === 0) {
+        setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 설정 가능
+      } else {
+        // entityType이 family인 이미지 중 가장 최신 이미지 사용
+        const familyImages = response.data.filter(image => image.entityType === "family");
+        if (familyImages.length > 0) {
+          const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
+          setProfileImage(`data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`);
+        } else {
+          console.error("가족 프로필 이미지가 없습니다.");
+        }
+      }
     })
-    .catch(error => {
-      console.error('프로필 사진 업데이트 실패:', error);
+    .catch((error) => {
+      console.error("이미지를 불러오는 중 오류 발생:", error);
     });
 };
-
   return (
     <div className={styles.personalInfo}>
       <h1>가족 정보 관리</h1>
@@ -140,16 +177,23 @@ const GroupManagement = () => {
       <div className={styles.profileContainer}>
         <span>가족 프로필 사진</span>
         <div className={styles.profileInfo}>
-        <img src={profileImage} className={styles.profileImg} alt="Family" />
+          <img
+            src={profileImage ? profileImage : familyPT} // 프로필 이미지 또는 기본 이미지
+            className={styles.profileImg}
+            alt="Family"
+          />
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            style={{ display: 'none' }} 
+            style={{ display: 'none' }}
             id="profileImageInput"
           />
           <label htmlFor="profileImageInput" className={styles.editImgButton}>
             수정
+          </label>
+          <label className={styles.saveImgButton} onClick={saveProfileImage}>
+            저장
           </label>
         </div>
       </div>
