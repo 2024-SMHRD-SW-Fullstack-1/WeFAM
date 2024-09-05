@@ -1,15 +1,27 @@
 .EventDetail {
   position: absolute;
-  top: 72px;
-  right: 0;
+  top: 80px;
+  right: calc(-1 * var(--EventDetail-width));
   width: var(--EventDetail-width);
-  height: 90%;
+  height: 89%;
   background-color: var(--color-white);
   transition: all var(--animation-duration);
   border: 1px solid beige;
   border-radius: 8px;
-  margin-right: 10px;
   overflow-y: auto;
+  z-index: 1000;
+
+  /* width와 opacity 애니메이션 */
+  opacity: 0; /* 처음에는 투명 */
+}
+.EventDetail.enter {
+  right: 0;
+  opacity: 1; /* 열릴 때 opacity 설정 */
+}
+
+.EventDetail.exit {
+  width: 0; /* 닫힐 때 width가 0으로 줄어듦 */
+  opacity: 0; /* 닫힐 때 opacity가 0으로 줄어듦 */
 }
 
 .header {
