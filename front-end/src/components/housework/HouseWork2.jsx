@@ -17,7 +17,6 @@ const Housework2 = () => {
   const [taskContent, setTaskContent] = useState("");
   const [taskPoint, setTaskPoint] = useState("");
   const [workUser, setWorkUser] = useState([]);
-  const [participantNames, setParticipantNames] = useState([]);
   const [warningMessages, setWarningMessages] = useState({
     workUser: "",
     taskPoint: "",
@@ -48,7 +47,6 @@ const Housework2 = () => {
     setTaskContent("");
     setTaskPoint("");
     setWorkUser([]);
-    setParticipantNames([]);
     setWarningMessages({ workUser: "", taskPoint: "" });
     setEditTaskIndex(null);
   };
@@ -61,12 +59,17 @@ const Housework2 = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:8089/wefam/get-works");
-      const tasks = response.data;
+      // userId를 query로 넘겨줌
+      const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
+  
+      const { works, totalPoints } = response.data;  // 총 포인트와 작업 데이터를 분리
+  
       setTasks({
-        daily: tasks.filter((task) => task.taskType === "daily"),
-        shortTerm: tasks.filter((task) => task.taskType === "shortTerm"),
+        daily: works.filter((task) => task.taskType === "daily"),
+        shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
+  
+      console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -278,7 +281,9 @@ const Housework2 = () => {
             </div>
             {dropdownOpen === `${taskType}-${index}` && (
               <div className={styles.dropdownMenu}>
-                <button onClick={() => handleMissionComplete(task)}>미션 성공</button>
+                <button onClick={() => handleMissionComplete(task)}>
+                  미션 성공
+                </button>
                 <button onClick={() => handleTaskEdit(index, tasks, taskType)}>
                   수정
                 </button>
@@ -294,7 +299,7 @@ const Housework2 = () => {
   };
 
   return (
-    <div className='main' onClick={handleOutsideClick}>
+    <div className="main" onClick={handleOutsideClick}>
       <div styles={styles.gridContainer}>
         <div className={styles.board}>
           <div className={styles.column}>
@@ -305,7 +310,8 @@ const Housework2 = () => {
                   tasks.daily.length > 0
                     ? styles.circleDaily
                     : styles.circleZero
-                }>
+                }
+              >
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -328,7 +334,8 @@ const Housework2 = () => {
                   tasks.shortTerm.length > 0
                     ? styles.circleShortTerm
                     : styles.circleZero
-                }>
+                }
+              >
                 {tasks.shortTerm.length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
@@ -342,7 +349,6 @@ const Housework2 = () => {
               {renderTaskList(tasks.shortTerm, "shortTerm")}
             </ul>
           </div>
-
         </div>
       </div>
       {/*오른쪽 그리드 */}
@@ -353,7 +359,8 @@ const Housework2 = () => {
             <span
               className={
                 tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-              }>
+              }
+            >
               {tasks.daily.length}
             </span>
             <div className={styles.add_task} onClick={openModal}>

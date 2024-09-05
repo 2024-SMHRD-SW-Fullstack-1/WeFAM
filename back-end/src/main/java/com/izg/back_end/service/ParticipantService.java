@@ -39,7 +39,7 @@ public class ParticipantService {
 	@Transactional
 	// 특정 작업의 모든 참여자 삭제
 	public void deleteParticipantsByEntityIdx(int workIdx) {
-	    System.out.println("Deleting participants for workIdx: " + workIdx);
+		System.out.println("Deleting participants for workIdx: " + workIdx);
 		participantRepository.deleteByEntityIdxAndEntityType(workIdx, "housework");
 	}
 
