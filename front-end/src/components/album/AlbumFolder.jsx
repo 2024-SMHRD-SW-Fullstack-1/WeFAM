@@ -300,7 +300,7 @@ const AlbumFolder = () => {
           </div>
 
           <ul className={styles.fileList}>
-            {selectedFiles.map((file) => (
+            {selectedFiles.map((file, index) => (
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
                 <button

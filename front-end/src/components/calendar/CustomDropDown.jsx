@@ -6,11 +6,13 @@ const CustomDropdown = ({ options, placeholder, onChange, value }) => {
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      width: 490,
+      width: 491,
       alignItems: "center",
-      boder: "0px solid #c02727",
-      boderRadius: "10px",
+      border: "0px solid #c02727",
+      borderRadius: "5px",
       backgroundColor: "#f9f9f9" /* 박스 배경색 */,
+      outline: "none",
+      height: "38px",
     }),
     option: (provided, { data, isSelected }) => ({
       ...provided,
@@ -31,13 +33,13 @@ const CustomDropdown = ({ options, placeholder, onChange, value }) => {
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999, // 드롭다운 메뉴가 다른 요소들 위에 위치하도록 설정
+      zIndex: 1000, // 드롭다운 메뉴가 다른 요소들 위에 위치하도록 설정
     }),
   };
 
   const formatOptionLabel = ({ label, color }) => (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <BsTagFill style={{ color, marginRight: "10px" }} />
+      <BsTagFill style={{ color }} />
       <span>{label}</span>
     </div>
   );
