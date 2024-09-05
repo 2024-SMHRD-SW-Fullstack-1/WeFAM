@@ -390,9 +390,9 @@ const Housework2 = () => {
               />
             </div>
           </div>
-          <ul className={styles.taskList}>
+          {/* <ul className={styles.taskList}>
             {renderTaskList(tasks.shortTerm, "shortTerm")}
-          </ul>
+          </ul> */}
 
         </div>
       </div>

@@ -397,7 +397,7 @@ const EventModal = ({
               <div
                 className={styles.tooltip}
                 style={{ backgroundColor: selectedColor }}>
-                일정 추천
+                AI 일정 추천
               </div>
             </div>
           )}
