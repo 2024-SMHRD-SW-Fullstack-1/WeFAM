@@ -560,8 +560,7 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}
-      >
+        }}>
         {/* allDay가 true이거나 날짜가 다를 때 바 형태로 표시 */}
         {event.allDay || !sameDate ? (
           <>
@@ -572,8 +571,7 @@ const Calendar = () => {
                 backgroundColor: event.backgroundColor || "#FF4D4D",
                 borderRadius: "2px",
                 position: "relative",
-              }}
-            >
+              }}>
               <span
                 style={{
                   position: "relative",
@@ -585,8 +583,7 @@ const Calendar = () => {
                   textOverflow: "ellipsis",
                   lineHeight: "8px",
                   color: "#fff", // 바 형태에서는 흰색 글씨로 표시
-                }}
-              >
+                }}>
                 {event.title}
               </span>
             </div>
@@ -610,8 +607,7 @@ const Calendar = () => {
                 whiteSpace: "nowrap",
                 flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
                 minWidth: "0",
-              }}
-            >
+              }}>
               {event.title}
             </span>
             <span
@@ -620,8 +616,7 @@ const Calendar = () => {
                 fontSize: "0.9em",
                 color: "#666",
                 flexShrink: 0,
-              }}
-            >
+              }}>
               {startTime}
             </span>
           </>
@@ -669,10 +664,10 @@ const Calendar = () => {
   }, []);
 
   return (
-    <div className="main">
+    <div className='main'>
       {/* ToastContainer는 루트 컴포넌트에 포함 */}
       <ToastContainer
-        position="bottom-center"
+        position='bottom-center'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
@@ -681,8 +676,8 @@ const Calendar = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
-        z-index="100"
+        theme='light'
+        z-index='100'
       />
       {/* 검색 기능 */}
       <div style={{ width: "80%" }}>
@@ -692,12 +687,11 @@ const Calendar = () => {
             justifyContent: "flex-end",
             gap: "6px",
             padding: "5px",
-          }}
-        >
+          }}>
           <input
             ref={searchInputRef} // 검색창을 참조
-            type="text"
-            placeholder="일정 검색"
+            type='text'
+            placeholder='일정 검색'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
@@ -705,76 +699,84 @@ const Calendar = () => {
             }`} // 애니메이션 클래스 적용
           />
         </div>
-        <FullCalendar
-          ref={calendarRef} // ref 연결
-          plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView="dayGridMonth"
-          locale="ko"
-          nowIndicator={true}
-          selectable={true}
-          headerToolbar={{
-            left: "title",
-            center: "prev,today,next",
-            right: "customSearch,customAddEvent", // 커스텀 버튼 추가
-          }}
-          editable={true}
-          buttonText={{
-            today: "오늘",
-            month: "월간",
-            week: "주간",
-            day: "일간",
-            allDay: "하루종일",
-          }}
-          height="85vh"
-          dayCellContent={renderDayCellContent}
-          allDaySlot={true}
-          droppable={true}
-          weekends={true}
-          eventTimeFormat={true}
-          events={[...holidays, ...events]}
-          // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
-          eventClick={handleEventClick}
-          // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
-          dateClick={handleDateDoubleClick}
-          dayMaxEvents={3}
-          moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
-          eventContent={renderEventContent}
-          customButtons={{
-            customSearch: {
-              text: "", // 텍스트 비움
-              click: () => setIsSearchVisible(!isSearchVisible),
-            },
-            customAddEvent: {
-              text: "", // 텍스트 비움
-              click: handleAddEventClick,
-            },
-          }}
-        />
-
-        {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
-        {isModalOpen && (
-          <EventModal
-            event={selectedEvent}
-            onSave={saveEvent}
-            familyName={familyName}
-            familyUsers={familyUsers}
-            onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
-            isDetailOpen={isDetailOpen} // isDetailOpen 상태 전달
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            marginTop: "2rem",
+            borderRadius: "1rem",
+            padding: "1rem",
+          }}>
+          <FullCalendar
+            ref={calendarRef} // ref 연결
+            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+            initialView='dayGridMonth'
+            locale='ko'
+            nowIndicator={true}
+            selectable={true}
+            headerToolbar={{
+              left: "title",
+              center: "prev,today,next",
+              right: "customSearch,customAddEvent", // 커스텀 버튼 추가
+            }}
+            editable={true}
+            buttonText={{
+              today: "오늘",
+              month: "월간",
+              week: "주간",
+              day: "일간",
+              allDay: "하루종일",
+            }}
+            height='80vh'
+            dayCellContent={renderDayCellContent}
+            allDaySlot={true}
+            droppable={true}
+            weekends={true}
+            eventTimeFormat={true}
+            events={[...holidays, ...events]}
+            // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
+            eventClick={handleEventClick}
+            // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
+            dateClick={handleDateDoubleClick}
+            dayMaxEvents={3}
+            moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+            eventContent={renderEventContent}
+            customButtons={{
+              customSearch: {
+                text: "", // 텍스트 비움
+                click: () => setIsSearchVisible(!isSearchVisible),
+              },
+              customAddEvent: {
+                text: "", // 텍스트 비움
+                click: handleAddEventClick,
+              },
+            }}
           />
-        )}
 
-        {/* 모달이 열렸을 때만 DetailModal 컴포넌트 렌더링 */}
-        {isEventOpen && (
-          <EventDetail
-            key={selectedEvent.id}
-            event={selectedEvent}
-            familyName={familyName}
-            familyUsers={familyUsers}
-            onEdit={handleEditClick} // 수정 버튼에 사용할 함수
-            onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
-            onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
-          />
-        )}
+          {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
+          {isModalOpen && (
+            <EventModal
+              event={selectedEvent}
+              onSave={saveEvent}
+              familyName={familyName}
+              familyUsers={familyUsers}
+              onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
+              isDetailOpen={isDetailOpen} // isDetailOpen 상태 전달
+            />
+          )}
+
+          {/* 모달이 열렸을 때만 DetailModal 컴포넌트 렌더링 */}
+          {isEventOpen && (
+            <EventDetail
+              key={selectedEvent.id}
+              event={selectedEvent}
+              familyName={familyName}
+              familyUsers={familyUsers}
+              onEdit={handleEditClick} // 수정 버튼에 사용할 함수
+              onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
+              onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
+            />
+          )}
+        </div>
       </div>
     </div>
   );
