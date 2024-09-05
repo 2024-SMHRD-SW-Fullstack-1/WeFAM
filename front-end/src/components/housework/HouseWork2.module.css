@@ -26,9 +26,13 @@
 .column:nth-child(2) .column_header {
   border-bottom: 3px solid #ff9203; /* 두 번째 컬럼의 하단 선 초록색 */
 }
+.column:nth-child(3) .column_header {
+  border-bottom: 3px solid #2ecc71;
+}
 
 .circleDaily,
-.circleShortTerm {
+.circleShortTerm,
+.circleFinished {
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -43,6 +47,9 @@
 }
 .circleShortTerm {
   background-color: #ff9203;
+}
+.circleFinished {
+  background-color: #2ecc71;
 }
 .circleZero {
   color: white;

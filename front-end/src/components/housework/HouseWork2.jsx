@@ -242,7 +242,6 @@ const Housework2 = () => {
   //   }
   // };
 
-
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
   };
@@ -309,7 +308,9 @@ const Housework2 = () => {
             </div>
             {dropdownOpen === `${taskType}-${index}` && (
               <div className={styles.dropdownMenu}>
-                <button onClick={() => handleMissionComplete(task)}>미션 성공</button>
+                <button onClick={() => handleMissionComplete(task)}>
+                  미션 성공
+                </button>
                 <button onClick={() => handleTaskEdit(index, tasks, taskType)}>
                   수정
                 </button>
@@ -326,58 +327,7 @@ const Housework2 = () => {
 
   return (
     <div className='main' onClick={handleOutsideClick}>
-      <div styles={styles.gridContainer}>
-        <div className={styles.board}>
-          <div className={styles.column}>
-            <div className={styles.column_header}>
-              <h3>매일 할 일</h3>
-              <span
-                className={
-                  tasks.daily.length > 0
-                    ? styles.circleDaily
-                    : styles.circleZero
-                }>
-                {tasks.daily.length}
-              </span>
-              <div className={styles.add_task} onClick={openModal}>
-                <BsPlusCircle
-                  styles={styles.icon}
-                  style={{ color: "#e74c3c", fontSize: "24px" }}
-                />
-              </div>
-            </div>
-            <ul className={styles.taskList}>
-              {renderTaskList(tasks.daily, "daily")}
-            </ul>
-          </div>
-
-          <div className={styles.column}>
-            <div className={styles.column_header}>
-              <h3>오늘의 미션</h3>
-              <span
-                className={
-                  tasks.shortTerm.length > 0
-                    ? styles.circleShortTerm
-                    : styles.circleZero
-                }>
-                {tasks.shortTerm.length}
-              </span>
-              <div className={styles.add_task} onClick={openModal}>
-                <BsPlusCircle
-                  styles={styles.icon}
-                  style={{ color: "#ff9203", fontSize: "24px" }}
-                />
-              </div>
-            </div>
-            <ul className={styles.taskList}>
-              {renderTaskList(tasks.shortTerm, "shortTerm")}
-            </ul>
-          </div>
-        
-        </div>
-      </div>
-      {/*오른쪽 그리드 */}
-      <div styles={styles.board}>
+      <div className={styles.board}>
         <div className={styles.column}>
           <div className={styles.column_header}>
             <h3>매일 할 일</h3>
@@ -391,6 +341,52 @@ const Housework2 = () => {
               <BsPlusCircle
                 styles={styles.icon}
                 style={{ color: "#e74c3c", fontSize: "24px" }}
+              />
+            </div>
+          </div>
+          <ul className={styles.taskList}>
+            {renderTaskList(tasks.daily, "daily")}
+          </ul>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>오늘의 미션</h3>
+            <span
+              className={
+                tasks.shortTerm.length > 0
+                  ? styles.circleShortTerm
+                  : styles.circleZero
+              }>
+              {tasks.shortTerm.length}
+            </span>
+            <div className={styles.add_task} onClick={openModal}>
+              <BsPlusCircle
+                styles={styles.icon}
+                style={{ color: "#ff9203", fontSize: "24px" }}
+              />
+            </div>
+          </div>
+          <ul className={styles.taskList}>
+            {renderTaskList(tasks.shortTerm, "shortTerm")}
+          </ul>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>마감된 할 일</h3>
+            <span
+              className={
+                tasks.daily.length > 0
+                  ? styles.circleFinished
+                  : styles.circleZero
+              }>
+              {tasks.daily.length}
+            </span>
+            <div className={styles.add_task} onClick={openModal}>
+              <BsPlusCircle
+                styles={styles.icon}
+                style={{ color: "#2ecc71 ", fontSize: "24px" }}
               />
             </div>
           </div>
