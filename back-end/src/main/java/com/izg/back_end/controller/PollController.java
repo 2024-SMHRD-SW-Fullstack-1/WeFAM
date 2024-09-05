@@ -29,37 +29,36 @@ public class PollController {
 	private PollUserService pollUserRepository;
 	@Autowired
 	private PollUserService pollUserService;
-    @Autowired
-    private PollService pollService;
-    
-    // 피드에 있는 투표 가져오기
-    @GetMapping("/get-polls/{feedIdx}")
-    public ResponseEntity<List<PollDto>> getPolls(@PathVariable("feedIdx") int feedIdx) {
-        try {
-            List<PollDto> pollDtos = pollService.getPollsByFeedIdx(feedIdx);
-            System.out.println("get-polls : " + pollDtos);
-            return ResponseEntity.ok(pollDtos);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+	@Autowired
+	private PollService pollService;
 
- 	
-    @PostMapping("/add-polls")
-    public ResponseEntity<PollModel> addPolls(@RequestBody PollDto pollDto) {
-    	System.out.println("Received poll dto : " + pollDto);
-        PollModel addedPoll = pollService.addPolls(pollDto);
-        return ResponseEntity.ok(addedPoll);
-    }
+	// 피드에 있는 투표 가져오기
+	@GetMapping("/get-polls/{feedIdx}")
+	public ResponseEntity<List<PollDto>> getPolls(@PathVariable("feedIdx") int feedIdx) {
+		try {
+			List<PollDto> pollDtos = pollService.getPollsByFeedIdx(feedIdx);
+			System.out.println("get-polls : " + pollDtos);
+			return ResponseEntity.ok(pollDtos);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 
-    @PostMapping("/vote")
-    public ResponseEntity<Void> vote(@RequestBody VoteDto voteDto) {
-        pollUserService.vote(voteDto);
-        return ResponseEntity.ok().build();
-    }
-    
-    // 현재 접속 중이 사용자가 투표를 열었을 때 투표했는 지 확인하기
+	@PostMapping("/add-polls")
+	public ResponseEntity<PollModel> addPolls(@RequestBody PollDto pollDto) {
+		System.out.println("Received poll dto : " + pollDto);
+		PollModel addedPoll = pollService.addPolls(pollDto);
+		return ResponseEntity.ok(addedPoll);
+	}
+
+	@PostMapping("/vote")
+	public ResponseEntity<Void> vote(@RequestBody VoteDto voteDto) {
+		pollUserService.vote(voteDto);
+		return ResponseEntity.ok().build();
+	}
+
+	// 현재 접속 중이 사용자가 투표를 열었을 때 투표했는 지 확인하기
 //    @GetMapping("/get-poll/{pollIdx}/user/{userId}/status")
 //    public ResponseEntity<VoteDto> getUserVote(@PathVariable("pollIdx") int pollIdx, @PathVariable("userId") String userId) {
 //        try {
@@ -75,29 +74,38 @@ public class PollController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        }
 //    }
-    
-    // 현재 접속 중인 사용자가 투표를 했는 지 확인
-    @GetMapping("/get-poll/{pollIdx}/user/{userId}/status")
-    public ResponseEntity<VoteStatusDto> getVoteStatus(@PathVariable("pollIdx") int pollIdx, @PathVariable("userId") String userId) {
-        try {
-            boolean hasVoted = pollUserService.hasUserVoted(pollIdx, userId);
-            return ResponseEntity.ok(new VoteStatusDto(hasVoted));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+	// 현재 접속 중인 사용자가 투표를 했는 지 확인
+	@GetMapping("/get-poll/{pollIdx}/user/{userId}/status")
+	public ResponseEntity<VoteStatusDto> getVoteStatus(@PathVariable("pollIdx") int pollIdx,
+			@PathVariable("userId") String userId) {
+		try {
+			boolean hasVoted = pollUserService.hasUserVoted(pollIdx, userId);
+			return ResponseEntity.ok(new VoteStatusDto(hasVoted));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	// 현재 사용자가 선택한 투표 번호
+	@GetMapping("/get-my-vote-result/poll/{pollIdx}/user/{userId}")
+    public ResponseEntity<Integer> getMyVoteResult(@PathVariable("pollIdx") int pollIdx,
+			@PathVariable("userId") String userId) {
+		int selectedOptionNum = pollUserService.getMyVoteResult(pollIdx, userId);
+	    return ResponseEntity.ok(selectedOptionNum);
     }
-    
-    // 투표 결과 확인
-    @GetMapping("/get-vote-result/{pollIdx}")
-    public ResponseEntity<List<VoteResultDto>> getVoteResult(@PathVariable("pollIdx") int pollIdX) {
-        try {
-            List<VoteResultDto> results = pollUserService.getVoteResult(pollIdX);
-            System.out.println("투표 결과 확인 : " + results);
-            return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+
+	// 투표 결과 확인
+	@GetMapping("/get-vote-result/{pollIdx}")
+	public ResponseEntity<List<VoteResultDto>> getVoteResult(@PathVariable("pollIdx") int pollIdX) {
+		try {
+			List<VoteResultDto> results = pollUserService.getVoteResult(pollIdX);
+			System.out.println("투표 결과 확인 : " + results);
+			return ResponseEntity.ok(results);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 }

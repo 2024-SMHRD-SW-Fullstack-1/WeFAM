@@ -31,6 +31,7 @@
   --color-grey: #737373;
   --color-light-grey: #f1f3f5;
   --color-separator: 219, 219, 219;
+  --color-background: #f0f2f5;
 
   /* Font size */
   --font-sm: 0.875rem;
@@ -120,6 +121,7 @@ body {
   margin: 0;
   padding: 0;
   -ms-overflow-style: none;
+  background-color: var(--color-background);
 }
 
 ::-webkit-scrollbar {
@@ -315,7 +317,6 @@ p {
 .fc .fc-button:disabled {
   opacity: 1;
   background-color: #ffae51;
-  
 }
 
 /*주 단위 */
@@ -331,12 +332,12 @@ p {
 .css-piclje-control {
   outline: none;
 }
-.css-ozsyar-control{
+.css-ozsyar-control {
   outline: none;
 }
 
-.css-hlgwow{
-  padding:8px 12px;
+.css-hlgwow {
+  padding: 8px 12px;
 }
 
 .css-b62m3t-container .css-piclje-control:focus {

@@ -5,7 +5,6 @@ import FeedItem from "./FeedItem";
 
 const FeedList = React.memo(
   ({ feeds, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
-    console.log("FeedList 리렌더링됨");
     return (
       <div className={styles.feedList}>
         {feeds.map((feed) => (

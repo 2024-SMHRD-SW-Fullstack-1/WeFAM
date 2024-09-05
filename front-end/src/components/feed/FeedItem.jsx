@@ -8,7 +8,7 @@ import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
 import PollModal from "./PollModal";
 import { elapsedTime } from "../../elapsedTime";
-import { LuVote } from "react-icons/lu";
+import { CiSquareCheck } from "react-icons/ci";
 
 import {
   BsSuitHeart,
@@ -93,7 +93,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       const response = await axios.get(
         `http://localhost:8089/wefam/get-polls/${feed.feedIdx}`
       );
-      console.log(response.data);
       setPolls(Array.from(response.data));
     } catch (error) {
       console.error(`피드 ${feed.feedIdx}번 투표 요청 에러 :`, error);
@@ -120,7 +119,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       const response = await axios.get(
         `http://localhost:8089/wefam/count-comments/${feed.feedIdx}`
       );
-      console.log("현재 댓글의 개수 : ", response.data);
       setCmtCount(response.data);
     } catch (error) {
       console.error("Error fetching like status", error);
@@ -223,8 +221,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   // 좋아요를 체크하는 함수
   const checkLike = useCallback(async () => {
     try {
-      console.log(userData.id);
-      console.log(feed.feedIdx);
       const response = await axios.get(
         "http://localhost:8089/wefam/check-like",
         {
@@ -237,7 +233,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           },
         }
       );
-      console.log(`${feed.feedIdx} + ${response.data}`);
       setIsLiked(response.data); // 응답 결과로 상태 초기화
     } catch (error) {
       console.error("Error checking like", error);
@@ -309,7 +304,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.header}>
         <div className={styles.feedInfoContainer}>
           <div className={styles.profileImg}>
-            <img src={writerProfileImg} alt="Profile" />
+            <img src={writerProfileImg} alt='Profile' />
           </div>
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
@@ -324,19 +319,18 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           <div
             className={styles.feedOptionsContainer}
             onClick={toggleOptions}
-            ref={optionsRef}
-          >
+            ref={optionsRef}>
             <BsThreeDots />
             {isOptionsVisible && (
               <ul className={styles.options}>
                 <>
                   <li>
-                    <button className="option" onClick={handleUpdateFeed}>
+                    <button className='option' onClick={handleUpdateFeed}>
                       수정
                     </button>
                   </li>
                   <li>
-                    <button className="option" onClick={handleDeleteFeed}>
+                    <button className='option' onClick={handleDeleteFeed}>
                       삭제
                     </button>
                   </li>
@@ -356,8 +350,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 className={`${styles.leftArrowBtn} ${
                   currentSlide === 0 ? styles.hidden : ""
                 }`}
-                onClick={handlePrevSlide}
-              >
+                onClick={handlePrevSlide}>
                 <MdKeyboardArrowLeft />
               </button>
               {images
@@ -384,8 +377,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                     ? styles.hidden
                     : ""
                 }`}
-                onClick={handleNextSlide}
-              >
+                onClick={handleNextSlide}>
                 <MdKeyboardArrowRight />
               </button>
             </div>
@@ -394,30 +386,29 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             <div
               className={`${styles.slideNumber} ${
                 totalSlides === 1 ? styles.hidden : ""
-              }`}
-            >
+              }`}>
               {totalSlides > 1 && `${currentSlideNumber} / ${totalSlides}`}
             </div>
           </div>
         )}
 
         {/* 내용 - 투표 */}
-        <div className={styles.pollsContent}>
-          {polls.length > 0 ? (
-            <div>
+        {polls.length > 0 ? (
+          <div className={styles.pollsContent}>
+            <div className={styles.poll}>
               {polls.map((poll, index) => (
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
                     {" "}
                     {/* pollIdx 전달 */}
-                    <LuVote />
+                    <CiSquareCheck />
                     <span>{poll.pollTitle}</span>
                   </button>
                 </span>
               ))}
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {(() => {
           let content;
@@ -438,21 +429,29 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.footer}>
         <div className={styles.iconbar}>
           <span>
-            <button onClick={handleHeart}>
-              {isLiked ? <BsSuitHeartFill /> : <BsSuitHeart />}
+            <button className={styles.likeBtn} onClick={handleHeart}>
+              {isLiked ? (
+                <BsSuitHeartFill style={{ color: "red" }} />
+              ) : (
+                <BsSuitHeart />
+              )}
             </button>
             {likeCount || 0}
           </span>
           <span>
-            <BsChatHeart />
+            {cmtCount > 0 ? (
+              <BsChatHeart style={{ color: "red" }} />
+            ) : (
+              <BsChatHeart />
+            )}
             {cmtCount || 0}
           </span>
         </div>
         <div className={styles.comment}>
           <textarea
             ref={textarea}
-            rows="1"
-            placeholder="댓글 달기..."
+            rows='1'
+            placeholder='댓글 달기...'
             value={newCmtContent} // 상태 값으로 textarea의 내용 설정
             onChange={(e) => setNewCmtContent(e.target.value)} // 댓글 내용 상태 업데이트
             onInput={handleResizeHeight}

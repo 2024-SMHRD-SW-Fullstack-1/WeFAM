@@ -12,11 +12,6 @@ import com.izg.back_end.model.PollModel;
 @Repository
 public interface PollRepository extends JpaRepository<PollModel, Integer> {
 
-	// 피드의 투표들을 찾기 위한 메서드
-    // List<PollModel> findPollsByFeedIdx(@Param("feedIdx") Integer feedIdx);
-    
 	@Query("SELECT p FROM PollModel p WHERE p.feedIdx = :feedIdx")
     List<PollModel> findPollsByFeedIdx(@Param("feedIdx") int feedIdx);
-	
-	// PollModel findById(int pollIdx);
 }

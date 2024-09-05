@@ -229,7 +229,6 @@ const Housework2 = () => {
     setSelectedTaskImages([]);
   };
 
-
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
   };
@@ -323,7 +322,7 @@ const Housework2 = () => {
 
   return (
     <div className="main" onClick={handleOutsideClick}>
-      <div styles={styles.gridContainer}>
+      
         <div className={styles.board}>
           <div className={styles.column}>
             <div className={styles.column_header}>
@@ -372,6 +371,29 @@ const Housework2 = () => {
               {renderTaskList(tasks.shortTerm, "shortTerm")}
             </ul>
           </div>
+
+          <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>마감된 할 일</h3>
+            <span
+              className={
+                tasks.daily.length > 0
+                  ? styles.circleFinished
+                  : styles.circleZero
+              }>
+              {tasks.daily.length}
+            </span>
+            <div className={styles.add_task} onClick={openModal}>
+              <BsPlusCircle
+                styles={styles.icon}
+                style={{ color: "#2ecc71 ", fontSize: "24px" }}
+              />
+            </div>
+          </div>
+          <ul className={styles.taskList}>
+            {renderTaskList(tasks.shortTerm, "shortTerm")}
+          </ul>
+
         </div>
       </div>
     
