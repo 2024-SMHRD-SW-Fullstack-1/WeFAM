@@ -205,14 +205,14 @@ const Housework2 = () => {
 
   // 미션 완료 모달 열기
   const handleMissionComplete = (task) => {
-    // 매일 할 일일 경우에만 담당자 여부를 확인
-    if (task.taskType === "daily" && !task.participantNames.includes(userData.name)) {
+    // 현재 로그인한 사용자의 ID와 담당자 ID를 비교
+    if (!task.participantNames.includes(userData.name)) {
       // 현재 사용자가 담당자가 아닐 경우
       alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
       return; // 함수 종료
     }
-
-    // 오늘의 미션 (shortTerm)은 담당자 여부 확인 없이 미션 성공 가능
+  
+    // 담당자일 경우에만 작업을 완료하도록 처리
     setSelectedTask(task);
     setIsCompleteModalOpen(true); // 완료 모달 열기
   };
@@ -228,6 +228,7 @@ const Housework2 = () => {
     setIsImageModalOpen(false);
     setSelectedTaskImages([]);
   };
+
 
   const toggleDropdown = (index) => {
     setDropdownOpen(dropdownOpen === index ? null : index);
@@ -373,30 +374,7 @@ const Housework2 = () => {
           </div>
         </div>
       </div>
-      {/*오른쪽 그리드 */}
-      <div styles={styles.board}>
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>매일 할 일</h3>
-            <span
-              className={
-                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-              }
-            >
-              {tasks.daily.length}
-            </span>
-            <div className={styles.add_task} onClick={openModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#e74c3c", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.shortTerm, "shortTerm")}
-          </ul>
-        </div>
-      </div>
+    
 
       <WorkModal
         isModalOpen={isModalOpen}
