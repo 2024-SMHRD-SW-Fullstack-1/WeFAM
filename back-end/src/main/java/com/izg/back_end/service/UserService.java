@@ -143,9 +143,9 @@ public class UserService {
 	        	existingUser.setProfileImg(userDTO.getProfileImg()); // 
 	        }
 	        
-//	        if (userDTO.getName() != null && !existingUser.getName().equals(userDTO.getName())) {
-//	            existingUser.setName(userDTO.getName());
-//	        }
+	        if (userDTO.getName() != null && !existingUser.getName().equals(userDTO.getName())) {
+	            existingUser.setName(userDTO.getName());
+	        }
 //	        // 생년월이이 설정되있으면 그대로 유지
 //	        if (existingUser.getBirth() == null || userDTO.getBirth() != null) {
 //	        	existingUser.setBirth(userDTO.getBirth());

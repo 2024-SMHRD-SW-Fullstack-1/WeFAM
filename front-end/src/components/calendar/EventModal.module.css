@@ -146,7 +146,7 @@
   margin-left: 35px;
   font-size: 1.3rem;
 }
-.previewIcon{
+.previewIcon {
   display: flex;
   justify-content: center;
   padding-right: 6px;
@@ -252,9 +252,8 @@
   cursor: pointer;
   /* 커서를 포인터로 변경해 클릭 가능하다는 힌트 제공 */
   white-space: normal;
-    /* 자동 줄바꿈 방지 */
+  /* 자동 줄바꿈 방지 */
 }
-
 
 .removeButton {
   background: none;
@@ -294,7 +293,7 @@
 
 .imgTextBox {
   margin-left: 32px;
-  max-height: 150px;
+  max-height: 110px;
   overflow-y: scroll;
 }
 

@@ -4,7 +4,7 @@
   left: 0;
   width: var(--leftSidebar-width);
   height: calc(100% - var(--header-height));
-  background-color: #fff;
+  background-color: var(--color-background);
   transition: all var(--animation-duration);
   font-size: 30px;
 }
