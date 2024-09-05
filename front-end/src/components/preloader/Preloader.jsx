@@ -3,8 +3,6 @@ import ReactDOM from "react-dom";
 import styles from "./Preloader.module.css";
 
 const Preloader = ({ isLoading }) => {
-  console.log("Preloader 렌더링됨, isLoading :", isLoading);
-
   useEffect(() => {
     if (isLoading) {
       document.documentElement.style.overflow = "hidden";
