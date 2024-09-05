@@ -28,20 +28,18 @@ const LeftSidebar = () => {
 
   const accessToken1 = userData.accessToken;
 
-
   useEffect(() => {
     if (userData) {
-      axios.get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
-        .then(response => {
+      axios
+        .get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
+        .then((response) => {
           setFamilyNick(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("가족 이름을 가져오는 중 에러 발생:", error);
         });
     }
   }, [userData]);
-
-
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
@@ -53,16 +51,19 @@ const LeftSidebar = () => {
     // 2. 백엔드에 로그아웃 요청, 카카오 로그아웃 API 호출
     console.log("된거아님?");
     try {
-      const response = await axios.post('http://localhost:8089/wefam/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
+      const response = await axios.post(
+        "http://localhost:8089/wefam/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-      });
+      );
       if (response.status === 200) {
         console.log("로그아웃 성공");
         window.localStorage.removeItem("kakaoAccessToken");
         nav("/");
-        
       } else {
         console.error("로그아웃 실패");
       }
@@ -160,7 +161,7 @@ const LeftSidebar = () => {
               style={{ cursor: "pointer" }}
             >
               <CiForkAndKnife className={styles.categoryItemLogo} />
-              <span>요리사</span>
+              <span>요리법</span>
             </span>
           </li>
           <li>
