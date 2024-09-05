@@ -10,7 +10,7 @@ import {
   BsPaperclip,
   BsAlarm,
   BsPersonCircle,
-  BsThreeDotsVertical,
+  BsSearch,
 } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
 import CustomDropdown from "./CustomDropDown";
@@ -20,10 +20,11 @@ import MapSearchInput from "./LocationSearch";
 import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
+import { MemoModal } from "./MemoModal";
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-}
+};
 
 const generateTimeOptions = () => {
   const options = [];
@@ -88,6 +89,36 @@ const EventModal = ({
   const userProfile = familyUsers.find((user) => user.id === event.userId);
   const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
   const [deletedFileIds, setDeletedFileIds] = useState([]);
+  const [isMemoModalOpen, setIsMemoModalOpen] = useState(false); // MemoModal 열림/닫힘 상태 관리
+  const [memoContent, setMemoContent] = useState(event.content); // 메모 내용 상태 관리
+
+  // MemoModal을 열기 위한 함수
+  const openMemoModal = () => {
+    setIsMemoModalOpen(true);
+  };
+
+  // MemoModal을 닫기 위한 함수
+  const closeMemoModal = (newContent) => {
+    setMemoContent(newContent); // 새로운 메모 내용을 저장
+    setIsMemoModalOpen(false);
+  };
+
+  // 메모 지우기 함수
+  const handelDeleteMemo = () => {
+    setMemoContent("");
+  };
+
+  // AiModal 상태 관리
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -146,7 +177,7 @@ const EventModal = ({
       id: event.id, // ID도 함께 전달
       allDay: isAllDay,
       familyIdx: event.familyIdx,
-      eventContent: event.eventContent,
+      content: memoContent,
       backgroundColor: selectedColor,
       userId: event.userId,
       location: location,
@@ -343,6 +374,9 @@ const EventModal = ({
     }
   };
 
+  const placeholderColor = "gray"; // placeholder 색상
+  const textColor = memoContent ? "black" : placeholderColor; // 색상 결정
+
   return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
@@ -352,16 +386,17 @@ const EventModal = ({
             <input
               className={styles.title}
               value={title || ""}
-              placeholder='제목'
+              placeholder="제목"
               onChange={handleTitleChange}
             />
           </div>
           {isDetailOpen && (
-            <div className={styles.ai}>
+            <div className={styles.ai} onClick={openModal}>
               <IoSparklesOutline style={{ color: selectedColor }} />
               <div
                 className={styles.tooltip}
-                style={{ backgroundColor: selectedColor }}>
+                style={{ backgroundColor: selectedColor }}
+              >
                 일정 추천
               </div>
             </div>
@@ -379,7 +414,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -387,7 +422,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -402,7 +438,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -414,7 +451,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
           </div>
@@ -429,7 +466,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type='checkbox'
+                type="checkbox"
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -439,7 +476,7 @@ const EventModal = ({
           </div>
         </div>
 
-        {/* 작성자, 그룹, 코알 필드 */}
+        {/* 작성자 */}
         <div className={styles.field}>
           <BsPersonCircle
             className={styles.icon}
@@ -501,30 +538,21 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }}
               />
-              {/* 클릭 시 알림 설정 UI */}
-              <div className={styles.contentField}>
-                <span style={{ width: "100%" }} onClick={toggleAlarmSetting}>
-                  {alarmText}
-                </span>
-                {showAlarmSetting && (
-                  <div
-                    style={{
-                      position: "absolute", // 절대 위치 설정
-                      zIndex: 1000, // 다른 요소 위로 배치
-                      backgroundColor: "#f9f9f9",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: "5px",
-                      padding: "8px",
-                      marginTop: "25px",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
-                      width: "100%", // 필드 너비에 맞추기
-                    }}>
-                    <AlarmSetting
-                      onAlarmChange={handleAlarmChange}
-                      color={selectedColor}
-                    />
+              <div className={styles.commonBox}>
+                <span className={styles.memoWrapper}>
+                  <div className={styles.memoText} style={{ color: textColor }}>
+                    {memoContent || "알람을 설정하세요"}
                   </div>
-                )}
+                  {memoContent !== "" && (
+                    <button
+                      type="button"
+                      className={styles.removeButton}
+                      onClick={handelDeleteMemo}
+                    >
+                      &times;
+                    </button>
+                  )}
+                </span>
               </div>
             </div>
             {/* 메모 작성 */}
@@ -535,13 +563,33 @@ const EventModal = ({
               />
               <div className={styles.commonBox}>
                 <span className={styles.memoWrapper}>
-                  <span>작성</span>
-                  <button type='button' className={styles.removeButton}>
-                    &times;
-                  </button>
+                  <div
+                    className={styles.memoText}
+                    onClick={openMemoModal}
+                    style={{ color: textColor }}
+                  >
+                    {memoContent || "메모를 입력하세요"}
+                  </div>
+                  {memoContent !== "" && (
+                    <button
+                      type="button"
+                      className={styles.removeButton}
+                      onClick={handelDeleteMemo}
+                    >
+                      &times;
+                    </button>
+                  )}
                 </span>
               </div>
             </div>
+            {/* MemoModal이 열렸을 때 보여줌 */}
+            {isMemoModalOpen && (
+              <MemoModal
+                onClose={closeMemoModal}
+                initialContent={memoContent} // 현재 메모 내용을 전달
+                eventColor={selectedColor}
+              />
+            )}
             {/*지도 설정 */}
             <div className={styles.field}>
               <FiMapPin
@@ -564,13 +612,13 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <label htmlFor='file-upload'>
+              <label htmlFor="file-upload">
                 <span className={styles.commonBox}>사진 추가</span>
               </label>
               <input
-                id='file-upload'
-                type='file'
-                accept='image/*'
+                id="file-upload"
+                type="file"
+                accept="image/*"
                 multiple
                 style={{ display: "none" }}
                 onChange={handleFileChange}
@@ -578,33 +626,38 @@ const EventModal = ({
             </div>
             <div className={styles.imgTextBox}>
               {savedFiles.concat(selectedFiles).map((file, index) => (
-                <div
-                  key={index}
-                  className={styles.previewWrapper}
-                  onMouseEnter={(e) => {
-                    const preview = e.currentTarget.querySelector(
-                      `.${styles.preview}`
-                    );
-                    if (preview) {
-                      preview.style.display = "block";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    const preview = e.currentTarget.querySelector(
-                      `.${styles.preview}`
-                    );
-                    if (preview) {
-                      preview.style.display = "none";
-                    }
-                  }}>
+                <div key={index} className={styles.previewWrapper}>
                   <span className={styles.fileNameWrapper}>
+                    <span
+                      className={styles.previewIcon}
+                      onMouseEnter={(e) => {
+                        const preview = e.currentTarget
+                          .closest(`.${styles.previewWrapper}`)
+                          .querySelector(`.${styles.preview}`);
+                        if (preview) {
+                          preview.style.display = "block";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        const preview = e.currentTarget
+                          .closest(`.${styles.previewWrapper}`)
+                          .querySelector(`.${styles.preview}`);
+                        if (preview) {
+                          preview.style.display = "none";
+                        }
+                      }}
+                    >
+                      <BsSearch />
+                    </span>
                     <span className={styles.fileName}>
                       {file.fileRname || file.name}
                     </span>
+
                     <button
-                      type='button'
+                      type="button"
                       className={styles.removeButton}
-                      onClick={() => handleRemoveFile(index)}>
+                      onClick={() => handleRemoveFile(index)}
+                    >
                       &times;
                     </button>
                   </span>
@@ -614,7 +667,7 @@ const EventModal = ({
                         file.url ||
                         `data:image/${file.fileExtension};base64,${file.fileData}`
                       }
-                      alt='Selected file preview'
+                      alt="Selected file preview"
                     />
                   </div>
                 </div>
@@ -640,6 +693,7 @@ const EventModal = ({
             저장
           </button>
         </div>
+        {isModalOpen && <AiModal onClose={closeModal} />}
       </div>
     </div>,
     document.body // 모달을 body에 추가
