@@ -70,7 +70,7 @@ const AiModal = ({ onClose }) => {
             {isChatbotOpen && (
                 <div className={styles.modal}>
                     <div className={styles.modalContent}>
-                        <Chatbot />
+                        <Chatbot onClose={handleChatbotClose} />
                         <button className={style.closeButton} onClick={handleChatbotClose}>챗봇 닫기</button>
                     </div>
                 </div>
