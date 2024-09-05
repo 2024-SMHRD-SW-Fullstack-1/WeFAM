@@ -37,10 +37,12 @@ public class PollUserService {
 	public void vote(VoteDto voteDto) {
 
 		boolean existingVote = pollUserRepository.existsByPollIdxAndUserId(voteDto.getPollIdx(), voteDto.getUserId());
-
+		PollUserModel reVote = pollUserRepository.findMyVoteResultByPollIdxAndUserId(voteDto.getPollIdx(), voteDto.getUserId());
 		if (existingVote == true) {
 			// 투표 수정 로직
-			System.out.println("이미 투표를 하셨는데요?");
+			reVote.setSelectedOptionNum(voteDto.getSelectedOptionNum());
+			// 더티 체킹 : save를 호출하지 않아도 트랜잭션이 끝날 때 자동으로 업데이트.
+			// 그러나 명시적으로 save를 호출하는 것을 권장하는 경우도 있음.
 
 		} else if (existingVote == false) {
 			// 새 투표 로직
@@ -52,10 +54,17 @@ public class PollUserService {
 		}
 	}
 
+	// 접속 중인 사용자가 선택한 번호
+	@Transactional
+	public int getMyVoteResult(int pollIdx, String userId) {
+		PollUserModel vote = pollUserRepository.findMyVoteResultByPollIdxAndUserId(pollIdx, userId);
+	    return vote.getSelectedOptionNum();
+	}
+
 	// 투표 결과 확인
 	@Transactional
-	public List<VoteResultDto> getVoteResult(int pollId) {
-		List<Object[]> results = pollUserRepository.findVoteResultsByPollIdx(pollId);
+	public List<VoteResultDto> getVoteResult(int pollIdx) {
+		List<Object[]> results = pollUserRepository.findVoteResultsByPollIdx(pollIdx);
 		List<VoteResultDto> voteResults = new ArrayList<>();
 		for (Object[] result : results) {
 			int choiceIndex = (int) result[0];

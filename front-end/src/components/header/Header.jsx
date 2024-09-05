@@ -40,17 +40,15 @@ const Header = () => {
         .catch((error) => {
           console.error("가져오기 에러!!", error);
         });
-        // 두 번째 GET 요청: 가족 가훈을 가져옴
-    axios
-    .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
-    .then((response) => {
-      setFamilyMotto(response.data);
-      console.log(response.data);
-      
-    })
-    .catch((error) => {
-      console.error("가훈 가져오기 에러:", error);
-    });
+      // 두 번째 GET 요청: 가족 가훈을 가져옴
+      axios
+        .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
+        .then((response) => {
+          setFamilyMotto(response.data);
+        })
+        .catch((error) => {
+          console.error("가훈 가져오기 에러:", error);
+        });
     }
   }, [userData]); // userData가 변경될 때마다 실행
 
@@ -64,17 +62,18 @@ const Header = () => {
       return;
     }
     const updatedFamily = {
-      familyIdx: 1, 
+      familyIdx: 1,
       familyMotto: familyMotto,
-      userId: userData.id
+      userId: userData.id,
     };
 
-    axios.put('http://localhost:8089/wefam/update-family-motto', updatedFamily)
-      .then(response => {
-        console.log('가훈 업데이트 성공:', response.data);
+    axios
+      .put("http://localhost:8089/wefam/update-family-motto", updatedFamily)
+      .then((response) => {
+        console.log("가훈 업데이트 성공:", response.data);
       })
-      .catch(error => {
-        console.error('가훈 업데이트 실패:', error);
+      .catch((error) => {
+        console.error("가훈 업데이트 실패:", error);
       });
   };
 
@@ -100,17 +99,12 @@ const Header = () => {
           {/* WeFAM로고 */}
           <img className={styles.logo} src={logo}></img>
         </div>
-        <div className={styles.groupContainer}>
-        {familyMotto}
-          </div> 
+        <div className={styles.groupContainer}>{familyMotto}</div>
         {/* <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
           </button>
         </div> */}
-
-        
-
       </nav>
     </div>
   );
