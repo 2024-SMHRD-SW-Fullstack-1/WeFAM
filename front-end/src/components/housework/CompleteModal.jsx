@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import { useDropzone } from 'react-dropzone';
-import axios from 'axios';
-import { useSelector } from 'react-redux'; // Redux에서 사용자 정보를 가져오기 위한 import
-import styles from './CompleteModal.module.css';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import { useDropzone } from "react-dropzone";
+import axios from "axios";
+import { useSelector } from "react-redux"; // Redux에서 사용자 정보를 가져오기 위한 import
+import styles from "./CompleteModal.module.css";
+import modalStyles from "../modal/Modal.module.css";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
-const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
+const CompleteModal = ({
+  isOpen,
+  onRequestClose,
+  taskName,
+  onComplete,
+  selectedTask,
+}) => {
   const userId = useSelector((state) => state.user.userData.id); // Redux에서 userId를 가져옴
   const familyIdx = useSelector((state) => state.user.userData.familyIdx); // Redux에서 familyIdx를 가져옴
   const [selectedFiles, setSelectedFiles] = useState([]); // 파일을 저장할 상태
@@ -16,6 +23,13 @@ const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
   const onDrop = (acceptedFiles) => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   };
+
+  // 모달이 열릴 때마다 파일 상태를 초기화
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedFiles([]); // 모달이 열릴 때 selectedFiles를 초기화
+    }
+  }, [isOpen]);
 
   // react-dropzone 설정
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -41,11 +55,11 @@ const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
       formData.append("fileSizes", file.size);
     });
 
-    formData.append("familyIdx", familyIdx); // Redux에서 가져온 familyIdx
-    formData.append("userId", userId); // Redux에서 가져온 userId
-    formData.append("entityType", "work");
-    formData.append("entityIdx", 1); // 작업 ID
-    formData.append("completed", true);
+    formData.append("familyIdx", familyIdx); // familyIdx 설정
+    formData.append("userId", userId); // userId 설정
+    formData.append("entityType", selectedTask.taskType); // taskType을 entityType으로 전송
+    formData.append("entityIdx", selectedTask.workIdx); // 선택된 작업의 workIdx를 entityIdx로 사용
+    formData.append("completed", true); // 작업 완료 여부
 
     try {
       const response = await axios.post(
@@ -83,7 +97,7 @@ const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
         <div {...getRootProps({ className: styles.dropzone })}>
           <input {...getInputProps()} />
           {selectedFiles.length === 0 ? (
-            <p onClick={open} style={{ cursor: 'pointer' }}>
+            <p onClick={open} style={{ cursor: "pointer" }}>
               여기를 클릭하거나 이미지를 드롭하여 업로드하세요.
             </p>
           ) : (
@@ -112,11 +126,12 @@ const CompleteModal = ({ isOpen, onRequestClose, taskName, onComplete }) => {
         </ul>
 
         <div className={styles.buttonContainer}>
-          <button className={styles.confirmButton} onClick={handleCompleteConfirm}>
-            예, 완료했습니다
-          </button>
-          <button className={styles.cancelButton} onClick={onRequestClose}>
-            취소
+          <p>확인용 이미지를 등록해주세요!</p>
+          <button
+            className={styles.confirmButton}
+            onClick={handleCompleteConfirm}
+          >
+            저장
           </button>
         </div>
       </div>
