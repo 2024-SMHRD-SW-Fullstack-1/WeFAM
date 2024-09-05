@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./FamilyManagement.module.css";
 import { useSelector } from "react-redux";
-import axios from 'axios';
-import ProfileModal from './ProfileModal';
+import axios from "axios";
+import ProfileModal from "./ProfileModal";
 
 const FamilyManagement = () => {
   const [users, setUsers] = useState([]);
@@ -12,8 +12,9 @@ const FamilyManagement = () => {
 
   useEffect(() => {
     if (userData) {
-      axios.get('http://localhost:8089/wefam/get-family')
-        .then(response => {
+      axios
+        .get("http://localhost:8089/wefam/get-family")
+        .then((response) => {
           setUsers(response.data); // 사용자 정보 업데이트
         })
         .catch((error) => {
@@ -41,14 +42,24 @@ const FamilyManagement = () => {
 
   // 바뀐 값을 DB에 저장하기
   const handleSaveChanges = () => {
-    axios.put('http://localhost:8089/wefam/update-profile', selectedProfile)
-      .then(response => {
-        console.log('프로필 업데이트 성공:', response.data);
-        closeModal(); // 모달 닫기
-        // window.location.reload(); // 페이지 새로고침
+    axios
+      .put("http://localhost:8089/wefam/update-profile", selectedProfile)
+      .then((response) => {
+        console.log("프로필 업데이트 성공:", response.data);
+
+        // 사용자 정보를 다시 가져오기
+        axios
+          .get("http://localhost:8089/wefam/get-family")
+          .then((response) => {
+            setUsers(response.data); // 사용자 정보 업데이트
+            closeModal(); // 모달 닫기
+          })
+          .catch((error) => {
+            console.error("사용자 정보 업데이트 실패:", error);
+          });
       })
-      .catch(error => {
-        console.error('프로필 업데이트 실패:', error);
+      .catch((error) => {
+        console.error("프로필 업데이트 실패:", error);
       });
   };
 
@@ -62,15 +73,14 @@ const FamilyManagement = () => {
             <div className={styles.profileInfo}>
               <img
                 src={user.profileImg}
-                alt="Profile"
+                alt='Profile'
                 className={styles.profileImg}
               />
               <span className={styles.username}>{user.name}</span>
               <span className={styles.nickname}>({user.nick})</span>
               <button
                 className={styles.editButton}
-                onClick={() => openModal(user)}
-              >
+                onClick={() => openModal(user)}>
                 {user.id === userData.id ? "정보 수정" : "가족 정보"}
               </button>
             </div>
