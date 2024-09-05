@@ -9,7 +9,8 @@ import RightSidebar from "./components/right-sidebar/RightSidebar";
 import Settings from "./components/user-setting/Settings";
 import HouseWork2 from "./components/housework/HouseWork2";
 import DailyMission from "./components/housework/DailyMission";
-import {MemoModal} from "./components/calendar/MemoModal";
+import { MemoModal } from "./components/calendar/MemoModal";
+import Reward from "./components/header/Reward";
 
 import "./css/App.css";
 import "./css/Test.css";
@@ -27,7 +28,8 @@ function App() {
           <Route path='settings' element={<Settings />} />
           <Route path='housework2' element={<HouseWork2 />} />
           <Route path='dailyMission' element={<DailyMission />} />
-          <Route path='memo' element={<MemoModal/>} />
+          <Route path='memo' element={<MemoModal />} />
+          <Route path='reward' element={<Reward />} />
         </Route>
       </Routes>
     </div>

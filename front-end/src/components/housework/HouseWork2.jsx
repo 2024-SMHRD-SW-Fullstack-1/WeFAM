@@ -66,16 +66,18 @@ const Housework2 = () => {
   const fetchTasks = async () => {
     try {
       // userId를 query로 넘겨줌
-      const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-works?userId=${userData.id}`
+      );
 
-      const { works, totalPoints } = response.data;  // 총 포인트와 작업 데이터를 분리
+      const { works, totalPoints } = response.data; // 총 포인트와 작업 데이터를 분리
 
       setTasks({
         daily: works.filter((task) => task.taskType === "daily"),
         shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
-      console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
-      console.log("작업 데이터:", works);  // 작업 데이터에 completed 필드가 있는지 확인
+      console.log("총 포인트:", totalPoints); // 콘솔에 총 포인트 출력
+      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -211,7 +213,7 @@ const Housework2 = () => {
       alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
       return; // 함수 종료
     }
-  
+
     // 담당자일 경우에만 작업을 완료하도록 처리
     setSelectedTask(task);
     setIsCompleteModalOpen(true); // 완료 모달 열기
@@ -321,8 +323,15 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main" onClick={handleOutsideClick}>
-      
+    <div className='main' onClick={handleOutsideClick}>
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          marginTop: "2rem",
+          borderRadius: "1rem",
+          padding: "1rem",
+          maxHeight: "720px",
+        }}>
         <div className={styles.board}>
           <div className={styles.column}>
             <div className={styles.column_header}>
@@ -332,8 +341,7 @@ const Housework2 = () => {
                   tasks.daily.length > 0
                     ? styles.circleDaily
                     : styles.circleZero
-                }
-              >
+                }>
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -356,8 +364,7 @@ const Housework2 = () => {
                   tasks.shortTerm.length > 0
                     ? styles.circleShortTerm
                     : styles.circleZero
-                }
-              >
+                }>
                 {tasks.shortTerm.length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
@@ -373,94 +380,91 @@ const Housework2 = () => {
           </div>
 
           <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>마감된 할 일</h3>
-            <span
-              className={
-                tasks.daily.length > 0
-                  ? styles.circleFinished
-                  : styles.circleZero
-              }>
-              {tasks.daily.length}
-            </span>
-            <div className={styles.add_task} onClick={openModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#2ecc71 ", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.shortTerm, "shortTerm")}
-          </ul>
-
-        </div>
-      </div>
-    
-
-      <WorkModal
-        isModalOpen={isModalOpen}
-        closeModal={closeModal}
-        taskType={taskType}
-        taskName={taskName}
-        taskContent={taskContent}
-        taskPoint={taskPoint}
-        workUser={workUser}
-        warningMessages={warningMessages}
-        familyMembers={localFamilyMembers}
-        handleTaskTypeChange={handleTaskTypeChange}
-        handleTaskNameChange={handleTaskNameChange}
-        handleTaskContentChange={handleTaskContentChange}
-        handleTaskPointChange={handleTaskPointChange}
-        handleWorkUserChange={handleWorkUserChange}
-        addOrUpdateTask={addOrUpdateTask}
-        editTaskIndex={editTaskIndex}
-      />
-
-      {/* 미션 성공 모달 */}
-      <CompleteModal
-        isOpen={isCompleteModalOpen}
-        onRequestClose={() => setIsCompleteModalOpen(false)}
-        taskName={selectedTask?.workTitle || ""}
-        selectedTask={selectedTask} // 선택된 작업 전달
-        selectedFiles={selectedFiles} // 파일 리스트 전달
-        setSelectedFiles={setSelectedFiles} // 파일 설정 함수 전달
-        onComplete={() => {
-          setIsCompleteModalOpen(false);
-          fetchTasks(); // 완료 후 목록 새로고침
-        }}
-      />
-
-      {/* 이미지 모달 */}
-      <Modal
-        isOpen={isImageModalOpen}
-        onRequestClose={closeImageModal}
-        contentLabel="작업 이미지"
-        className={styles.imageModalContent}
-        overlayClassName={styles.imageModalOverlay}
-      >
-        <div className={styles.modalBody}>
-          <h2>작업 이미지</h2>
-          <div className={styles.imagePreviewContainer}>
-            {selectedTaskImages && selectedTaskImages.length > 0 ? (
-              selectedTaskImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`작업 이미지 ${index}`}
-                  className={styles.modalImage}
+            <div className={styles.column_header}>
+              <h3>마감된 할 일</h3>
+              <span
+                className={
+                  tasks.daily.length > 0
+                    ? styles.circleFinished
+                    : styles.circleZero
+                }>
+                {tasks.daily.length}
+              </span>
+              <div className={styles.add_task} onClick={openModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#2ecc71 ", fontSize: "24px" }}
                 />
-              ))
-            ) : (
-              <p>이미지가 없습니다.</p>
-            )}
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.shortTerm, "shortTerm")}
+            </ul>
           </div>
-          {/* <button onClick={closeImageModal} className={styles.closeButton}>
+        </div>
+
+        <WorkModal
+          isModalOpen={isModalOpen}
+          closeModal={closeModal}
+          taskType={taskType}
+          taskName={taskName}
+          taskContent={taskContent}
+          taskPoint={taskPoint}
+          workUser={workUser}
+          warningMessages={warningMessages}
+          familyMembers={localFamilyMembers}
+          handleTaskTypeChange={handleTaskTypeChange}
+          handleTaskNameChange={handleTaskNameChange}
+          handleTaskContentChange={handleTaskContentChange}
+          handleTaskPointChange={handleTaskPointChange}
+          handleWorkUserChange={handleWorkUserChange}
+          addOrUpdateTask={addOrUpdateTask}
+          editTaskIndex={editTaskIndex}
+        />
+
+        {/* 미션 성공 모달 */}
+        <CompleteModal
+          isOpen={isCompleteModalOpen}
+          onRequestClose={() => setIsCompleteModalOpen(false)}
+          taskName={selectedTask?.workTitle || ""}
+          selectedTask={selectedTask} // 선택된 작업 전달
+          selectedFiles={selectedFiles} // 파일 리스트 전달
+          setSelectedFiles={setSelectedFiles} // 파일 설정 함수 전달
+          onComplete={() => {
+            setIsCompleteModalOpen(false);
+            fetchTasks(); // 완료 후 목록 새로고침
+          }}
+        />
+
+        {/* 이미지 모달 */}
+        <Modal
+          isOpen={isImageModalOpen}
+          onRequestClose={closeImageModal}
+          contentLabel='작업 이미지'
+          className={styles.imageModalContent}
+          overlayClassName={styles.imageModalOverlay}>
+          <div className={styles.modalBody}>
+            <h2>작업 이미지</h2>
+            <div className={styles.imagePreviewContainer}>
+              {selectedTaskImages && selectedTaskImages.length > 0 ? (
+                selectedTaskImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`작업 이미지 ${index}`}
+                    className={styles.modalImage}
+                  />
+                ))
+              ) : (
+                <p>이미지가 없습니다.</p>
+              )}
+            </div>
+            {/* <button onClick={closeImageModal} className={styles.closeButton}>
             닫기
           </button> */}
-        </div>
-      </Modal>
-
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };

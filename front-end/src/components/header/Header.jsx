@@ -10,6 +10,10 @@ import { HiMiniBars3 } from "react-icons/hi2";
 import logo from "../../assets/images/logo-text-segoe.png";
 import add_group from "../../assets/images/add-group.png";
 import AddCircle from "./AddCircle";
+import { GoBell } from "react-icons/go";
+import { HiOutlineTrophy } from "react-icons/hi2";
+import { BsPersonCircle } from "react-icons/bs";
+import Point from "./Reward";
 
 const Header = () => {
   const nav = useNavigate();
@@ -20,6 +24,7 @@ const Header = () => {
   const [userImages, setUserImages] = useState([]);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
+  const [isPointOpen, setIsPointOpen] = useState(false);
 
   const handleMenuClick = () => {
     dispatch(toggleLeftSidebar());
@@ -27,6 +32,7 @@ const Header = () => {
 
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
+  console.log(userData);
 
   useEffect(() => {
     if (userData) {
@@ -77,34 +83,68 @@ const Header = () => {
       });
   };
 
+  const handleBellClick = () => {
+    alert("알람~");
+  };
+
+  const handleTrophyClick = () => {
+    alert("트로피 클릭");
+    nav("/main/reward");
+  };
+
+  const handleProfileClick = () => {
+    alert("프로필 클릭");
+  };
+
   return (
     <div>
-      <nav>
-        <div className={styles.menuBtnContainer}>
-          <button className={styles.menuBtn}>
-            {/* 왼쪽 미니바 */}
-            <HiMiniBars3
-              className={styles.menuIcon}
-              onClick={handleMenuClick}
-            />
-          </button>
-        </div>
-        <div
-          className={styles.logoContainer}
-          onClick={() => {
-            nav("/");
-          }}
-          style={{ cursor: "pointer" }}>
-          {/* WeFAM로고 */}
-          <img className={styles.logo} src={logo}></img>
-        </div>
-        <div className={styles.groupContainer}>{familyMotto}</div>
-        {/* <div className={styles.groupContainer}>
+      <div style={{ width: "100%" }}>
+        <nav>
+          <div className={styles.menuBtnContainer}>
+            <button className={styles.menuBtn}>
+              {/* 왼쪽 미니바 */}
+              <HiMiniBars3
+                className={styles.menuIcon}
+                onClick={handleMenuClick}
+              />
+            </button>
+          </div>
+          <div
+            className={styles.logoContainer}
+            onClick={() => {
+              nav("/main");
+            }}
+            style={{ cursor: "pointer" }}>
+            {/* WeFAM로고 */}
+            <img className={styles.logo} src={logo}></img>
+          </div>
+          <div className={styles.groupContainer}>{familyMotto}</div>
+          {/* <div className={styles.groupContainer}>
           <button onClick={openGroup} className={styles.groupBtn}>
             {groupName} ▼
           </button>
         </div> */}
-      </nav>
+          <div className={styles.infoContainer}>
+            <div className={styles.infoField}>
+              <div className={styles.icon} onClick={handleBellClick}>
+                <GoBell />
+              </div>
+              <div className={styles.icon} onClick={handleTrophyClick}>
+                <HiOutlineTrophy />
+              </div>
+              <div
+                className={styles.profileImageWrapper}
+                onClick={handleProfileClick}>
+                <img
+                  src={userData.profileImg}
+                  className={styles.profileImage}
+                  alt='사용자 프로필'
+                />
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };
