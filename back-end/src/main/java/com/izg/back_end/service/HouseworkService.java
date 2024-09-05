@@ -13,8 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.izg.back_end.dto.HouseworkDTO;
 import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkModel;
+import com.izg.back_end.model.PointLogModel;
 import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.repository.HouseworkRepository;
+import com.izg.back_end.repository.PointLogRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ public class HouseworkService {
 	private final HouseworkRepository houseworkRepository;
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
+	private final PointLogRepository pointLogRepository;
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
@@ -71,8 +74,12 @@ public class HouseworkService {
 
 		if (workOptional.isPresent()) {
 			try {
-				// 먼저 참여자를 삭제
+				// 참여자를 먼저 삭제
 				participantService.deleteParticipantsByEntityIdx(workIdx);
+
+				// 집안일과 연관된 파일 삭제 (entityType은 "work"로 고정)
+				fileRepository.deleteByEntityTypeAndEntityIdx("work", workIdx);
+
 				// 그 다음 작업을 삭제
 				houseworkRepository.deleteById(workIdx);
 			} catch (Exception e) {
@@ -83,10 +90,10 @@ public class HouseworkService {
 		}
 	}
 
-	// 미션 완료 처리 및 파일 업로드
+	// 미션 완료 처리 및 파일 업로드, 포인트 저장
 	@Transactional
 	public void completeHouseworkWithFiles(int workIdx, List<MultipartFile> images, int familyIdx, String userId,
-			boolean completed) throws IOException {
+			boolean completed, String entityType) throws IOException {
 		// 1. 작업 완료 처리
 		HouseworkModel housework = houseworkRepository.findByWorkIdx(workIdx);
 		if (housework != null) {
@@ -94,7 +101,20 @@ public class HouseworkService {
 			houseworkRepository.save(housework);
 		}
 
-		// 2. 파일 저장 처리
+		// 2. 포인트 저장 처리
+		if (completed) {
+			int points = housework.getPoints(); // 해당 작업의 포인트 가져오기
+			PointLogModel pointLog = new PointLogModel();
+			pointLog.setUserId(userId);
+			pointLog.setEntityType(entityType); // daily 또는 shortTerm을 여기서 저장
+			pointLog.setEntityIdx(workIdx);
+			pointLog.setPoints(points);
+			pointLog.setPointedAt(LocalDateTime.now()); // 포인트 적립 시간 설정
+
+			pointLogRepository.save(pointLog); // 포인트 로그 저장
+		}
+
+		// 3. 파일 저장 처리
 		for (MultipartFile image : images) {
 			String fileName = image.getOriginalFilename();
 			String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
