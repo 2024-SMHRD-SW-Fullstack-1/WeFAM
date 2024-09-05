@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
@@ -39,44 +37,45 @@ public class UserController {
 			// 액세스 토큰을 이용해 사용자 정보 가져오기
 			UserDto userDTO = userService.getUserInforFromKakao(accessToken);
 
-            // 유저 정보를 데이터베이스에 저장
-            userService.saveUser(userDTO, accessToken);
+			// 유저 정보를 데이터베이스에 저장
+			userService.saveUser(userDTO, accessToken);
 
-            return ResponseEntity.ok(userDTO);
-        } catch (Exception e) {
-            System.out.println("카카오 로그인 처리 중 오류 발생");
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
-        }
-    }
-    
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response,  String accessToken) {
-        try {
-            // 1. 카카오 로그아웃 API 호출
-            userService.kakaoLogout(accessToken);
-            
-            // 2. 세션 무효화
-            session.invalidate();
+			return ResponseEntity.ok(userDTO);
+		} catch (Exception e) {
+			System.out.println("카카오 로그인 처리 중 오류 발생");
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+		}
+	}
 
-            // 3. 쿠키 삭제
-            Cookie cookie = new Cookie("JSESSIONID", null);
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(0); 
-            response.addCookie(cookie);
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response, String accessToken) {
+		try {
+			// 1. 카카오 로그아웃 API 호출
+			userService.kakaoLogout(accessToken);
 
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
-    
-    // 가족만 보여주기
-    @GetMapping("/get-family")
-    public List<UserModel> getFamily() {
-        return userService.getUsersInJoining();
-    }
+			// 2. 세션 무효화
+			session.invalidate();
+
+			// 3. 쿠키 삭제
+			Cookie cookie = new Cookie("JSESSIONID", null);
+			cookie.setPath("/");
+			cookie.setHttpOnly(true);
+			cookie.setMaxAge(0);
+			response.addCookie(cookie);
+
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			return ResponseEntity.status(500).build();
+		}
+	}
+
+	// 가족만 보여주기
+	@GetMapping("/get-family")
+	public List<UserModel> getFamily() {
+		return userService.getUsersInJoining();
+	}
+
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
 //    	return userService.getFamilyStaus();
