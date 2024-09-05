@@ -5,6 +5,10 @@ import { useSelector } from "react-redux";
 import WorkModal from "./WorkModal";
 import CompleteModal from "./CompleteModal";
 import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
+import { FcRating } from "react-icons/fc";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 const Housework2 = () => {
   const userData = useSelector((state) => state.user.userData);
@@ -26,6 +30,8 @@ const Housework2 = () => {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false); // 완료 모달 상태 추가
   const [selectedTask, setSelectedTask] = useState(null); // 완료하려는 작업 선택
   const [selectedFiles, setSelectedFiles] = useState([]); // 이미지 파일을 저장할 상태
+  const [selectedTaskImages, setSelectedTaskImages] = useState();
+  const [isImageModalOpen, setIsImageModalOpen] = useState();
 
   // 매일 할 일 모달을 여는 함수
   const openDailyModal = () => {
@@ -61,15 +67,15 @@ const Housework2 = () => {
     try {
       // userId를 query로 넘겨줌
       const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
-  
+
       const { works, totalPoints } = response.data;  // 총 포인트와 작업 데이터를 분리
-  
+
       setTasks({
         daily: works.filter((task) => task.taskType === "daily"),
         shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
-  
       console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
+      console.log("작업 데이터:", works);  // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -199,9 +205,28 @@ const Housework2 = () => {
 
   // 미션 완료 모달 열기
   const handleMissionComplete = (task) => {
-    console.log("선택된 작업:", task); // task 객체가 제대로 전달되는지 확인
-    setSelectedTask(task); // 완료하려는 작업 설정
+    // 매일 할 일일 경우에만 담당자 여부를 확인
+    if (task.taskType === "daily" && !task.participantNames.includes(userData.name)) {
+      // 현재 사용자가 담당자가 아닐 경우
+      alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
+      return; // 함수 종료
+    }
+
+    // 오늘의 미션 (shortTerm)은 담당자 여부 확인 없이 미션 성공 가능
+    setSelectedTask(task);
     setIsCompleteModalOpen(true); // 완료 모달 열기
+  };
+
+  // 이미지 모달을 열고 이미지를 설정하는 함수
+  const openImageModal = (images) => {
+    setSelectedTaskImages(images);
+    setIsImageModalOpen(true);
+  };
+
+  // 이미지 모달을 닫는 함수
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    setSelectedTaskImages([]);
   };
 
   const toggleDropdown = (index) => {
@@ -239,17 +264,6 @@ const Housework2 = () => {
     return tasks.map((task, index) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
-          {/* 이미지가 있을 경우 출력 */}
-          {task.images && task.images.length > 0 && (
-            <div className={styles.imageContainer}>
-              <img
-                src={task.images[0]} // 첫 번째 이미지를 렌더링
-                alt={`작업 이미지 ${index}`}
-                className={styles.taskImage}
-              />
-            </div>
-          )}
-
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span className={styles.taskContent}>{task.workContent}</span>
@@ -270,13 +284,21 @@ const Housework2 = () => {
         <div className={styles.dropdownContainer}>
           <div className={styles.taskRight}>
             <div className={styles.taskContainer}>
-              <BsThreeDots
-                className={styles.taskIcon}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleDropdown(`${taskType}-${index}`);
-                }}
-              />
+              {/* 작업 완료 여부에 따라 아이콘을 변경 */}
+              {task.completed ? (
+                <FcRating
+                  className={styles.taskIcon}
+                  onClick={() => openImageModal(task.images)} // 이미지를 모달로 열기
+                />
+              ) : (
+                <BsThreeDots
+                  className={styles.taskIcon}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown(`${taskType}-${index}`);
+                  }}
+                />
+              )}
               <span className={styles.taskPoints}>{task.points} 포인트</span>
             </div>
             {dropdownOpen === `${taskType}-${index}` && (
@@ -408,6 +430,37 @@ const Housework2 = () => {
           fetchTasks(); // 완료 후 목록 새로고침
         }}
       />
+
+      {/* 이미지 모달 */}
+      <Modal
+        isOpen={isImageModalOpen}
+        onRequestClose={closeImageModal}
+        contentLabel="작업 이미지"
+        className={styles.imageModalContent}
+        overlayClassName={styles.imageModalOverlay}
+      >
+        <div className={styles.modalBody}>
+          <h2>작업 이미지</h2>
+          <div className={styles.imagePreviewContainer}>
+            {selectedTaskImages && selectedTaskImages.length > 0 ? (
+              selectedTaskImages.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`작업 이미지 ${index}`}
+                  className={styles.modalImage}
+                />
+              ))
+            ) : (
+              <p>이미지가 없습니다.</p>
+            )}
+          </div>
+          {/* <button onClick={closeImageModal} className={styles.closeButton}>
+            닫기
+          </button> */}
+        </div>
+      </Modal>
+
     </div>
   );
 };

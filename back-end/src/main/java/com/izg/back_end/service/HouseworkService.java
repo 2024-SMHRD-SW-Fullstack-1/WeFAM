@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.izg.back_end.dto.HouseworkDTO;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.model.HouseworkLogModel;
 import com.izg.back_end.model.HouseworkModel;
 import com.izg.back_end.model.PointLogModel;
 import com.izg.back_end.repository.FileRepository;
+import com.izg.back_end.repository.HouseworkLogRepository;
 import com.izg.back_end.repository.HouseworkRepository;
 import com.izg.back_end.repository.PointLogRepository;
 
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseworkService {
 
 	private final HouseworkRepository houseworkRepository;
+    private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
 	private final PointLogRepository pointLogRepository;
@@ -100,8 +103,27 @@ public class HouseworkService {
 			housework.setCompleted(completed);
 			houseworkRepository.save(housework);
 		}
+		
+		// 2. 완료된 작업을 housework_log 테이블에 저장
+        if (completed) {
+            // housework_log로 복사
+            HouseworkLogModel log = new HouseworkLogModel();
+            log.setWorkIdx(housework.getWorkIdx());
+            log.setFamilyIdx(housework.getFamilyIdx());
+            log.setUserId(housework.getUserId());
+            log.setTaskType(housework.getTaskType());
+            log.setWorkTitle(housework.getWorkTitle());
+            log.setWorkContent(housework.getWorkContent());
+            log.setDeadline(housework.getDeadline());
+            log.setPoints(housework.getPoints());
+            log.setCompleted(true);  // 완료 상태로 저장
+            log.setPostedAt(housework.getPostedAt());
+            log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
 
-		// 2. 포인트 저장 처리
+            houseworkLogRepository.save(log);
+        }
+
+		// 3. 포인트 저장 처리
 		if (completed) {
 			int points = housework.getPoints(); // 해당 작업의 포인트 가져오기
 			PointLogModel pointLog = new PointLogModel();
@@ -114,7 +136,7 @@ public class HouseworkService {
 			pointLogRepository.save(pointLog); // 포인트 로그 저장
 		}
 
-		// 3. 파일 저장 처리
+		// 4. 파일 저장 처리
 		for (MultipartFile image : images) {
 			String fileName = image.getOriginalFilename();
 			String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
