@@ -24,9 +24,6 @@ const Feed = () => {
         `http://localhost:8089/wefam/get-all-feeds/${userData.familyIdx}`
       );
       setFeeds(response.data);
-      console.log(
-        `${userData.familyIdx}번 가족 getAllFeeds 함수 실행 : ${response.data}`
-      );
     } catch (error) {
       // 에러 발생 시 콘솔에 에러 메시지 출력
       console.error(
@@ -134,7 +131,7 @@ const Feed = () => {
   }, [getAllFeeds, userData.familyIdx]);
 
   return (
-    <div className='main'>
+    <div className="main">
       <div className={styles.feed}>
         {isLoading ? (
           <Preloader isLoading={isLoading} />
