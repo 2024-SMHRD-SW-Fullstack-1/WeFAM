@@ -25,7 +25,6 @@ import com.izg.back_end.dto.ImageUploadDto;
 import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkModel;
 import com.izg.back_end.repository.FileRepository;
-import com.izg.back_end.repository.PointLogRepository;
 import com.izg.back_end.service.HouseworkService;
 import com.izg.back_end.service.ParticipantService;
 import com.izg.back_end.service.PointLogService;
