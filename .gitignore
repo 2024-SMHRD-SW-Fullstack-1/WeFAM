@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,git,java,maven,gradle,netbeans,visualstudio,eclipse,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,git,java,maven,gradle,netbeans,visualstudio,eclipse,intellij
 
+### ChatGPT API KEY ###
+application.properties
+
 ### Eclipse ###
 .metadata
 bin/

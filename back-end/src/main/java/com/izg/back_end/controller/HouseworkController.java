@@ -23,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.izg.back_end.dto.HouseworkDTO;
 import com.izg.back_end.dto.ImageUploadDto;
 import com.izg.back_end.model.FileModel;
+import com.izg.back_end.model.HouseworkLogModel;
 import com.izg.back_end.model.HouseworkModel;
 import com.izg.back_end.repository.FileRepository;
+import com.izg.back_end.repository.HouseworkLogRepository;
 import com.izg.back_end.service.HouseworkService;
 import com.izg.back_end.service.ParticipantService;
 import com.izg.back_end.service.PointLogService;
@@ -36,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseworkController {
 
 	private final HouseworkService houseworkService;
+	private final HouseworkLogRepository houseworkLogRepository;
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
 	private final PointLogService pointLogService;
@@ -89,6 +92,39 @@ public class HouseworkController {
 		response.put("totalPoints", totalPoints); // 총 포인트 추가
 
 		return ResponseEntity.ok(response);
+	}
+
+	// 완료된 작업 (housework_log) 목록 가져오기
+	@GetMapping("/completed-works")
+	public ResponseEntity<List<Map<String, Object>>> getCompletedWorks() {
+		List<HouseworkLogModel> completedWorks = houseworkLogRepository.findAll();
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		for (HouseworkLogModel log : completedWorks) {
+			// 작업과 연관된 파일(이미지)을 entity_idx를 기준으로 불러옴
+			List<FileModel> files = fileRepository.findByEntityTypeAndEntityIdx("work", log.getEntityIdx());
+
+			// 이미지를 Base64로 변환
+			List<String> images = new ArrayList<>();
+			for (FileModel file : files) {
+				try {
+					String base64File = Base64.getEncoder().encodeToString(file.getFileData());
+					images.add("data:image/" + file.getFileExtension() + ";base64," + base64File);
+				} catch (Exception e) {
+					System.err.println("Error encoding image for workIdx: " + log.getWorkIdx());
+					e.printStackTrace();
+				}
+			}
+
+			// 작업 로그와 이미지를 함께 반환
+			Map<String, Object> logWithImages = new HashMap<>();
+			logWithImages.put("workLog", log);
+			logWithImages.put("images", images); // 이미지 추가
+
+			result.add(logWithImages);
+		}
+
+		return ResponseEntity.ok(result);
 	}
 
 	// 집안일 삭제

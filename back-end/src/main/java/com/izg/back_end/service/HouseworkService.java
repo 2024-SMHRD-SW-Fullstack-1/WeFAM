@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseworkService {
 
 	private final HouseworkRepository houseworkRepository;
-    private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
+	private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
 	private final PointLogRepository pointLogRepository;
@@ -103,25 +103,26 @@ public class HouseworkService {
 			housework.setCompleted(completed);
 			houseworkRepository.save(housework);
 		}
-		
-		// 2. 완료된 작업을 housework_log 테이블에 저장
-        if (completed) {
-            // housework_log로 복사
-            HouseworkLogModel log = new HouseworkLogModel();
-            log.setWorkIdx(housework.getWorkIdx());
-            log.setFamilyIdx(housework.getFamilyIdx());
-            log.setUserId(housework.getUserId());
-            log.setTaskType(housework.getTaskType());
-            log.setWorkTitle(housework.getWorkTitle());
-            log.setWorkContent(housework.getWorkContent());
-            log.setDeadline(housework.getDeadline());
-            log.setPoints(housework.getPoints());
-            log.setCompleted(true);  // 완료 상태로 저장
-            log.setPostedAt(housework.getPostedAt());
-            log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
 
-            houseworkLogRepository.save(log);
-        }
+		// 2. 완료된 작업을 housework_log 테이블에 저장
+		if (completed) {
+			// housework_log로 복사, entity_idx 저장
+			HouseworkLogModel log = new HouseworkLogModel();
+			log.setWorkIdx(housework.getWorkIdx());
+			log.setFamilyIdx(housework.getFamilyIdx());
+			log.setUserId(housework.getUserId());
+			log.setTaskType(housework.getTaskType());
+			log.setWorkTitle(housework.getWorkTitle());
+			log.setWorkContent(housework.getWorkContent());
+			log.setDeadline(housework.getDeadline());
+			log.setPoints(housework.getPoints());
+			log.setCompleted(true); // 완료 상태로 저장
+			log.setPostedAt(housework.getPostedAt());
+			log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
+			log.setEntityIdx(housework.getWorkIdx()); // entity_idx 추가
+
+			houseworkLogRepository.save(log);
+		}
 
 		// 3. 포인트 저장 처리
 		if (completed) {
@@ -146,7 +147,7 @@ public class HouseworkService {
 			fileModel.setFamilyIdx(familyIdx);
 			fileModel.setUserId(userId);
 			fileModel.setEntityType("work");
-			fileModel.setEntityIdx(workIdx);
+			fileModel.setEntityIdx(workIdx); // entity_idx로 workIdx 저장
 			fileModel.setFileRname(fileName);
 			fileModel.setFileUname(fileName + "_" + Instant.now().toEpochMilli());
 			fileModel.setFileSize(fileSize);

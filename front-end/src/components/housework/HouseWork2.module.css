@@ -257,3 +257,27 @@
 .closeButton:hover {
   background-color: #c0392b;
 }
+
+.userProfile {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.userImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.userName {
+  font-size: 14px;
+  color: #333;
+}
+
+.userContainer {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
