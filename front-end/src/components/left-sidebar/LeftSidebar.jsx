@@ -60,7 +60,7 @@ const LeftSidebar = () => {
           setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 사용
         } else {
           // entityType이 family인 이미지 중 가장 최신 이미지 사용
-        const familyImages = response.data.filter(image => image.entityType === "family");
+          const familyImages = response.data.filter(image => image.entityType === "family");
           const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
           setProfileImage(
             `data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`

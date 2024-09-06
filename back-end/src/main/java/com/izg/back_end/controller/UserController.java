@@ -34,6 +34,7 @@ public class UserController {
 	@Autowired
 	private AlbumService albumService;
 
+
 	@PostMapping("/login")
 	public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
 		System.out.println("카카오 로그인 요청 수신. 인가 코드: " + code);
@@ -99,16 +100,16 @@ public class UserController {
 			return ResponseEntity.status(500).body(null);
 		}
 	}
-	
+
 	// 가족 프로필 사진 가져오기
-    @GetMapping("/get-family-profile-photo/{familyIdx}")
-    public ResponseEntity<FileModel> getFamilyProfilePhoto(@PathVariable("familyIdx") int familyIdx) {
-        FileModel profileImage = userService.getProfileImageByFamilyIdx(familyIdx, "family");
-        if (profileImage != null) {
-            return ResponseEntity.ok(profileImage);
-        } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-    }
+	@GetMapping("/get-family-profile-photo/{familyIdx}")
+	public ResponseEntity<FileModel> getFamilyProfilePhoto(@PathVariable("familyIdx") int familyIdx) {
+		FileModel profileImage = userService.getProfileImageByFamilyIdx(familyIdx, "family");
+		if (profileImage != null) {
+			return ResponseEntity.ok(profileImage);
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
+	}
 
 }
