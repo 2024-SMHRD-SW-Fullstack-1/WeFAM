@@ -1,6 +1,12 @@
 .board {
   display: flex;
   justify-content: center;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin: 12px;
+
 }
 
 .column {
@@ -62,7 +68,7 @@
 
 .taskList {
   margin-top: 10px;
-  max-height: 620px;
+  max-height: 650px;
   overflow-y: auto;
   /* 리스트가 5개 이상일 경우 스크롤 활성화 */
 }
@@ -70,7 +76,7 @@
 .taskItem {
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   align-items: center;
   background-color: #fff;

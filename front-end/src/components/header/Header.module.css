@@ -65,8 +65,6 @@ nav {
 .groupListIcon {
   font-size: var(--font-4xl);
   color: black;
-  display: flex;
-  justify-content: center;
 }
 
 .modalOverlay {
