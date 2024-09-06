@@ -62,7 +62,7 @@
 
 .taskList {
   margin-top: 10px;
-  max-height: 650px;
+  max-height: 620px;
   overflow-y: auto;
   /* 리스트가 5개 이상일 경우 스크롤 활성화 */
 }
@@ -70,7 +70,7 @@
 .taskItem {
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 12px;
+  padding: 10px;
   display: flex;
   align-items: center;
   background-color: #fff;

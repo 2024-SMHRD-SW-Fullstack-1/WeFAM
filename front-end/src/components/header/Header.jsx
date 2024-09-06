@@ -1,5 +1,5 @@
 // 타임트리 젤 위의 헤더 부분입니다.
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import axios from "axios";
@@ -13,18 +13,18 @@ import AddCircle from "./AddCircle";
 import { GoBell } from "react-icons/go";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { BsPersonCircle } from "react-icons/bs";
-import Point from "./Reward";
+import AlarmModal from "./AlarmModal";
 
 const Header = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [familyMotto, setFamilyMotto] = useState("");
-  const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [userImages, setUserImages] = useState([]);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
-  const [isPointOpen, setIsPointOpen] = useState(false);
+  const [isAlarm, setIsAlarm] = useState(false);
+  const alarmRef = useRef(null); // 알람 모달 감지용 ref
 
   const handleMenuClick = () => {
     dispatch(toggleLeftSidebar());
@@ -84,7 +84,7 @@ const Header = () => {
   };
 
   const handleBellClick = () => {
-    alert("알람~");
+    setIsAlarm(!isAlarm);
   };
 
   const handleTrophyClick = () => {
@@ -95,7 +95,16 @@ const Header = () => {
   const handleProfileClick = () => {
     alert("프로필 클릭");
   };
-  
+
+  // 알람 모달 밖을 클릭하면 닫히게 하는 로직
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (alarmRef.current && !alarmRef.current.contains(event.target)) {
+        setIsAlarm(false);
+      }
+    };
+  }, [isAlarm]);
+
   return (
     <div>
       <div style={{ width: "100%" }}>
@@ -129,6 +138,11 @@ const Header = () => {
               <div className={styles.icon} onClick={handleBellClick}>
                 <GoBell />
               </div>
+              {isAlarm && (
+                <div ref={alarmRef}>
+                  <AlarmModal />
+                </div>
+              )}
               <div className={styles.icon} onClick={handleTrophyClick}>
                 <HiOutlineTrophy />
               </div>

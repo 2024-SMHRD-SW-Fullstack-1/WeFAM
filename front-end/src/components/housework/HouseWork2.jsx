@@ -346,8 +346,7 @@ const Housework2 = () => {
                     미션 성공
                   </button>
                   <button
-                    onClick={() => handleTaskEdit(index, tasks, taskType)}
-                  >
+                    onClick={() => handleTaskEdit(index, tasks, taskType)}>
                     수정
                   </button>
                   <button onClick={() => deleteSelectedTasks(index, taskType)}>
@@ -398,7 +397,7 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main" onClick={handleOutsideClick}>
+    <div className='main' onClick={handleOutsideClick}>
       <div className={styles.board}>
         {/* 기존 매일 할 일과 오늘의 미션 */}
         <div className={styles.column}>
@@ -407,8 +406,7 @@ const Housework2 = () => {
             <span
               className={
                 tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-              }
-            >
+              }>
               {tasks.daily.length}
             </span>
             <div className={styles.add_task} onClick={openDailyModal}>
@@ -431,8 +429,7 @@ const Housework2 = () => {
                 tasks.shortTerm.length > 0
                   ? styles.circleShortTerm
                   : styles.circleZero
-              }
-            >
+              }>
               {tasks.shortTerm.length}
             </span>
             <div className={styles.add_task} onClick={openShortTermModal}>
@@ -447,7 +444,6 @@ const Housework2 = () => {
           </ul>
         </div>
 
-
         {/* 완료된 할 일 리스트 */}
         <div className={styles.column}>
           <div className={styles.column_header}>
@@ -457,8 +453,7 @@ const Housework2 = () => {
                 completedTasks.length > 0
                   ? styles.circleFinished
                   : styles.circleZero
-              }
-            >
+              }>
               {completedTasks.length}
             </span>
           </div>
@@ -506,10 +501,9 @@ const Housework2 = () => {
       <Modal
         isOpen={isImageModalOpen}
         onRequestClose={closeImageModal}
-        contentLabel="작업 이미지"
+        contentLabel='작업 이미지'
         className={styles.imageModalContent}
-        overlayClassName={styles.imageModalOverlay}
-      >
+        overlayClassName={styles.imageModalOverlay}>
         <div className={styles.modalBody}>
           <h2>작업 이미지</h2>
           <div className={styles.imagePreviewContainer}>
