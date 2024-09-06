@@ -399,7 +399,7 @@ const EventModal = ({
               <div
                 className={styles.tooltip}
                 style={{ backgroundColor: selectedColor }}>
-                일정 추천
+                AI 일정 추천
               </div>
             </div>
           )}
@@ -508,7 +508,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                    ?.label || "색상을 선택하세요"
+                  ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />
