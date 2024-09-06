@@ -3,7 +3,10 @@ package com.izg.back_end.service;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -15,10 +18,12 @@ import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkLogModel;
 import com.izg.back_end.model.HouseworkModel;
 import com.izg.back_end.model.PointLogModel;
+import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.repository.HouseworkLogRepository;
 import com.izg.back_end.repository.HouseworkRepository;
 import com.izg.back_end.repository.PointLogRepository;
+import com.izg.back_end.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,10 +32,11 @@ import lombok.RequiredArgsConstructor;
 public class HouseworkService {
 
 	private final HouseworkRepository houseworkRepository;
-    private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
+	private final HouseworkLogRepository houseworkLogRepository; // 추가된 레포지토리
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
 	private final PointLogRepository pointLogRepository;
+	private final UserRepository userRepository;
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
@@ -103,25 +109,26 @@ public class HouseworkService {
 			housework.setCompleted(completed);
 			houseworkRepository.save(housework);
 		}
-		
-		// 2. 완료된 작업을 housework_log 테이블에 저장
-        if (completed) {
-            // housework_log로 복사
-            HouseworkLogModel log = new HouseworkLogModel();
-            log.setWorkIdx(housework.getWorkIdx());
-            log.setFamilyIdx(housework.getFamilyIdx());
-            log.setUserId(housework.getUserId());
-            log.setTaskType(housework.getTaskType());
-            log.setWorkTitle(housework.getWorkTitle());
-            log.setWorkContent(housework.getWorkContent());
-            log.setDeadline(housework.getDeadline());
-            log.setPoints(housework.getPoints());
-            log.setCompleted(true);  // 완료 상태로 저장
-            log.setPostedAt(housework.getPostedAt());
-            log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
 
-            houseworkLogRepository.save(log);
-        }
+		// 2. 완료된 작업을 housework_log 테이블에 저장
+		if (completed) {
+			// housework_log로 복사, entity_idx 저장
+			HouseworkLogModel log = new HouseworkLogModel();
+			log.setWorkIdx(housework.getWorkIdx());
+			log.setFamilyIdx(housework.getFamilyIdx());
+			log.setUserId(housework.getUserId());
+			log.setTaskType(housework.getTaskType());
+			log.setWorkTitle(housework.getWorkTitle());
+			log.setWorkContent(housework.getWorkContent());
+			log.setDeadline(housework.getDeadline());
+			log.setPoints(housework.getPoints());
+			log.setCompleted(true); // 완료 상태로 저장
+			log.setPostedAt(housework.getPostedAt());
+			log.setCompletedAt(LocalDateTime.now()); // 완료된 시간 기록
+			log.setEntityIdx(housework.getWorkIdx()); // entity_idx 추가
+
+			houseworkLogRepository.save(log);
+		}
 
 		// 3. 포인트 저장 처리
 		if (completed) {
@@ -146,7 +153,7 @@ public class HouseworkService {
 			fileModel.setFamilyIdx(familyIdx);
 			fileModel.setUserId(userId);
 			fileModel.setEntityType("work");
-			fileModel.setEntityIdx(workIdx);
+			fileModel.setEntityIdx(workIdx); // entity_idx로 workIdx 저장
 			fileModel.setFileRname(fileName);
 			fileModel.setFileUname(fileName + "_" + Instant.now().toEpochMilli());
 			fileModel.setFileSize(fileSize);
@@ -156,6 +163,25 @@ public class HouseworkService {
 
 			fileRepository.save(fileModel);
 		}
+	}
+
+	// 참가자 ID 목록을 받아서 각 참가자의 프로필 이미지를 포함한 데이터를 반환하는 메서드
+	public List<Map<String, Object>> getParticipantsWithProfile(List<String> participantIds) {
+		List<Map<String, Object>> participantsWithProfile = new ArrayList<>();
+
+		for (String participantId : participantIds) {
+			Optional<UserModel> userOptional = userRepository.findById(participantId);
+			if (userOptional.isPresent()) {
+				UserModel user = userOptional.get();
+				Map<String, Object> participantData = new HashMap<>();
+				participantData.put("id", user.getId());
+				participantData.put("name", user.getName());
+				participantData.put("profileImg", user.getProfileImg()); // 프로필 이미지 추가
+				participantsWithProfile.add(participantData);
+			}
+		}
+
+		return participantsWithProfile;
 	}
 
 	// DTO를 모델로 변환하는 메서드

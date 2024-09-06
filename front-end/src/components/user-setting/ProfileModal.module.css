@@ -38,8 +38,9 @@
   .modalLabel {
     font-weight: bold;
     display: inline-block;
-    width: 100px; /* 레이블에 고정 너비를 줘서 이름, 생년월일, 닉네임 정렬 */
+    width: 120px; /* 레이블에 고정 너비를 줘서 이름, 생년월일, 닉네임 정렬 */
     font-size: 20px;
+
   }
 
   .profile{

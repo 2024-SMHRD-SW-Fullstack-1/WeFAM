@@ -257,3 +257,29 @@
 .closeButton:hover {
   background-color: #c0392b;
 }
+
+.userContainer {
+  display: flex;
+  flex-wrap: wrap; /* 줄바꿈을 허용 */
+  gap: 8px; /* 담당자 간의 간격을 설정 */
+  margin-top: 5px;
+}
+
+.userProfile {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  margin-bottom: 8px; /* 줄바꿈 시 간격을 확보 */
+}
+
+.userImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.userName {
+  font-size: 14px;
+  color: #333;
+}

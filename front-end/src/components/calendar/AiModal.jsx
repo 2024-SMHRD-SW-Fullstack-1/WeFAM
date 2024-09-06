@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import styles from '../modal/Modal.module.css';
-import style from './AiModal.module.css'
-import mountain from '../../assets/images/mountains.png'
-import inside from '../../assets/images/inside.png'
-import festival from '../../assets/images/festival.png'
-import activity from '../../assets/images/gliding.png'
+import style from './AiModal.module.css';
+import mountain from '../../assets/images/mountains.png';
+import inside from '../../assets/images/inside.png';
+import festival from '../../assets/images/festival.png';
+import activity from '../../assets/images/gliding.png';
+import Chatbot from '../chatbot/Chatbot'; // Chatbot 컴포넌트 임포트
 
 const AiModal = ({ onClose }) => {
     const [selectedTheme, setSelectedTheme] = useState(null);
+    const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Chatbot 모달 상태 관리
 
     const themes = [
         { id: 1, name: '산', image: mountain },
@@ -24,13 +26,19 @@ const AiModal = ({ onClose }) => {
     const handleComplete = () => {
         if (selectedTheme) {
             alert(`선택한 테마: ${selectedTheme.name}`);
+            setIsChatbotOpen(true); // 완료 버튼을 누르면 Chatbot 모달 열기
         } else {
             alert('테마를 선택해 주세요.');
         }
     };
+
     const handleClose = () => {
         onClose();
-    }
+    };
+
+    const handleChatbotClose = () => {
+        setIsChatbotOpen(false); // Chatbot 모달 닫기
+    };
 
     return (
         <div className={styles.modal}>
@@ -57,6 +65,16 @@ const AiModal = ({ onClose }) => {
                     <button className={style.completeButton} onClick={handleComplete}>완료</button>
                 </div>
             </div>
+
+            {/* Chatbot 모달 렌더링 */}
+            {isChatbotOpen && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <Chatbot onClose={handleChatbotClose} />
+                        <button className={style.closeButton} onClick={handleChatbotClose}>챗봇 닫기</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

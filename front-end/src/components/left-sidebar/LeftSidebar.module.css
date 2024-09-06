@@ -26,7 +26,6 @@
   align-items: center;
   padding: var(--space-lg) 0;
   gap: var(--space-md);
-  background-image: url(../../assets/images/famaily.png);
   background-size: cover;
   background-position: center;
 }
