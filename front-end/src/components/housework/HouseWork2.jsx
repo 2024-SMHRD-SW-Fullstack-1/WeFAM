@@ -82,7 +82,6 @@ const Housework2 = () => {
           (task) => task.taskType === "shortTerm" && !task.completed
         ), // 완료되지 않은 단기 미션
       });
-      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -346,7 +345,8 @@ const Housework2 = () => {
                     미션 성공
                   </button>
                   <button
-                    onClick={() => handleTaskEdit(index, tasks, taskType)}>
+                    onClick={() => handleTaskEdit(index, tasks, taskType)}
+                  >
                     수정
                   </button>
                   <button onClick={() => deleteSelectedTasks(index, taskType)}>
@@ -397,7 +397,7 @@ const Housework2 = () => {
   };
 
   return (
-    <div className='main' onClick={handleOutsideClick}>
+    <div className="main" onClick={handleOutsideClick}>
       <div className={styles.board}>
         {/* 기존 매일 할 일과 오늘의 미션 */}
         <div className={styles.column}>
@@ -406,7 +406,8 @@ const Housework2 = () => {
             <span
               className={
                 tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-              }>
+              }
+            >
               {tasks.daily.length}
             </span>
             <div className={styles.add_task} onClick={openDailyModal}>
@@ -429,7 +430,8 @@ const Housework2 = () => {
                 tasks.shortTerm.length > 0
                   ? styles.circleShortTerm
                   : styles.circleZero
-              }>
+              }
+            >
               {tasks.shortTerm.length}
             </span>
             <div className={styles.add_task} onClick={openShortTermModal}>
@@ -447,13 +449,14 @@ const Housework2 = () => {
         {/* 완료된 할 일 리스트 */}
         <div className={styles.column}>
           <div className={styles.column_header}>
-            <h3>마감된 할 일</h3>
+            <h3>완료된 할 일</h3>
             <span
               className={
                 completedTasks.length > 0
                   ? styles.circleFinished
                   : styles.circleZero
-              }>
+              }
+            >
               {completedTasks.length}
             </span>
           </div>
@@ -501,9 +504,10 @@ const Housework2 = () => {
       <Modal
         isOpen={isImageModalOpen}
         onRequestClose={closeImageModal}
-        contentLabel='작업 이미지'
+        contentLabel="작업 이미지"
         className={styles.imageModalContent}
-        overlayClassName={styles.imageModalOverlay}>
+        overlayClassName={styles.imageModalOverlay}
+      >
         <div className={styles.modalBody}>
           <h2>작업 이미지</h2>
           <div className={styles.imagePreviewContainer}>
