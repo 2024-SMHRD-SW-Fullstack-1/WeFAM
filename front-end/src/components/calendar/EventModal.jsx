@@ -398,8 +398,7 @@ const EventModal = ({
               <img src={ai} alt='AI 버튼' style={{ height: 48, width: 48 }} />
               <div
                 className={styles.tooltip}
-                style={{ backgroundColor: selectedColor }}
-              >
+                style={{ backgroundColor: selectedColor }}>
                 AI 일정 추천
               </div>
             </div>
@@ -509,7 +508,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                    ?.label || "색상을 선택하세요"
+                  ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />

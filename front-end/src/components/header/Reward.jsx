@@ -10,6 +10,7 @@ const Reward = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [rewards, setRewards] = useState([]); // 보상 리스트 상태
   const [completedTasks, setCompletedTasks] = useState([]); // 완료된 작업들
+  const [familyPoints, setFamilyPoints] = useState([]); // 가족 구성원 포인트 상태
 
   // 총 포인트 가져오기
   useEffect(() => {

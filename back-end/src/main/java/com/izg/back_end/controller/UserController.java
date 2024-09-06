@@ -30,9 +30,10 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-
+	
 	@Autowired
 	private AlbumService albumService;
+
 
 	@PostMapping("/login")
 	public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
@@ -47,14 +48,14 @@ public class UserController {
 			// 유저 정보를 데이터베이스에 저장
 			userService.saveUser(userDTO, accessToken);
 
-			return ResponseEntity.ok(userDTO);
-		} catch (Exception e) {
-			System.out.println("카카오 로그인 처리 중 오류 발생");
-			e.printStackTrace();
-			return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
-		}
-	}
-
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            System.out.println("카카오 로그인 처리 중 오류 발생");
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+        }
+    }
+    
 //    @PostMapping("/logout")
 //    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse response,  String accessToken) {
 //        try {
@@ -76,12 +77,12 @@ public class UserController {
 //            return ResponseEntity.status(500).build();
 //        }
 //    }
-
-	// 가족만 보여주기
-	@GetMapping("/get-family")
-	public List<UserModel> getFamily() {
-		return userService.getUsersInJoining();
-	}
+    
+    // 가족만 보여주기
+    @GetMapping("/get-family")
+    public List<UserModel> getFamily() {
+        return userService.getUsersInJoining();
+    }
 
 //    @GetMapping("/get-family-staus")
 //    public List<LogModel> getFamilyStaus(){
