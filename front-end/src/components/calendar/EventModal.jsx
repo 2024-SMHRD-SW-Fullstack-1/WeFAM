@@ -172,6 +172,10 @@ const EventModal = ({
     const newFiles = selectedFiles.filter(
       (file) => !savedFiles.some((savedFile) => savedFile.name === file.name)
     );
+    if (title == "") {
+      alert("제목을 입력해주세요");
+      return;
+    }
 
     onSave({
       start: startDate, // 업데이트된 시작 날짜

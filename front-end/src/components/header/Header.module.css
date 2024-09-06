@@ -65,6 +65,8 @@ nav {
 .groupListIcon {
   font-size: var(--font-4xl);
   color: black;
+  display: flex;
+  justify-content: center;
 }
 
 .modalOverlay {
@@ -268,7 +270,7 @@ nav {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 0.5px solid var(--color-black);
+  border: 1px solid var(--color-black);
 }
 
 .infoContainer {

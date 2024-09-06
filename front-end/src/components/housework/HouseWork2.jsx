@@ -330,6 +330,7 @@ const Housework2 = () => {
           marginTop: "2rem",
           borderRadius: "1rem",
           padding: "1rem",
+          height: "720px",
           maxHeight: "720px",
         }}>
         <div className={styles.board}>
