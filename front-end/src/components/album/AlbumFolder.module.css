@@ -104,10 +104,6 @@
   align-items: center;
 }
 
-input[type="checkbox"] {
-  accent-color: var(--color-sunset); /* 체크박스의 색상 변경 */
-}
-
 .folderContainer {
   position: relative;
   display: flex;
@@ -319,9 +315,6 @@ input[type="checkbox"] {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-}
-
-.slider {
 }
 
 @media (max-width: 768px) {
