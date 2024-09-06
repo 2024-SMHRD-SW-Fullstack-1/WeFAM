@@ -30,6 +30,10 @@ public class HouseworkLogModel {
 	@Column(name = "user_id")
 	@JsonProperty("userId")
 	private String userId = ""; // 기본값 빈 문자열
+	
+	@Column(name = "entity_idx")
+	@JsonProperty("entityIdx")
+	private int entityIdx;
 
 	@Column(name = "task_type")
 	@JsonProperty("taskType")
