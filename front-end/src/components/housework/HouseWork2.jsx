@@ -447,6 +447,7 @@ const Housework2 = () => {
           </ul>
         </div>
 
+
         {/* 완료된 할 일 리스트 */}
         <div className={styles.column}>
           <div className={styles.column_header}>
