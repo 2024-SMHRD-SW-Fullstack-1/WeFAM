@@ -148,6 +148,10 @@ button {
   outline: none;
 }
 
+input[type="checkbox"] {
+  accent-color: var(--color-sunset);
+}
+
 /* Typography */
 h1 {
   font-size: var(--font-4xl);
