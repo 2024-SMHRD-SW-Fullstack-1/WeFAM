@@ -43,6 +43,8 @@
 .rightSidebar {
   padding: 20px;
   width: 250px;
+  margin-top: 20px;
+  margin-right: 30px;
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 

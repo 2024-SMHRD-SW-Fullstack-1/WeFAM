@@ -56,8 +56,6 @@ const Reward = () => {
     }
   }, [userData]);
 
-
-
   const handleAddReward = (newReward) => {
     setRewards([...rewards, newReward]);
     // 추가된 보상을 서버로 전송하는 로직을 여기에 작성 가능
@@ -66,16 +64,20 @@ const Reward = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")} ${String(
+      date.getHours()
+    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   };
 
   return (
-    <div className="main">
+    <div className='main'>
       <div className={styles.container}>
         <button
           className={styles.addButton}
-          onClick={() => setIsModalOpen(true)}
-        >
+          onClick={() => setIsModalOpen(true)}>
           보상 추가
         </button>
 
@@ -93,7 +95,7 @@ const Reward = () => {
             </div>
           ))}
         </div>
-        
+
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
@@ -104,7 +106,9 @@ const Reward = () => {
                   <h3>{task.workTitle}</h3>
                   <p>{task.workContent}</p>
                   <span>완료일: {formatDate(task.completedAt)}</span>
-                  <span className={styles.taskPoints}>{task.points} 포인트</span>
+                  <span className={styles.taskPoints}>
+                    {task.points} 포인트
+                  </span>
                 </li>
               ))}
             </ul>
