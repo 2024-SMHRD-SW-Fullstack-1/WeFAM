@@ -38,7 +38,7 @@ public class UserController {
 	public ResponseEntity<Object> kakaoLogin(@RequestBody String code) {
 		System.out.println("카카오 로그인 요청 수신. 인가 코드: " + code);
 		try {
-			// 인가 코드를 사용해 액세스 토큰을 얻음2
+			// 인가 코드를 사용해 액세스 토큰을 얻음
 			String accessToken = userService.getKakaoAccessToken(code);
 
 			// 액세스 토큰을 이용해 사용자 정보 가져오기
