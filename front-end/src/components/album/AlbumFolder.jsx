@@ -25,7 +25,7 @@ const AlbumFolder = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const imagesPerPage = 10;
+  const imagesPerPage = 15;
 
   // 초기 이미지 불러오기
   useEffect(() => {
@@ -50,7 +50,7 @@ const AlbumFolder = () => {
             id: image.fileIdx,
             url: `data:image/${image.fileExtension};base64,${image.fileData}`,
           }));
-          setImages(fetchedImages);
+          setImages(fetchedImages.reverse());
         }
       })
       .catch((error) => {
@@ -276,6 +276,15 @@ const AlbumFolder = () => {
                     />
                   </div>
                 ))}
+              {/* 왼쪽 버튼 */}
+              <button className={`${styles.navigateButton} ${styles.leftButton}`} onClick={handlePrevPage}>
+                {"<"}
+              </button>
+
+              {/* 오른쪽 버튼 */}
+              <button className={`${styles.navigateButton} ${styles.rightButton}`} onClick={handleNextPage}>
+                {">"}
+              </button>
             </div>
           ) : (
             <p>이미지가 없습니다.</p>
@@ -317,8 +326,8 @@ const AlbumFolder = () => {
                 />
                 {selectedFiles.length > 1 && (
                   <div className={styles.slideButtons}>
-                    <button onClick={showPreviousFile}>{"<"}</button>
-                    <button onClick={showNextFile}>{">"}</button>
+                    <button onClick={showPreviousFile} className={styles.addleftButton}>{"<"}</button>
+                    <button onClick={showNextFile} className={styles.addrightButton}>{">"}</button>
                   </div>
                 )}
               </div>
@@ -329,10 +338,10 @@ const AlbumFolder = () => {
             {selectedFiles.map((file) => (
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
-                <button onClick={open} className={styles.inputButton}>
-                  추가
-                </button>
-                <button onClick={() => removeFile(file.name)}>삭제</button>
+                <div className={styles.buttonContainer}>
+                  <button onClick={open} className={styles.inputButton}>추가</button>
+                  <button onClick={() => removeFile(file.name)}>삭제</button>
+                </div>
               </li>
             ))}
           </ul>
@@ -341,10 +350,10 @@ const AlbumFolder = () => {
             <button className={styles.modalButton} onClick={saveImages}>
               저장
             </button>
-            <button
-              className={styles.modalButton}
-              onClick={() => setIsModalOpen(false)}
-            >
+            <button className={styles.modalButton} onClick={() => {
+              setSelectedFiles([]); // 선택된 파일 초기화
+              setIsModalOpen(false); // 모달 닫기
+            }}>
               취소
             </button>
           </div>
@@ -359,13 +368,13 @@ const AlbumFolder = () => {
           overlayClassName={styles.folderOverlay}
         >
           <div className={styles.imageModalContent}>
-            <button onClick={showPreviousImage}>{"<"}</button>
+            <button onClick={showPreviousImage} className={styles.leftimageModalContent}>{"<"}</button>
             <img
               src={images[currentImageIndex]?.url}
               alt={`img-${currentImageIndex}`}
               className={styles.modalImage}
             />
-            <button onClick={showNextImage}>{">"}</button>
+            <button onClick={showNextImage} className={styles.rightimageModalContent}>{">"}</button>
           </div>
         </Modal>
       </div>

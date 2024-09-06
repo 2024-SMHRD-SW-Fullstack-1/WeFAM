@@ -3,8 +3,14 @@ import styles from "./GroupManagement.module.css";
 import { useSelector } from "react-redux";
 import familyPT from "../../assets/images/famaily.png"; // 가족 프로필 사진 기본 이미지
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const GroupManagement = () => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
+  const handleAiButtonClick = () => {
+    navigate("/chatbot"); // Chatbot 경로로 이동
+  };
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
   const userId = useSelector((state) => state.user.userData.id);
@@ -234,7 +240,7 @@ const GroupManagement = () => {
         </div>
       </div>
       <hr />
-
+<button onClick={handleAiButtonClick}>ai</button>
     </div>
   );
 };

@@ -53,7 +53,7 @@
 .imagesContent,
 .pollsContent {
   width: 100%;
-  background-color: var(--color-light-grey);
+  background-color: var(--color-white);
 }
 .pollsContent {
   padding: var(--space-sm);
