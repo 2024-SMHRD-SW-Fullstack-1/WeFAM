@@ -67,17 +67,22 @@ const Housework2 = () => {
   // 할 일 목록 불러오기
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-works?userId=${userData.id}`
+      );
 
-      const { works, totalPoints } = response.data;
+      const { works } = response.data;
 
       // 완료되지 않은 작업만 필터링해서 상태에 저장
       setTasks({
-        daily: works.filter((task) => task.taskType === "daily" && !task.completed),  // 완료되지 않은 매일 할 일
-        shortTerm: works.filter((task) => task.taskType === "shortTerm" && !task.completed),  // 완료되지 않은 단기 미션
+        daily: works.filter(
+          (task) => task.taskType === "daily" && !task.completed
+        ), // 완료되지 않은 매일 할 일
+        shortTerm: works.filter(
+          (task) => task.taskType === "shortTerm" && !task.completed
+        ), // 완료되지 않은 단기 미션
       });
-      console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
-      console.log("작업 데이터:", works);  // 작업 데이터에 completed 필드가 있는지 확인
+      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -101,17 +106,17 @@ const Housework2 = () => {
         }
       }
     };
-
     fetchFamilyMembers();
   }, [userData]);
 
   // 마감된 할 일 가져오기
   const fetchCompletedTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:8089/wefam/completed-works");
+      const response = await axios.get(
+        "http://localhost:8089/wefam/completed-works"
+      );
 
       const completedTasksWithImages = response.data.map((item) => {
-        console.log("Received images for workIdx:", item.workLog.workIdx, item.images); // 이미지 로그 확인
         return {
           ...item.workLog, // 작업 로그 데이터
           images: item.images, // 이미지 데이터
@@ -125,7 +130,7 @@ const Housework2 = () => {
   };
 
   useEffect(() => {
-    fetchCompletedTasks();  // 컴포넌트가 마운트될 때 호출
+    fetchCompletedTasks(); // 컴포넌트가 마운트될 때 호출
   }, []);
 
   const addOrUpdateTask = async () => {
@@ -278,21 +283,26 @@ const Housework2 = () => {
     setIsModalOpen(true);
   };
 
+  // 리덕스에서 이미 저장된 데이터를 사용해 family members 설정
+  useEffect(() => {
+    if (userData && userData.familyMembers) {
+      // 만약 familyMembers가 리덕스 스토어에 있다면
+      setFamilyMembers(userData.familyMembers);
+    }
+  }, [userData]);
 
   // 담당자의 이미지와 이름을 표시하는 함수
   const renderTaskUsers = (task) => {
-    return task.workUserIds.map((userId) => {
-      const user = localFamilyMembers.find((member) => member.id === userId);
-      if (user) {
-        return (
-          <div key={userId} className={styles.userProfile}>
-            <img src={user.profileImg} alt={user.name} className={styles.userImage} />
-            <span className={styles.userName}>{user.name}</span>
-          </div>
-        );
-      }
-      return null;
-    });
+    return task.participantsWithProfile?.map((user) => (
+      <div key={user.id} className={styles.userProfile}>
+        <img
+          src={user.profileImg ? user.profileImg : "default_profile_image_url"}
+          alt={user.name}
+          className={styles.userImage}
+        />
+        <span className={styles.userName}>{user.name}</span>
+      </div>
+    ));
   };
 
   // 작업 리스트를 렌더링하는 함수
@@ -335,7 +345,9 @@ const Housework2 = () => {
                   <button onClick={() => handleMissionComplete(task)}>
                     미션 성공
                   </button>
-                  <button onClick={() => handleTaskEdit(index, tasks, taskType)}>
+                  <button
+                    onClick={() => handleTaskEdit(index, tasks, taskType)}
+                  >
                     수정
                   </button>
                   <button onClick={() => deleteSelectedTasks(index, taskType)}>
@@ -356,7 +368,7 @@ const Housework2 = () => {
       return date.toLocaleString("ko-KR", {
         year: "numeric",
         month: "2-digit",
-        day: "2-digit"
+        day: "2-digit",
       });
     };
     return tasks.map((task, index) => (
@@ -387,7 +399,6 @@ const Housework2 = () => {
 
   return (
     <div className="main" onClick={handleOutsideClick}>
-
       <div className={styles.board}>
         {/* 기존 매일 할 일과 오늘의 미션 */}
         <div className={styles.column}>
@@ -395,9 +406,7 @@ const Housework2 = () => {
             <h3>매일 할 일</h3>
             <span
               className={
-                tasks.daily.length > 0
-                  ? styles.circleDaily
-                  : styles.circleZero
+                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
               }
             >
               {tasks.daily.length}
@@ -457,7 +466,6 @@ const Housework2 = () => {
           </ul>
         </div>
       </div>
-
 
       <WorkModal
         isModalOpen={isModalOpen}
@@ -519,7 +527,6 @@ const Housework2 = () => {
           </div>
         </div>
       </Modal>
-
     </div>
   );
 };

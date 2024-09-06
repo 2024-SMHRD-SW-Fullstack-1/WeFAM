@@ -65,6 +65,10 @@ public class HouseworkController {
 			List<String> participantIds = participantService.findParticipantsByWorkIdx(work.getWorkIdx());
 			List<String> participantNames = participantService.findParticipantNamesByWorkIdx(work.getWorkIdx());
 
+			// 각 참가자의 프로필 이미지도 가져와서 DTO에 포함
+			List<Map<String, Object>> participantsWithProfile = houseworkService
+					.getParticipantsWithProfile(participantIds);
+
 			// 작업과 연관된 파일(이미지)을 불러옴
 			List<FileModel> files = fileRepository.findByEntityTypeAndEntityIdx("work", work.getWorkIdx());
 
@@ -79,17 +83,14 @@ public class HouseworkController {
 			HouseworkDTO dto = houseworkService.convertModelToDto(work, participantIds);
 			dto.setParticipantNames(participantNames); // DTO에 이름 목록 추가
 			dto.setImages(images); // DTO에 이미지 목록 추가
+			dto.setParticipantsWithProfile(participantsWithProfile); // DTO에 프로필 포함
 
 			result.add(dto);
 		}
 
-		// 사용자별 총 포인트 계산 (포인트 로그 서비스 사용)
-		Integer totalPoints = pointLogService.getTotalPointsByUserId(userId);
-
-		// 집안일 리스트와 총 포인트를 함께 반환
+		// 집안일 리스트만 반환
 		Map<String, Object> response = new HashMap<>();
 		response.put("works", result);
-		response.put("totalPoints", totalPoints); // 총 포인트 추가
 
 		return ResponseEntity.ok(response);
 	}
@@ -164,5 +165,12 @@ public class HouseworkController {
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 중 오류 발생");
 		}
+	}
+
+	// 사용자별 총 포인트 계산 API
+	@GetMapping("/get-total-points")
+	public ResponseEntity<Integer> getTotalPoints(@RequestParam("userId") String userId) {
+		Integer totalPoints = pointLogService.getTotalPointsByUserId(userId);
+		return ResponseEntity.ok(totalPoints);
 	}
 }

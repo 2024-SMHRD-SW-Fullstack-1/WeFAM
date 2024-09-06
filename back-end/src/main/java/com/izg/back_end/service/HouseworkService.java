@@ -3,7 +3,10 @@ package com.izg.back_end.service;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -15,10 +18,12 @@ import com.izg.back_end.model.FileModel;
 import com.izg.back_end.model.HouseworkLogModel;
 import com.izg.back_end.model.HouseworkModel;
 import com.izg.back_end.model.PointLogModel;
+import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.FileRepository;
 import com.izg.back_end.repository.HouseworkLogRepository;
 import com.izg.back_end.repository.HouseworkRepository;
 import com.izg.back_end.repository.PointLogRepository;
+import com.izg.back_end.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +36,7 @@ public class HouseworkService {
 	private final ParticipantService participantService;
 	private final FileRepository fileRepository;
 	private final PointLogRepository pointLogRepository;
+	private final UserRepository userRepository;
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
@@ -157,6 +163,25 @@ public class HouseworkService {
 
 			fileRepository.save(fileModel);
 		}
+	}
+
+	// 참가자 ID 목록을 받아서 각 참가자의 프로필 이미지를 포함한 데이터를 반환하는 메서드
+	public List<Map<String, Object>> getParticipantsWithProfile(List<String> participantIds) {
+		List<Map<String, Object>> participantsWithProfile = new ArrayList<>();
+
+		for (String participantId : participantIds) {
+			Optional<UserModel> userOptional = userRepository.findById(participantId);
+			if (userOptional.isPresent()) {
+				UserModel user = userOptional.get();
+				Map<String, Object> participantData = new HashMap<>();
+				participantData.put("id", user.getId());
+				participantData.put("name", user.getName());
+				participantData.put("profileImg", user.getProfileImg()); // 프로필 이미지 추가
+				participantsWithProfile.add(participantData);
+			}
+		}
+
+		return participantsWithProfile;
 	}
 
 	// DTO를 모델로 변환하는 메서드
