@@ -1,27 +1,63 @@
-import React, { useState } from 'react';
-import styles from './FamilyModal.module.css'
+import React, { useState } from "react";
+import styles from "./FamilyModal.module.css";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
 const FamilyModal = ({ user, onClose }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+  const userData = useSelector((state) => state.user.userData);
+  const [isSending, setIsSending] = useState(false);
 
   const handleSendMessage = () => {
-    // 메시지 전송 로직 추가
-    console.log(`쪽지 보낼사람 ${user.nick}: ${message}`);
-    onClose();
+    if (!message || isSending) {
+      return;
+    }
+    setIsSending(true); // 메시지 전송 중 상태로 설정
+
+    const data = {
+      senderId: userData.id,
+      senderNick: userData.nick,
+      receiverId: user.id,
+      message: message,
+      time: new Date().toISOString(),
+      type: "쪽지",
+      profileImg: userData.profileImg,
+    };
+
+    axios
+      .post("http://localhost:8089/wefam/send-message", data)
+      .then((response) => {
+        console.log("쪽지 전송 성공:", response.data);
+        alert("쪽지 전송 성공!"); // 성공 메시지 추가
+        setIsSending(false);
+        onClose();
+      })
+      .catch((error) => {
+        console.error("쪽지 전송 실패:", error);
+        alert("쪽지 전송 실패! 다시 시도해주세요."); // 실패 메시지 추가
+        setIsSending(false);
+      });
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <h2>{user.nick} 에게 쪽지 보내기</h2>
-        <textarea 
-          value={message} 
-          onChange={(e) => setMessage(e.target.value)} 
-          placeholder="쪽지 내용을 입력하세요..." 
-          className={styles.textarea}
-        />
-        <div className={styles.modalActions}>
-          <button onClick={handleSendMessage} className={styles.sendButton}>전송</button>
-          <button onClick={onClose} className={styles.closeButton}>취소</button>
+    <div className="main">
+      <div className={styles.modalOverlay}>
+        <div className="modal-content">
+          <h2>{user.nick} 에게 쪽지 보내기</h2>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="쪽지 내용을 입력하세요..."
+            className="textarea"
+          />
+          <div className={styles.modalActions}>
+            <button onClick={handleSendMessage} className={styles.sendButton}>
+              전송
+            </button>
+            <button onClick={onClose} className={styles.closeButton}>
+              취소
+            </button>
+          </div>
         </div>
       </div>
     </div>
