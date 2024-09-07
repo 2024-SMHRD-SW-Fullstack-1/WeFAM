@@ -48,11 +48,11 @@ const RightSidebar = () => {
   }, [userData]); // userData가 변경될 때마다 실행
 
   const handleProfileClick = (user) => {
-    if (user.id !== userData.id) {
-      // 본인이 아닌 경우에만 모달 열기
-      setSelectedUser(user);
-      setIsModalOpen(true);
-    }
+    // if (user.id !== userData.id) {
+    // 본인이 아닌 경우에만 모달 열기
+    setSelectedUser(user);
+    setIsModalOpen(true);
+    // }
   };
 
   const closeModal = () => {
