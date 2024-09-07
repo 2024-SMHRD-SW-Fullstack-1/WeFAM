@@ -122,6 +122,11 @@ const EventModal = ({
   };
 
   useEffect(() => {
+    console.log(startDate);
+    console.log(event.setEndDate);
+    console.log(location);
+    
+    
     setIsDetailOpen(initialIsDetailOpen);
   }, [initialIsDetailOpen]);
 
@@ -508,7 +513,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                    ?.label || "색상을 선택하세요"
+                  ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />
@@ -687,7 +692,14 @@ const EventModal = ({
             저장
           </button>
         </div>
-        {isModalOpen && <AiModal onClose={closeModal} />}
+        {isModalOpen && (
+          <AiModal
+            onClose={closeModal}
+            startDate={startDate}
+            endDate={endDate}
+            location={location}
+             />
+        )}
       </div>
     </div>,
     document.body // 모달을 body에 추가
