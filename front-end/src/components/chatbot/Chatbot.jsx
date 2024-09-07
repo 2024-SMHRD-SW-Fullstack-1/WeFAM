@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Chatbot.module.css";
 
-const Chatbot = ({onClose}) => {
+const Chatbot = ({onClose, theme, startDate, endDate, location}) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
@@ -10,11 +10,23 @@ const Chatbot = ({onClose}) => {
 
     // 최초 환영 메시지 설정
     useEffect(() => {
+        console.log("장소 :"+location);
+        console.log("테마 :" + theme);
+        console.log("시작 :" + startDate);
+        console.log("종료 :" + endDate);
+        
+        
         setChatContent([
             ...chatContent,
             { message: "안녕하세요! 세계 최고의 가족비서 파미 입니다.", isUserChat: false }
         ]);
-    }, []);
+
+        
+        if (theme && startDate &&  location && endDate){
+            sendChatToServer(`${theme}를 선택하셨군요! 선택하신 날짜는${startDate}부터 ${endDate}이고 고르신 장소는 ${location}입니다!`)
+        }
+    }, [theme, startDate,  location, endDate]);
+
 
     // 토글 버튼 클릭 시 이벤트 처리
     const toggleChat = () => {
@@ -37,7 +49,6 @@ const Chatbot = ({onClose}) => {
 
     // 서버로 메시지를 보내고 응답을 받는 함수
     const sendChatToServer = (message) => {
-        setIsWaitingResponse(true);
         setChatContent([...chatContent, { message: "AI가 답변 중...", isUserChat: false }]);
 
         // 서버 요청
@@ -48,20 +59,16 @@ const Chatbot = ({onClose}) => {
             },
             body: JSON.stringify({ message })
         })
-            .then((response) => response.text())
-            .then((data) => {
-                try {
-                    chat(data, false); // 파싱한 데이터 사용
-                } catch (error) {
-                    console.error("JSON 파싱 오류:", error);
-                }
-                setIsWaitingResponse(false);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                setIsWaitingResponse(false);
-            });
+        .then((response) => response.text())
+        .then((data) => {
+            setChatContent([...chatContent, { message: data, isUserChat: false }]);
+            scrollToBottom();
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
     };
+
 
     // 대화창에 메시지 추가하는 함수
     const chat = (message, isUserChat) => {

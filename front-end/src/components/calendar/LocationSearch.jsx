@@ -16,6 +16,7 @@ const MapSearchInput = ({
   useEffect(() => {
     setSearchTerm(location || event.location || ""); // location을 초기값으로 설정하고, location이 변경될 때마다 searchTerm을 업데이트
     console.log(location, event.location);
+    console.log(searchTerm, event.location);
   }, [location, event.location]);
 
   useEffect(() => {
