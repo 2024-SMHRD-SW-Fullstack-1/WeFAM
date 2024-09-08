@@ -12,5 +12,4 @@ public interface ParticipantRepository extends JpaRepository<ParticipantModel, I
 	void deleteByEntityIdxAndEntityType(int entityIdx, String entityType);
 
 	List<ParticipantModel> findAllByEntityIdxAndEntityType(int entityIdx, String entityType);
-
 }

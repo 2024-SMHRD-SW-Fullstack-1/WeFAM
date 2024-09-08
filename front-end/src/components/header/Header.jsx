@@ -15,7 +15,6 @@ const Header = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [familyMotto, setFamilyMotto] = useState("");
-  const groupName = "우리가족"; //임시 그룹명
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [userImages, setUserImages] = useState([]);
   const [groups, setGroups] = useState([]); // 그룹 목록 상태
@@ -89,7 +88,7 @@ const Header = () => {
   };
 
   const handleBellClick = () => {
-    alert("알람~");
+    setIsAlarm(!isAlarm);
   };
 
   const handleTrophyClick = () => {
