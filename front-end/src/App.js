@@ -15,9 +15,13 @@ import Chatbot from "./components/chatbot/Chatbot";
 import "./css/App.css";
 import "./css/Test.css";
 
+import { NotificationProvider } from "./NotificationContext";
+
+
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
+         <NotificationProvider>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="main" element={<Home />}>
@@ -32,6 +36,7 @@ function App() {
           <Route path="reward-point" element={<RewardPoint />} />
         </Route>
       </Routes>
+      </NotificationProvider>
     </div>
   );
 }

@@ -106,6 +106,8 @@ public class FamilyService {
         return familyRepository.save(family);
     }
     
-    
+    // 가족 생성자 찾기
+    public String getUserIdByFamilyIdx(int familyIdx) {
+        return familyRepository.findUserIdByFamilyIdx(familyIdx);
+    }
 }
-
