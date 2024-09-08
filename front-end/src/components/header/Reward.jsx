@@ -11,6 +11,7 @@ const Reward = () => {
   const [rewards, setRewards] = useState([]); // 보상 리스트 상태
   const [completedTasks, setCompletedTasks] = useState([]); // 완료된 작업들
   const [familyPoints, setFamilyPoints] = useState([]); // 가족 구성원 포인트 상태
+  const [notifications, setNotifications] = useState([]); // 알림 상태 추가
 
   // 총 포인트 가져오기
   useEffect(() => {
@@ -73,11 +74,12 @@ const Reward = () => {
   };
 
   return (
-    <div className='main'>
+    <div className="main">
       <div className={styles.container}>
         <button
           className={styles.addButton}
-          onClick={() => setIsModalOpen(true)}>
+          onClick={() => setIsModalOpen(true)}
+        >
           보상 추가
         </button>
 
