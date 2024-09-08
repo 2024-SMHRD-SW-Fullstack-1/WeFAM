@@ -44,7 +44,7 @@ const LeftSidebar = () => {
         if (response.data.length === 0) {
           setProfileImage(familyPT); // 이미지가 없을 때 기본 이미지 사용
         } else {
-          const familyImages = response.data.filter(image => image.entityType === "family");
+            const familyImages = response.data.filter(image => image.entityType === "family");
           const latestFamilyImage = familyImages[familyImages.length - 1];
           setProfileImage(`data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`);
         }

@@ -1,0 +1,131 @@
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 80%;
+}
+
+.addButton {
+  border: 1px solid black;
+}
+
+.points {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.itemsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  /* 자동으로 아이템을 채움 */
+  gap: 16px;
+  /* 아이템 간의 간격 */
+  width: 100%;
+  /* 부모 요소 전체 너비 사용 */
+  justify-items: center;
+  /* 그리드 항목들을 가운데 정렬 */
+  align-items: start;
+  /* 세로 축에서 시작 부분에 맞춤 */
+}
+
+.itemCard {
+  width: 180px;
+  /* itemCard의 너비를 고정 */
+  height: auto;
+  /* 자동 높이 */
+  border: 1px solid #b8b7b7;
+  padding: 16px;
+  margin: 10px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.itemCard:hover {
+  background-color: #dadada;
+  color: white;
+}
+
+.itemCard h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.itemCard p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.rewardImage {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.logContainer {
+  display: flex;
+  justify-content: space-around;
+  /* 좌우로 나눔 */
+  width: 100%;
+  /* 부모 컨테이너 전체 너비 사용 */
+  margin-top: 40px;
+  /* 위에서 떨어진 간격 */
+}
+
+.pointLog {
+  width: 500px;
+  border: 1px solid #b8b7b7;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 0 10px;
+}
+
+.completedTaskList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.completedTask {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.completedTask h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.completedTask p {
+  margin: 5px 0;
+}
+
+.completedTask span {
+  display: block;
+  margin: 5px 0;
+  color: gray;
+}
+
+.taskPoints {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.point {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #b8b7b7;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 0 10px;
+}

@@ -129,11 +129,14 @@
 }
 
 .titleContainer {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 24px;
   width: 100%;
+}
+.titleNone {
 }
 
 .title {
@@ -278,10 +281,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  width: 300px;
+  width: 400px;
   height: auto;
   border: 1px solid #ccc;
-  background-color: white;
+  background-color: var(--color-sunset);
   padding: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
