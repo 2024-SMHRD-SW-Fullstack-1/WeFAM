@@ -7,7 +7,7 @@ import festival from '../../assets/images/festival.png';
 import activity from '../../assets/images/gliding.png';
 import Chatbot from '../chatbot/Chatbot'; // Chatbot 컴포넌트 임포트
 
-const AiModal = ({ onClose, startDate, endDate, location }) => {
+const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Chatbot 모달 상태 관리
 
@@ -33,6 +33,13 @@ const AiModal = ({ onClose, startDate, endDate, location }) => {
 
     const handleClose = () => {
         onClose();
+    };
+
+    // 장소를 선택했을 때 Chatbot과 AiModal을 닫는 함수
+    const handlePlaceSelectFromChatbot = (placeName) => {
+        onSelectPlace(placeName); // 선택된 장소를 EventModal로 전달
+        setIsChatbotOpen(false); // Chatbot 모달 닫기
+        onClose(); // AiModal 닫기
     };
 
     const handleChatbotClose = () => {
@@ -76,6 +83,7 @@ const AiModal = ({ onClose, startDate, endDate, location }) => {
                             startDate={startDate}
                             endDate={endDate}
                             location={location}
+                            onSelectPlace={handlePlaceSelectFromChatbot}
                             /> {/* 선택된 테마 전달 */}
                         <button className={style.closeButton} onClick={handleChatbotClose}>챗봇 닫기</button>
                     </div>

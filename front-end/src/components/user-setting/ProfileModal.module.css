@@ -61,6 +61,15 @@
     font-size: 20px;
     font-weight: 800;
   }
+
+  .modalInput {
+    width: 100%; /* 모든 입력 필드의 크기를 동일하게 설정 */
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px; /* 동일한 폰트 크기 적용 */
+  }
   
   .modalInputText,
   .modalInputDate {
@@ -69,6 +78,7 @@
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 20px; /* 폰트 크기 통일 */
   }
   
   .modalInputFile {
@@ -94,4 +104,51 @@
     justify-content: flex-end;
     gap: 10px;
   }
+  
+  
+  .emojiInputContainer {
+    width: 100%; /* 동일한 너비 설정 */
+    display: flex;
+    align-items: center;
+  }
+  
+
+
+  .what{
+    width: 100%;
+  }
+  
+  .emojiSelector {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .emojiPicker {
+    position: absolute;
+    bottom: 5px;
+    left: 120%; /* 오른쪽으로 나오는 위치 설정 */
+    display: flex;
+    gap: 10px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 10px;
+    animation: slideIn 0.2s ease-out; /* 슬라이드 애니메이션 */
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .emoji {
+    cursor: pointer;
+    font-size: 24px;
+  }
+  
   

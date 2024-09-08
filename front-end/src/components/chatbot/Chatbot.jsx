@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Chatbot.module.css";
 
-const Chatbot = ({onClose, theme, startDate, endDate, location}) => {
+const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
@@ -10,33 +10,46 @@ const Chatbot = ({onClose, theme, startDate, endDate, location}) => {
 
     // 최초 환영 메시지 설정
     useEffect(() => {
-        console.log("장소 :"+location);
+        console.log("장소 :" + location);
         console.log("테마 :" + theme);
         console.log("시작 :" + startDate);
         console.log("종료 :" + endDate);
-        
-        
+
+
         setChatContent([
             ...chatContent,
             { message: "안녕하세요! 세계 최고의 가족비서 파미 입니다.", isUserChat: false }
         ]);
 
-        
-        if (theme && startDate &&  location && endDate){
-            sendChatToServer(`${theme}를 선택하셨군요! 선택하신 날짜는${startDate}부터 ${endDate}이고 고르신 장소는 ${location}입니다!`)
+
+        // 조건을 만족할 때 AI 서버로 요청
+        if (theme && startDate && location && endDate) {
+            sendChatToServer(`${theme}를 선택하셨군요! 선택하신 날짜는 ${startDate}부터 ${endDate}이고 고르신 장소는 ${location}입니다!`);
         }
-    }, [theme, startDate,  location, endDate]);
+    }, []);
 
+    // 날짜 형식 변환 함수
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
-    // 토글 버튼 클릭 시 이벤트 처리
-    const toggleChat = () => {
-        setIsChatGPT(!isChatGPT);
-        const message = isChatGPT
-            ? "안녕하세요! 푸보다 조금 더 똑똑한 세계 최고의 요리사 디 입니다."
-            : "안녕하세요! 세계 최고의 요리사 푸 입니다.";
+    // 장소를 클릭했을 때 이벤트 핸들러
+    const handlePlaceClick = (placeName) => {
+        if (typeof onSelectPlace === 'function') {
+            onSelectPlace(placeName); // EventModal의 '장소' 필드에 해당 장소 이름을 넣음
+            console.log("클릭한 장소" + placeName);
 
-        setChatContent([...chatContent, { message, isUserChat: false }]);
-        scrollToBottom();
+            // AiModal과 Chatbot 모달을 닫는 함수 호출
+        onClose();
+
+        } else {
+            console.error("onSelectPlace 함수가 전달되지 않았습니다.");
+        }
+        setChatContent([...chatContent, { message: `선택하신 장소는 ${placeName}입니다!`, isUserChat: false }]);
     };
 
     // 사용자가 입력한 메시지 보내기
@@ -59,14 +72,23 @@ const Chatbot = ({onClose, theme, startDate, endDate, location}) => {
             },
             body: JSON.stringify({ message })
         })
-        .then((response) => response.text())
-        .then((data) => {
-            setChatContent([...chatContent, { message: data, isUserChat: false }]);
-            scrollToBottom();
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+            .then((response) => response.text())
+            .then((data) => {
+                const formattedStartDate = formatDate(startDate);
+                const formattedEndDate = formatDate(endDate);
+
+                const messageWithPlaces = data.split("\n");
+                const firstMessage = `${formattedStartDate}부터 ${formattedEndDate}까지 여행을 계획중이시군요!💕`
+                setChatContent((prevContent) => [
+                    ...prevContent,
+                    { message: firstMessage, isUserChat: false }, // 첫 번째 메시지
+                    { message: data, isUserChat: false, aiResponse: messageWithPlaces }, // 두 번째 메시지, 장소 목록 처리
+                ]);
+                scrollToBottom();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
 
@@ -110,9 +132,60 @@ const Chatbot = ({onClose, theme, startDate, endDate, location}) => {
             <div className={styles.chatbot__content} ref={chatContainerRef}>
                 {chatContent.map((chat, index) => (
                     <div className={styles.chatbot__content__box} key={index}>
-                        {chat.message}
+                        {chat.aiResponse ? (
+                            chat.aiResponse.map((line, idx) => {
+
+                                let placeName = null;
+
+                                // (숫자). **장소명** - 또는 : 을 제외한 장소명을 추출하는 정규식
+                                const match1 = line.match(/\d+\.\s*\*\*(.*?)\*\*/); // 형식 1 처리 (숫자. **장소명**)
+                                const match2 = line.match(/\d+\.\s*(.*?):/);         // 형식 2 처리 (숫자. 장소명:)
+
+                                // 형식 1이 매칭될 경우
+                                if (match1) {
+                                    placeName = match1[1].trim(); // **을 제외한 장소명 추출
+                                }
+                                // 형식 2가 매칭될 경우
+                                else if (match2) {
+                                    placeName = match2[1].trim(); // : 앞의 장소명 추출
+                                }
+                                if (placeName) {
+                                    // console.log("추출된 장소 이름:", placeName); // placeName 값 확인
+
+                                    return (
+                                        <React.Fragment key={idx}>
+                                            <span
+                                                onClick={() => handlePlaceClick(placeName)}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "black",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                {line}
+                                            </span>
+                                            <br />
+                                        </React.Fragment>
+                                    );
+                                }
+                                return (
+                                    <React.Fragment key={idx}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                );
+                            })
+                        ) : (
+                            chat.message.split("\n\n").map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))
+                        )}
                     </div>
                 ))}
+
+
             </div>
 
             <div className={styles.chatbot__footer}>

@@ -1,80 +1,66 @@
-// 타임트리 젤 위의 헤더 부분입니다.
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "react-modal";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
+import { updateFamilyNick } from "../../features/familySlice"; // Redux 액션 가져오기
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
 import logo from "../../assets/images/logo-text-segoe.png";
-import add_group from "../../assets/images/add-group.png";
-import AddCircle from "./AddCircle";
 
 const Header = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const [familyMotto, setFamilyMotto] = useState("");
-  const groupName = "우리가족"; //임시 그룹명
-  const [isGroupOpen, setIsGroupOpen] = useState(false);
-  const [userImages, setUserImages] = useState([]);
-  const [groups, setGroups] = useState([]); // 그룹 목록 상태
-  const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
 
-  const handleMenuClick = () => {
-    dispatch(toggleLeftSidebar());
-  };
-
-  // Redux에서 사용자 정보 가져오기
-  const userData = useSelector((state) => state.user.userData);
+  // Redux에서 familyNick 가져오기
+  const familyNick = useSelector((state) => state.family.familyNick); // 가족 이름을 Redux에서 구독
+  const userData = useSelector((state) => state.user.userData); // 사용자 정보 구독
+  
+  const [newFamilyNick, setNewFamilyNick] = useState(familyNick); // 입력된 값을 관리
 
   useEffect(() => {
     if (userData) {
-      // 첫 번째 GET 요청: 가족 데이터를 가져옴
-      axios
-        .get("http://localhost:8089/wefam/get-family")
-        .then((response) => {
-          const loadedImages = response.data.map((user) => user.profileImg);
-          setUserImages(loadedImages);
-        })
-        .catch((error) => {
-          console.error("가져오기 에러!!", error);
-        });
-      // 두 번째 GET 요청: 가족 가훈을 가져옴
+      // 가족 이름 서버에서 가져오기
       axios
         .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
         .then((response) => {
-          setFamilyMotto(response.data);
+          setNewFamilyNick(response.data);
+          dispatch(updateFamilyNick(response.data)); // Redux 상태 업데이트
         })
         .catch((error) => {
-          console.error("가훈 가져오기 에러:", error);
+          console.error("가족 이름을 가져오는 중 오류:", error);
         });
     }
-  }, [userData]); // userData가 변경될 때마다 실행
+  }, [userData, dispatch]);
 
-  const handleMottoChange = (e) => {
-    setFamilyMotto(e.target.value);
+  const handleFamilyNickChange = (e) => {
+    setNewFamilyNick(e.target.value);
   };
 
-  const updateFamilyMotto = () => {
-    if (!familyMotto) {
-      alert("가훈을 입력하세요.");
+  const updateFamilyNickHandler = () => {
+    if (!newFamilyNick) {
+      alert("가족 이름을 입력하세요.");
       return;
     }
     const updatedFamily = {
       familyIdx: 1,
-      familyMotto: familyMotto,
+      familyNick: newFamilyNick,
       userId: userData.id,
     };
 
     axios
-      .put("http://localhost:8089/wefam/update-family-motto", updatedFamily)
-      .then((response) => {
-        console.log("가훈 업데이트 성공:");
+      .put("http://localhost:8089/wefam/update-family-nick", updatedFamily)
+      .then(() => {
+        dispatch(updateFamilyNick(newFamilyNick)); // Redux 상태 업데이트
+        console.log("가족 이름 업데이트 성공");
       })
       .catch((error) => {
-        console.error("가훈 업데이트 실패:", error);
+        console.error("가족 이름 업데이트 실패:", error);
       });
+  };
+
+  const handleMenuClick = () => {
+    dispatch(toggleLeftSidebar());
   };
 
   return (
@@ -82,11 +68,7 @@ const Header = () => {
       <nav>
         <div className={styles.menuBtnContainer}>
           <button className={styles.menuBtn}>
-            {/* 왼쪽 미니바 */}
-            <HiMiniBars3
-              className={styles.menuIcon}
-              onClick={handleMenuClick}
-            />
+            <HiMiniBars3 className={styles.menuIcon} onClick={handleMenuClick} />
           </button>
         </div>
         <div
@@ -94,16 +76,12 @@ const Header = () => {
           onClick={() => {
             nav("/");
           }}
-          style={{ cursor: "pointer" }}>
+          style={{ cursor: "pointer" }}
+        >
           {/* WeFAM로고 */}
-          <img className={styles.logo} src={logo}></img>
+          <img className={styles.logo} src={logo} alt="WeFAM 로고" />
         </div>
-        <div className={styles.groupContainer}>{familyMotto}</div>
-        {/* <div className={styles.groupContainer}>
-          <button onClick={openGroup} className={styles.groupBtn}>
-            {groupName} ▼
-          </button>
-        </div> */}
+        <div className={styles.groupContainer}>{familyNick}</div>
       </nav>
     </div>
   );

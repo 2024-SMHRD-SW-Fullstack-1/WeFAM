@@ -65,11 +65,11 @@ const LeftSidebar = () => {
       });
       if (response.status === 200) {
         window.localStorage.removeItem("kakaoAccessToken");
-        nav("/");
       } else {
         console.error("로그아웃 실패");
       }
     } catch (error) {
+      nav("/");
       console.error("로그아웃 요청 중 에러 발생:", error);
     }
   };

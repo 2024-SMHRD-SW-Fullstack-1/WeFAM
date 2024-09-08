@@ -113,68 +113,57 @@ public class UserService {
 	    	// 생년월일이 없는 경우 기존 값을 유지 (업데이트하지 않음)
 	    }
 
-	    // 기존 사용자 확인
-	    UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
+	 // 기존 사용자 확인
+        UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
 
-	    if (existingUser != null) {
-	        // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트하는 것이 적절한지 확인)
-	        if(existingUser != null) {
-	        	// 생년월일이 null이 아닌 경우에만 업데이트
-	        	if (userDTO.getBirth() != null) {
-	        		existingUser.setBirth(userDTO.getBirth());
-	        	}
-	        }
-	    	
-	        // 카카오에서 받은 닉네임이 기존 닉네임과 다르다면 업데이트하지 않음
-	        if (!existingUser.getNick().equals(userDTO.getNick())) {
-	            existingUser.setNick(existingUser.getNick()); // 기존 닉네임 유지
-	        } else {
-	            existingUser.setNick(userDTO.getNick()); // 카카오에서 받은 닉네임으로 업데이트
-	        }
-	        if (!existingUser.getName().equals(userDTO.getName())) {
-	        	existingUser.setName(existingUser.getName()); // 기존 닉네임 유지
-	        } else {
-	        	existingUser.setName(userDTO.getName()); // 카카오에서 받은 닉네임으로 업데이트
-	        }
-	        
-	        if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
-	        	existingUser.setProfileImg(existingUser.getProfileImg()); // 
-	        } else {
-	        	existingUser.setProfileImg(userDTO.getProfileImg()); // 
-	        }
-	        
-	        if (userDTO.getName() != null && !existingUser.getName().equals(userDTO.getName())) {
-	            existingUser.setName(userDTO.getName());
-	        }
-//	        // 생년월이이 설정되있으면 그대로 유지
-//	        if (existingUser.getBirth() == null || userDTO.getBirth() != null) {
-//	        	existingUser.setBirth(userDTO.getBirth());
-//	        }
-	        
-	        // 다른 필드들도 동일하게 필요에 따라 업데이트를 선택
-	        existingUser.setName(userDTO.getName());
-	        existingUser.setLoginSource(userDTO.getLoginSource());
-	        // joined_at 필드는 업데이트하지 않음 (처음 가입된 시간 유지)
-	    } else {
-	        // 새로운 사용자 저장
-	        UserModel newUser = new UserModel();
-	        newUser.setId(userDTO.getId());
-	        newUser.setName(userDTO.getName());
-	        newUser.setNick(userDTO.getNick());
-	        newUser.setBirth(userDTO.getBirth());
-	        newUser.setProfileImg(userDTO.getProfileImg());
-	        newUser.setJoinedAt(userDTO.getJoinedAt());
-	        newUser.setLoginSource(userDTO.getLoginSource());
-	      
+        if (existingUser != null) {
+            // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트할지 여부 확인)
 
-	        userRepository.save(newUser);
-	    }
+            // 1. 닉네임 업데이트 조건: DB에 저장된 닉네임과 동일하지 않다면 업데이트하지 않음
+            if (!existingUser.getNick().equals(userDTO.getNick())) {
+                // 기존 닉네임을 유지
+                userDTO.setNick(existingUser.getNick());
+            }
 
-	    // 기존 사용자도 업데이트를 진행한 후 저장
-	    if (existingUser != null) {
-	        userRepository.save(existingUser);
-	    }
-	}
+            // 2. 이름 업데이트 조건: DB에 저장된 이름과 동일하지 않다면 업데이트하지 않음
+            if (!existingUser.getName().equals(userDTO.getName())) {
+                // 기존 이름을 유지
+                userDTO.setName(existingUser.getName());
+            }
+
+            // 3. 프로필 이미지 업데이트 조건
+            if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
+                // 기존 프로필 이미지를 유지
+                userDTO.setProfileImg(existingUser.getProfileImg());
+            }
+
+            // 사용자 정보 업데이트
+            existingUser.setNick(userDTO.getNick());
+            existingUser.setName(userDTO.getName());
+            existingUser.setProfileImg(userDTO.getProfileImg());
+            existingUser.setLoginSource(userDTO.getLoginSource());
+
+            // 생년월일 정보도 필요할 때만 업데이트
+            if (userDTO.getBirth() != null) {
+                existingUser.setBirth(userDTO.getBirth());
+            }
+
+            userRepository.save(existingUser);
+
+        } else {
+            // 새로운 사용자 저장
+            UserModel newUser = new UserModel();
+            newUser.setId(userDTO.getId());
+            newUser.setName(userDTO.getName());
+            newUser.setNick(userDTO.getNick());
+            newUser.setBirth(userDTO.getBirth());
+            newUser.setProfileImg(userDTO.getProfileImg());
+            newUser.setJoinedAt(userDTO.getJoinedAt());
+            newUser.setLoginSource(userDTO.getLoginSource());
+
+            userRepository.save(newUser);
+        }
+    }
 
 	 public List<UserModel> getUsersInJoining() {
 	        // Joining 테이블의 모든 항목을 가져옴
