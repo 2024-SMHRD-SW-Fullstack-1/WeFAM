@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from "./GroupManagement.module.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import familyPT from "../../assets/images/famaily.png"; // 가족 프로필 사진 기본 이미지
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 const GroupManagement = () => {
   const navigate = useNavigate(); // useNavigate 훅 사용
+  const dispatch = useDispatch(); // Redux 디스패치 사용
 
-  const handleAiButtonClick = () => {
-    navigate("/chatbot"); // Chatbot 경로로 이동
-  };
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
   const userId = useSelector((state) => state.user.userData.id);
@@ -200,14 +197,14 @@ const handleSaveAll = () => {
             id="profileImageInput"
           />
           <label htmlFor="profileImageInput" className={styles.editImgButton}>
-            수정
+            이미지 수정
           </label>
           <label className={styles.saveImgButton} onClick={handleSaveAll}>
-            저장
+            변경사항 전체 저장
           </label>
         </div>
       </div>
-      <hr />
+      <hr  className={styles.halfHr}/>
 
       {/* 가족 이름 수정 영역 */}
       <div className={styles.profileContainer}>
@@ -220,12 +217,9 @@ const handleSaveAll = () => {
             value={familyNick}
             onChange={handleFamilyNickChange}
           />
-          {/* <button className={styles.editNickButton} onClick={updateFamilyNick}>
-            수정
-          </button> */}
         </div>
       </div>
-      <hr />
+      <hr className={styles.halfHr}/>
 
       {/* 가족 가훈 수정 영역 */}
       <div className={styles.profileContainer}>
@@ -238,12 +232,9 @@ const handleSaveAll = () => {
             value={newFamilyMotto}
             onChange={handleFamilyMottoChange}
           />
-          {/* <button className={styles.editNickButton} onClick={updateFamilyMotto}>
-            수정
-          </button> */}
         </div>
       </div>
-      <hr />
+      <hr className={styles.halfHr}/>
     </div>
   );
 };

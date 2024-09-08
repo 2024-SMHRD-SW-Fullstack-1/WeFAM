@@ -385,6 +385,10 @@ const EventModal = ({
   const placeholderColor = "gray"; // placeholder 색상
   const textColor = memoContent ? "black" : placeholderColor; // 색상 결정
 
+  const handlePlaceSelectFromChatbot = (placeName) => {
+    setLocation(placeName); // 장소 입력란에 선택한 장소 이름을 설정
+};
+
   return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
@@ -698,6 +702,7 @@ const EventModal = ({
             startDate={startDate}
             endDate={endDate}
             location={location}
+            onSelectPlace={handlePlaceSelectFromChatbot} // Chatbot에서 선택된 장소를 받아 처리
              />
         )}
       </div>
