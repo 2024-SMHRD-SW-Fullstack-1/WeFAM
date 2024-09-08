@@ -111,3 +111,4 @@ public class FamilyService {
         return familyRepository.findUserIdByFamilyIdx(familyIdx);
     }
 }
+
