@@ -9,6 +9,7 @@ import logo from "../../assets/images/logo-text-segoe.png";
 import { GoBell } from "react-icons/go";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import AlarmModal from "./AlarmModal";
+import { NotificationContext } from "../../NotificationContext";
 
 const Header = () => {
   const nav = useNavigate();
@@ -21,6 +22,7 @@ const Header = () => {
   const [isAlarm, setIsAlarm] = useState(false);
   const alarmRef = useRef(null); // 알람 모달 감지용 ref
   const bellRef = useRef(null); // bell 아이콘 감지용 ref
+  const { notifications } = React.useContext(NotificationContext);
 
   const handleMenuClick = () => {
     dispatch(toggleLeftSidebar());
@@ -28,7 +30,13 @@ const Header = () => {
 
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
-  console.log(userData);
+
+  // 본인 계정과 일치하는 알림 개수 필터링
+  const filteredNotifications = userData
+    ? notifications.filter(
+        (notification) => notification.receiverId === userData.id
+      )
+    : [];
 
   useEffect(() => {
     if (userData) {
@@ -91,28 +99,6 @@ const Header = () => {
     alert("프로필 클릭");
   };
 
-  // 알람 모달 밖을 클릭하면 닫히게 하는 로직
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        alarmRef.current &&
-        !alarmRef.current.contains(event.target) &&
-        bellRef.current &&
-        !bellRef.current.contains(event.target) // bell 아이콘을 클릭한 경우는 제외
-      ) {
-        setIsAlarm(false);
-      }
-    };
-
-    // 컴포넌트가 마운트되면 이벤트 리스너 추가
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // 컴포넌트가 언마운트되면 이벤트 리스너 제거
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isAlarm]);
-
   return (
     <div>
       <div style={{ width: "100%" }}>
@@ -145,12 +131,33 @@ const Header = () => {
                 ref={bellRef}
               >
                 <GoBell />
-                {isAlarm && (
-                  <div ref={alarmRef} style={{ position: "absolute" }}>
-                    <AlarmModal />
+                {filteredNotifications.length > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "-5px",
+                      right: "-3px",
+                      background: "var(--color-sunset)",
+                      color: "white",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {filteredNotifications.length}
                   </div>
                 )}
               </div>
+              {isAlarm && (
+                <div ref={alarmRef} style={{ position: "absolute" }}>
+                  <AlarmModal />
+                </div>
+              )}
               <div className={styles.icon} onClick={handleTrophyClick}>
                 <HiOutlineTrophy />
               </div>
