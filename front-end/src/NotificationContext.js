@@ -10,7 +10,7 @@ export const NotificationProvider = ({ children }) => {
 
     eventSource.onmessage = (event) => {
       const newNotification = JSON.parse(event.data);
-      setNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+      setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
     };
 
     eventSource.onerror = (error) => {
@@ -28,7 +28,7 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   return (
-    <NotificationContext.Provider value={{ notifications }}>
+    <NotificationContext.Provider value={{ notifications, setNotifications }}>
       {children}
     </NotificationContext.Provider>
   );
