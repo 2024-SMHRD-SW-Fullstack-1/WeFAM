@@ -8,6 +8,7 @@ import madong from "../../assets/images/madong.png";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import FamilyModal from "./FamilyModal";
+import crown from "../../assets/images/crown.png";
 
 const RightSidebar = () => {
   const [users, setUsers] = useState([]);
@@ -26,8 +27,9 @@ const RightSidebar = () => {
             image: user.profileImg,
             nick: user.nick,
             id: user.id,
-            online: true
+            online: true,
           }));
+          console.log(loadedUsers);
           setUsers(loadedUsers);
         })
         .catch((error) => {
@@ -46,7 +48,8 @@ const RightSidebar = () => {
   }, [userData]); // userData가 변경될 때마다 실행
 
   const handleProfileClick = (user) => {
-    if (user.id !== userData.id) { // 본인이 아닌 경우에만 모달 열기
+    if (user.id !== userData.id) {
+      // 본인이 아닌 경우에만 모달 열기
       setSelectedUser(user);
       setIsModalOpen(true);
     }
@@ -64,25 +67,32 @@ const RightSidebar = () => {
         <hr className={styles.separator} />
         <ul className={styles.userList}>
           {users.map((user, index) => (
-            <li 
-            key={index} 
-            className={styles.userItem} 
-            onClick={() => handleProfileClick(user)}
-            style={{ cursor: user.id !== userData.id ? 'pointer' : 'default' }} // 본인이 아닌 경우에만 클릭 가능
-          >
-
-              <img src={user.image} className={styles.userImage} alt={user.name} />
+            <li
+              key={index}
+              className={styles.userItem}
+              onClick={() => handleProfileClick(user)}
+              style={{
+                cursor: user.id !== userData.id ? "pointer" : "default",
+              }} // 본인이 아닌 경우에만 클릭 가능
+            >
+              <img
+                src={user.image}
+                className={styles.userImage}
+                alt={user.name}
+              />
               <span className={styles.userName}>{user.name}</span>
               <span>({user.nick})</span>
-              <span className={`${styles.status} ${user.online ? styles.online : styles.offline}`}></span>
+              <span
+                className={`${styles.status} ${
+                  user.online ? styles.online : styles.offline
+                }`}
+              ></span>
             </li>
           ))}
         </ul>
       </div>
 
-      {isModalOpen && (
-        <FamilyModal user={selectedUser} onClose={closeModal} />
-      )}
+      {isModalOpen && <FamilyModal user={selectedUser} onClose={closeModal} />}
     </div>
   );
 };

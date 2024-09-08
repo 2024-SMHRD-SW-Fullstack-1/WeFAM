@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styles from "./EventModal.module.css"; // 모달 관련 CSS
 import DatePicker from "react-datepicker";
+import ai from "../../assets/images/ai.png";
 import "react-datepicker/dist/react-datepicker.css"; // DatePicker 스타일
 import {
   BsEyedropper,
@@ -10,7 +11,7 @@ import {
   BsPaperclip,
   BsAlarm,
   BsPersonCircle,
-  BsThreeDotsVertical,
+  BsSearch,
 } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
 import CustomDropdown from "./CustomDropDown";
@@ -20,10 +21,11 @@ import MapSearchInput from "./LocationSearch";
 import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
+import { MemoModal } from "./MemoModal";
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-}
+};
 
 const generateTimeOptions = () => {
   const options = [];
@@ -88,6 +90,36 @@ const EventModal = ({
   const userProfile = familyUsers.find((user) => user.id === event.userId);
   const [savedFiles, setSavedFiles] = useState([]); // 파일 목록을 담기 위한 상태
   const [deletedFileIds, setDeletedFileIds] = useState([]);
+  const [isMemoModalOpen, setIsMemoModalOpen] = useState(false); // MemoModal 열림/닫힘 상태 관리
+  const [memoContent, setMemoContent] = useState(event.content); // 메모 내용 상태 관리
+
+  // MemoModal을 열기 위한 함수
+  const openMemoModal = () => {
+    setIsMemoModalOpen(true);
+  };
+
+  // MemoModal을 닫기 위한 함수
+  const closeMemoModal = (newContent) => {
+    setMemoContent(newContent); // 새로운 메모 내용을 저장
+    setIsMemoModalOpen(false);
+  };
+
+  // 메모 지우기 함수
+  const handelDeleteMemo = () => {
+    setMemoContent("");
+  };
+
+  // AiModal 상태 관리
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setIsDetailOpen(initialIsDetailOpen);
@@ -134,6 +166,8 @@ const EventModal = ({
 
   // 저장 버튼 클릭 시 이벤트 정보를 전달
   const handleSaveClick = () => {
+    // 만약 location이 빈 문자열이면 기존 값 유지
+    const finalLocation = location !== "" ? location : event.location;
     // 새로 추가된 파일
     const newFiles = selectedFiles.filter(
       (file) => !savedFiles.some((savedFile) => savedFile.name === file.name)
@@ -146,10 +180,10 @@ const EventModal = ({
       id: event.id, // ID도 함께 전달
       allDay: isAllDay,
       familyIdx: event.familyIdx,
-      eventContent: event.eventContent,
+      content: memoContent,
       backgroundColor: selectedColor,
       userId: event.userId,
-      location: location,
+      location: finalLocation,
       latitude: coordinates.lat, // 좌표 정보에서 위도 추출
       longitude: coordinates.lng, // 좌표 정보에서 경도 추출
       allDay: isAllDay ? 1 : 0, // isAllDay를 1 또는 0으로 변환
@@ -343,6 +377,9 @@ const EventModal = ({
     }
   };
 
+  const placeholderColor = "gray"; // placeholder 색상
+  const textColor = memoContent ? "black" : placeholderColor; // 색상 결정
+
   return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
@@ -357,12 +394,12 @@ const EventModal = ({
             />
           </div>
           {isDetailOpen && (
-            <div className={styles.ai}>
-              <IoSparklesOutline style={{ color: selectedColor }} />
+            <div className={styles.ai} onClick={openModal}>
+              <img src={ai} alt='AI 버튼' style={{ height: 48, width: 48 }} />
               <div
                 className={styles.tooltip}
                 style={{ backgroundColor: selectedColor }}>
-                일정 추천
+                AI 일정 추천
               </div>
             </div>
           )}
@@ -439,7 +476,7 @@ const EventModal = ({
           </div>
         </div>
 
-        {/* 작성자, 그룹, 코알 필드 */}
+        {/* 작성자 */}
         <div className={styles.field}>
           <BsPersonCircle
             className={styles.icon}
@@ -471,7 +508,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                    ?.label || "색상을 선택하세요"
+                  ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />
@@ -494,39 +531,28 @@ const EventModal = ({
         {isDetailOpen && (
           <div className={styles.detailSection}>
             {/*알림 설정 */}
-            <div className={styles.field}>
-              {/* 알림 설정 필드 */}
-
-              <BsAlarm
+            {/* <div className={styles.field}> */}
+            {/* 알림 설정 필드 */}
+            {/* <BsAlarm
                 className={styles.icon}
                 style={{ color: selectedColor }}
-              />
-              {/* 클릭 시 알림 설정 UI */}
-              <div className={styles.contentField}>
-                <span style={{ width: "100%" }} onClick={toggleAlarmSetting}>
-                  {alarmText}
-                </span>
-                {showAlarmSetting && (
-                  <div
-                    style={{
-                      position: "absolute", // 절대 위치 설정
-                      zIndex: 1000, // 다른 요소 위로 배치
-                      backgroundColor: "#f9f9f9",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: "5px",
-                      padding: "8px",
-                      marginTop: "25px",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // 그림자 추가
-                      width: "100%", // 필드 너비에 맞추기
-                    }}>
-                    <AlarmSetting
-                      onAlarmChange={handleAlarmChange}
-                      color={selectedColor}
-                    />
+              /> */}
+            {/* <div className={styles.commonBox}>
+                <span className={styles.memoWrapper}>
+                  <div className={styles.memoText} style={{ color: textColor }}>
+                    {memoContent || "알람을 설정하세요"}
                   </div>
-                )}
-              </div>
-            </div>
+                  {memoContent !== "" && (
+                    <button
+                      type='button'
+                      className={styles.removeButton}
+                      onClick={handelDeleteMemo}>
+                      &times;
+                    </button>
+                  )}
+                </span>
+              </div> */}
+            {/* </div> */}
             {/* 메모 작성 */}
             <div className={styles.field}>
               <MdOutlineEditNote
@@ -535,13 +561,31 @@ const EventModal = ({
               />
               <div className={styles.commonBox}>
                 <span className={styles.memoWrapper}>
-                  <span>작성</span>
-                  <button type='button' className={styles.removeButton}>
-                    &times;
-                  </button>
+                  <div
+                    className={styles.memoText}
+                    onClick={openMemoModal}
+                    style={{ color: textColor }}>
+                    {memoContent || "메모를 입력하세요"}
+                  </div>
+                  {memoContent !== "" && (
+                    <button
+                      type='button'
+                      className={styles.removeButton}
+                      onClick={handelDeleteMemo}>
+                      &times;
+                    </button>
+                  )}
                 </span>
               </div>
             </div>
+            {/* MemoModal이 열렸을 때 보여줌 */}
+            {isMemoModalOpen && (
+              <MemoModal
+                onClose={closeMemoModal}
+                initialContent={memoContent} // 현재 메모 내용을 전달
+                eventColor={selectedColor}
+              />
+            )}
             {/*지도 설정 */}
             <div className={styles.field}>
               <FiMapPin
@@ -578,29 +622,32 @@ const EventModal = ({
             </div>
             <div className={styles.imgTextBox}>
               {savedFiles.concat(selectedFiles).map((file, index) => (
-                <div
-                  key={index}
-                  className={styles.previewWrapper}
-                  onMouseEnter={(e) => {
-                    const preview = e.currentTarget.querySelector(
-                      `.${styles.preview}`
-                    );
-                    if (preview) {
-                      preview.style.display = "block";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    const preview = e.currentTarget.querySelector(
-                      `.${styles.preview}`
-                    );
-                    if (preview) {
-                      preview.style.display = "none";
-                    }
-                  }}>
+                <div key={index} className={styles.previewWrapper}>
                   <span className={styles.fileNameWrapper}>
+                    <span
+                      className={styles.previewIcon}
+                      onMouseEnter={(e) => {
+                        const preview = e.currentTarget
+                          .closest(`.${styles.previewWrapper}`)
+                          .querySelector(`.${styles.preview}`);
+                        if (preview) {
+                          preview.style.display = "block";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        const preview = e.currentTarget
+                          .closest(`.${styles.previewWrapper}`)
+                          .querySelector(`.${styles.preview}`);
+                        if (preview) {
+                          preview.style.display = "none";
+                        }
+                      }}>
+                      <BsSearch />
+                    </span>
                     <span className={styles.fileName}>
                       {file.fileRname || file.name}
                     </span>
+
                     <button
                       type='button'
                       className={styles.removeButton}
@@ -640,6 +687,7 @@ const EventModal = ({
             저장
           </button>
         </div>
+        {isModalOpen && <AiModal onClose={closeModal} />}
       </div>
     </div>,
     document.body // 모달을 body에 추가

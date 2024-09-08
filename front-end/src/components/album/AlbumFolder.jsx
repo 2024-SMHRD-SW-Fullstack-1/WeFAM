@@ -5,6 +5,8 @@ import Modal from "react-modal";
 import { useDropzone } from "react-dropzone";
 import styles from "./AlbumFolder.module.css";
 import axios from "axios";
+import { BsPlusCircle } from "react-icons/bs";
+import { BsTrash } from "react-icons/bs";
 
 Modal.setAppElement("#root");
 
@@ -12,7 +14,7 @@ const AlbumFolder = () => {
   const { name } = useParams();
   const userId = useSelector((state) => state.user.userData.id);
   const userData = useSelector((state) => state.user.userData);
-  
+
   const [images, setImages] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,10 +22,10 @@ const AlbumFolder = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  
-  const imagesPerPage = 10;
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const imagesPerPage = 15;
 
   // 초기 이미지 불러오기
   useEffect(() => {
@@ -31,26 +33,27 @@ const AlbumFolder = () => {
   }, []);
 
   // 이미지 조회 함수
-  const fetchImages = (start = '', end = '') => {
-    const effectiveEndDate = end || new Date().toISOString().split('T')[0];
-    const url = start 
+  const fetchImages = (start = "", end = "") => {
+    const effectiveEndDate = end || new Date().toISOString().split("T")[0];
+    const url = start
       ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
       : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
 
-    axios.get(url)
-      .then(response => {
+    axios
+      .get(url)
+      .then((response) => {
         if (response.data.length === 0) {
           alert("해당 기간에 이미지가 없습니다.");
           setImages([]);
         } else {
-          const fetchedImages = response.data.map(image => ({
+          const fetchedImages = response.data.map((image) => ({
             id: image.fileIdx,
             url: `data:image/${image.fileExtension};base64,${image.fileData}`,
           }));
-          setImages(fetchedImages);
+          setImages(fetchedImages.reverse());
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("이미지를 불러오는 중 오류 발생:", error);
       });
   };
@@ -125,22 +128,24 @@ const AlbumFolder = () => {
 
   // 이미지 삭제
   const deleteSelectedImages = () => {
-    axios.delete('http://localhost:8089/wefam/delete-album-images', {
-      data: selectedImages,
-    })
-      .then(response => {
-        alert('이미지가 성공적으로 삭제되었습니다.');
-        setImages(images.filter(image => !selectedImages.includes(image.id)));
+    axios
+      .delete("http://localhost:8089/wefam/delete-album-images", {
+        data: selectedImages,
+      })
+      .then((response) => {
+        alert("이미지가 성공적으로 삭제되었습니다.");
+        setImages(images.filter((image) => !selectedImages.includes(image.id)));
         setSelectedImages([]);
       })
-      .catch(error => {
-        console.error('이미지 삭제 중 오류 발생:', error);
+      .catch((error) => {
+        console.error("이미지 삭제 중 오류 발생:", error);
       });
   };
 
   // 날짜 선택 핸들러
   const handleStartDateChange = (event) => setStartDate(event.target.value);
-  const handleEndDateChange = (event) => setEndDate(event.target.value || new Date().toISOString().split('T')[0]);
+  const handleEndDateChange = (event) =>
+    setEndDate(event.target.value || new Date().toISOString().split("T")[0]);
 
   // 이미지 선택 처리
   const toggleImageSelection = (id) => {
@@ -152,7 +157,9 @@ const AlbumFolder = () => {
   };
 
   const toggleAllImages = (event) => {
-    setSelectedImages(event.target.checked ? images.map(image => image.id) : []);
+    setSelectedImages(
+      event.target.checked ? images.map((image) => image.id) : []
+    );
   };
 
   const openImageModal = (index) => {
@@ -192,7 +199,7 @@ const AlbumFolder = () => {
         <div className={styles.albumHead}>
           <div className={styles.headTitle}>
             <div className={styles.folderName}>
-              <h1>갤러리</h1>
+              <h1>가족 앨범</h1>
               <p className={styles.folderNameText}>{name}</p>
             </div>
             <div className={styles.imgArray}>
@@ -208,48 +215,76 @@ const AlbumFolder = () => {
                 onChange={handleEndDateChange}
                 value={endDate}
               />
-              <button onClick={() => fetchImages(startDate, endDate)}>조회</button>
-              <button onClick={() => fetchImages()}>전체 이미지 보기</button>
+              <button
+                className={styles.selectBtn}
+                onClick={() => fetchImages(startDate, endDate)}
+              >
+                조회
+              </button>
+              <button className={styles.resetBtn} onClick={() => fetchImages()}>
+                초기화
+              </button>
             </div>
           </div>
 
           <div className={styles.imgSetting}>
-            <button className={styles.btnDelete} onClick={deleteSelectedImages}>삭제</button>
-            <div className={styles.saveAndCheckbox}>
-              <label className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  onChange={toggleAllImages}
-                  checked={selectedImages.length === images.length && images.length > 0}
-                />
-                전체선택
-              </label>
-            </div>
-            <button className={styles.btnPlus} onClick={() => setIsModalOpen(true)}>
-              +
+            <button className={styles.btnDelete} onClick={deleteSelectedImages}>
+              <BsTrash />
+            </button>
+            <button
+              className={styles.btnPlus}
+              onClick={() => setIsModalOpen(true)}
+            >
+              <BsPlusCircle />
             </button>
           </div>
         </div>
 
         <div className={styles.folderContainer}>
+          <div className={styles.saveAndCheckbox}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                onChange={toggleAllImages}
+                checked={
+                  selectedImages.length === images.length && images.length > 0
+                }
+              />
+              전체선택
+            </label>
+          </div>
           {images.length > 0 ? (
             <div className={styles.imageGrid}>
-              {images.slice(currentPage * imagesPerPage, (currentPage + 1) * imagesPerPage).map((image, index) => (
-                <div key={image.id} className={styles.folder}>
-                  <input
-                    type="checkbox"
-                    className={styles.folderCheckbox}
-                    checked={selectedImages.includes(image.id)}
-                    onChange={() => toggleImageSelection(image.id)}
-                  />
-                  <img
-                    src={image.url}
-                    alt={`img-${image.id}`}
-                    className={styles.image}
-                    onClick={() => openImageModal(index)}
-                  />
-                </div>
-              ))}
+              {images
+                .slice(
+                  currentPage * imagesPerPage,
+                  (currentPage + 1) * imagesPerPage
+                )
+                .map((image, index) => (
+                  <div key={image.id} className={styles.folder}>
+                    <input
+                      type="checkbox"
+                      className={styles.folderCheckbox}
+                      checked={selectedImages.includes(image.id)}
+                      onChange={() => toggleImageSelection(image.id)}
+                    />
+                    <img
+                      src={image.url}
+                      alt={`img-${image.id}`}
+                      className={styles.image}
+                      onClick={() => openImageModal(index)}
+                    />
+                  </div>
+                ))}
+              {/* 왼쪽 버튼 */}
+              <button className={`${styles.navigateButton} ${styles.leftButton}`} onClick={handlePrevPage}>
+                {"<"}
+              </button>
+
+              {/* 오른쪽 버튼 */}
+              <button className={`${styles.navigateButton} ${styles.rightButton}`} onClick={handleNextPage}>
+                {">"}
+              </button>
             </div>
           ) : (
             <p>이미지가 없습니다.</p>
@@ -291,8 +326,8 @@ const AlbumFolder = () => {
                 />
                 {selectedFiles.length > 1 && (
                   <div className={styles.slideButtons}>
-                    <button onClick={showPreviousFile}>{"<"}</button>
-                    <button onClick={showNextFile}>{">"}</button>
+                    <button onClick={showPreviousFile} className={styles.addleftButton}>{"<"}</button>
+                    <button onClick={showNextFile} className={styles.addrightButton}>{">"}</button>
                   </div>
                 )}
               </div>
@@ -303,13 +338,10 @@ const AlbumFolder = () => {
             {selectedFiles.map((file) => (
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
-                <button
-                  onClick={open}
-                  className={styles.inputButton}
-                >
-                  추가
-                </button>
-                <button onClick={() => removeFile(file.name)}>삭제</button>
+                <div className={styles.buttonContainer}>
+                  <button onClick={open} className={styles.inputButton}>추가</button>
+                  <button onClick={() => removeFile(file.name)}>삭제</button>
+                </div>
               </li>
             ))}
           </ul>
@@ -318,7 +350,10 @@ const AlbumFolder = () => {
             <button className={styles.modalButton} onClick={saveImages}>
               저장
             </button>
-            <button className={styles.modalButton} onClick={() => setIsModalOpen(false)}>
+            <button className={styles.modalButton} onClick={() => {
+              setSelectedFiles([]); // 선택된 파일 초기화
+              setIsModalOpen(false); // 모달 닫기
+            }}>
               취소
             </button>
           </div>
@@ -333,13 +368,13 @@ const AlbumFolder = () => {
           overlayClassName={styles.folderOverlay}
         >
           <div className={styles.imageModalContent}>
-            <button onClick={showPreviousImage}>{"<"}</button>
+            <button onClick={showPreviousImage} className={styles.leftimageModalContent}>{"<"}</button>
             <img
               src={images[currentImageIndex]?.url}
               alt={`img-${currentImageIndex}`}
               className={styles.modalImage}
             />
-            <button onClick={showNextImage}>{">"}</button>
+            <button onClick={showNextImage} className={styles.rightimageModalContent}>{">"}</button>
           </div>
         </Modal>
       </div>

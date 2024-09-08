@@ -6,9 +6,11 @@ import styles from "./FeedItem.module.css";
 import FeedDetailModal from "./FeedDetailModal";
 import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
+import RouletteModal from "./RouletteModal";
 import PollModal from "./PollModal";
 import { elapsedTime } from "../../elapsedTime";
-import { LuVote } from "react-icons/lu";
+import { CiSquareCheck } from "react-icons/ci";
+import { PiGameControllerLight } from "react-icons/pi";
 
 import {
   BsSuitHeart,
@@ -23,9 +25,11 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null);
+  const [selectedRoulette, setSelectedRoulette] = useState([]);
   const [selectedPoll, setSelectedPoll] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isRouletteModalOpen, setIsRouletteModalOpen] = useState(false);
   const [isPollModalOpen, setIsPollModalOpen] = useState(false);
   const [writerProfileImg, setWriterProfileImg] = useState("");
   const [writerId, setWriterId] = useState("");
@@ -34,6 +38,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const imageMaxCount = 9;
   const imagePreCount = 3;
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 룰렛
+  const [roulettes, setRoulettes] = useState([]);
   // 투표
   const [polls, setPolls] = useState([]);
   // 좋아요
@@ -87,13 +93,24 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     }
   }, [feed.feedIdx]);
 
+  // getRoulettes를 useCallback으로 메모이제이션
+  const getRoulettes = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/feed/${feed.feedIdx}/roulettes`
+      );
+      setRoulettes(Array.from(response.data));
+    } catch (error) {
+      console.error(`피드 ${feed.feedIdx}번 룰렛 요청 에러 :`, error);
+    }
+  }, [feed.feedIdx]);
+
   // getPolls를 useCallback으로 메모이제이션
   const getPolls = useCallback(async () => {
     try {
       const response = await axios.get(
         `http://localhost:8089/wefam/get-polls/${feed.feedIdx}`
       );
-      console.log(response.data);
       setPolls(Array.from(response.data));
     } catch (error) {
       console.error(`피드 ${feed.feedIdx}번 투표 요청 에러 :`, error);
@@ -120,7 +137,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       const response = await axios.get(
         `http://localhost:8089/wefam/count-comments/${feed.feedIdx}`
       );
-      console.log("현재 댓글의 개수 : ", response.data);
       setCmtCount(response.data);
     } catch (error) {
       console.error("Error fetching like status", error);
@@ -145,8 +161,9 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   useEffect(() => {
     fetchWriter();
     fetchImages();
+    getRoulettes();
     getPolls();
-  }, [fetchWriter, fetchImages, getPolls]);
+  }, [fetchWriter, fetchImages, getRoulettes, getPolls]);
 
   useEffect(() => {
     getAllCmts();
@@ -204,6 +221,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     }
   };
 
+  // 피드 룰렛 클릭!
+  const handleOpenRoulette = (rouletteIdx) => {
+    setSelectedFeed({ feedIdx: feed.feedIdx });
+    setSelectedRoulette({ rouletteIdx }); // 선택된 rouletteIdx로 상태를 설정
+    setIsRouletteModalOpen(true);
+  };
+
   // 피드 투표 클릭!
   const handleOpenPoll = (pollIdx) => {
     setSelectedFeed({ feedIdx: feed.feedIdx });
@@ -223,8 +247,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   // 좋아요를 체크하는 함수
   const checkLike = useCallback(async () => {
     try {
-      console.log(userData.id);
-      console.log(feed.feedIdx);
       const response = await axios.get(
         "http://localhost:8089/wefam/check-like",
         {
@@ -237,7 +259,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           },
         }
       );
-      console.log(`${feed.feedIdx} + ${response.data}`);
       setIsLiked(response.data); // 응답 결과로 상태 초기화
     } catch (error) {
       console.error("Error checking like", error);
@@ -311,6 +332,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           <div className={styles.profileImg}>
             <img src={writerProfileImg} alt="Profile" />
           </div>
+
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
               <span className={styles.writer}>{writerNick}</span>
@@ -320,6 +342,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             <div className={styles.location}>{feed.feedLocation}</div>
           </div>
         </div>
+
         {writerId === userData.id && (
           <div
             className={styles.feedOptionsContainer}
@@ -401,23 +424,41 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           </div>
         )}
 
+        {/* 내용 - 룰렛 */}
+        {roulettes.length > 0 ? (
+          <div className={styles.roulettesContent}>
+            <div className={styles.roulette}>
+              {roulettes.map((roulette, index) => (
+                <span key={index}>
+                  <button
+                    onClick={() => handleOpenRoulette(roulette.rouletteIdx)}
+                  >
+                    {" "}
+                    <PiGameControllerLight />
+                    <span>{roulette.rouletteTitle}</span>
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         {/* 내용 - 투표 */}
-        <div className={styles.pollsContent}>
-          {polls.length > 0 ? (
-            <div>
+        {polls.length > 0 ? (
+          <div className={styles.pollsContent}>
+            <div className={styles.poll}>
               {polls.map((poll, index) => (
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
                     {" "}
-                    {/* pollIdx 전달 */}
-                    <LuVote />
+                    <CiSquareCheck />
                     <span>{poll.pollTitle}</span>
                   </button>
                 </span>
               ))}
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {(() => {
           let content;
@@ -438,13 +479,21 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.footer}>
         <div className={styles.iconbar}>
           <span>
-            <button onClick={handleHeart}>
-              {isLiked ? <BsSuitHeartFill /> : <BsSuitHeart />}
+            <button className={styles.likeBtn} onClick={handleHeart}>
+              {isLiked ? (
+                <BsSuitHeartFill style={{ color: "red" }} />
+              ) : (
+                <BsSuitHeart />
+              )}
             </button>
             {likeCount || 0}
           </span>
           <span>
-            <BsChatHeart />
+            {cmtCount > 0 ? (
+              <BsChatHeart style={{ color: "red" }} />
+            ) : (
+              <BsChatHeart />
+            )}
             {cmtCount || 0}
           </span>
         </div>
@@ -493,7 +542,14 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           onClose={() => setIsDetailModalOpen(false)}
         />
       )}
-
+      {isRouletteModalOpen && (
+        <RouletteModal
+          feed={selectedFeed}
+          roulette={selectedRoulette}
+          onShow={onGetFeedDetail}
+          onClose={() => setIsRouletteModalOpen(false)}
+        />
+      )}
       {isPollModalOpen && (
         <PollModal
           feed={selectedFeed}

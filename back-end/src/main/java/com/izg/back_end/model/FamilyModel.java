@@ -30,4 +30,8 @@ public class FamilyModel {
     @Column(name = "created_at")
     @JsonProperty("createdAt")
     private LocalDateTime createdAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간
+    
+    @Column(name = "family_motto")
+    @JsonProperty("familyMotto")
+    private String familyMotto = ""; // 기본값 빈 문자열
 }

@@ -53,7 +53,7 @@ public class HouseworkModel {
 
    @Column(name = "completed")
    @JsonProperty("completed")
-   private boolean completed = false; // 기본값 false
+   private boolean completed; // 0: 미완료, 1: 완료
 
    @Column(name = "posted_at")
    @JsonProperty("postedAt")

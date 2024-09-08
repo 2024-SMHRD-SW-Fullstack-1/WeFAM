@@ -7,9 +7,9 @@
     bottom: 20px;
   }
   .profileContainer {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 30%;
   }
   
   .profileContainer span {
@@ -45,7 +45,7 @@
 
 
   .editButton {
-    background-color: #A0D6B4;
+    background-color: #e1888b;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -54,9 +54,12 @@
     margin-left: 230px;
     
   }
+  .editButton:hover{
+    background-color: #ff4d4d;
+  }
   
   .editImgButton{
-    background-color: #A0D6B4;
+    background-color: #ff4d4d;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -66,10 +69,10 @@
     margin-top: 100px;
   }
   .editImgButton:hover {
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
   .editNickButton:hover{
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
   
   .editNick{
@@ -78,7 +81,7 @@
   }
 
   .editNickButton{
-    background-color: #A0D6B4;
+    background-color: #ff4d4d;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -89,7 +92,7 @@
   }
 
   .hrLine {
-    width: 50%; /* hr 태그의 너비를 절반으로 설정 */
+    width: 85%; /* hr 태그의 너비를 절반으로 설정 */
     margin: 0;
     border: none;
     border-top: 1px solid #ccc; /* hr 모양을 유지하되 줄이 짧아지게 */

@@ -8,6 +8,8 @@ import {
   BsChevronCompactRight,
   BsPinMap,
   BsImages,
+  BsChevronDown,
+  BsChevronUp,
 } from "react-icons/bs";
 import { RiArrowRightWideLine } from "react-icons/ri";
 import { MdOutlineEditNote } from "react-icons/md";
@@ -33,6 +35,8 @@ const EventDetail = ({
   const [coordinates, setCoordinates] = useState(null);
   const [editHovered, setEditHovered] = useState(false);
   const [deleteHovered, setDeleteHovered] = useState(false);
+  const [isMemoOpen, setIsMemoOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // 모달 열림/닫힘 상태 관리
 
   useEffect(() => {
     // event가 변경될 때마다 coordinates와 location을 설정
@@ -69,6 +73,11 @@ const EventDetail = ({
     console.log(event);
 
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // 메모 클릭 핸들러
+  const handleMemoClick = () => {
+    setIsMemoOpen(!isMemoOpen);
   };
 
   // 날짜 포맷팅 함수
@@ -121,6 +130,16 @@ const EventDetail = ({
     const hours = date.getHours();
     return hours >= 12 ? "오후" : "오전";
   };
+  const [clicked, setClicked] = useState(false);
+
+  const handleImageClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!clicked) {
+      setClicked(true); // 조건에 맞는 상태 변경
+    }
+  };
 
   // 메뉴 외부 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -151,12 +170,23 @@ const EventDetail = ({
     arrow: true,
   };
 
+  useEffect(() => {
+    setIsOpen(true); // 컴포넌트가 마운트되면 모달을 열림 상태로 설정
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false); // 닫힘 상태로 변경
+    setTimeout(onClose, 300); // 애니메이션이 끝난 후에 onClose 호출
+  };
+
   return ReactDOM.createPortal(
-    <div className={styles.EventDetail} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${styles.EventDetail} ${isOpen ? styles.enter : styles.exit}`} // enter와 exit 클래스 적용
+      onClick={(e) => e.stopPropagation()}>
       {/* Header 부분 */}
       <div className={styles.header}>
         <div className={styles.icon}>
-          <BsXLg onClick={onClose} />
+          <BsXLg onClick={handleClose} />
         </div>
 
         <div className={styles.profileContainer}>
@@ -248,11 +278,33 @@ const EventDetail = ({
           <div>
             <h3 className={styles.locationName}>메모</h3>
           </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "5px",
+              color: eventColor,
+            }}>
+            {event.content !== "" && !isMemoOpen && (
+              <BsChevronDown onClick={handleMemoClick} />
+            )}
+            {event.content !== "" && isMemoOpen && (
+              <BsChevronUp onClick={handleMemoClick} />
+            )}
+          </div>
         </div>
-        <div style={{ padding: "0 18px" }}>
-          <p>{event.content}</p>
-          <span>일정을 등록했습니다</span>
-        </div>
+        {isMemoOpen && (
+          <div style={{ padding: "0 18px", marginBottom: "10px" }}>
+            <p>
+              {event.content.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 지도  */}
@@ -294,10 +346,7 @@ const EventDetail = ({
                     }
                     alt={`Event file ${index}`}
                     className={styles.image}
-                    onClick={(e) => {
-                      e.preventDefault(); // 기본 동작 방지
-                      e.stopPropagation(); // 이벤트 전파 차단
-                    }}
+                    onClick={(e) => handleImageClick(e)}
                   />
                 </div>
               ))}

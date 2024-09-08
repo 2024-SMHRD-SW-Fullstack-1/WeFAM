@@ -2,10 +2,13 @@
   display: flex;
   flex-direction: column;
   row-gap: var(--space-lg);
-  padding: var(--space-sm) var(--space-sm) var(--space-xl) var(--space-sm);
+  padding: var(--space-md);
   margin-bottom: var(--space-xl);
   border-bottom: 1px solid;
   border-bottom-color: rgb(var(--color-separator));
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 */
 }
 .header {
   height: 40px;
@@ -53,6 +56,7 @@
 
 .feedOptionsContainer {
   position: relative;
+  height: 100%;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -85,6 +89,35 @@
   height: 100%;
 }
 
+.roulettesContent,
+.pollsContent {
+  display: flex;
+  flex-wrap: wrap; /* 자동으로 줄 바꿈 */
+  width: 100%;
+}
+.roulettesContent > .roulette,
+.pollsContent > .poll {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.roulettesContent > .roulette button,
+.pollsContent > .poll button {
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--space-xs);
+  font-size: var(--font-md);
+  color: var(--color-white);
+  background-color: var(--color-sunset);
+  border-radius: var(--radius-md);
+}
+.roulettesContent > .roulette button:hover,
+.pollsContent > .poll button:hover {
+  background-color: var(--color-sunset-hover);
+}
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -99,10 +132,19 @@
   align-items: center;
   gap: var(--space-xs);
 }
+
+.likeBtn {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--font-md);
+}
+
 .comment {
   min-height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 .comment textarea {
   width: 90%;
@@ -115,7 +157,7 @@
 }
 
 .comment .addCommentBtn {
-  width: 56px;
+  width: 36px;
   height: 28px;
   font-size: var(--font-2xl);
   color: var(--color-white);
@@ -209,7 +251,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  white-space: pre-wrap;
 }
 
 .leftArrowBtn,
@@ -217,7 +260,7 @@
   position: absolute;
   width: 32px;
   height: 32px;
-  top: 50%;
+  top: calc(50% - 16px);
   transform: translateY(-50%);
   display: flex;
   justify-content: center;
@@ -233,8 +276,8 @@
   opacity: 0; /* 기본적으로 투명 상태 */
 }
 
-.imageContainer:hover .leftArrowBtn,
-.imageContainer:hover .rightArrowBtn {
+.imageSlider:hover .leftArrowBtn,
+.imageSlider:hover .rightArrowBtn {
   opacity: 1; /* 호버 시 불투명하게 표시 */
   transform: translateX(0); /* 호버 시 원래 위치로 이동 */
 }

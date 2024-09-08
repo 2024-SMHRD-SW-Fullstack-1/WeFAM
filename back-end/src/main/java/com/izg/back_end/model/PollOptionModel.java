@@ -2,6 +2,7 @@ package com.izg.back_end.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,11 +24,13 @@ public class PollOptionModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "poll_option_idx")
     private int pollOptionIdx;
-
-    @ManyToOne
-    @JoinColumn(name = "poll_idx", nullable = false)
-    @JsonBackReference
-    private PollModel poll;
+    
+    @Column(name = "poll_idx")
+    @JsonProperty("pollIdx")
+    private int pollIdx;
+    
+    @Column(name = "poll_option_num", nullable = false)
+    private int pollOptionNum;
 
     @Column(name = "poll_option_content", nullable = false)
     private String pollOptionContent;

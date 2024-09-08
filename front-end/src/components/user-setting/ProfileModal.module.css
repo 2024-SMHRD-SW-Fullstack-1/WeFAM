@@ -34,10 +34,32 @@
     font-size: 22px;
   }
   
+  
   .modalLabel {
-    display: block;
-    margin-bottom: 8px;
     font-weight: bold;
+    display: inline-block;
+    width: 120px; /* 레이블에 고정 너비를 줘서 이름, 생년월일, 닉네임 정렬 */
+    font-size: 20px;
+
+  }
+
+  .profile{
+    background-color: rgb(209, 223, 235);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 20px;
+    
+    
+  }
+  .profileInfoRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* 각 항목 사이에 간격 추가 */
+  }
+  
+  .profileInfoRow p{
+    font-size: 20px;
+    font-weight: 800;
   }
   
   .modalInputText,

@@ -27,7 +27,7 @@
   
   .profileImg {
     width: 300px;
-    height: 150px;
+    height: 200px;
     border-radius: 8%;
     object-fit: cover;
     margin-right: 20px;
@@ -44,7 +44,7 @@
   }
   
   .editImgButton{
-    background-color: #A0D6B4;
+    background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -54,10 +54,22 @@
     margin-top: 100px;
   }
   .editImgButton:hover {
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
+
+  .saveImgButton{
+    background-color: #E1888B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+    margin-top: 100px;
+  }
+
   .editNickButton:hover{
-    background-color: #7cb342;
+    background-color: #ff4d4d;
   }
   
   .editNick{
@@ -66,12 +78,12 @@
   }
 
   .editNickButton{
-    background-color: #A0D6B4;
+    background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 30px;
-    margin-left: 30px;
+    margin-left: 190px;
   }

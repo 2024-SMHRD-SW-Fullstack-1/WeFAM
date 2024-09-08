@@ -21,17 +21,15 @@ public class PollUserModel {
     @Column(name = "poll_user_idx")
     private int pollUserIdx;
 
-    
     @Column(name = "poll_idx", nullable = false)
     private int pollIdx;
-
     
-    @Column(name = "poll_option_idx", nullable = false)
-    private int pollOptionIdx;
+    @Column(name = "selected_option_num", nullable = false)
+    private int selectedOptionNum;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(name = "voted_at", nullable = false)
-    private LocalDateTime votedAt;
+    private LocalDateTime votedAt = LocalDateTime.now(); // 기본값 현재 날짜와 시간;
 }

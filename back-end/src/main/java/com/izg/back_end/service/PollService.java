@@ -1,21 +1,22 @@
 package com.izg.back_end.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.izg.back_end.dto.PollDto;
 import com.izg.back_end.dto.PollOptionDto;
-import com.izg.back_end.dto.VoteStatusDto;
+import com.izg.back_end.dto.VoteDto;
 import com.izg.back_end.model.PollModel;
 import com.izg.back_end.model.PollOptionModel;
 import com.izg.back_end.model.PollUserModel;
 import com.izg.back_end.repository.PollOptionRepository;
 import com.izg.back_end.repository.PollRepository;
 import com.izg.back_end.repository.PollUserRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class PollService {
@@ -41,7 +42,8 @@ public class PollService {
 
         for (PollOptionDto optionDto : pollDto.getPollOptions()) {
             PollOptionModel option = new PollOptionModel();
-            option.setPoll(poll);
+            option.setPollIdx(poll.getPollIdx());
+            option.setPollOptionNum(optionDto.getPollOptionIdx());
             option.setPollOptionContent(optionDto.getPollOptionContent());
             pollOptionRepository.save(option);
         }
@@ -50,33 +52,23 @@ public class PollService {
     }
 
     @Transactional(readOnly = true)
-	public List<PollModel> getPollsByFeedIdx(int feedIdx) {
-        return pollRepository.findPollsByFeedIdx(feedIdx);
+    public List<PollDto> getPollsByFeedIdx(int feedIdx) {
+        List<PollModel> polls = pollRepository.findPollsByFeedIdx(feedIdx);
+
+        return polls.stream().map(poll -> {
+            List<PollOptionModel> options = pollOptionRepository.findByPollIdx(poll.getPollIdx());
+            List<PollOptionDto> optionDtos = options.stream().map(option ->
+                new PollOptionDto(option.getPollOptionIdx(), option.getPollOptionContent())
+            ).collect(Collectors.toList());
+
+            return new PollDto(
+                poll.getPollIdx(), 
+                poll.getFeedIdx(), 
+                poll.getUserId(), 
+                poll.getPollTitle(), 
+                poll.getCreatedAt(), 
+                optionDtos
+            );
+        }).collect(Collectors.toList());
     }
-    
-//    @Transactional
-//    public void vote(VoteDto voteDto) {
-//        PollModel poll = pollRepository.findById(voteDto.getPollIdx())
-//            .orElseThrow(() -> new IllegalArgumentException("Invalid poll ID"));
-//
-//        PollOptionModel selectedOption = pollOptionRepository.findById(voteDto.getPollOptionIdx())
-//            .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
-//
-//        PollUserModel existingVote = pollUserRepository.findByPollAndUserId(poll, voteDto.getUserId());
-//
-//        if (existingVote != null) {
-//            // 투표 수정 로직
-//            existingVote.setPollOption(selectedOption);
-//            existingVote.setVotedAt(LocalDateTime.now());
-//            pollUserRepository.save(existingVote);
-//        } else {
-//            // 새 투표 로직
-//            PollUserModel newVote = new PollUserModel();
-//            newVote.setPoll(poll);
-//            newVote.setPollOption(selectedOption);
-//            newVote.setUserId(voteDto.getUserId());
-//            newVote.setVotedAt(LocalDateTime.now());
-//            pollUserRepository.save(newVote);
-//        }
-//    }
 }

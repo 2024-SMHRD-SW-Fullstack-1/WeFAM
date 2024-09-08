@@ -11,5 +11,6 @@ public interface HouseworkRepository extends JpaRepository<HouseworkModel, Integ
 	Optional<HouseworkModel> findById(int workIdx);
 
 	void deleteById(int workIdx);
-}
 
+	HouseworkModel findByWorkIdx(int workIdx);
+}

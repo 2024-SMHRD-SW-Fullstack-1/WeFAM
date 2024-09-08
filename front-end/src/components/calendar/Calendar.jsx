@@ -30,10 +30,36 @@ const Calendar = () => {
   const [familyFiles, setFamilyFiles] = useState([]);
   const [familyIdx, setFamilyIdx] = useState(null); // familyIdx 상태 추가
   const [eventFiles, setEventFiles] = useState([]);
+  const searchInputRef = useRef(null); // 검색창 요소 참조를 위한 useRef
 
   // let clickTimeout = null;
 
   const userData = useSelector((state) => state.user.userData);
+
+  // 검색된 일정 필터링
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // 검색창 외부를 클릭하면 검색창 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target)
+      ) {
+        setIsSearchVisible(false); // 외부 클릭 시 검색창 닫기
+      }
+    };
+
+    // 문서 전체에서 클릭 이벤트 감지
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // 컴포넌트가 언마운트 될 때 이벤트 리스너를 제거
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchInputRef]);
 
   useEffect(() => {
     // 패밀리 데이터를 가져오는 함수
@@ -147,8 +173,8 @@ const Calendar = () => {
           backgroundColor: event.eventColor,
           familyIdx: event.familyIdx,
           userId: event.userId,
-          content: event.eventContent || "",
-          location: event.eventLocation || "",
+          content: event.eventContent,
+          location: event.eventLocation,
           isholiday: false,
           classNames: ["custom-dot-event"],
           allDay: event.isAllDay == 1,
@@ -610,10 +636,11 @@ const Calendar = () => {
       searchButton._root.render(
         <BsSearch
           style={{
-            fontSize: "24px",
+            fontSize: "20px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            height: "30px",
           }}
         />
       );
@@ -624,9 +651,9 @@ const Calendar = () => {
         addButton._root = createRoot(addButton);
       }
       addButton._root.render(
-        <BsCalendarPlus
+        <BsPlus
           style={{
-            fontSize: "24px",
+            fontSize: "30px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -653,7 +680,7 @@ const Calendar = () => {
         z-index='100'
       />
       {/* 검색 기능 */}
-      <div style={{ width: "90%" }}>
+      <div style={{ width: "80%" }}>
         <div
           style={{
             display: "flex",
@@ -662,6 +689,7 @@ const Calendar = () => {
             padding: "5px",
           }}>
           <input
+            ref={searchInputRef} // 검색창을 참조
             type='text'
             placeholder='일정 검색'
             value={searchTerm}
@@ -671,76 +699,84 @@ const Calendar = () => {
             }`} // 애니메이션 클래스 적용
           />
         </div>
-        <FullCalendar
-          ref={calendarRef} // ref 연결
-          plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView='dayGridMonth'
-          locale='ko'
-          nowIndicator={true}
-          selectable={true}
-          headerToolbar={{
-            left: "title",
-            center: "prev,today,next",
-            right: "customSearch,customAddEvent", // 커스텀 버튼 추가
-          }}
-          editable={true}
-          buttonText={{
-            today: "오늘",
-            month: "월간",
-            week: "주간",
-            day: "일간",
-            allDay: "하루종일",
-          }}
-          height='85vh'
-          dayCellContent={renderDayCellContent}
-          allDaySlot={true}
-          droppable={true}
-          weekends={true}
-          eventTimeFormat={true}
-          events={[...holidays, ...events]}
-          // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
-          eventClick={handleEventClick}
-          // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
-          dateClick={handleDateDoubleClick}
-          dayMaxEvents={3}
-          moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
-          eventContent={renderEventContent}
-          customButtons={{
-            customSearch: {
-              text: "", // 텍스트 비움
-              click: () => setIsSearchVisible(!isSearchVisible),
-            },
-            customAddEvent: {
-              text: "", // 텍스트 비움
-              click: handleAddEventClick,
-            },
-          }}
-        />
-
-        {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
-        {isModalOpen && (
-          <EventModal
-            event={selectedEvent}
-            onSave={saveEvent}
-            familyName={familyName}
-            familyUsers={familyUsers}
-            onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
-            isDetailOpen={isDetailOpen} // isDetailOpen 상태 전달
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            marginTop: "2rem",
+            borderRadius: "1rem",
+            padding: "1rem",
+          }}>
+          <FullCalendar
+            ref={calendarRef} // ref 연결
+            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+            initialView='dayGridMonth'
+            locale='ko'
+            nowIndicator={true}
+            selectable={true}
+            headerToolbar={{
+              left: "title",
+              center: "prev,today,next",
+              right: "customSearch,customAddEvent", // 커스텀 버튼 추가
+            }}
+            editable={true}
+            buttonText={{
+              today: "오늘",
+              month: "월간",
+              week: "주간",
+              day: "일간",
+              allDay: "하루종일",
+            }}
+            height='80vh'
+            dayCellContent={renderDayCellContent}
+            allDaySlot={true}
+            droppable={true}
+            weekends={true}
+            eventTimeFormat={true}
+            events={[...holidays, ...events]}
+            // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
+            eventClick={handleEventClick}
+            // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
+            dateClick={handleDateDoubleClick}
+            dayMaxEvents={3}
+            moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+            eventContent={renderEventContent}
+            customButtons={{
+              customSearch: {
+                text: "", // 텍스트 비움
+                click: () => setIsSearchVisible(!isSearchVisible),
+              },
+              customAddEvent: {
+                text: "", // 텍스트 비움
+                click: handleAddEventClick,
+              },
+            }}
           />
-        )}
 
-        {/* 모달이 열렸을 때만 DetailModal 컴포넌트 렌더링 */}
-        {isEventOpen && (
-          <EventDetail
-            key={selectedEvent.id}
-            event={selectedEvent}
-            familyName={familyName}
-            familyUsers={familyUsers}
-            onEdit={handleEditClick} // 수정 버튼에 사용할 함수
-            onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
-            onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
-          />
-        )}
+          {/* 모달이 열렸을 때만 EventModal 컴포넌트 렌더링 */}
+          {isModalOpen && (
+            <EventModal
+              event={selectedEvent}
+              onSave={saveEvent}
+              familyName={familyName}
+              familyUsers={familyUsers}
+              onClose={() => setIsModalOpen(false)} // 모달 닫기 함수 전달
+              isDetailOpen={isDetailOpen} // isDetailOpen 상태 전달
+            />
+          )}
+
+          {/* 모달이 열렸을 때만 DetailModal 컴포넌트 렌더링 */}
+          {isEventOpen && (
+            <EventDetail
+              key={selectedEvent.id}
+              event={selectedEvent}
+              familyName={familyName}
+              familyUsers={familyUsers}
+              onEdit={handleEditClick} // 수정 버튼에 사용할 함수
+              onDelete={handleDeleteClick} // 삭제 버튼에 사용할 함수
+              onClose={() => setIsEventOpen(false)} // 모달 닫기 함수 전달
+            />
+          )}
+        </div>
       </div>
     </div>
   );
