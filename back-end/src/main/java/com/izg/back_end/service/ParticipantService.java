@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ParticipantService {
 
 	private final ParticipantRepository participantRepository;
-	private final UserRepository userRepository; // 추가
+	private final UserRepository userRepository; // 사용자 레포지토리 추가
 
 	// 특정 작업에 참여자들 저장
 	public void saveParticipants(int workIdx, List<String> userIds, String creatorUserId) {
@@ -56,6 +56,12 @@ public class ParticipantService {
 			return userRepository.findById(participant.getUserId()).map(user -> user.getName()) // User 엔티티에서 이름 가져오기
 					.orElse("Unknown"); // 예외 처리: 유저를 찾지 못한 경우
 		}).collect(Collectors.toList());
+	}
+
+	// 모든 작업의 참여자 ID들을 가져오는 메서드
+	public List<String> findAllParticipantIds() {
+		return participantRepository.findAll().stream().map(ParticipantModel::getUserId).distinct()
+				.collect(Collectors.toList());
 	}
 
 }
