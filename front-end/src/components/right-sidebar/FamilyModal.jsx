@@ -27,14 +27,12 @@ const FamilyModal = ({ user, onClose }) => {
     axios
       .post("http://localhost:8089/wefam/send-message", data)
       .then((response) => {
-        console.log("쪽지 전송 성공:", response.data);
-        alert("쪽지 전송 성공!"); // 성공 메시지 추가
         setIsSending(false);
         onClose();
       })
       .catch((error) => {
         console.error("쪽지 전송 실패:", error);
-        alert("쪽지 전송 실패! 다시 시도해주세요."); // 실패 메시지 추가
+
         setIsSending(false);
       });
   };
