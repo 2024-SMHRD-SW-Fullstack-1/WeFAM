@@ -32,6 +32,7 @@ const Housework2 = () => {
   const [selectedFiles, setSelectedFiles] = useState([]); // 이미지 파일을 저장할 상태
   const [selectedTaskImages, setSelectedTaskImages] = useState();
   const [isImageModalOpen, setIsImageModalOpen] = useState();
+  const [completedTasks, setCompletedTasks] = useState([]); // 마감된 할 일을 저장할 상태
 
   // 매일 할 일 모달을 여는 함수
   const openDailyModal = () => {
@@ -63,19 +64,25 @@ const Housework2 = () => {
   const handleTaskPointChange = (e) => setTaskPoint(e.target.value);
   const handleWorkUserChange = (selectedUsers) => setWorkUser(selectedUsers);
 
+  // 할 일 목록 불러오기
   const fetchTasks = async () => {
     try {
-      // userId를 query로 넘겨줌
-      const response = await axios.get(`http://localhost:8089/wefam/get-works?userId=${userData.id}`);
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-works?userId=${userData.id}`
+      );
 
-      const { works, totalPoints } = response.data;  // 총 포인트와 작업 데이터를 분리
+      const { works } = response.data;
 
+      // 완료되지 않은 작업만 필터링해서 상태에 저장
       setTasks({
-        daily: works.filter((task) => task.taskType === "daily"),
-        shortTerm: works.filter((task) => task.taskType === "shortTerm"),
+        daily: works.filter(
+          (task) => task.taskType === "daily" && !task.completed
+        ), // 완료되지 않은 매일 할 일
+        shortTerm: works.filter(
+          (task) => task.taskType === "shortTerm" && !task.completed
+        ), // 완료되지 않은 단기 미션
       });
-      console.log("총 포인트:", totalPoints);  // 콘솔에 총 포인트 출력
-      console.log("작업 데이터:", works);  // 작업 데이터에 completed 필드가 있는지 확인
+      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -99,9 +106,32 @@ const Housework2 = () => {
         }
       }
     };
-
     fetchFamilyMembers();
   }, [userData]);
+
+  // 마감된 할 일 가져오기
+  const fetchCompletedTasks = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8089/wefam/completed-works"
+      );
+
+      const completedTasksWithImages = response.data.map((item) => {
+        return {
+          ...item.workLog, // 작업 로그 데이터
+          images: item.images, // 이미지 데이터
+        };
+      });
+
+      setCompletedTasks(completedTasksWithImages); // 응답 데이터를 상태로 설정
+    } catch (error) {
+      console.error("완료된 작업을 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletedTasks(); // 컴포넌트가 마운트될 때 호출
+  }, []);
 
   const addOrUpdateTask = async () => {
     let warnings = { workUser: "", taskPoint: "" };
@@ -205,14 +235,17 @@ const Housework2 = () => {
 
   // 미션 완료 모달 열기
   const handleMissionComplete = (task) => {
-    // 현재 로그인한 사용자의 ID와 담당자 ID를 비교
-    if (!task.participantNames.includes(userData.name)) {
-      // 현재 사용자가 담당자가 아닐 경우
-      alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
-      return; // 함수 종료
+    // 'shortTerm'은 담당자가 없으므로, 이 경우는 담당자 체크를 건너뜀
+    if (task.taskType !== "shortTerm") {
+      // 현재 로그인한 사용자의 ID와 담당자 ID를 비교
+      if (!task.participantNames.includes(userData.name)) {
+        // 현재 사용자가 담당자가 아닐 경우
+        alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
+        return; // 함수 종료
+      }
     }
-  
-    // 담당자일 경우에만 작업을 완료하도록 처리
+
+    // 'shortTerm'이거나 담당자인 경우에만 작업을 완료하도록 처리
     setSelectedTask(task);
     setIsCompleteModalOpen(true); // 완료 모달 열기
   };
@@ -250,7 +283,84 @@ const Housework2 = () => {
     setIsModalOpen(true);
   };
 
+  // 리덕스에서 이미 저장된 데이터를 사용해 family members 설정
+  useEffect(() => {
+    if (userData && userData.familyMembers) {
+      // 만약 familyMembers가 리덕스 스토어에 있다면
+      setFamilyMembers(userData.familyMembers);
+    }
+  }, [userData]);
+
+  // 담당자의 이미지와 이름을 표시하는 함수
+  const renderTaskUsers = (task) => {
+    return task.participantsWithProfile?.map((user) => (
+      <div key={user.id} className={styles.userProfile}>
+        <img
+          src={user.profileImg ? user.profileImg : "default_profile_image_url"}
+          alt={user.name}
+          className={styles.userImage}
+        />
+        <span className={styles.userName}>{user.name}</span>
+      </div>
+    ));
+  };
+
+  // 작업 리스트를 렌더링하는 함수
   const renderTaskList = (tasks, taskType) => {
+    return tasks
+      .filter((task) => !task.completed) // 완료된 작업은 여기서 제외
+      .map((task, index) => (
+        <li key={task.workIdx} className={styles.taskItem}>
+          <div className={styles.taskContent}>
+            <span className={styles.taskTitle}>{task.workTitle}</span>
+            <br />
+            <span className={styles.taskContent}>{task.workContent}</span>
+            <br />
+            <div className={styles.userContainer}>
+              {renderTaskUsers(task)} {/* 담당자 이미지 및 이름 렌더링 */}
+            </div>
+          </div>
+          <div className={styles.dropdownContainer}>
+            <div className={styles.taskRight}>
+              <div>
+                {/* 작업 완료 여부에 따라 아이콘을 변경 */}
+                {task.completed ? (
+                  <FcRating
+                    className={styles.taskIcon}
+                    onClick={() => openImageModal(task.images)} // 이미지를 모달로 열기
+                  />
+                ) : (
+                  <BsThreeDots
+                    className={styles.taskIcon}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDropdown(`${taskType}-${index}`);
+                    }}
+                  />
+                )}
+                <span className={styles.taskPoints}>{task.points} 포인트</span>
+              </div>
+              {dropdownOpen === `${taskType}-${index}` && (
+                <div className={styles.dropdownMenu}>
+                  <button onClick={() => handleMissionComplete(task)}>
+                    미션 성공
+                  </button>
+                  <button
+                    onClick={() => handleTaskEdit(index, tasks, taskType)}>
+                    수정
+                  </button>
+                  <button onClick={() => deleteSelectedTasks(index, taskType)}>
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </li>
+      ));
+  };
+
+  const renderCompletedTaskList = (tasks) => {
     const formatDateTime = (dateTime) => {
       if (!dateTime) return "";
       const date = new Date(dateTime);
@@ -260,7 +370,6 @@ const Housework2 = () => {
         day: "2-digit",
       });
     };
-
     return tasks.map((task, index) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
@@ -268,52 +377,19 @@ const Housework2 = () => {
           <br />
           <span className={styles.taskContent}>{task.workContent}</span>
           <br />
-          {taskType === "daily" ? (
-            <span className={styles.taskUser}>
-              담당자:{" "}
-              {task.participantNames && task.participantNames.length > 0
-                ? task.participantNames.join(", ")
-                : "없음"}
-            </span>
-          ) : (
-            <span className={styles.taskUser}>
-              마감일: {formatDateTime(task.deadline)}
-            </span>
-          )}
+          <span className={styles.taskUser}>
+            완료일: {formatDateTime(task.completedAt)}
+          </span>
         </div>
         <div className={styles.dropdownContainer}>
           <div className={styles.taskRight}>
-            <div className={styles.taskContainer}>
-              {/* 작업 완료 여부에 따라 아이콘을 변경 */}
-              {task.completed ? (
-                <FcRating
-                  className={styles.taskIcon}
-                  onClick={() => openImageModal(task.images)} // 이미지를 모달로 열기
-                />
-              ) : (
-                <BsThreeDots
-                  className={styles.taskIcon}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleDropdown(`${taskType}-${index}`);
-                  }}
-                />
-              )}
+            <div>
+              <FcRating
+                className={styles.taskIcon}
+                onClick={() => openImageModal(task.images)} // 이미지를 모달로 열기
+              />
               <span className={styles.taskPoints}>{task.points} 포인트</span>
             </div>
-            {dropdownOpen === `${taskType}-${index}` && (
-              <div className={styles.dropdownMenu}>
-                <button onClick={() => handleMissionComplete(task)}>
-                  미션 성공
-                </button>
-                <button onClick={() => handleTaskEdit(index, tasks, taskType)}>
-                  수정
-                </button>
-                <button onClick={() => deleteSelectedTasks(index, taskType)}>
-                  삭제
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </li>
@@ -321,82 +397,71 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main" onClick={handleOutsideClick}>
-      
-        <div className={styles.board}>
-          <div className={styles.column}>
-            <div className={styles.column_header}>
-              <h3>매일 할 일</h3>
-              <span
-                className={
-                  tasks.daily.length > 0
-                    ? styles.circleDaily
-                    : styles.circleZero
-                }
-              >
-                {tasks.daily.length}
-              </span>
-              <div className={styles.add_task} onClick={openDailyModal}>
-                <BsPlusCircle
-                  styles={styles.icon}
-                  style={{ color: "#e74c3c", fontSize: "24px" }}
-                />
-              </div>
-            </div>
-            <ul className={styles.taskList}>
-              {renderTaskList(tasks.daily, "daily")}
-            </ul>
-          </div>
-
-          <div className={styles.column}>
-            <div className={styles.column_header}>
-              <h3>오늘의 미션</h3>
-              <span
-                className={
-                  tasks.shortTerm.length > 0
-                    ? styles.circleShortTerm
-                    : styles.circleZero
-                }
-              >
-                {tasks.shortTerm.length}
-              </span>
-              <div className={styles.add_task} onClick={openShortTermModal}>
-                <BsPlusCircle
-                  styles={styles.icon}
-                  style={{ color: "#ff9203", fontSize: "24px" }}
-                />
-              </div>
-            </div>
-            <ul className={styles.taskList}>
-              {renderTaskList(tasks.shortTerm, "shortTerm")}
-            </ul>
-          </div>
-
-          <div className={styles.column}>
+    <div className='main' onClick={handleOutsideClick}>
+      <div className={styles.board}>
+        {/* 기존 매일 할 일과 오늘의 미션 */}
+        <div className={styles.column}>
           <div className={styles.column_header}>
-            <h3>마감된 할 일</h3>
+            <h3>매일 할 일</h3>
             <span
               className={
-                tasks.daily.length > 0
-                  ? styles.circleFinished
-                  : styles.circleZero
+                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
               }>
               {tasks.daily.length}
             </span>
-            <div className={styles.add_task} onClick={openModal}>
+            <div className={styles.add_task} onClick={openDailyModal}>
               <BsPlusCircle
                 styles={styles.icon}
-                style={{ color: "#2ecc71 ", fontSize: "24px" }}
+                style={{ color: "#e74c3c", fontSize: "24px" }}
+              />
+            </div>
+          </div>
+          <ul className={styles.taskList}>
+            {renderTaskList(tasks.daily, "daily")}
+          </ul>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>오늘의 미션</h3>
+            <span
+              className={
+                tasks.shortTerm.length > 0
+                  ? styles.circleShortTerm
+                  : styles.circleZero
+              }>
+              {tasks.shortTerm.length}
+            </span>
+            <div className={styles.add_task} onClick={openShortTermModal}>
+              <BsPlusCircle
+                styles={styles.icon}
+                style={{ color: "#ff9203", fontSize: "24px" }}
               />
             </div>
           </div>
           <ul className={styles.taskList}>
             {renderTaskList(tasks.shortTerm, "shortTerm")}
           </ul>
+        </div>
 
+        {/* 완료된 할 일 리스트 */}
+        <div className={styles.column}>
+          <div className={styles.column_header}>
+            <h3>마감된 할 일</h3>
+            <span
+              className={
+                completedTasks.length > 0
+                  ? styles.circleFinished
+                  : styles.circleZero
+              }>
+              {completedTasks.length}
+            </span>
+          </div>
+          <ul className={styles.taskList}>
+            {renderCompletedTaskList(completedTasks)}
+          </ul>
         </div>
       </div>
-    
 
       <WorkModal
         isModalOpen={isModalOpen}
@@ -428,6 +493,7 @@ const Housework2 = () => {
         onComplete={() => {
           setIsCompleteModalOpen(false);
           fetchTasks(); // 완료 후 목록 새로고침
+          fetchCompletedTasks(); // 완료 후 마감된 작업 새로고침
         }}
       />
 
@@ -435,10 +501,9 @@ const Housework2 = () => {
       <Modal
         isOpen={isImageModalOpen}
         onRequestClose={closeImageModal}
-        contentLabel="작업 이미지"
+        contentLabel='작업 이미지'
         className={styles.imageModalContent}
-        overlayClassName={styles.imageModalOverlay}
-      >
+        overlayClassName={styles.imageModalOverlay}>
         <div className={styles.modalBody}>
           <h2>작업 이미지</h2>
           <div className={styles.imagePreviewContainer}>
@@ -455,12 +520,8 @@ const Housework2 = () => {
               <p>이미지가 없습니다.</p>
             )}
           </div>
-          {/* <button onClick={closeImageModal} className={styles.closeButton}>
-            닫기
-          </button> */}
         </div>
       </Modal>
-
     </div>
   );
 };

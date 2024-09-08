@@ -7,12 +7,14 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import EventModal from "./EventModal";
-import { BsSearch, BsCalendarPlus, BsPlus } from "react-icons/bs";
+import { BsSearch, BsPlus } from "react-icons/bs";
 import styles from "./Calendar.module.css";
 import EventDetail from "./EventDetail";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { toastSuccess, toastError } from "../Toast/showCustomToast";
+import SearchResults from "./SearchResults";
 
 const Calendar = () => {
   const calendarRef = useRef(null); // FullCalendar를 가리킬 ref
@@ -31,35 +33,27 @@ const Calendar = () => {
   const [familyIdx, setFamilyIdx] = useState(null); // familyIdx 상태 추가
   const [eventFiles, setEventFiles] = useState([]);
   const searchInputRef = useRef(null); // 검색창 요소 참조를 위한 useRef
+  const [filteredEvents, setFilteredEvents] = useState([]); // 검색된 일정 상태
 
   // let clickTimeout = null;
 
   const userData = useSelector((state) => state.user.userData);
 
-  // 검색된 일정 필터링
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // 검색창 외부를 클릭하면 검색창 닫기
+  // 검색된 일정 필터링 함수
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        searchInputRef.current &&
-        !searchInputRef.current.contains(event.target)
-      ) {
-        setIsSearchVisible(false); // 외부 클릭 시 검색창 닫기
-      }
-    };
+    const filtered = events.filter((event) =>
+      event.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredEvents(filtered);
+  }, [searchTerm, events]);
 
-    // 문서 전체에서 클릭 이벤트 감지
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      // 컴포넌트가 언마운트 될 때 이벤트 리스너를 제거
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [searchInputRef]);
+  // 검색 아이콘 클릭 시 검색창 보이기/숨기기 토글
+  const handleSearchToggle = () => {
+    if (isSearchVisible) {
+      setSearchTerm(""); // 검색어 초기화
+    }
+    setIsSearchVisible(!isSearchVisible); // 검색창 보이기/숨기기 토글
+  };
 
   useEffect(() => {
     // 패밀리 데이터를 가져오는 함수
@@ -119,13 +113,13 @@ const Calendar = () => {
   }, [selectedEvent, familyFiles]);
 
   useEffect(() => {
-    if (selectedEvent) {
+    if (selectedEvent && !selectedEvent.files) {
       setSelectedEvent((prevEvent) => ({
         ...prevEvent,
         files: eventFiles,
       }));
     }
-  }, [eventFiles]);
+  }, [eventFiles, selectedEvent]);
 
   //요일에 따른 날짜 색상
   const renderDayCellContent = (info) => {
@@ -293,8 +287,10 @@ const Calendar = () => {
       }
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}:00`;
+      const seconds = date.getSeconds().toString().padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`; // 'HH:MM:SS' 형식으로 변환
     };
+    console.log("어떤 값이 오니", updatedEvent);
 
     // 날짜와 시간으로 분리
     const eventToSave = {
@@ -330,7 +326,8 @@ const Calendar = () => {
           ...selectedEvent,
           ...updatedEvent,
         }); // 변경된 이벤트로 selectedEvent 업데이트
-        toast.success("일정이 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
+        console.log("이벤트 업데이트 응답:", response); // 서버 응답 로그
+        toastSuccess("일정이 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
         await fetchEvents();
         setIsModalOpen(false);
         savedEvent = response.data;
@@ -376,7 +373,6 @@ const Calendar = () => {
           }
         );
       }
-      console.log(updatedEvent.deletedFileIds);
 
       // 삭제된 파일 처리
       if (
@@ -399,6 +395,48 @@ const Calendar = () => {
     }
   };
 
+  // 이동 저장
+  const handleEventDrop = async (dropInfo) => {
+    const updatedEvent = {
+      ...dropInfo.event.extendedProps, // 기존 이벤트 정보 복사
+      id: dropInfo.event.id,
+      title: dropInfo.event.title,
+      start: dropInfo.event.start, // 시작 날짜
+      end: dropInfo.event.end,
+      allDay: dropInfo.event.allDay ? 1 : 0, // allDay 여부를 int로 변환
+      backgroundColor: dropInfo.event.backgroundColor,
+      latitude: dropInfo.event.extendedProps.latitude,
+      longitude: dropInfo.event.extendedProps.longitude,
+      location: dropInfo.event.extendedProps.location,
+      content: dropInfo.event.extendedProps.content,
+    };
+
+    try {
+      // 이동된 이벤트를 서버에 저장하는 함수 호출
+      await saveEvent(updatedEvent);
+
+      // 상태 업데이트를 통해 이벤트 반영
+      setSelectedEvent(updatedEvent);
+
+      // FullCalendar에서 이벤트 다시 로드
+      calendarRef.current.getApi().refetchEvents(); // 이 위치에서 호출
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
+  };
+
+  useEffect(() => {
+    // selectedEvent가 존재할 때만 처리
+    if (selectedEvent) {
+      // 로그 출력 - 선택된 이벤트 변경 감지
+      console.log("selectedEvent 상태가 변경되었습니다:", selectedEvent);
+
+      // 상태 업데이트는 여기서 하지 않음 (무한 루프 방지)
+      // 상태 업데이트는 이벤트 핸들러(예: 드롭 완료 후 저장 등)에서만 수행
+    }
+  }, [selectedEvent]);
+
+  // 일정 삭제
   const handleDeleteClick = async () => {
     if (!selectedEvent || !selectedEvent.id) {
       console.error("선택된 이벤트가 없습니다.");
@@ -419,7 +457,7 @@ const Calendar = () => {
       );
 
       if (response.status === 200) {
-        toast.success("일정이 성공적으로 삭제되었습니다!"); // 삭제 성공 메시지 표시
+        toastSuccess("일정이 성공적으로 삭제되었습니다!"); // 삭제 성공 메시지 표시
 
         // 이벤트 목록에서 삭제된 이벤트 제거
         setEvents((prevEvents) =>
@@ -430,14 +468,55 @@ const Calendar = () => {
         setIsEventOpen(false);
         setIsDeatilOpen(false);
       } else {
-        toast.error("일정 삭제에 실패했습니다."); // 삭제 실패 메시지 표시
+        toastError("일정 삭제에 실패했습니다."); // 삭제 실패 메시지 표시
       }
     } catch (error) {
       console.error("Error deleting event:", error);
-      toast.error("일정 삭제 중 오류가 발생했습니다."); // 에러 메시지 표시
+      toastError("일정 삭제 중 오류가 발생했습니다."); // 에러 메시지 표시
     }
   };
 
+  // 검색 결과에서 선택한 일정 클릭
+  const handleSearchResultClick = (event) => {
+    // start와 end 시간이 존재할 경우 시간을 추출하여 문자열로 변환
+    const formatTime = (date) => {
+      if (!(date instanceof Date)) {
+        date = new Date(date); // 문자열이나 다른 유형의 데이터가 들어오면 Date 객체로 변환
+      }
+
+      if (isNaN(date.getTime())) {
+        return "00:00:00"; // 유효하지 않은 날짜인 경우 기본값
+      }
+
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}:00`;
+    };
+
+    setSelectedEvent({
+      id: event.id,
+      title: event.title,
+      start: event.start, // 기존 날짜 그대로 유지
+      startTime: formatTime(event.start), // 시간 추출
+      end: event.end || event.start, // 기존 날짜 그대로 유지
+      endTime: formatTime(event.end || event.start), // 시간 추출
+      allDay: event.allDay,
+      backgroundColor: event.backgroundColor,
+      familyIdx: event.familyIdx || null, // 검색에서 추가된 데이터 처리
+      content: event.content || "", // 검색에서 추가된 데이터 처리
+      userId: event.userId || null, // 검색에서 추가된 데이터 처리
+      eventLocation: event.location || "",
+      latitude: event.latitude || null,
+      longitude: event.longitude || null,
+      location: event.location || "",
+    });
+
+    setIsSearchVisible(false);
+    setIsDeatilOpen(false);
+    setIsEventOpen(true);
+  };
+
+  // 일정 클릭
   const handleEventClick = (clickInfo) => {
     if (clickInfo.event.extendedProps.isHoliday) {
       return;
@@ -560,7 +639,8 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}>
+        }}
+      >
         {/* allDay가 true이거나 날짜가 다를 때 바 형태로 표시 */}
         {event.allDay || !sameDate ? (
           <>
@@ -571,7 +651,8 @@ const Calendar = () => {
                 backgroundColor: event.backgroundColor || "#FF4D4D",
                 borderRadius: "2px",
                 position: "relative",
-              }}>
+              }}
+            >
               <span
                 style={{
                   position: "relative",
@@ -583,7 +664,8 @@ const Calendar = () => {
                   textOverflow: "ellipsis",
                   lineHeight: "8px",
                   color: "#fff", // 바 형태에서는 흰색 글씨로 표시
-                }}>
+                }}
+              >
                 {event.title}
               </span>
             </div>
@@ -607,7 +689,8 @@ const Calendar = () => {
                 whiteSpace: "nowrap",
                 flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
                 minWidth: "0",
-              }}>
+              }}
+            >
               {event.title}
             </span>
             <span
@@ -616,7 +699,8 @@ const Calendar = () => {
                 fontSize: "0.9em",
                 color: "#666",
                 flexShrink: 0,
-              }}>
+              }}
+            >
               {startTime}
             </span>
           </>
@@ -634,15 +718,17 @@ const Calendar = () => {
         searchButton._root = createRoot(searchButton);
       }
       searchButton._root.render(
-        <BsSearch
-          style={{
-            fontSize: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "30px",
-          }}
-        />
+        <div>
+          <BsSearch
+            style={{
+              width: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "30px",
+            }}
+          />
+        </div>
       );
     }
 
@@ -664,21 +750,7 @@ const Calendar = () => {
   }, []);
 
   return (
-    <div className='main'>
-      {/* ToastContainer는 루트 컴포넌트에 포함 */}
-      <ToastContainer
-        position='bottom-center'
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-        z-index='100'
-      />
+    <div className="main">
       {/* 검색 기능 */}
       <div style={{ width: "80%" }}>
         <div
@@ -687,11 +759,13 @@ const Calendar = () => {
             justifyContent: "flex-end",
             gap: "6px",
             padding: "5px",
-          }}>
+            position: "relative", // 검색 결과를 검색창 아래에 위치시키기 위해 relative 설정
+          }}
+        >
           <input
             ref={searchInputRef} // 검색창을 참조
-            type='text'
-            placeholder='일정 검색'
+            type="text"
+            placeholder="일정 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
@@ -699,18 +773,26 @@ const Calendar = () => {
             }`} // 애니메이션 클래스 적용
           />
         </div>
+        {/* 검색 결과 리스트 */}
+        {isSearchVisible && (
+          <SearchResults
+            filteredEvents={filteredEvents}
+            onEventClick={handleSearchResultClick}
+          />
+        )}
         <div
           style={{
             backgroundColor: "#ffffff",
             marginTop: "2rem",
             borderRadius: "1rem",
             padding: "1rem",
-          }}>
+          }}
+        >
           <FullCalendar
             ref={calendarRef} // ref 연결
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-            initialView='dayGridMonth'
-            locale='ko'
+            initialView="dayGridMonth"
+            locale="ko"
             nowIndicator={true}
             selectable={true}
             headerToolbar={{
@@ -726,19 +808,20 @@ const Calendar = () => {
               day: "일간",
               allDay: "하루종일",
             }}
-            height='80vh'
+            height="80vh"
             dayCellContent={renderDayCellContent}
             allDaySlot={true}
             droppable={true}
             weekends={true}
             eventTimeFormat={true}
             events={[...holidays, ...events]}
+            eventDrop={handleEventDrop}
             // 일정 클릭 시 EventInfo 컴포넌트를 열기 위한 함수
             eventClick={handleEventClick}
             // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
             dateClick={handleDateDoubleClick}
             dayMaxEvents={3}
-            moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+            moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
             eventContent={renderEventContent}
             customButtons={{
               customSearch: {
