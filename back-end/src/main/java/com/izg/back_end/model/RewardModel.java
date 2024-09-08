@@ -27,15 +27,27 @@ public class RewardModel {
 	@JsonProperty("userId")
 	private String userId;
 	
+	@Column(name = "reward_name")
+	@JsonProperty("rewardName")
 	private String rewardName;
 	
+	@Column(name = "reward_point")
+	@JsonProperty("rewardPoint")
 	private int rewardPoint;
 	
+	@Column(name = "is_sold")
+	@JsonProperty("isSold")
 	private boolean isSold;
 	
+	@Column(name = "purchase")
+	@JsonProperty("purchase")
 	private String purchase;
 	
+	@Column(name = "sold_At")
+	@JsonProperty("soldAt")
 	private LocalDateTime soldAt;
-		
 	
+	@Column(name = "created_At")
+	@JsonProperty("createdAt")
+	private LocalDateTime createdAt;
 }

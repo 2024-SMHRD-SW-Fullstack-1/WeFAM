@@ -21,95 +21,85 @@
   z-index: 1001; /* 챗봇보다 위에 있게끔 */
 }
 
-.aimodal {
-  position: relative;
-  bottom: 180px;
-  background-color: rgb(255, 255, 255);
-  padding: 20px;
-  border-radius: 10px;
+.aimodal{
+    position: relative;
+    bottom: 180px;
+    background-color: antiquewhite;
+    padding: 50px;
+    border-radius: 10px;
 }
 
+
 .themeContainer {
-  display: flex;
-  justify-content: center; /* 가운데 정렬 */
-  gap: 20px; /* 테마 사이의 간격 */
-  flex-wrap: wrap; /* 여러 줄로 테마 배치 */
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    gap: 20px; /* 테마 사이의 간격 */
+    flex-wrap: wrap; /* 여러 줄로 테마 배치 */
+    margin-bottom: 20px;
 }
 
 .theme {
-  width: 150px;
-  height: auto; /* 높이를 auto로 설정하여 텍스트 공간 확보 */
+  width: 80px;
+  height: auto;
   display: flex;
-  flex-direction: column; /* 이미지와 텍스트를 수직으로 배치 */
-  align-items: center; /* 수직 정렬 */
+  align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 10px;
-  padding: 5px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: #333;
+  transition: transform 0.3s ease;
+  flex-direction: column; /* 아이템들을 수직으로 정렬 */
+  background-color: transparent; /* 배경색 제거 */
+  border: none; /* 테두리 제거 */
 }
 
 .themeImage {
-  width: 140px;
-  height: 140px;
-  padding: 6px;
-  border-radius: 50%; /* 이미지를 동그랗게 만듦 */
-  object-fit: cover; /* 이미지 크기에 맞춰 잘라내기 */
-  transition: border 0.3s ease, box-shadow 0.3s ease; /* 애니메이션 추가 */
+  width: 80px;
+  height: 80px;
+  border-radius: 50%; /* 이미지를 둥글게 만듦 */
+  object-fit: cover; /* 이미지가 원형 안에 맞춰지도록 함 */
+  margin-bottom: 10px;
+}
+  
+  .themeName {
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px; /* 원과 텍스트 사이의 간격 */
+  }
+
+.theme:hover {
+  transform: scale(1.2);
 }
 
-.themeName {
-  margin-top: 16px; /* 이미지와 이름 사이 간격 */
-  font-size: 20px;
-  text-align: center;
-
-  color: #333;
-}
-
-.themeImage:hover {
-  transform: scale(1.05);
-}
-
-.selected .themeImage {
-  background-color: var(--color-sunset);
+.selected {
   color: white;
-  border-color: var(--color-sunset);
-  /* box-shadow: 0 0 40px var(--color-sunset);  */
-  /* 그림자 효과 */
+  border-color: #ff4d4d;
+  transform: scale(1.2); /* 선택된 상태에서 크기가 유지되게 */
 }
 
 .buttonContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end;  
   margin-top: 20px;
-  padding-top: 10px;
 }
 
-.completeButton,
-.cancelButton {
-  background-color: var(--color-sunset);
+.completeButton, .cancelButton {
+  background-color: #ff4d4d;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  margin-left: 10px;
-}
-.cancelButton {
-  color: var(--color-sunset);
-  background-color: #ffffff;
-  border: 1px solid #e9e9e9;
+  font-size: 16px;
+  margin-left: 10px; 
 }
 
 .completeButton:hover {
-  background-color: var(--color-sunset-hover);
+  background-color: #ff4d4d;
 }
 
-.themeHead h1 {
-  color: black;
-  margin-bottom: 30px;
-  text-align: center;
+.themeHead h1{
+    color: black;
+    margin-bottom: 30px;
 }

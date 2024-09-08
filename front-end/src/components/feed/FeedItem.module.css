@@ -255,7 +255,7 @@
   position: absolute;
   width: 32px;
   height: 32px;
-  top: calc(50% - 16px);
+  top: 50%;
   transform: translateY(-50%);
   display: flex;
   justify-content: center;
@@ -271,11 +271,8 @@
   opacity: 0; /* 기본적으로 투명 상태 */
 }
 
-.imageSlider {
-  background-color: red;
-}
-.imageSlider:hover .leftArrowBtn,
-.imageSlider:hover .rightArrowBtn {
+.imageContainer:hover .leftArrowBtn,
+.imageContainer:hover .rightArrowBtn {
   opacity: 1; /* 호버 시 불투명하게 표시 */
   transform: translateX(0); /* 호버 시 원래 위치로 이동 */
 }
