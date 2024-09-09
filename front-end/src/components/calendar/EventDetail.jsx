@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import { useState, useEffect, useRef } from "react";
 import {
   BsXLg,
-  BsThreeDotsVertical,
+  BsThreeDots,
   BsChevronCompactRight,
   BsPinMap,
   BsImages,
@@ -191,7 +191,8 @@ const EventDetail = ({
   return ReactDOM.createPortal(
     <div
       className={`${styles.EventDetail} ${isOpen ? styles.enter : styles.exit}`} // enter와 exit 클래스 적용
-      onClick={(e) => e.stopPropagation()}>
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Header 부분 */}
       <div className={styles.header}>
         <div className={styles.icon}>
@@ -207,7 +208,7 @@ const EventDetail = ({
         </div>
 
         <div className={styles.icon} style={{ marginLeft: "auto" }}>
-          <BsThreeDotsVertical onClick={handleMenuClick} />
+          <BsThreeDots onClick={handleMenuClick} />
           {isMenuOpen && (
             <div className={styles.menu} ref={menuRef}>
               <div
@@ -218,7 +219,8 @@ const EventDetail = ({
                   color: editHovered ? eventColor : "inherit",
                   fontWeight: editHovered ? "bold" : "normal",
                   backgroundColor: editHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 수정
               </div>
               <div
@@ -229,7 +231,8 @@ const EventDetail = ({
                   color: deleteHovered ? eventColor : "inherit",
                   fontWeight: deleteHovered ? "bold" : "normal",
                   backgroundColor: deleteHovered ? "#f0f0f0" : "transparent",
-                }}>
+                }}
+              >
                 삭제
               </div>
             </div>
@@ -244,7 +247,8 @@ const EventDetail = ({
       <div
         className={`${styles.details} ${
           event.start !== event.end ? "hasTime" : "noTime"
-        } ${event.allDay ? styles.allDay : ""}`}>
+        } ${event.allDay ? styles.allDay : ""}`}
+      >
         <div className={styles.dateTime}>
           <span className={styles.startDate}>{formatDate(event.start)}</span>
           {!event.allDay && ( // allDay가 false일 때만 시간 표시
@@ -285,7 +289,7 @@ const EventDetail = ({
             style={{ color: eventColor, width: 26, height: 26 }}
           />
           <div>
-            <h3 className={styles.locationName}>메모</h3>
+            <h3 className={styles.memoTitle}>메모</h3>
           </div>
           <div
             style={{
@@ -293,7 +297,8 @@ const EventDetail = ({
               justifyContent: "center",
               padding: "5px",
               color: eventColor,
-            }}>
+            }}
+          >
             {event.content !== "" && !isMemoOpen && (
               <BsChevronDown onClick={handleMemoClick} />
             )}

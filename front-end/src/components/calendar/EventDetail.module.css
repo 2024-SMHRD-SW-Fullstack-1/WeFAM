@@ -188,6 +188,14 @@
   /* 이름과 지도의 간격 */
   text-align: center;
   /* 가운데 정렬 */
+  padding-left: 5px;
+}
+.memoTitle {
+  font-weight: bold;
+  font-size: 16px;
+  /* 이름과 지도의 간격 */
+  text-align: center;
+  /* 가운데 정렬 */
 }
 
 .mapContainer {
