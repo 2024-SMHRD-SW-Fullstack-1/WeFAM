@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import FamilyModal from "./FamilyModal";
 import crown from "../../assets/images/crown.png";
+import ProfileModal from "../user-setting/ProfileModal"; // 프로필 정보 모달
 
 const RightSidebar = () => {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,10 @@ const RightSidebar = () => {
   const userData = useSelector((state) => state.user.userData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isPopupVisible, setIsPopupVisible] = useState(false); // 팝업 상태 추가
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 }); // 팝업 위치 상태
+  const [isFamilyModalOpen, setIsFamilyModalOpen] = useState(false); // 쪽지 보내기 모달 상태
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   useEffect(() => {
     // 사용자 데이터를 가져오는 axios 요청
@@ -36,7 +41,7 @@ const RightSidebar = () => {
       .catch((error) => {
         console.error("가져오기 에러!!", error);
       });
-  }, []); // userData가 변경될 때마다 실행
+  }, [userData]); // userData가 변경될 때마다 실행
 
   useEffect(() => {
     const fetchFamilyCreator = async () => {
@@ -58,9 +63,39 @@ const RightSidebar = () => {
     }
   }, []);
 
-  const handleProfileClick = (user) => {
+  const handleProfileClick = (user, event) => {
     setSelectedUser(user);
     setIsModalOpen(true);
+    setPopupPosition({ x: event.clientX, y: event.clientY }); // 클릭한 위치 설정
+    setIsPopupVisible(true); // 팝업 표시
+    // 선택된 사용자의 정보를 서버에서 가져오기
+    axios
+      .get(`http://localhost:8089/wefam/get-user/${user.id}`)
+      .then((response) => {
+        setSelectedUser(response.data); // 사용자 정보를 받아와서 상태에 저장
+        setIsModalOpen(true); // 모달을 열기
+      })
+      .catch((error) => {
+        console.error("사용자 정보 가져오기 에러:", error);
+      });
+  };
+
+  const handleSendMessageClick = () => {
+    setIsPopupVisible(false); // 팝업 닫기
+    setIsFamilyModalOpen(true); // 쪽지 보내기 모달 열기
+  };
+
+  const handleViewProfileClick = () => {
+    setIsPopupVisible(false); // 팝업 닫기
+    setIsProfileModalOpen(true); // 프로필 모달 열기
+  };
+
+  const closeFamilyModal = () => {
+    setIsFamilyModalOpen(false);
+  };
+
+  const closeProfileModal = () => {
+    setIsProfileModalOpen(false);
   };
 
   const closeModal = () => {
@@ -79,7 +114,7 @@ const RightSidebar = () => {
               <li
                 key={users[0].id}
                 className={styles.userItem}
-                onClick={() => handleProfileClick(users[0])}
+                onClick={(e) => handleProfileClick(users[0], e)} // 팝업 열기
                 style={{
                   cursor: users[0].id !== userData.id ? "pointer" : "default",
                 }}
@@ -91,9 +126,8 @@ const RightSidebar = () => {
                     alt={users[0].name}
                   />
                   <span
-                    className={`${styles.status} ${
-                      users[0].online ? styles.online : styles.offline
-                    }`}
+                    className={`${styles.status} ${users[0].online ? styles.online : styles.offline
+                      }`}
                   ></span>
                   {users[0].id == creatorUserId && (
                     <img
@@ -114,7 +148,7 @@ const RightSidebar = () => {
             <li
               key={user.id}
               className={styles.userItem}
-              onClick={() => handleProfileClick(user)}
+              onClick={(e) => handleProfileClick(user, e)} // 팝업 열기
             >
               <div className={styles.userImageContainer}>
                 <img
@@ -123,9 +157,8 @@ const RightSidebar = () => {
                   alt={user.name}
                 />
                 <span
-                  className={`${styles.status} ${
-                    user.online ? styles.online : styles.offline
-                  }`}
+                  className={`${styles.status} ${user.online ? styles.online : styles.offline
+                    }`}
                 ></span>
                 {user.id == creatorUserId && (
                   <img src={crown} alt="Creator" className={styles.crownIcon} />
@@ -138,7 +171,32 @@ const RightSidebar = () => {
         </ul>
       </div>
 
-      {isModalOpen && <FamilyModal user={selectedUser} onClose={closeModal} />}
+      {/* 팝업 메뉴 */}
+      {isPopupVisible && (
+        <ul
+          className={styles.popupMenu}
+          style={{ top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }}
+        >
+          <li onClick={handleSendMessageClick}>쪽지 보내기</li>
+          <li onClick={handleViewProfileClick}>정보 확인</li>
+          <li onClick={() => setIsPopupVisible(false)}>취소</li>
+        </ul>
+      )}
+
+      {/* 쪽지 보내기 모달 */}
+      {isFamilyModalOpen && (
+        <FamilyModal user={selectedUser} onClose={closeFamilyModal} />
+      )}
+
+      {/* 프로필 정보 모달 */}
+      {isProfileModalOpen && (
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onRequestClose={closeProfileModal}
+          profile={selectedUser}
+          isEditing={false}
+        />
+      )}
     </div>
   );
 };

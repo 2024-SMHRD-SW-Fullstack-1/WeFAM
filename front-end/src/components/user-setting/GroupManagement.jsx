@@ -22,6 +22,8 @@ const GroupManagement = () => {
 
   // 사용자 정보가 로드된 후 가족 이름과 가훈을 서버에서 불러오기 위한 useEffect
   useEffect(() => {
+    console.log(userData);
+
     if (userData) {
       // 가족 이름 불러오기
       axios.get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
@@ -148,83 +150,86 @@ const GroupManagement = () => {
     const url = `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}?entityType=family`;
 
     axios
-    .get(url)
-    .then((response) => {
-      if (response.data.length === 0) {
-        setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 설정 가능
-      } else {
-        // entityType이 family인 이미지 중 가장 최신 이미지 사용
-        const familyImages = response.data.filter(image => image.entityType === "family");
-        if (familyImages.length > 0) {
-          const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
-          setProfileImage(`data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`);
+      .get(url)
+      .then((response) => {
+        if (response.data.length === 0) {
+          setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 설정 가능
         } else {
-          console.error("가족 프로필 이미지가 없습니다.");
+          // entityType이 family인 이미지 중 가장 최신 이미지 사용
+          const familyImages = response.data.filter(image => image.entityType === "family");
+          if (familyImages.length > 0) {
+            const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
+            setProfileImage(`data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`);
+          } else {
+            console.error("가족 프로필 이미지가 없습니다.");
+          }
         }
-      }
-    })
-    .catch((error) => {
-      console.error("이미지를 불러오는 중 오류 발생:", error);
-    });
-};
+      })
+      .catch((error) => {
+        console.error("이미지를 불러오는 중 오류 발생:", error);
+      });
+  };
 
-const handleSaveAll = () => {
-  alert("저장하신 내용이 변경되었습니다.");
-  // 가족 이름, 가훈, 프로필 사진을 모두 저장
-  updateFamilyNick();
-  updateFamilyMotto();
-  saveProfileImage();
-};
+  const handleSaveAll = () => {
+    alert("저장하신 내용이 변경되었습니다.");
+    // 가족 이름, 가훈, 프로필 사진을 모두 저장
+    updateFamilyNick();
+    updateFamilyMotto();
+    saveProfileImage();
+  };
   return (
-    <div className={styles.personalInfo}>
-      <h1>가족 정보 관리</h1>
-      <hr />
+    <div className="main">
+      <div className={styles.family}>
+        <div className={styles.personalInfo}>
+          <div className={styles.titleAndButton}>
+            <h1>가족 정보 관리</h1>
+            <label className={styles.saveImgButton} onClick={handleSaveAll}>
+              변경사항 전체 저장
+            </label>
+          </div>
+          <hr />
 
-      {/* 가족 프로필 사진 영역 */}
-      <div className={styles.profileContainer}>
-        <span>가족 프로필 사진</span>
-        <div className={styles.profileInfo}>
-          <img
-            src={profileImage ? profileImage : familyPT} // 프로필 이미지 또는 기본 이미지
-            className={styles.profileImg}
-            alt="Family"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ display: 'none' }}
-            id="profileImageInput"
-          />
-          <label htmlFor="profileImageInput" className={styles.editImgButton}>
-            이미지 수정
-          </label>
-          <label className={styles.saveImgButton} onClick={handleSaveAll}>
-            변경사항 전체 저장
-          </label>
-        </div>
-      </div>
-      <hr  className={styles.halfHr}/>
+          {/* 가족 프로필 사진 영역 */}
+          <div className={styles.profileContainer}>
+            <span>가족 프로필 사진</span>
+            <div className={styles.profileInfo}>
+              <img
+                src={profileImage} // 프로필 이미지 또는 기본 이미지
+                className={styles.profileImg}
+                alt="Family"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+                id="profileImageInput"
+              />
+              <label htmlFor="profileImageInput" className={styles.editImgButton}>
+                이미지 수정
+              </label>
 
-      {/* 가족 이름 수정 영역 */}
-      <div className={styles.profileContainer}>
-        <span>우리 가족 이름</span>
-        <h2>{newFamilyNick}</h2> {/* 현재 가족 이름을 보여줌 */}
-        <div>
-          <input
-            type="text"
-            className={styles.editNick}
-            value={familyNick}
-            onChange={handleFamilyNickChange}
-          />
-        </div>
-      </div>
-      <hr className={styles.halfHr}/>
+            </div>
+          </div>
+          <hr className={styles.halfHr} />
 
-      {/* 가족 가훈 수정 영역 */}
-      <div className={styles.profileContainer}>
+          {/* 가족 이름 수정 영역 */}
+          <div className={styles.profileContainer}>
+            <span>우리 가족 이름</span>
+            <div>
+              <input
+                type="text"
+                className={styles.editNick}
+                value={familyNick}
+                onChange={handleFamilyNickChange}
+              />
+            </div>
+          </div>
+          <hr className={styles.halfHr} />
+
+          {/* 가족 가훈 수정 영역 */}
+          {/* <div className={styles.profileContainer}>
         <span>우리 가족 가훈</span>
-        <h2>{familyMotto}</h2> {/* 현재 가족 가훈을 보여줌 */}
         <div>
           <input
             type="text"
@@ -233,8 +238,10 @@ const handleSaveAll = () => {
             onChange={handleFamilyMottoChange}
           />
         </div>
+      </div> */}
+          {/* <hr className={styles.halfHr}/> */}
+        </div>
       </div>
-      <hr className={styles.halfHr}/>
     </div>
   );
 };

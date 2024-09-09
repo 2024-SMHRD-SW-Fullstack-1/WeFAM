@@ -31,7 +31,7 @@ function App() {
             <Route path="calendar" element={<Calendar />} />
             <Route path="meal" element={<Meal />} />
             <Route path="album" element={<AlbumFolder />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="settings" element={<GroupManagement />} />
             <Route path="housework2" element={<HouseWork2 />} />
             <Route path="memo" element={<MemoModal />} />
             <Route path="reward" element={<Reward />} />
@@ -39,7 +39,6 @@ function App() {
             <Route path="reward-point" element={<RewardPoint />} />
           </Route>
           <Route path="chatbot" element={<Chatbot />} />
-          <Route path="group-management" element={<GroupManagement />} />
           <Route path="profileModal" element={<ProfileModal />} />
 
         </Routes>
