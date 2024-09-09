@@ -12,6 +12,7 @@ import { MemoModal } from "./components/calendar/MemoModal";
 import Reward from "./components/header/Reward";
 import RewardPoint from "./components/header/RewardPoint";
 import Chatbot from "./components/chatbot/Chatbot";
+import GroupManagement from "./components/user-setting/GroupManagement";
 
 import "./css/App.css";
 import "./css/Test.css";
@@ -36,7 +37,9 @@ function App() {
             <Route path="chatbot" element={<Chatbot />} />
             <Route path="reward-point" element={<RewardPoint />} />
           </Route>
-        </Routes>
+            <Route path="chatbot" element={<Chatbot />} />
+          <Route path="group-management" element={<GroupManagement />} />
+      </Routes>
       </NotificationProvider>
     </div>
   );

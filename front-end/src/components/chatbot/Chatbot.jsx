@@ -1,30 +1,60 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Chatbot.module.css";
+import { useSelector } from "react-redux";
 
-const Chatbot = ({onClose}) => {
+
+const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace}) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
     const [userInput, setUserInput] = useState("");
     const chatContainerRef = useRef(null);
-
+    const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
     // 최초 환영 메시지 설정
     useEffect(() => {
+        console.log("장소 :" + location);
+        console.log("테마 :" + theme);
+        console.log("시작 :" + startDate);
+        console.log("종료 :" + endDate);
+        console.log("입력만 받은 장소 : " + locationInput)
+
+
         setChatContent([
             ...chatContent,
             { message: "안녕하세요! 세계 최고의 가족비서 파미 입니다.", isUserChat: false }
         ]);
+
+
+        // 조건을 만족할 때 AI 서버로 요청
+        if (theme && startDate && location && endDate) {
+            sendChatToServer(`우리 가족이 고른 여행테마는 ${theme}이고, 선택한 날짜는 ${startDate}부터 ${endDate}이고 고른 장소는 ${location}야. 
+                고른 테마와 날짜, 장소에 맞춰 선택한 장소 주변에 추천해줄 세가지 장소명칭을 알려주고 영어로는 알려주지 않아도돼. 그리고 줄바꿈해서 부가설명을 해줘.
+                만약 축제테마를 골랐다면 축제가 열리는 장소명칭 **장소명칭** 이렇게 알려주고 축제정보가는  그 밑에 해당 축제에대한 설명을해주면돼. `);
+        }
     }, []);
 
-    // 토글 버튼 클릭 시 이벤트 처리
-    const toggleChat = () => {
-        setIsChatGPT(!isChatGPT);
-        const message = isChatGPT
-            ? "안녕하세요! 푸보다 조금 더 똑똑한 세계 최고의 요리사 디 입니다."
-            : "안녕하세요! 세계 최고의 요리사 푸 입니다.";
+    // 날짜 형식 변환 함수
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
-        setChatContent([...chatContent, { message, isUserChat: false }]);
-        scrollToBottom();
+    // 장소를 클릭했을 때 이벤트 핸들러
+    const handlePlaceClick = (placeName) => {
+        if (typeof onSelectPlace === 'function') {
+            onSelectPlace(placeName); // EventModal의 '장소' 필드에 해당 장소 이름을 넣음
+            console.log("클릭한 장소" + placeName);
+
+            // AiModal과 Chatbot 모달을 닫는 함수 호출
+        onClose();
+
+        } else {
+            console.error("onSelectPlace 함수가 전달되지 않았습니다.");
+        }
+        setChatContent([...chatContent, { message: `선택하신 장소는 ${placeName}입니다!`, isUserChat: false }]);
     };
 
     // 사용자가 입력한 메시지 보내기
@@ -37,7 +67,6 @@ const Chatbot = ({onClose}) => {
 
     // 서버로 메시지를 보내고 응답을 받는 함수
     const sendChatToServer = (message) => {
-        setIsWaitingResponse(true);
         setChatContent([...chatContent, { message: "AI가 답변 중...", isUserChat: false }]);
 
         // 서버 요청
@@ -50,18 +79,23 @@ const Chatbot = ({onClose}) => {
         })
             .then((response) => response.text())
             .then((data) => {
-                try {
-                    chat(data, false); // 파싱한 데이터 사용
-                } catch (error) {
-                    console.error("JSON 파싱 오류:", error);
-                }
-                setIsWaitingResponse(false);
+                const formattedStartDate = formatDate(startDate);
+                const formattedEndDate = formatDate(endDate);
+
+                const messageWithPlaces = data.split("\n");
+                const firstMessage = `${formattedStartDate}부터 ${formattedEndDate}까지 여행을 계획중이시군요!💕`
+                setChatContent((prevContent) => [
+                    ...prevContent,
+                    { message: firstMessage, isUserChat: false }, // 첫 번째 메시지
+                    { message: data, isUserChat: false, aiResponse: messageWithPlaces }, // 두 번째 메시지, 장소 목록 처리
+                ]);
+                scrollToBottom();
             })
             .catch((error) => {
                 console.error("Error:", error);
-                setIsWaitingResponse(false);
             });
     };
+
 
     // 대화창에 메시지 추가하는 함수
     const chat = (message, isUserChat) => {
@@ -103,9 +137,60 @@ const Chatbot = ({onClose}) => {
             <div className={styles.chatbot__content} ref={chatContainerRef}>
                 {chatContent.map((chat, index) => (
                     <div className={styles.chatbot__content__box} key={index}>
-                        {chat.message}
+                        {chat.aiResponse ? (
+                            chat.aiResponse.map((line, idx) => {
+
+                                let placeName = null;
+
+                                // (숫자). **장소명** - 또는 : 을 제외한 장소명을 추출하는 정규식
+                                const match1 = line.match(/\d+\.\s*\*\*(.*?)\*\*/); // 형식 1 처리 (숫자. **장소명**)
+                                const match2 = line.match(/\d+\.\s*(.*?):/);         // 형식 2 처리 (숫자. 장소명:)
+
+                                // 형식 1이 매칭될 경우
+                                if (match1) {
+                                    placeName = match1[1].trim(); // **을 제외한 장소명 추출
+                                }
+                                // 형식 2가 매칭될 경우
+                                else if (match2) {
+                                    placeName = match2[1].trim(); // : 앞의 장소명 추출
+                                }
+                                if (placeName) {
+                                    // console.log("추출된 장소 이름:", placeName); // placeName 값 확인
+
+                                    return (
+                                        <React.Fragment key={idx}>
+                                            <span
+                                                onClick={() => handlePlaceClick(placeName)}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "black",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                {line}
+                                            </span>
+                                            <br />
+                                        </React.Fragment>
+                                    );
+                                }
+                                return (
+                                    <React.Fragment key={idx}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                );
+                            })
+                        ) : (
+                            chat.message.split("\n\n").map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))
+                        )}
                     </div>
                 ))}
+
+
             </div>
 
             <div className={styles.chatbot__footer}>
