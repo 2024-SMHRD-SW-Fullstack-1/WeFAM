@@ -4,7 +4,8 @@ import AddRewardModal from "./AddRewardModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
+import { HiOutlineTrophy } from "react-icons/hi2";
 
 const Reward = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
@@ -14,7 +15,7 @@ const Reward = () => {
   const [totalPoints, setTotalPoints] = useState(0); // 유저의 총 포인트 상태 추가
   const navigate = useNavigate(); // 페이지 이동을 위한 훅
   const userId = useSelector((state) => state.user.userData.id);
-  const dropdownRef = useRef(null); // 드롭다운 참조
+  const dropdownRef = useRef([]); // 각 드롭다운의 참조 배열
 
   const goToRewardPoint = () => {
     navigate("/main/reward-point");
@@ -36,7 +37,6 @@ const Reward = () => {
   const fetchRewards = async () => {
     try {
       const response = await axios.get("http://localhost:8089/wefam/rewards");
-      // 구매되지 않은 보상만 표시
       const availableRewards = response.data.filter(
         (reward) => !reward.reward.isSold
       );
@@ -56,9 +56,8 @@ const Reward = () => {
         formData.append("image", newReward.image);
       }
 
-      // 보상 ID가 있으면 수정, 없으면 추가
       if (newReward.rewardIdx) {
-        const response = await axios.post(
+        await axios.post(
           `http://localhost:8089/wefam/rewards/${newReward.rewardIdx}/update`,
           formData,
           {
@@ -67,9 +66,8 @@ const Reward = () => {
             },
           }
         );
-        console.log("보상 수정 성공:", response.data);
       } else {
-        const response = await axios.post(
+        await axios.post(
           "http://localhost:8089/wefam/rewards",
           formData,
           {
@@ -78,10 +76,9 @@ const Reward = () => {
             },
           }
         );
-        console.log("보상 추가 성공:", response.data);
       }
 
-      fetchRewards(); // 보상 목록 다시 불러오기
+      fetchRewards();
     } catch (error) {
       console.error("보상 저장 중 오류 발생:", error);
     }
@@ -89,33 +86,32 @@ const Reward = () => {
 
   useEffect(() => {
     fetchRewards();
-    fetchTotalPoints(); // 유저의 총 포인트도 불러오기
+    fetchTotalPoints();
   }, []);
 
   // 드롭다운 열기 및 닫기
   const toggleDropdown = (index) => {
-    if (dropdownOpen === index) {
-      setDropdownOpen(null); // 현재 열려있는 드롭다운을 닫음
-    } else {
-      setDropdownOpen(index); // 선택한 드롭다운을 엶
-    }
+    setDropdownOpen(dropdownOpen === index ? null : index); // 동일한 방식으로 토글 관리
   };
 
+  // 외부 클릭 감지로 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(null); // 외부 클릭 시 드롭다운 닫기
+      // 드롭다운 메뉴 외부 클릭 시
+      if (dropdownRef.current && dropdownRef.current.some(ref => ref && !ref.contains(event.target))) {
+        setDropdownOpen(null); // 드롭다운 닫기
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, []);
 
   const handleEditReward = (reward) => {
-    setSelectedReward(reward); // 선택된 보상 데이터를 설정
-    setIsModalOpen(true); // 모달 열기
+    setSelectedReward(reward);
+    setIsModalOpen(true);
   };
 
   const handleDeleteReward = async (reward) => {
@@ -124,8 +120,7 @@ const Reward = () => {
         await axios.post(
           `http://localhost:8089/wefam/rewards/${reward.reward.rewardIdx}/delete`
         );
-        console.log("삭제 성공:", reward.reward.rewardName);
-        fetchRewards(); // 삭제 후 보상 목록 다시 불러오기
+        fetchRewards();
       } catch (error) {
         console.error("보상 삭제 중 오류 발생:", error);
       }
@@ -140,21 +135,15 @@ const Reward = () => {
 
     if (window.confirm(`${reward.reward.rewardName}을(를) 구매하시겠습니까?`)) {
       try {
-        const response = await axios.post(
+        await axios.post(
           `http://localhost:8089/wefam/rewards/${reward.reward.rewardIdx}/purchase`,
           null,
           {
-            params: {
-              userId: userId,
-            },
+            params: { userId },
           }
         );
-        console.log("구매 성공:", response.data);
-
-        // 보상 구매 후 유저의 포인트 다시 불러오기
-        await fetchTotalPoints();
-
-        fetchRewards(); // 구매 후 보상 목록 다시 불러오기
+        fetchTotalPoints();
+        fetchRewards();
       } catch (error) {
         console.error("구매 중 오류 발생:", error);
       }
@@ -164,38 +153,44 @@ const Reward = () => {
   return (
     <div className="main">
       <div className={styles.container}>
-        <div className={styles.buttonGroup}>
-          {/* RewardPoint 페이지로 이동 버튼 */}
-          <button
-            className={styles.rewardPointButton}
-            onClick={goToRewardPoint}
-          >
-            포인트 확인하기
-          </button>
+        <div className={styles.titleGroup}>
+          <div className={styles.leftTitleGroup}>
+            <div className={styles.iconTitleGroup}>
+              <HiOutlineTrophy />
+              <h1>포인트 상점</h1>
+            </div>
+            <div>
+              <button
+                className={styles.rewardPointButton}
+                onClick={goToRewardPoint}
+              >
+                포인트 확인
+              </button>
+            </div>
+          </div>
 
-          {/* 보상 추가 버튼 */}
-          <button
-            className={styles.addButton}
+          <BsPlusCircle
+            className={styles.btnAdd}
             onClick={() => {
-              setSelectedReward(null); // 추가 버튼을 눌렀을 때 선택된 보상 데이터를 초기화
+              setSelectedReward(null);
               setIsModalOpen(true);
             }}
-          >
-            보상 추가
-          </button>
+          />
         </div>
 
-        {/* 보상 아이템들을 보여주는 영역 */}
         <div className={styles.itemsContainer}>
           {rewards.map((rewardItem, index) => (
             <div key={index} className={styles.itemCard}>
               <div className={styles.cardHeader}>
-                <BsThreeDotsVertical
+                <BsThreeDots
                   className={styles.menuIcon}
                   onClick={() => toggleDropdown(index)}
                 />
                 {dropdownOpen === index && (
-                  <div className={styles.dropdownMenu} ref={dropdownRef}>
+                  <div
+                    className={styles.dropdownMenu}
+                    ref={(el) => (dropdownRef.current[index] = el)}
+                  >
                     <p onClick={() => handleEditReward(rewardItem)}>수정</p>
                     <p onClick={() => handleDeleteReward(rewardItem)}>삭제</p>
                   </div>
@@ -220,7 +215,6 @@ const Reward = () => {
           ))}
         </div>
 
-        {/* 보상 추가 또는 수정 모달 */}
         <AddRewardModal
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
