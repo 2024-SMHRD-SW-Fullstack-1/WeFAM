@@ -1,13 +1,18 @@
 .board {
   display: flex;
   justify-content: center;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin: 12px;
 }
 
 .column {
   display: flex;
   flex-direction: column;
   padding: 5px 6px;
-  width: 300px;
+  width: 500px;
   margin-left: 10px;
 }
 
@@ -62,7 +67,7 @@
 
 .taskList {
   margin-top: 10px;
-  max-height: 650px;
+  max-height: 900px;
   overflow-y: auto;
   /* 리스트가 5개 이상일 경우 스크롤 활성화 */
 }
@@ -78,6 +83,16 @@
   position: relative;
   justify-content: space-between;
   margin-bottom: 10px;
+}
+
+.readMoreButton {
+  display: flex;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  float: right; /* 버튼을 오른쪽으로 배치 */
 }
 
 .taskContent {
@@ -96,7 +111,7 @@
 
 .taskDescription {
   margin-bottom: 4px;
-  color: #666;
+  color: #000000;
   font-size: 14px;
 }
 
@@ -142,6 +157,10 @@
   height: 50px;
   object-fit: cover;
   border-radius: 8px;
+}
+
+.completedTask {
+  background-color: #7e7d7d; /* 회색 배경 */
 }
 
 .dropdownContainer {
@@ -260,8 +279,8 @@
 
 .userContainer {
   display: flex;
-  flex-wrap: wrap; /* 줄바꿈을 허용 */
-  gap: 8px; /* 담당자 간의 간격을 설정 */
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 5px;
 }
 
@@ -269,7 +288,7 @@
   display: inline-flex;
   align-items: center;
   margin-right: 8px;
-  margin-bottom: 8px; /* 줄바꿈 시 간격을 확보 */
+  margin-bottom: 8px;
 }
 
 .userImage {
