@@ -221,5 +221,4 @@ public class UserService {
 	public FileModel getProfileImageByFamilyIdx(int familyIdx, String entityType) {
 		return fileRepository.findLatestByFamilyIdxAndEntityType(familyIdx, entityType);
 	}
-
 }

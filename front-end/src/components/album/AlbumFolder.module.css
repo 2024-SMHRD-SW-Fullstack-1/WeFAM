@@ -474,6 +474,12 @@ input[type="checkbox"] {
   cursor: pointer; /* 마우스 포인터 변경 */
 }
 
-.addleftButton:hover, .addrightButton:hover {
-  background-color: rgba(0, 0, 0, 0.7); /* 마우스 오버 시 배경색 조금 더 어둡게 */
+.addleftButton:hover,
+.addrightButton:hover {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); /* 마우스 오버 시 배경색 조금 더 어둡게 */
 }
