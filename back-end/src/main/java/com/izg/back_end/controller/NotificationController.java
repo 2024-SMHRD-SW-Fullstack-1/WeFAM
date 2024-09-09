@@ -17,7 +17,7 @@ public class NotificationController {
     // SSE 연결 설정 (receiverId로 구독)
     @GetMapping("/notifications/{receiverId}")
     public SseEmitter subscribe(@PathVariable("receiverId") String receiverId) {
-        SseEmitter emitter = new SseEmitter(60 * 1000L * 10);
+        SseEmitter emitter = new SseEmitter(60 * 1000L * 1000);
         clients.put(receiverId, emitter);  // receiverId를 String으로 저장
 
         System.out.println("구독된 수신자 ID: " + receiverId);
