@@ -21,19 +21,12 @@ import iconMenuFamily from "../../assets/images/icon-menu-family.png";
 import iconMenuLogout from "../../assets/images/icon-menu-logout.png";
 import axios from "axios";
 
-// 카카오 로그인
-const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
-const REDIRECT_URI = "http://localhost:3000";
-const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
-
 const LeftSidebar = () => {
   const [familyMotto, setFamilyMotto] = useState("");
   const [profileImage, setProfileImage] = useState(null); // 가족 프로필 이미지 상태
   const userData = useSelector((state) => state.user.userData);
   const nav = useNavigate();
   const isOpen = useSelector((state) => state.leftSidebar.isOpen);
-
-  const accessToken1 = userData.accessToken;
 
   useEffect(() => {
     if (userData) {
@@ -59,13 +52,12 @@ const LeftSidebar = () => {
       .get(url)
       .then((response) => {
         if (response.data.length === 0) {
-          setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 사용
+          setProfileImage(familyPT); // 이미지가 없을 때 기본 이미지 사용
         } else {
-          // entityType이 family인 이미지 중 가장 최신 이미지 사용
           const familyImages = response.data.filter(
             (image) => image.entityType === "family"
           );
-          const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
+          const latestFamilyImage = familyImages[familyImages.length - 1];
           setProfileImage(
             `data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`
           );
@@ -79,38 +71,25 @@ const LeftSidebar = () => {
   // 로그아웃 처리 함수
   const handleLogout = async () => {
     const accessToken = window.localStorage.getItem("kakaoAccessToken");
-
-    // 1. 로컬 스토리지에서 토큰 삭제
     window.localStorage.removeItem("kakaoAccessToken");
 
-    // 2. 백엔드에 로그아웃 요청, 카카오 로그아웃 API 호출
-    console.log("된거아님?");
     try {
       const response = await axios.post(
         "http://localhost:8089/wefam/logout",
         {},
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
       if (response.status === 200) {
-        console.log("로그아웃 성공");
         window.localStorage.removeItem("kakaoAccessToken");
-        nav("/");
       } else {
         console.error("로그아웃 실패");
       }
     } catch (error) {
+      nav("/");
       console.error("로그아웃 요청 중 에러 발생:", error);
     }
-
-    // 3. 로그인 페이지로 리디렉트
-    nav("/");
-    console.log("토큰값?", userData.accessToken);
-
-    console.log("카카오 토큰 삭제 및 로그아웃 처리 완료");
   };
 
   return (
@@ -127,9 +106,9 @@ const LeftSidebar = () => {
           alt="프로필"
         /> */}
       </div>
-      <div className={styles.familyMotto}>
+      {/* <div className={styles.familyMotto}>
         <p>{familyMotto}</p>
-      </div>
+      </div> */}
 
       {/* 카테고리 */}
       <div className={styles.category}>

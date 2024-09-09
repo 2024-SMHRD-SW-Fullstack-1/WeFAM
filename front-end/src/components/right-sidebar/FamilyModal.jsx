@@ -8,6 +8,8 @@ const FamilyModal = ({ user, onClose }) => {
   const userData = useSelector((state) => state.user.userData);
   const [isSending, setIsSending] = useState(false);
 
+  console.log("체크용", user);
+
   const handleSendMessage = () => {
     if (!message || isSending) {
       return;
@@ -38,15 +40,15 @@ const FamilyModal = ({ user, onClose }) => {
   };
 
   return (
-    <div className="main">
+    <div className='main'>
       <div className={styles.modalOverlay}>
-        <div className="modal-content">
+        <div className='modal-content'>
           <h2>{user.nick} 에게 쪽지 보내기</h2>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="쪽지 내용을 입력하세요..."
-            className="textarea"
+            placeholder='쪽지 내용을 입력하세요...'
+            className='textarea'
           />
           <div className={styles.modalActions}>
             <button onClick={handleSendMessage} className={styles.sendButton}>
