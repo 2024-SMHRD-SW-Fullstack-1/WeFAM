@@ -12,26 +12,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RestController
 public class NotificationController {
 
-    private final List<SseEmitter> clients = new CopyOnWriteArrayList<>();
+    private final  Map<String, SseEmitter> clients = new HashMap<>();
 
-    // SSE 연결 설정
-    @GetMapping("/notifications")
-    public SseEmitter subscribe() {
-        SseEmitter emitter = new SseEmitter(60 * 1000L * 10); // 10분 타임아웃
-        clients.add(emitter);
+    // SSE 연결 설정 (receiverId로 구독)
+    @GetMapping("/notifications/{receiverId}")
+    public SseEmitter subscribe(@PathVariable("receiverId") String receiverId) {
+        SseEmitter emitter = new SseEmitter(60 * 1000L * 10);
+        clients.put(receiverId, emitter);  // receiverId를 String으로 저장
 
-        emitter.onCompletion(() -> clients.remove(emitter));
+        System.out.println("구독된 수신자 ID: " + receiverId);
+        System.out.println("구독자 리스트: " + clients.keySet());
+
+        emitter.onCompletion(() -> clients.remove(receiverId));
         emitter.onTimeout(() -> {
-            clients.remove(emitter);
+            clients.remove(receiverId);
             emitter.complete();
         });
         emitter.onError((e) -> {
-            clients.remove(emitter);
+            clients.remove(receiverId);
             emitter.completeWithError(e);
         });
 
         return emitter;
     }
+
+
+
 
     // 쪽지 전송 API
     @PostMapping("/send-message")
@@ -47,17 +53,22 @@ public class NotificationController {
 
     // 알림을 연결된 클라이언트들에게 전송하는 메서드
     private void sendNotification(NotificationDto notification) {
-        clients.forEach(emitter -> {
+        String receiverId = notification.getReceiverId();  // receiverId가 String인지 확인
+        System.out.println("알림 전송 시 수신자 ID: " + receiverId);
+        System.out.println("현재 구독자 리스트: " + clients.keySet());  // 구독자 리스트 로그 출력
+
+        SseEmitter emitter = clients.get(receiverId);
+        if (emitter != null) {
             try {
-                System.out.println("알림을 전송합니다: " + notification); // 알림 전송 로그 추가
-                emitter.send(SseEmitter.event()
-                    .name("message")  // 이벤트 이름 지정
-                    .data(notification));  // 데이터를 알림 DTO로 전송
+                System.out.println("알림을 전송합니다: " + notification);
+                emitter.send(SseEmitter.event().name("message").data(notification));
             } catch (IOException e) {
                 System.err.println("알림 전송 중 오류 발생: " + e.getMessage());
                 emitter.completeWithError(e);
-                clients.remove(emitter);
+                clients.remove(receiverId);
             }
-        });
+        } else {
+            System.err.println("수신자를 찾을 수 없습니다: " + receiverId);
+        }
     }
 }
