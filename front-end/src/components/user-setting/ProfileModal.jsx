@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 import styles from './ProfileModal.module.css';
 
 Modal.setAppElement("#root");
 
+const emojis = ['👩', '👨', '👧', '🧑','👴','🧓']; // 이모티콘 선택 목록
+
 const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputChange, handleSaveChanges }) => {
+  const [selectedEmoji, setSelectedEmoji] = useState(''); // 선택된 이모티콘 상태
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // 이모티콘 선택창 표시 상태
+
+  // 이모티콘을 닉네임에서 제거하고 새로운 이모티콘을 추가하는 함수
+const handleEmojiClick = (emoji) => {
+  const regex = new RegExp('[' + emojis.join('') + ']', 'g'); // 이전에 선택한 모든 이모티콘 제거를 위한 정규식
+  const updatedNick = profile.nick.replace(regex, ''); // 기존 이모티콘 모두 제거
+  setSelectedEmoji(emoji); // 새로운 이모티콘 상태 저장
+  handleInputChange({ target: { name: 'nick', value: emoji + updatedNick } }); // 새로운 이모티콘 추가
+  setShowEmojiPicker(false); // 이모티콘 선택창 닫기
+};
+
   return (
     <Modal
       isOpen={isOpen}
@@ -21,28 +35,28 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
         <img src={profile.profileImg} alt="Profile" className={styles.profileImage} />
         <div className={styles.profile}>
           <div className={styles.profileInfoRow}>
-            <label className={styles.modalLabel}>이름  :</label>
+            <label className={styles.modalLabel}>이름 :</label>
             {isEditing ? (
               <input
                 type="text"
                 name="name"
                 value={profile.name}
                 onChange={handleInputChange}
-                className={styles.modalInputText}
+                className={`${styles.modalInput} ${styles.modalInputText}`}
               />
             ) : (
               <p>{profile.name}</p>
             )}
           </div>
           <div className={styles.profileInfoRow}>
-            <label className={styles.modalLabel}>생년월일  :</label>
+            <label className={styles.modalLabel}>생년월일 :</label>
             {isEditing ? (
               <input
                 type="date"
                 name="birth"
                 value={profile.birth}
                 onChange={handleInputChange}
-                className={styles.modalInputDate}
+                className={`${styles.modalInput} ${styles.modalInputDate}`}
               />
             ) : (
               <p>{profile.birth}</p>
@@ -51,13 +65,34 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
           <div className={styles.profileInfoRow}>
             <label className={styles.modalLabel}>닉네임 :</label>
             {isEditing ? (
-              <input
-                type="text"
-                name="nick"
-                value={profile.nick} 
-                onChange={handleInputChange}
-                className={styles.modalInputText}
-              />
+              <div className={styles.what}>
+                {/* 이모티콘 선택 토글 버튼 */}
+                <div className={styles.emojiSelector}>
+                  <span onClick={() => setShowEmojiPicker(!showEmojiPicker)} style={{ cursor: 'pointer' }}>
+                    👨‍👩‍👦‍👦(이모티콘 변경)
+                  </span>
+                  {showEmojiPicker && (
+                    <div className={styles.emojiPicker}>
+                      {emojis.map((emoji) => (
+                        <span
+                          key={emoji}
+                          className={styles.emoji}
+                          onClick={() => handleEmojiClick(emoji)}
+                        >
+                          {emoji}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  name="nick"
+                  value={selectedEmoji + profile.nick.replace(selectedEmoji, '')} // 중복 방지
+                  onChange={handleInputChange}
+                 className={`${styles.modalInput} ${styles.modalInputText}`}
+                />
+              </div>
             ) : (
               <p>{profile.nick}</p>
             )}
@@ -65,24 +100,6 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputC
         </div>
       </div>
 
-      {isEditing && (
-        <div>
-          <label className={styles.modalLabel}>프로필 이미지:</label>
-          <input
-            type="file"
-            name="profileImage"
-            onChange={(e) =>
-              handleInputChange({
-                target: {
-                  name: "profileImage",
-                  value: URL.createObjectURL(e.target.files[0])
-                }
-              })
-            }
-            className={styles.modalInputFile}
-          />
-        </div>
-      )}
       <div className={styles.buttonGroup}>
         {isEditing && (
           <button onClick={handleSaveChanges} className={styles.saveBtn}>

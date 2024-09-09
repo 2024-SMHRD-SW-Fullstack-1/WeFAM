@@ -35,7 +35,6 @@ const Housework2 = () => {
   const [completedTasks, setCompletedTasks] = useState([]);
   const [existingPostedAt, setExistingPostedAt] = useState(null);
 
-
   // 모달을 여는 함수
   const openDailyModal = () => {
     setTaskType("daily");
@@ -118,7 +117,9 @@ const Housework2 = () => {
           images: item.images,
           userProfileImg: item.userProfileImg,
           userName: item.userName,
-          completedAt: item.workLog.completedAt ? new Date(item.workLog.completedAt) : null,  // completedAt을 Date 객체로 변환
+          completedAt: item.workLog.completedAt
+            ? new Date(item.workLog.completedAt)
+            : null, // completedAt을 Date 객체로 변환
         };
       });
 
@@ -126,7 +127,7 @@ const Housework2 = () => {
       const sortedCompletedTasks = completedTasksWithImages.sort((a, b) => {
         if (!a.completedAt) return 1;
         if (!b.completedAt) return -1;
-        return b.completedAt - a.completedAt;  // 최신 완료 작업이 위로 오도록 정렬
+        return b.completedAt - a.completedAt; // 최신 완료 작업이 위로 오도록 정렬
       });
 
       setCompletedTasks(sortedCompletedTasks);
@@ -175,8 +176,8 @@ const Housework2 = () => {
         taskType === "daily" && workUser.length > 0
           ? workUser.map((user) => user.id)
           : [],
-      postedAt: editTaskIndex !== null ? existingPostedAt : new Date().toISOString(), // posted_at 필드를 추가
-
+      postedAt:
+        editTaskIndex !== null ? existingPostedAt : new Date().toISOString(), // posted_at 필드를 추가
     };
 
     try {
@@ -240,7 +241,6 @@ const Housework2 = () => {
 
   };
 
-
   const openImageModal = (images) => {
     setSelectedTaskImages(images);
     setIsImageModalOpen(true);
@@ -285,8 +285,8 @@ const Housework2 = () => {
 
     setTaskPoint(task.points.toString());
     setTaskType(taskType);
-    setEditTaskIndex(task.workIdx);  // 작업의 고유 ID로 설정
-    setExistingPostedAt(task.postedAt);  // postedAt 값을 상태로 설정
+    setEditTaskIndex(task.workIdx); // 작업의 고유 ID로 설정
+    setExistingPostedAt(task.postedAt); // postedAt 값을 상태로 설정
     setIsModalOpen(true);
   };
 
@@ -310,24 +310,22 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
   };
 
   // 작업 목록을 정렬하는 함수
   const sortTasks = (tasks) => {
-    return tasks
-      .slice()
-      .sort((a, b) => {
-        if (a.completed && !b.completed) return 1;
-        if (!a.completed && b.completed) return -1;
+    return tasks.slice().sort((a, b) => {
+      if (a.completed && !b.completed) return 1;
+      if (!a.completed && b.completed) return -1;
 
-        // postedAt 기준으로 내림차순 정렬
-        const dateA = new Date(a.postedAt);
-        const dateB = new Date(b.postedAt);
-        return dateB - dateA; // 최신 작업이 맨 위로 오게 정렬
-      });
+      // postedAt 기준으로 내림차순 정렬
+      const dateA = new Date(a.postedAt);
+      const dateB = new Date(b.postedAt);
+      return dateB - dateA; // 최신 작업이 맨 위로 오게 정렬
+    });
   };
 
   // 완료된 작업의 유저 정보를 렌더링하는 함수
@@ -352,13 +350,11 @@ const Housework2 = () => {
 
   // 완료된 작업 리스트도 동일하게 정렬해서 렌더링
   const renderCompletedTaskList = (tasks) => {
-    const sortedCompletedTasks = tasks
-      .slice()
-      .sort((a, b) => {
-        if (!a.completedAt) return 1;
-        if (!b.completedAt) return -1;
-        return new Date(b.completedAt) - new Date(a.completedAt); // 최신 completedAt 기준으로 정렬
-      });
+    const sortedCompletedTasks = tasks.slice().sort((a, b) => {
+      if (!a.completedAt) return 1;
+      if (!b.completedAt) return -1;
+      return new Date(b.completedAt) - new Date(a.completedAt); // 최신 completedAt 기준으로 정렬
+    });
 
     return sortedCompletedTasks.map((task) => (
       <li key={task.workIdx} className={styles.taskItem}>
@@ -386,7 +382,6 @@ const Housework2 = () => {
     ));
   };
 
-
   // 작업 항목 렌더링 함수
   const TaskItem = ({ task, taskType }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -403,15 +398,18 @@ const Housework2 = () => {
     return (
       <li
         key={task.workIdx}
-        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""}`}
-      >
+        className={`${styles.taskItem} ${
+          isCompleted ? styles.completedTask : ""
+        }`}>
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span className={styles.taskDescription}>
             {displayedContent}
             {isLongContent && (
-              <button onClick={toggleReadMore} className={styles.readMoreButton}>
+              <button
+                onClick={toggleReadMore}
+                className={styles.readMoreButton}>
                 {isExpanded ? "간략히" : "더보기"}
               </button>
             )}
@@ -439,30 +437,26 @@ const Housework2 = () => {
             onClick={(e) => {
               e.stopPropagation(); // 클릭 이벤트 버블링 방지
               setDropdownOpen(null); // 드롭다운 메뉴를 클릭하면 닫음
-            }}
-          >
+            }}>
             <button
               onClick={() => {
                 handleMissionComplete(task);
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               미션 성공
             </button>
             <button
               onClick={() => {
                 handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               수정
             </button>
             <button
               onClick={() => {
                 deleteSelectedTasks(task.workIdx, taskType); // workIdx로 삭제
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               삭제
             </button>
           </div>
@@ -470,7 +464,6 @@ const Housework2 = () => {
       </li>
     );
   };
-
 
   // 작업 목록을 렌더링하는 함수
   const renderTaskList = (tasks, taskType) => {
@@ -487,23 +480,25 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main" onClick={handleOutsideClick}>
-      <div style={{
-        backgroundColor: "#ffffff",
-        marginTop: "2rem",
-        borderRadius: "1rem",
-        padding: "1rem",
-      }}>
-
+    <div className='main' onClick={handleOutsideClick}>
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          marginTop: "2rem",
+          borderRadius: "1rem",
+          padding: "1rem",
+          height: "631px",
+        }}>
         <div className={styles.board}>
           <div className={styles.column}>
             <div className={styles.column_header}>
               <h3>매일 할 일</h3>
               <span
                 className={
-                  tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-                }
-              >
+                  tasks.daily.length > 0
+                    ? styles.circleDaily
+                    : styles.circleZero
+                }>
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -526,8 +521,7 @@ const Housework2 = () => {
                   tasks.shortTerm.length > 0
                     ? styles.circleShortTerm
                     : styles.circleZero
-                }
-              >
+                }>
                 {tasks.shortTerm.length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
@@ -550,8 +544,7 @@ const Housework2 = () => {
                   completedTasks.length > 0
                     ? styles.circleFinished
                     : styles.circleZero
-                }
-              >
+                }>
                 {completedTasks.length}
               </span>
             </div>
@@ -597,10 +590,9 @@ const Housework2 = () => {
         <Modal
           isOpen={isImageModalOpen}
           onRequestClose={closeImageModal}
-          contentLabel="작업 이미지"
+          contentLabel='작업 이미지'
           className={styles.imageModalContent}
-          overlayClassName={styles.imageModalOverlay}
-        >
+          overlayClassName={styles.imageModalOverlay}>
           <div className={styles.modalBody}>
             <h2>작업 이미지</h2>
             <div className={styles.imagePreviewContainer}>
@@ -620,7 +612,7 @@ const Housework2 = () => {
           </div>
         </Modal>
       </div>
-    </div >
+    </div>
   );
 };
 

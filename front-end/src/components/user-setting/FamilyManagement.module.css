@@ -37,7 +37,7 @@
     font-size: 0.9em !important; /* 여기에서 원하는 크기로 설정하세요 */
     color : #666; /* 필요에 따라 색상도 조절할 수 있습니다 */
     margin-left: 10px;
-    width: 70px;
+    width: 90px;
   }
   .username{
     width: 70px;
@@ -92,7 +92,7 @@
   }
 
   .hrLine {
-    width: 85%; /* hr 태그의 너비를 절반으로 설정 */
+    width: 68%; /* hr 태그의 너비를 절반으로 설정 */
     margin: 0;
     border: none;
     border-top: 1px solid #ccc; /* hr 모양을 유지하되 줄이 짧아지게 */
