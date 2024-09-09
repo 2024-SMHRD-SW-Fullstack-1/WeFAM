@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Chatbot.module.css";
+import { useSelector } from "react-redux";
 
-const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }) => {
+
+const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace}) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
     const [userInput, setUserInput] = useState("");
     const chatContainerRef = useRef(null);
-
+    const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
     // 최초 환영 메시지 설정
     useEffect(() => {
         console.log("장소 :" + location);
         console.log("테마 :" + theme);
         console.log("시작 :" + startDate);
         console.log("종료 :" + endDate);
+        console.log("입력만 받은 장소 : " + locationInput)
 
 
         setChatContent([
@@ -24,7 +27,9 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }
 
         // 조건을 만족할 때 AI 서버로 요청
         if (theme && startDate && location && endDate) {
-            sendChatToServer(`${theme}를 선택하셨군요! 선택하신 날짜는 ${startDate}부터 ${endDate}이고 고르신 장소는 ${location}입니다!`);
+            sendChatToServer(`우리 가족이 고른 여행테마는 ${theme}이고, 선택한 날짜는 ${startDate}부터 ${endDate}이고 고른 장소는 ${location}야. 
+                고른 테마와 날짜, 장소에 맞춰 선택한 장소 주변에 추천해줄 세가지 장소명칭을 알려주고 줄바꿈해서 부가설명을 해줘.
+                만약 축제테마를 골랐다면 축제가 열리는 장소명칭 **장소명칭** 이렇게 알려주고 축제정보가는  그 밑에 해당 축제에대한 설명을해주면돼. `);
         }
     }, []);
 

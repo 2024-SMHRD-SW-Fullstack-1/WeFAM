@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./LocationSearchInput.module.css"; // CSS 모듈 사용
 import Login from "../login/Login";
+import { useDispatch } from 'react-redux'; // Redux에서 useDispatch 훅 가져오기
+import { setLocationInput } from '../../features/locationSlice'; // 액션 가져오기
 
 const MapSearchInput = ({
   onPlaceSelect,
@@ -12,11 +14,11 @@ const MapSearchInput = ({
   const [searchResults, setSearchResults] = useState([]);
   const [map, setMap] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const dispatch = useDispatch(); // Redux dispatch 함수
 
   useEffect(() => {
     setSearchTerm(location || event.location || ""); // location을 초기값으로 설정하고, location이 변경될 때마다 searchTerm을 업데이트
     console.log(location, event.location);
-    console.log(searchTerm, event.location);
   }, [location, event.location]);
 
   useEffect(() => {
@@ -49,11 +51,16 @@ const MapSearchInput = ({
 
   // 입력된 검색어가 변경되면 searchTerm 업데이트
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+    const inputValue = e.target.value;
+    setSearchTerm(inputValue);
+    console.log(inputValue);
 
-    if (e.target.value && map) {
+    // Redux로 입력된 값 저장
+    dispatch(setLocationInput(inputValue));
+
+    if (inputValue && map) {
       const ps = new window.kakao.maps.services.Places();
-      ps.keywordSearch(e.target.value, (data, status) => {
+      ps.keywordSearch(inputValue, (data, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
           setSearchResults(data);
           setSelectedIndex(-1);
@@ -69,8 +76,10 @@ const MapSearchInput = ({
   const handlePlaceSelect = (place) => {
     setSearchTerm(place.place_name);
     setSearchResults([]);
+    dispatch(setLocationInput(place.place_name)); // redux에 장소 이름 저장
     if (onPlaceSelect) {
       onPlaceSelect(place);
+
     }
     const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
     map.setCenter(moveLatLon);

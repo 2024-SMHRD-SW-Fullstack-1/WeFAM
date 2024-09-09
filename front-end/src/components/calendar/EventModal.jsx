@@ -22,6 +22,8 @@ import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
 import { MemoModal } from "./MemoModal";
+import { useSelector } from "react-redux";
+
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,7 +83,7 @@ const EventModal = ({
   const [endDate, setEndDate] = useState(new Date(event.end));
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
   const [title, setTitle] = useState(event.title);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState(event.location || "");
   const [coordinates, setCoordinates] = useState({
     lat: event.latitude,
     lng: event.longitude,
@@ -92,6 +94,7 @@ const EventModal = ({
   const [deletedFileIds, setDeletedFileIds] = useState([]);
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false); // MemoModal 열림/닫힘 상태 관리
   const [memoContent, setMemoContent] = useState(event.content); // 메모 내용 상태 관리
+  const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
 
   // MemoModal을 열기 위한 함수
   const openMemoModal = () => {
@@ -134,6 +137,10 @@ const EventModal = ({
     setLocation(""); // 지명 초기화
     setCoordinates({ lat: 0, lng: 0 }); // 좌표 초기화
   };
+
+  useEffect(() => {
+    console.log("리덕스에서 가져온 locationInput: ", locationInput); 
+  }, [locationInput]);
 
   useEffect(() => {
     // event가 변경되고, coordinates가 초기화되지 않았을 때만 좌표를 설정

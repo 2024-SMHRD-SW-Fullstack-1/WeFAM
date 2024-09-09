@@ -43,34 +43,27 @@
     
   }
   
-  .editImgButton{
+  .editImgButton, .saveImgButton {
     background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-left: 0px;
     margin-top: 160px;
-  }
-  .editImgButton:hover {
-    background-color: #ff4d4d;
-  }
+    height: 50px; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+}
 
-  .saveImgButton{
-    background-color: #E1888B;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 1%;
-    margin-top: 16.5%;
-  }
+.saveImgButton {
+    margin-left: 20px; 
+}
 
-  .saveImgButton:hover{
+.editImgButton:hover, .saveImgButton:hover {
     background-color: #ff4d4d;
-  }
+}
   
   .editNick{
     border-radius: 6px;
