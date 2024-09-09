@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
 
 import profileThumbnail from "../../assets/images/gucci-cat.png";
-import familyPT from "../../assets/images/famaily.png"
-
+import familyPT from "../../assets/images/famaily.png";
 
 import { CiHome } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
@@ -16,8 +15,6 @@ import { CiImageOn } from "react-icons/ci";
 import { CiSettings } from "react-icons/ci";
 import { CiLogout } from "react-icons/ci";
 import axios from "axios";
-
-
 
 // 카카오 로그인
 const REST_API_KEY = "e8bed681390865b7c0ef4d85e4e2c842";
@@ -60,7 +57,9 @@ const LeftSidebar = () => {
           setProfileImage(null); // 불러올 이미지가 없을 때 기본 이미지 사용
         } else {
           // entityType이 family인 이미지 중 가장 최신 이미지 사용
-          const familyImages = response.data.filter(image => image.entityType === "family");
+          const familyImages = response.data.filter(
+            (image) => image.entityType === "family"
+          );
           const latestFamilyImage = familyImages[familyImages.length - 1]; // 최신 이미지 선택
           setProfileImage(
             `data:image/${latestFamilyImage.fileExtension};base64,${latestFamilyImage.fileData}`
@@ -109,7 +108,6 @@ const LeftSidebar = () => {
     console.log("카카오 토큰 삭제 및 로그아웃 처리 완료");
   };
 
-
   return (
     <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
       {/* 프로필 */}
@@ -122,7 +120,9 @@ const LeftSidebar = () => {
           src={userData.profileImg || profileThumbnail}
           alt="프로필"
         />
-        <div className={styles.profileName}><p>{familyNick}</p></div>
+        <div className={styles.profileName}>
+          <p>{familyNick}</p>
+        </div>
       </div>
 
       {/* 카테고리 */}
@@ -165,7 +165,7 @@ const LeftSidebar = () => {
           <li>
             <span
               onClick={() => {
-                nav("/main/recipe");
+                nav("/main/meal");
               }}
               style={{ cursor: "pointer" }}
             >

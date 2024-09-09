@@ -22,11 +22,13 @@ import com.izg.back_end.dto.FeedDto;
 import com.izg.back_end.dto.ImageUploadDto;
 import com.izg.back_end.dto.PollDto;
 import com.izg.back_end.dto.PollOptionDto;
+import com.izg.back_end.dto.RouletteDto;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
 import com.izg.back_end.repository.FeedRepository;
 import com.izg.back_end.service.FeedService;
 import com.izg.back_end.service.PollService;
+import com.izg.back_end.service.RouletteService;
 
 import jakarta.transaction.Transactional;
 
@@ -40,6 +42,9 @@ public class FeedController {
 	@Autowired
 	private FeedRepository feedRepository;
 
+	@Autowired
+	private RouletteService rouletteService;
+	
 	@Autowired
 	private PollService pollService;
 
@@ -60,6 +65,22 @@ public class FeedController {
 	    // 피드를 저장합니다.
 	    FeedModel savedFeed = feedRepository.save(feed);
 
+	    // 피드에 관련된 룰렛이 있는 경우, 룰렛을 저장합니다.
+	    if (feed.getRoulettes() != null && !feed.getRoulettes().isEmpty()) {
+	        for (RouletteDto rouletteDto : feed.getRoulettes()) {
+	            // 룰렛 DTO의 feedIdx를 설정합니다.
+	            rouletteDto.setFeedIdx(savedFeed.getFeedIdx());
+	            rouletteDto.setUserId(savedFeed.getUserId());
+
+	            // RouletteOptions를 변환할 필요는 없고
+	            // DTO의 rouletteOptions 필드에 이미 배열이 포함되어 있으므로
+	            // 그대로 사용하면 됩니다.
+
+	            System.out.println("룰렛 제목 : " + rouletteDto.getRouletteTitle());
+	            rouletteService.addRoulettes(rouletteDto);
+	        }
+	    }
+	    
 	    // 피드에 관련된 폴이 있는 경우, 폴을 저장합니다.
 	    if (feed.getPolls() != null && !feed.getPolls().isEmpty()) {
 	        for (PollDto pollDto : feed.getPolls()) {

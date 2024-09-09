@@ -37,7 +37,6 @@
   border: none;
   border-radius: 10px;
   padding: 5% 10%;
-
   box-shadow: 0px 12px 24.8px 0px rgba(0, 0, 0, 0.2);
 }
 
@@ -96,7 +95,7 @@
   /* 원하는 크기로 조정 */
   height: 20px;
   /* transform: rotate(-45deg); */
-    /* 요소를 반시계 방향으로 45도 회전 */
+  /* 요소를 반시계 방향으로 45도 회전 */
 }
 
 .userName {

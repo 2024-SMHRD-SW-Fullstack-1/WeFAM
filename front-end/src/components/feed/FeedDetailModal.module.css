@@ -10,6 +10,11 @@
 }
 .preview {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 6rem;
+  border: 1px solid #ccc;
 }
 
 .preview,
@@ -69,22 +74,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: var(--font-md);
 }
 
 .contentContainer {
   width: 320px;
   height: 100%;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
   border-top: 1px solid #ccc;
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
 .profileContainer {
   width: 100%;
-  height: calc(40px + 2 * var(--space-md));
+  height: 40px;
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-sm);
 }
 .profileImg,
 .profileImg > img {
@@ -94,16 +103,21 @@
 .profileImg > img {
   border-radius: 50%;
 }
-.profileNick {
+.profileNickLocation {
   height: 40px;
+}
+.profileNick {
+  height: 20px;
   display: flex;
   align-items: center;
+}
+.location {
+  height: 20px;
 }
 
 .content {
   width: 100%;
-  height: calc(100% - 40px - 2 * var(--space-md));
-  padding: var(--space-md);
+  height: 100%;
   resize: none;
   font-size: var(--font-md);
   border: none;
