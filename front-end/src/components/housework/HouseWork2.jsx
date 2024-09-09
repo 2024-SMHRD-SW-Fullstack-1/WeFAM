@@ -227,7 +227,9 @@ const Housework2 = () => {
   const handleDeleteConfirm = async () => {
     if (taskToDelete) {
       try {
-        await axios.delete(`http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`);
+        await axios.delete(
+          `http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`
+        );
         setTasks((prevTasks) => ({
           ...prevTasks,
           [taskToDelete.taskType]: prevTasks[taskToDelete.taskType].filter(
@@ -317,7 +319,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        {/* <span className={styles.userName}>{user.name}</span> */}
+        <span className={styles.userName}>{user.name}</span>
       </div>
     ));
   };
@@ -410,8 +412,10 @@ const Housework2 = () => {
     return (
       <li
         key={task.workIdx}
-        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""
-          }`}>
+        className={`${styles.taskItem} ${
+          isCompleted ? styles.completedTask : ""
+        }`}
+      >
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
@@ -420,7 +424,8 @@ const Housework2 = () => {
             {isLongContent && (
               <button
                 onClick={toggleReadMore}
-                className={styles.readMoreButton}>
+                className={styles.readMoreButton}
+              >
                 {isExpanded ? "간략히" : "더보기"}
               </button>
             )}
@@ -448,19 +453,22 @@ const Housework2 = () => {
             onClick={(e) => {
               e.stopPropagation(); // 클릭 이벤트 버블링 방지
               setDropdownOpen(null); // 드롭다운 메뉴를 클릭하면 닫음
-            }}>
+            }}
+          >
             <button
               onClick={() => {
                 handleMissionComplete(task);
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}>
+              }}
+            >
               미션 성공
             </button>
             <button
               onClick={() => {
                 handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}>
+              }}
+            >
               수정
             </button>
             <button onClick={() => handleDeleteClick(task)}>삭제</button>
@@ -485,7 +493,7 @@ const Housework2 = () => {
   };
 
   return (
-    <div className='main' onClick={handleOutsideClick}>
+    <div className="main" onClick={handleOutsideClick}>
       <div
         style={{
           backgroundColor: "#ffffff",
@@ -493,7 +501,8 @@ const Housework2 = () => {
           borderRadius: "1rem",
           padding: "1rem",
           height: "710px",
-        }}>
+        }}
+      >
         <div className={styles.board}>
           <div className={styles.column}>
             <div className={styles.column_header}>
@@ -502,9 +511,9 @@ const Housework2 = () => {
                 className={
                   tasks.daily.length > 0
                     ? styles.circleDaily
-                    : styles.circleZero         
-                    }>
-
+                    : styles.circleZero
+                }
+              >
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -527,7 +536,8 @@ const Housework2 = () => {
                   tasks.shortTerm.length > 0
                     ? styles.circleShortTerm
                     : styles.circleZero
-                }>
+                }
+              >
                 {tasks.shortTerm.length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
@@ -550,7 +560,8 @@ const Housework2 = () => {
                   completedTasks.length > 0
                     ? styles.circleFinished
                     : styles.circleZero
-                }>
+                }
+              >
                 {completedTasks.length}
               </span>
             </div>
@@ -601,10 +612,10 @@ const Housework2 = () => {
         <Modal
           isOpen={isImageModalOpen}
           onRequestClose={closeImageModal}
-          contentLabel='작업 이미지'
+          contentLabel="작업 이미지"
           className={styles.imageModalContent}
-          overlayClassName={styles.imageModalOverlay}>
-
+          overlayClassName={styles.imageModalOverlay}
+        >
           <div className={styles.modalBody}>
             <h2>작업 이미지</h2>
             <div className={styles.imagePreviewContainer}>
