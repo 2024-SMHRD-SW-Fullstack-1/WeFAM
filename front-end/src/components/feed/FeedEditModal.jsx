@@ -4,7 +4,8 @@ import axios from "axios";
 import modalStyles from "../modal/Modal.module.css";
 import styles from "./FeedDetailModal.module.css";
 import Preloader from "../preloader/Preloader";
-
+import { CiImageOn } from "react-icons/ci";
+import { CiImageOff } from "react-icons/ci";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 const FeedEditModal = ({ feed, onClose, onSave }) => {
@@ -95,7 +96,7 @@ const FeedEditModal = ({ feed, onClose, onSave }) => {
           <div className={styles.main}>
             {/* 이미지 프리뷰 */}
             <div className={styles.preview}>
-              {imagePreview.length > 0 && (
+              {imagePreview.length > 0 ? (
                 <>
                   {currentSlide > 0 && (
                     <div
@@ -122,6 +123,8 @@ const FeedEditModal = ({ feed, onClose, onSave }) => {
                     {currentSlideNumber} / {totalSlides}
                   </div>
                 </>
+              ) : (
+                <CiImageOff />
               )}
             </div>
 
@@ -131,7 +134,10 @@ const FeedEditModal = ({ feed, onClose, onSave }) => {
                 <div className={styles.profileImg}>
                   <img src={writerProfileImg} alt="" />
                 </div>
-                <div className={styles.profileNick}>{writerNick}</div>
+                <div className={styles.profileNickLocation}>
+                  <div className={styles.profileNick}>{writerNick}</div>
+                  <div className={styles.location}></div>
+                </div>
               </div>
               {/* 사용자 */}
               <textarea

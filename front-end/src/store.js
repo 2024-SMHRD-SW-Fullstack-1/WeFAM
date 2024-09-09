@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/userSlice";
 import leftSidebarReducer from "./features/leftSidebarSlice";
 import imagesOnFeedReducer from "./features/imagesOnFeedSlice";
+import roulettesReducer from "./features/roulettesSlice";
 import pollsReducer from "./features/pollsSlice";
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   leftSidebar: leftSidebarReducer,
   // imagesOnFeed: imagesOnFeedReducer,
+  roulettes: roulettesReducer,
   polls: pollsReducer,
 });
 
