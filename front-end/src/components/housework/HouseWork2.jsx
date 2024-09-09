@@ -82,7 +82,6 @@ const Housework2 = () => {
           (task) => task.taskType === "shortTerm" && !task.completed
         ), // 완료되지 않은 단기 미션
       });
-      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
@@ -450,7 +449,7 @@ const Housework2 = () => {
         {/* 완료된 할 일 리스트 */}
         <div className={styles.column}>
           <div className={styles.column_header}>
-            <h3>마감된 할 일</h3>
+            <h3>완료된 할 일</h3>
             <span
               className={
                 completedTasks.length > 0

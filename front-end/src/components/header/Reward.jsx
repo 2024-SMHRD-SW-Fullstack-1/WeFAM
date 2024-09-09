@@ -6,29 +6,11 @@ import AddRewardModal from "./AddRewardModal";
 
 const Reward = () => {
   const userData = useSelector((state) => state.user.userData);
-  const [totalPoints, setTotalPoints] = useState(0); // 총 포인트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [rewards, setRewards] = useState([]); // 보상 리스트 상태
   const [completedTasks, setCompletedTasks] = useState([]); // 완료된 작업들
   const [familyPoints, setFamilyPoints] = useState([]); // 가족 구성원 포인트 상태
 
-  // 총 포인트 가져오기
-  useEffect(() => {
-    const fetchTotalPoints = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8089/wefam/get-total-points?userId=${userData.id}`
-        );
-        setTotalPoints(response.data); // 서버에서 받은 총 포인트 값 저장
-      } catch (error) {
-        console.error("총 포인트를 가져오는 중 오류 발생:", error);
-      }
-    };
-
-    if (userData) {
-      fetchTotalPoints(); // 유저 데이터가 있으면 포인트 가져오기
-    }
-  }, [userData]);
 
   // 완료된 하우스워크 로그 가져오기
   useEffect(() => {
@@ -56,6 +38,37 @@ const Reward = () => {
     }
   }, [userData]);
 
+  // 가족 구성원 포인트 가져오기
+  useEffect(() => {
+    const fetchFamilyPoints = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8089/wefam/get-family-members/${userData.id}`
+        );
+        const members = response.data;
+        console.log(members.profileImg);
+
+        // 각 구성원의 포인트 가져오기
+        const pointsPromises = members.map((member) =>
+          axios.get(`http://localhost:8089/wefam/get-total-points?userId=${member.userId}`)
+        );
+
+        const pointsResponses = await Promise.all(pointsPromises);
+        const familyPointsData = members.map((member, index) => ({
+          ...member,
+          points: pointsResponses[index].data,
+        }));
+
+        setFamilyPoints(familyPointsData); // 구성원과 그들의 포인트를 상태에 저장
+      } catch (error) {
+        console.error("가족 구성원 포인트를 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    if (userData) {
+      fetchFamilyPoints(); // 로그인된 유저 데이터가 있으면 실행
+    }
+  }, [userData]);
 
 
   const handleAddReward = (newReward) => {
@@ -93,7 +106,7 @@ const Reward = () => {
             </div>
           ))}
         </div>
-        
+
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
@@ -110,10 +123,25 @@ const Reward = () => {
             </ul>
           </div>
 
-          {/* 포인트 정보 */}
+          {/* 포인트 정보 및 가족 구성원 포인트 */}
           <div className={styles.point}>
-            <h2>포인트</h2>
-            <h3>{totalPoints} 점</h3>
+            <div className={styles.familyPointsContainer}>
+              <h2>가족 구성원 포인트</h2>
+              <ul>
+                {familyPoints.map((member) => (
+                  <li key={member.userId} className={styles.familyMember}>
+                    <img
+                      src={member.profileImg || "default_profile_image_url"}
+                      alt={member.name}
+                      className={styles.familyMemberImg}
+                    />
+                    <div className={styles.memberInfo}>
+                      <span>{member.points} 포인트</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
