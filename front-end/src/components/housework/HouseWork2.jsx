@@ -9,7 +9,6 @@ import { FcRating } from "react-icons/fc";
 import Modal from "react-modal";
 import DeleteModal from "../modal/DeleteModal";
 
-
 Modal.setAppElement("#root");
 
 const Housework2 = () => {
@@ -38,7 +37,6 @@ const Housework2 = () => {
   const [existingPostedAt, setExistingPostedAt] = useState(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false); // 삭제 모달 상태
   const [taskToDelete, setTaskToDelete] = useState(null); // 삭제할 작업 저장
-
 
   // 모달을 여는 함수
   const openDailyModal = () => {
@@ -319,7 +317,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
   };
@@ -466,7 +464,6 @@ const Housework2 = () => {
               수정
             </button>
             <button onClick={() => handleDeleteClick(task)}>삭제</button>
-
           </div>
         )}
       </li>
@@ -505,8 +502,9 @@ const Housework2 = () => {
                 className={
                   tasks.daily.length > 0
                     ? styles.circleDaily
-                    : styles.circleZero
-                }>
+                    : styles.circleZero         
+                    }>
+
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -594,7 +592,6 @@ const Housework2 = () => {
             fetchCompletedTasks();
           }}
         />
-
         <DeleteModal
           showModal={isDeleteOpen}
           onClose={() => setIsDeleteOpen(false)} // 모달 닫기
@@ -607,6 +604,7 @@ const Housework2 = () => {
           contentLabel='작업 이미지'
           className={styles.imageModalContent}
           overlayClassName={styles.imageModalOverlay}>
+
           <div className={styles.modalBody}>
             <h2>작업 이미지</h2>
             <div className={styles.imagePreviewContainer}>

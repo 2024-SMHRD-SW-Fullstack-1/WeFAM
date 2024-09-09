@@ -6,11 +6,11 @@ const DeleteModal = ({ showModal, onClose, onConfirm }) => {
   if (!showModal) return null; // 모달이 열리지 않으면 렌더링하지 않음
 
   return ReactDOM.createPortal(
-    <div className='modal'>
-      <div className='modal-content'>
+    <div className="modal">
+      <div className="modal-content">
         <div>
           <h3>삭제 확인</h3>
-          <span className='close-button' onClick={onClose}>
+          <span className="close-button" onClick={onClose}>
             &times;
           </span>
 
@@ -19,11 +19,11 @@ const DeleteModal = ({ showModal, onClose, onConfirm }) => {
           </div>
         </div>
 
-        <div className='modalFooter'>
-          <button className='cancelButton' onClick={onClose}>
+        <div className="modalFooter">
+          <button className="cancelButton" onClick={onClose}>
             취소
           </button>
-          <button className='saveButton' onClick={onConfirm}>
+          <button className="saveButton" onClick={onConfirm}>
             삭제
           </button>
         </div>

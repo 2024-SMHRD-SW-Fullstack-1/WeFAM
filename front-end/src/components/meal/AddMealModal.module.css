@@ -18,8 +18,14 @@
   width: 100%;
 }
 .content .inputUrl {
-  margin: 0;
   width: calc(100% - 40px);
+  border: 1px solid #ddd;
+  padding: 4px 20px;
+  border-radius: 5px;
+  border-color: transparent;
+  margin: 0 3px;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
 .content label {
@@ -31,6 +37,15 @@
 .content .inputDate,
 .inputType {
   height: 100%;
+  border: 1px solid #ddd;
+  padding: 4px;
+  border-radius: 5px;
+  border-color: transparent;
+  margin: 0 3px;
+  background-color: #f9f9f9;
+  color: #333;
+  width: 130px;
+  text-align: center;
 }
 
 .content .logoContainer {
@@ -64,5 +79,22 @@
 .content textarea {
   resize: none;
   width: 100%;
-  padding: var(--space-md);
+
+  background-color: #f7f7f7;
+  /* 옅은 회색 배경 */
+  border: none;
+  /* 테두리 제거 */
+  width: 600px;
+  /* 너비 설정 */
+  height: 300px;
+  /* 높이 설정 */
+  padding: 10px;
+  /* 내부 여백 */
+  border-radius: 8px;
+  /* 모서리 둥글게 */
+  resize: none;
+  /* 크기 조정 비활성화 */
+  outline: none;
+  /* 기본 outline 제거 */
+  font-size: 18px;
 }

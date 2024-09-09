@@ -8,6 +8,7 @@ import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
 import RouletteModal from "./RouletteModal";
 import PollModal from "./PollModal";
+import DeleteModal from "../modal/DeleteModal";
 import { elapsedTime } from "../../elapsedTime";
 import { CiSquareCheck } from "react-icons/ci";
 import { PiGameControllerLight } from "react-icons/pi";
@@ -21,7 +22,8 @@ import {
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 
-const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
+const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null);
@@ -67,19 +69,22 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   // Redux store에서 현재 로그인한 사용자의 데이터를 가져오기
   const userData = useSelector((state) => state.user.userData);
 
-  // 현재 사용자와 피드의 작성자가 일치하는지 확인하기 위해 DB에서 피드 작성자 ID 가져오기
-  const fetchWriter = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8089/wefam/get-feed-detail/${feed.feedIdx}`
-      );
-      setWriterProfileImg(response.data.profileImg);
-      setWriterId(response.data.userId);
-      setWriterNick(response.data.nick);
-    } catch (error) {
-      console.error("피드 디테일 요청 에러:", error);
-    }
-  }, [feed.feedIdx]);
+  useEffect(() => {
+    const fetchWriter = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8089/wefam/get-feed-detail/${feed.feedIdx}`
+        );
+        console.log("feeditem fetch 데이터 : ", response.data.userId);
+        setWriterProfileImg(response.data.profileImg);
+        setWriterId(response.data.userId); // 데이터가 로딩된 후 상태 업데이트
+        setWriterNick(response.data.nick);
+      } catch (error) {
+        console.error("피드 디테일 요청 에러:", error);
+      }
+    };
+    fetchWriter();
+  }, [feed.feedIdx]); // feed.feedIdx가 변경될 때마다 실행
 
   // 피드에 관련된 이미지들을 가져오기
   const fetchImages = useCallback(async () => {
@@ -90,6 +95,18 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       setImages(response.data);
     } catch (error) {
       console.error(`피드 ${feed.feedIdx}번 이미지 요청 에러 :`, error);
+    }
+  }, [feed.feedIdx]);
+
+  // getRoulettes를 useCallback으로 메모이제이션
+  const getRoulettes = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/feed/${feed.feedIdx}/roulettes`
+      );
+      setRoulettes(Array.from(response.data));
+    } catch (error) {
+      console.error(`피드 ${feed.feedIdx}번 룰렛 요청 에러 :`, error);
     }
   }, [feed.feedIdx]);
 
@@ -159,11 +176,10 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   }, [feed.feedIdx]);
 
   useEffect(() => {
-    fetchWriter();
     fetchImages();
     getRoulettes();
     getPolls();
-  }, [fetchWriter, fetchImages, getRoulettes, getPolls]);
+  }, [fetchImages, getRoulettes, getPolls]);
 
   useEffect(() => {
     getAllCmts();
@@ -178,11 +194,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
 
   // 옵션
   const toggleOptions = useCallback(() => {
-    if (!isOptionsVisible) {
-      fetchWriter(); // 옵션이 처음 열릴 때만 작성자 아이디를 가져옴
-    }
     setIsOptionsVisible((prev) => !prev);
-  }, [isOptionsVisible, fetchWriter]);
+  }, [isOptionsVisible]);
 
   const handleClickOutside = useCallback((e) => {
     if (optionsRef.current && !optionsRef.current.contains(e.target)) {
@@ -214,11 +227,55 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     setIsEditModalOpen(true);
   };
 
-  // 피드 삭제 클릭!
-  const handleDeleteFeed = async () => {
-    if (window.confirm(`${feed.feedIdx}번 피드를 삭제하시겠습니까?`)) {
-      await onDeleteFeed(feed.feedIdx);
-    }
+  // 삭제 클릭 시 삭제 확인 모달 열기
+  const handleDeleteClick = () => {
+    setIsDeleteOpen(true); // 삭제 모달을 열기
+  };
+
+  // 삭제 확인 후 실제 삭제 처리
+  const handleDeleteConfirm = () => {
+    setIsDeleteOpen(false); // 삭제 모달 닫기
+    deleteFeed(feed.feedIdx);
+  };
+
+  // 피드를 삭제하는 함수
+  const deleteFeed = useCallback(
+    async (feedIdx) => {
+      try {
+        console.log(`deleteFeed 함수 실행 : ${feedIdx}번 피드 삭제 요청`);
+        setIsLoading(true);
+        const response = await axios.get(
+          `http://localhost:8089/wefam/get-feed-detail/${feed.feedIdx}`
+        );
+        console.log("userData.id : ", userData.id);
+        console.log("writerId : ", response.data.userId);
+        if (userData.id === response.data.userId) {
+          console.log("삭제 시도");
+          // API 호출하여 피드 삭제
+          await axios.delete(
+            `http://localhost:8089/wefam/delete-feed/${feedIdx}`
+          );
+          // 삭제 후 다시 피드 데이터를 가져오기 (리렌더링 필요)
+          await getAllFeeds(userData.familyIdx);
+          console.log("피드 삭제 완료");
+        } else {
+          alert("피드 삭제 중에 오류가 발생하였습니다. 삭제 권한이 없습니다.");
+        }
+      } catch (error) {
+        // 에러 발생 시 콘솔에 에러 메시지 출력
+        console.error("deleteFeed 함수 에러 : ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [userData.id, userData.familyIdx, getAllFeeds]
+  );
+
+  // 피드 룰렛 클릭!
+  const handleOpenRoulette = (rouletteIdx) => {
+    setSelectedFeed({ feedIdx: feed.feedIdx });
+    setSelectedRoulette({ rouletteIdx }); // 선택된 rouletteIdx로 상태를 설정
+    setIsRouletteModalOpen(true);
   };
 
   // 피드 룰렛 클릭!
@@ -359,7 +416,7 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                     </button>
                   </li>
                   <li>
-                    <button className="option" onClick={handleDeleteFeed}>
+                    <button className="option" onClick={handleDeleteClick}>
                       삭제
                     </button>
                   </li>
@@ -558,6 +615,11 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           onClose={() => setIsPollModalOpen(false)}
         />
       )}
+      <DeleteModal
+        showModal={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)} // 모달 닫기
+        onConfirm={handleDeleteConfirm} // 삭제 확인 시 실제 삭제 실행
+      />
     </div>
   );
 };
