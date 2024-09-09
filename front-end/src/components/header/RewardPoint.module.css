@@ -12,7 +12,6 @@
 
 .logContainer {
   display: flex;
-  justify-content: space-around;
   /* 좌우로 나눔 */
   width: 100%;
   /* 부모 컨테이너 전체 너비 사용 */
@@ -20,7 +19,7 @@
 }
 
 .pointLog {
-  width: 500px;
+  width: 100%;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
   padding: 20px;
@@ -76,7 +75,7 @@
 }
 
 .familyPointsContainer {
-  width: 330px; /* 섹션의 전체 너비를 줄임 */
+  width: 100%; /* 섹션의 전체 너비를 줄임 */
   text-align: left;
   padding: 20px;
   border: 1px solid #b8b7b7;
@@ -111,7 +110,7 @@
 }
 
 .buyContainer {
-  width: 400px; /* 완료한 작업들과 동일한 너비로 조정 */
+  width: 100%; /* 완료한 작업들과 동일한 너비로 조정 */
   text-align: left;
   padding: 20px;
   border: 1px solid #b8b7b7;
