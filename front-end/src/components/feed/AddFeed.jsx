@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import styles from "./AddFeed.module.css";
 import UploadImageModal from "./UploadImageModal";
-import GameModal from "./game/GameModal";
+import GameModal from "./GameModal";
 import AddPollModal from "./AddPollModal";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 import { CiImageOn } from "react-icons/ci";
@@ -11,8 +11,10 @@ import { CiCalendar } from "react-icons/ci";
 import { CiSquareCheck } from "react-icons/ci";
 import { PiGameControllerLight } from "react-icons/pi";
 import { clearImages } from "../../features/imagesOnFeedSlice";
+import { deleteRoulette, clearRoulettes } from "../../features/roulettesSlice";
 import { deletePoll, clearPolls } from "../../features/pollsSlice";
 import Preloader from "../preloader/Preloader";
+import AddRouletteModal from "./AddRouletteModal"; // 룰렛 컴포넌트 임포트
 
 const AddFeed = React.memo(({ onGetAllFeeds }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,12 +23,15 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
   const [location, setLocation] = useState("");
   const [isUploadImageModalOpen, setIsUploadImageModalOpen] = useState(false);
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const [isRouletteModalOpen, setIsRouletteModalOpen] = useState(false);
   const [isPollModalOpen, setIsPollModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [roulettes, setRoulettes] = useState([]); // 룰렛 데이터 상태
   const [polls, setPolls] = useState([]); // 투표 데이터 상태
 
   // Redux에서 로그인한 사용자 데이터 및 이미지를 가져오기
   const userData = useSelector((state) => state.user.userData);
+  const roulettesData = useSelector((state) => state.roulettes.roulettes) || [];
   const pollsData = useSelector((state) => state.polls.polls) || [];
 
   const dispatch = useDispatch();
@@ -36,13 +41,14 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
   useEffect(() => {
     // 페이지 로드 시 이미지 상태를 초기화
     // dispatch(clearImages());
+    dispatch(clearRoulettes()); // 페이지 로드 시 polls 상태를 초기화
     dispatch(clearPolls()); // 페이지 로드 시 polls 상태를 초기화
   }, [dispatch]);
 
   useEffect(() => {
+    setRoulettes(roulettesData); // Redux에서 가져온 roulettes를 상태에 설정
     setPolls(pollsData); // Redux에서 가져온 polls를 상태에 설정
-    console.log(polls);
-  }, [pollsData]);
+  }, [roulettesData, pollsData]);
 
   // const handlePrev = () => {
   //   if (currentIndex > 0) {
@@ -91,6 +97,11 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
       };
 
       // pollsContent가 비어 있지 않은 경우에만 polls 추가
+      if (roulettes.length > 0) {
+        newFeed.roulettes = roulettes;
+      }
+
+      // pollsContent가 비어 있지 않은 경우에만 polls 추가
       if (polls.length > 0) {
         newFeed.polls = polls;
       }
@@ -98,11 +109,24 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
       await addFeed(newFeed);
       setContent("");
       setLocation("");
+      setRoulettes([]); // 피드를 추가한 후 룰렛 내용도 초기화
+      dispatch(clearRoulettes()); // 리덕스의 roulettes 상태 초기화
       setPolls([]); // 피드를 추가한 후 투표 내용도 초기화
       dispatch(clearPolls()); // 리덕스의 polls 상태 초기화
     } catch (error) {
       console.error("AddFeed 함수에서 오류 발생:", error);
     }
+  };
+
+  const openRouletteModal = () => setIsRouletteModalOpen(true);
+
+  // RouletteModal에서 저장된 Roulette 데이터를 받아서 상태에 저장
+  const handleSaveRoulette = (rouletteData) => {
+    setRoulettes([...roulettes, rouletteData]);
+  };
+
+  const handleDeleteRoulette = (rouletteId) => {
+    dispatch(deleteRoulette({ rouletteId }));
   };
 
   // PollModal에서 저장된 투표 데이터를 받아서 상태에 저장
@@ -128,6 +152,24 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
           <div className={styles.imagesContent}></div>
+          {roulettes.length > 0 ? (
+            <div className={styles.roulettesContent}>
+              {roulettes.map((roulette, index) => (
+                <div key={index} className={styles.roulette}>
+                  <button>
+                    <PiGameControllerLight />
+                    <span>{roulette.rouletteTitle}</span>
+                  </button>
+                  <button
+                    className={styles.rouletteDeleteBtn}
+                    onClick={() => handleDeleteRoulette(roulette.id)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
           {polls.length > 0 ? (
             <div className={styles.pollsContent}>
               {polls.map((poll, index) => (
@@ -177,7 +219,17 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             />
           )}
           {isGameModalOpen && (
-            <GameModal onClose={() => setIsGameModalOpen(false)} />
+            <GameModal
+              onSaveRoulette={handleSaveRoulette}
+              openRouletteModal={openRouletteModal}
+              onClose={() => setIsGameModalOpen(false)}
+            />
+          )}
+          {isRouletteModalOpen && (
+            <AddRouletteModal
+              onSaveRoulette={handleSaveRoulette}
+              onClose={() => setIsRouletteModalOpen(false)}
+            />
           )}
           {isPollModalOpen && (
             <AddPollModal

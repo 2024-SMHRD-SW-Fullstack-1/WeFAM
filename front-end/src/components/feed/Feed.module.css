@@ -1,6 +1,5 @@
 .feed {
   width: 640px;
-  height: 100vh;
 }
 
 @media (max-width: 767px) {

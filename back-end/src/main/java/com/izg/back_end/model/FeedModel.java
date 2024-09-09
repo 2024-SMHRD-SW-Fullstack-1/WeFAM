@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.izg.back_end.dto.PollDto;
+import com.izg.back_end.dto.RouletteDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,6 +55,10 @@ public class FeedModel {
     @Column(name = "feed_likes")
     @JsonProperty("feedLikes")
     private int feedLikes = 0; // 기본값 0
+    
+    // 룰렛 데이터와 연관짓기 위한 필드 추가
+    @Transient
+    private List<RouletteDto> roulettes;
     
     // 폴 데이터와 연관짓기 위한 필드 추가
     @Transient
