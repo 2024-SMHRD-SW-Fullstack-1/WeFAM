@@ -66,153 +66,141 @@ public class UserService {
 	}
 
 	// 카카오 서버에서 유저 정보를 받아옴
-	public UserDto getUserInforFromKakao(String accessToken) {
-		String userInfoUri = "https://kapi.kakao.com/v2/user/me";
-		RestTemplate restTemplate = new RestTemplate();
+		public UserDto getUserInforFromKakao(String accessToken) {
+			String userInfoUri = "https://kapi.kakao.com/v2/user/me";
+			RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "Bearer " + accessToken);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", "Bearer " + accessToken);
 
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-		ResponseEntity<Map> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Map.class);
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+			ResponseEntity<Map> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Map.class);
 
-		Map<String, Object> responseBody = response.getBody();
-		if (responseBody == null) {
-			throw new RuntimeException("Failed to get user info from Kakao");
+			Map<String, Object> responseBody = response.getBody();
+			if (responseBody == null) {
+				throw new RuntimeException("Failed to get user info from Kakao");
+			}
+
+			Map<String, Object> properties = (Map<String, Object>) responseBody.get("properties");
+			Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
+
+			UserDto userDTO = new UserDto();
+			userDTO.setId(responseBody.get("id").toString());
+			userDTO.setName(properties.get("nickname").toString());
+			userDTO.setNick(properties.get("nickname").toString());
+			userDTO.setProfileImg(properties.get("profile_image").toString());
+			userDTO.setLoginSource("kakao");
+			userDTO.setJoinedAt(LocalDateTime.now());
+
+			if (kakaoAccount.get("birthday") != null) {
+				String birthday = kakaoAccount.get("birthday").toString();
+				int currentYear = LocalDate.now().getYear();
+				userDTO.setBirth(
+						LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
+			} else {
+				// 기존 DB에서 생년월일을 불러와 저장
+				UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
+				if (existingUser != null) {
+					userDTO.setBirth(existingUser.getBirth());  // 기존 생년월일 유지
+				} else {
+					userDTO.setBirth(null);  // 없을 경우 null
+				}
+			}
+
+			userDTO.setAccessToken(accessToken);
+			return userDTO;
 		}
-
-		Map<String, Object> properties = (Map<String, Object>) responseBody.get("properties");
-		Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
-
-		UserDto userDTO = new UserDto();
-		userDTO.setId(responseBody.get("id").toString());
-		userDTO.setName(properties.get("nickname").toString());
-		userDTO.setNick(properties.get("nickname").toString());
-		userDTO.setProfileImg(properties.get("profile_image").toString());
-		userDTO.setLoginSource("kakao");
-		userDTO.setJoinedAt(LocalDateTime.now());
-
-		if (kakaoAccount.get("birthday") != null) {
-			String birthday = kakaoAccount.get("birthday").toString();
-			int currentYear = LocalDate.now().getYear();
-			userDTO.setBirth(
-					LocalDate.parse(currentYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2)));
-		} else {
-			userDTO.setBirth(null);
-		}
-		
-		 // 액세스 토큰을 DTO에 추가
-        userDTO.setAccessToken(accessToken);
-
-		return userDTO;
-	}
 
 	// 유저 정보를 데이터베이스에 저장
 	public void saveUser(UserDto userDTO, String accessToken) {
-	    if (userDTO.getBirth() == null) {
-	    	// 생년월일이 없는 경우 기존 값을 유지 (업데이트하지 않음)
-	    }
+		// 기존 사용자 확인
+		UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
 
-	 // 기존 사용자 확인
-        UserModel existingUser = userRepository.findById(userDTO.getId()).orElse(null);
+		if (existingUser != null) {
+			// 기존 사용자 정보 업데이트 시 생년월일 유지
+			if (userDTO.getBirth() == null) {
+				userDTO.setBirth(existingUser.getBirth()); // 기존 생년월일 유지
+			}
 
-        if (existingUser != null) {
-            // 기존 사용자 정보 업데이트 (카카오에서 받은 정보로 업데이트할지 여부 확인)
+			// 1. 닉네임 업데이트 조건: DB에 저장된 닉네임과 동일하지 않다면 업데이트하지 않음
+			if (!existingUser.getNick().equals(userDTO.getNick())) {
+				userDTO.setNick(existingUser.getNick()); // 기존 닉네임 유지
+			}
 
-            // 1. 닉네임 업데이트 조건: DB에 저장된 닉네임과 동일하지 않다면 업데이트하지 않음
-            if (!existingUser.getNick().equals(userDTO.getNick())) {
-                // 기존 닉네임을 유지
-                userDTO.setNick(existingUser.getNick());
-            }
+			// 2. 이름 업데이트 조건: DB에 저장된 이름과 동일하지 않다면 업데이트하지 않음
+			if (!existingUser.getName().equals(userDTO.getName())) {
+				userDTO.setName(existingUser.getName()); // 기존 이름 유지
+			}
 
-            // 2. 이름 업데이트 조건: DB에 저장된 이름과 동일하지 않다면 업데이트하지 않음
-            if (!existingUser.getName().equals(userDTO.getName())) {
-                // 기존 이름을 유지
-                userDTO.setName(existingUser.getName());
-            }
+			// 3. 프로필 이미지 업데이트 조건
+			if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
+				userDTO.setProfileImg(existingUser.getProfileImg()); // 기존 프로필 이미지 유지
+			}
 
-            // 3. 프로필 이미지 업데이트 조건
-            if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
-                // 기존 프로필 이미지를 유지
-                userDTO.setProfileImg(existingUser.getProfileImg());
-            }
+			// 사용자 정보 업데이트
+			existingUser.setNick(userDTO.getNick());
+			existingUser.setName(userDTO.getName());
+			existingUser.setProfileImg(userDTO.getProfileImg());
+			existingUser.setLoginSource(userDTO.getLoginSource());
 
-            // 사용자 정보 업데이트
-            existingUser.setNick(userDTO.getNick());
-            existingUser.setName(userDTO.getName());
-            existingUser.setProfileImg(userDTO.getProfileImg());
-            existingUser.setLoginSource(userDTO.getLoginSource());
+			// 생년월일 정보도 필요할 때만 업데이트 (null 값이 아닌 경우에만 업데이트)
+			if (userDTO.getBirth() != null) {
+				existingUser.setBirth(userDTO.getBirth());
+			}
 
-            // 생년월일 정보도 필요할 때만 업데이트
-            if (userDTO.getBirth() != null) {
-                existingUser.setBirth(userDTO.getBirth());
-            }
+			// 사용자 정보 저장
+			userRepository.save(existingUser);
 
-            userRepository.save(existingUser);
+		} else {
+			// 새로운 사용자 저장
+			UserModel newUser = new UserModel();
+			newUser.setId(userDTO.getId());
+			newUser.setName(userDTO.getName());
+			newUser.setNick(userDTO.getNick());
+			newUser.setBirth(userDTO.getBirth()); // 새 유저라면 null 일 수도 있으니 그대로 설정
+			newUser.setProfileImg(userDTO.getProfileImg());
+			newUser.setJoinedAt(userDTO.getJoinedAt());
+			newUser.setLoginSource(userDTO.getLoginSource());
 
-        } else {
-            // 새로운 사용자 저장
-            UserModel newUser = new UserModel();
-            newUser.setId(userDTO.getId());
-            newUser.setName(userDTO.getName());
-            newUser.setNick(userDTO.getNick());
-            newUser.setBirth(userDTO.getBirth());
-            newUser.setProfileImg(userDTO.getProfileImg());
-            newUser.setJoinedAt(userDTO.getJoinedAt());
-            newUser.setLoginSource(userDTO.getLoginSource());
+			userRepository.save(newUser);
+		}
+	}
 
-            userRepository.save(newUser);
-        }
-    }
+	public List<UserModel> getUsersInJoining() {
+		// Joining 테이블의 모든 항목을 가져옴
+		List<JoiningModel> joiningList = joiningRepository.findAll();
 
-	 public List<UserModel> getUsersInJoining() {
-	        // Joining 테이블의 모든 항목을 가져옴
-	        List<JoiningModel> joiningList = joiningRepository.findAll();
-	        
-	        // User 테이블에서 user_id와 일치하는 사용자 정보 가져오기
-	        return joiningList.stream()
-	                .map(joining -> userRepository.findById(joining.getUserId()).orElse(null))
-	                .filter(user -> user != null)  // null 값 필터링
-	                .collect(Collectors.toList());
-	    }
+		// User 테이블에서 user_id와 일치하는 사용자 정보 가져오기
+		return joiningList.stream().map(joining -> userRepository.findById(joining.getUserId()).orElse(null))
+				.filter(user -> user != null) // null 값 필터링
+				.collect(Collectors.toList());
+	}
 
 //	public List<LogModel> getFamilyStaus(){
 //		return userRepository.findAll();
 //	}
-	 
-	 // 닉네임 수정하면 db에 저장하기위한거
-	 public UserModel updateUserProfile(UserModel updatedUser) {
-	        // 기존 사용자 정보를 가져와서 업데이트
-	        UserModel user = userRepository.findById(updatedUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
-	        
-	        user.setName(updatedUser.getName());
-	        user.setNick(updatedUser.getNick());
-	        user.setBirth(updatedUser.getBirth());
-	        user.setProfileImg(updatedUser.getProfileImg());
 
-	        return userRepository.save(user);
-	    }
-//	 
-//	// 카카오 로그아웃 API 호출
-//	 public void kakaoLogout(String accessToken) {
-//	     String logoutUri = "https://kapi.kakao.com/v1/user/logout";
-//	     RestTemplate restTemplate = new RestTemplate();
-//
-//	     HttpHeaders headers = new HttpHeaders();
-//	     headers.set("Authorization", "Bearer " + accessToken);
-//
-//	     HttpEntity<String> entity = new HttpEntity<>(headers);
-//	     ResponseEntity<Map> response = restTemplate.exchange(logoutUri, HttpMethod.POST, entity, Map.class);
-//
-//	     if (response.getStatusCode() != HttpStatus.OK) {
-//	         throw new RuntimeException("카카오 로그아웃 실패");
-//	     }
-//	 }
+	// 닉네임 수정하면 db에 저장하기위한거
+	public UserModel updateUserProfile(UserModel updatedUser) {
+		// 기존 사용자 정보를 가져와서 업데이트
+		UserModel user = userRepository.findById(updatedUser.getId())
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	 // 가족 프로필 사진 가져오기
-	    public FileModel getProfileImageByFamilyIdx(int familyIdx, String entityType) {
-	        return fileRepository.findLatestByFamilyIdxAndEntityType(familyIdx, entityType);
-	    }
-	 
-	 
+		user.setName(updatedUser.getName());
+		user.setNick(updatedUser.getNick());
+		user.setBirth(updatedUser.getBirth());
+		user.setProfileImg(updatedUser.getProfileImg());
+
+		return userRepository.save(user);
+	}
+
+	// 가족 프로필 사진 가져오기
+	public FileModel getProfileImageByFamilyIdx(int familyIdx, String entityType) {
+		return fileRepository.findLatestByFamilyIdxAndEntityType(familyIdx, entityType);
+	}
+	
+	// 업데이트된 프로필 가져오기
+	public UserModel getUserById(String id) {
+	    return userRepository.findById(id).orElse(null);
+	}
 }

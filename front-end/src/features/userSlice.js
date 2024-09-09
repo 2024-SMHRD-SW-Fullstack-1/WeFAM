@@ -12,9 +12,12 @@ const userSlice = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
+    updateUserData: (state, action) => {
+      state.userData = { ...state.userData, ...action.payload }; // 기존 데이터에 새 데이터 병합
+    },
   },
 });
 
-export const { setUserData } = userSlice.actions;
+export const { setUserData, updateUserData } = userSlice.actions;
 
 export default userSlice.reducer;

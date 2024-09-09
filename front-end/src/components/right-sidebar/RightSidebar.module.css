@@ -72,6 +72,7 @@
 }
 .userImageContainer {
   position: relative;
+  display: inline-block; /* 팝업 메뉴와 프로필 이미지가 함께 표시되도록 함 */
   /* 상태 표시의 절대 위치를 설정할 기준으로 사용 */
 }
 
@@ -124,4 +125,42 @@
 
 .offline {
   background-color: red;
+}
+
+.popupMenu {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  list-style: none;
+  width: 150px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: top;
+  z-index: 1000;
+  opacity: 1;
+  transform: scaleY(1);
+  margin-top: 20px;
+}
+
+.popupMenu.open {
+  opacity: 1;
+  transform: scaleY(1); /* 클릭 시 팝업이 수직으로 열리는 애니메이션 */
+}
+
+
+
+.popupMenuItem {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  text-align: center;
+}
+
+.popupMenuItem:hover {
+  background-color: #f1f1f1;
+}
+
+.popupMenuItem:last-child {
+  border-bottom: none;
 }

@@ -7,16 +7,23 @@ Modal.setAppElement("#root");
 
 const emojis = ["👩", "👨", "👧", "🧑", "👴", "🧓"]; // 이모티콘 선택 목록
 
-const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing }) => {
+const ProfileModal = ({
+  isOpen,
+  onRequestClose,
+  profile,
+  isEditing,
+}) => {
   const [selectedProfile, setSelectedProfile] = useState(profile); // 수정된 프로필 정보 저장
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // 이모티콘 선택창 표시 상태
 
-  useEffect(() => {
+
+  useEffect(()=>{
     console.log(selectedProfile);
-    if (isOpen) {
+    if(isOpen) {
       setSelectedProfile(profile);
     }
-  }, [isOpen, profile]);
+    
+  }, [isOpen, profile])     
 
   // 입력값 변경 핸들러
   const handleInputChange = (e) => {
@@ -32,7 +39,7 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing }) => {
     const updatedNick = selectedProfile.nick.replace(regex, ""); // 기존 이모티콘 제거
     setSelectedProfile({
       ...selectedProfile,
-      nick: emoji + updatedNick, // 새로운 이모티콘 추가
+      nick: updatedNick+emoji, // 새로운 이모티콘 추가
     });
     setShowEmojiPicker(false); // 이모티콘 선택창 닫기
   };
@@ -43,12 +50,23 @@ const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing }) => {
       .put("http://localhost:8089/wefam/update-profile", selectedProfile)
       .then((response) => {
         console.log("프로필 업데이트 성공:", response.data);
-        console.log("생일" + selectedProfile.birth);
+
+        // 사용자 정보를 다시 가져오는 로직 추가
+        axios
+          .get(`http://localhost:8089/wefam/get-family-nick/${selectedProfile.id}`)
+          .then((res) => {
+            console.log("최신 사용자 정보:", res.data);
+            // 최신 사용자 정보로 state 업데이트
+            setSelectedProfile(res.data);
+          })
+          .catch((error) => {
+            console.error("최신 사용자 정보 가져오기 실패:", error);
+          });
+      
         onRequestClose(); // 저장 후 모달 닫기
       })
       .catch((error) => {
         console.error("프로필 업데이트 실패:", error);
-        console.log(selectedProfile.name);
       });
   };
 
