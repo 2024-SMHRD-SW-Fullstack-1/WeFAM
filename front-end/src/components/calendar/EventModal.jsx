@@ -66,8 +66,8 @@ const EventModal = ({
   onClose,
   onSave,
   isDetailOpen: initialIsDetailOpen,
-  familyUsers,
-  familyName,
+  familyUsers = [],
+  familyName = "",
 }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(initialIsDetailOpen); // 초기값을 prop으로 받음
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
@@ -210,10 +210,11 @@ const EventModal = ({
     setIsDetailOpen((prevState) => !prevState);
   };
 
-  const toggleAlarmSetting = () => {
-    setShowAlarmSetting((prevState) => !prevState); // 알림 설정 토글
-    setAlarmText(showAlarmSetting ? "알림 없음" : "10분 전"); // 알림 상태 텍스트 변경
-  };
+  // 알람 설정 (미사용)
+  // const toggleAlarmSetting = () => {
+  //   setShowAlarmSetting((prevState) => !prevState); // 알림 설정 토글
+  //   setAlarmText(showAlarmSetting ? "알림 없음" : "10분 전"); // 알림 상태 텍스트 변경
+  // };
 
   useEffect(() => {
     // 모달이 열릴 때, 이미 선택된 색상이 있으면 라벨 설정
@@ -508,7 +509,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                  ?.label || "색상을 선택하세요"
+                    ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />
