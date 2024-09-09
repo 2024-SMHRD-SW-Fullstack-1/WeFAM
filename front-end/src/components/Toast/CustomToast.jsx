@@ -14,9 +14,9 @@ const CustomToast = ({ type, message, onClose }) => {
 
   return (
     <div className={`${styles.toastContainer} ${styles[type]}`}>
-      <div className={styles.icon}>{getIcon()}</div>
+      <div className={`${styles.icon} ${styles[type]}`}>{getIcon()}</div>
       <div className={styles.message}>
-        <strong>{getTitle()}</strong>
+        <strong className={styles[type]}>{getTitle()}</strong>
         <p>{message}</p>
       </div>
       <button className={styles.closeButton} onClick={onClose}>

@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick"; // react-slick 임포트
+import DeleteModal from "../modal/DeleteModal";
 
 const EventDetail = ({
   event,
@@ -37,6 +38,7 @@ const EventDetail = ({
   const [deleteHovered, setDeleteHovered] = useState(false);
   const [isMemoOpen, setIsMemoOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false); // 모달 열림/닫힘 상태 관리
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     // event가 변경될 때마다 coordinates와 location을 설정
@@ -68,10 +70,6 @@ const EventDetail = ({
 
   // 메뉴 클릭 핸들러
   const handleMenuClick = () => {
-    console.log("familyName", familyName);
-    console.log("familyUsers", familyUsers);
-    console.log(event);
-
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -174,6 +172,17 @@ const EventDetail = ({
     setIsOpen(true); // 컴포넌트가 마운트되면 모달을 열림 상태로 설정
   }, []);
 
+  // 삭제 클릭 시 삭제 확인 모달 열기
+  const handleDeleteClick = () => {
+    setIsDeleteOpen(true); // 삭제 모달을 열기
+  };
+
+  // 삭제 확인 후 실제 삭제 처리
+  const handleDeleteConfirm = () => {
+    setIsDeleteOpen(false); // 삭제 모달 닫기
+    onDelete(); // 삭제 로직 실행
+  };
+
   const handleClose = () => {
     setIsOpen(false); // 닫힘 상태로 변경
     setTimeout(onClose, 300); // 애니메이션이 끝난 후에 onClose 호출
@@ -213,7 +222,7 @@ const EventDetail = ({
                 수정
               </div>
               <div
-                onClick={onDelete}
+                onClick={handleDeleteClick}
                 onMouseEnter={() => setDeleteHovered(true)}
                 onMouseLeave={() => setDeleteHovered(false)}
                 style={{
@@ -354,8 +363,12 @@ const EventDetail = ({
           </div>
         </>
       )}
+      <DeleteModal
+        showModal={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)} // 모달 닫기
+        onConfirm={handleDeleteConfirm} // 삭제 확인 시 실제 삭제 실행
+      />
     </div>,
-
     document.body // 모달을 body에 추가
   );
 };

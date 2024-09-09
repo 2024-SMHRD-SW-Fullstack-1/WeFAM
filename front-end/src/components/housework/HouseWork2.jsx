@@ -4,7 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import WorkModal from "./WorkModal";
 import CompleteModal from "./CompleteModal";
-import { BsThreeDotsVertical, BsPlusCircle } from "react-icons/bs";
+import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 import { FcRating } from "react-icons/fc";
 import Modal from "react-modal";
 
@@ -222,20 +222,23 @@ const Housework2 = () => {
 
   // 선택한 작업 삭제하는 함수
   const deleteSelectedTasks = async (workIdx, taskType) => {
-    try {
-      await axios.delete(`http://localhost:8089/wefam/delete-work/${workIdx}`);
+    if (window.confirm("할 일을 삭제하시겠습니까?")) {
+      try {
+        await axios.delete(
+          `http://localhost:8089/wefam/delete-work/${workIdx}`
+        );
 
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [taskType]: prevTasks[taskType].filter(
-          (task) => task.workIdx !== workIdx
-        ),
-      }));
+        setTasks((prevTasks) => ({
+          ...prevTasks,
+          [taskType]: prevTasks[taskType].filter((task) => task.workIdx !== workIdx),
+        }));
 
-      fetchTasks();
-    } catch (error) {
-      console.error("작업 삭제 중 오류 발생:", error);
+        fetchTasks();
+      } catch (error) {
+        console.error("작업 삭제 중 오류 발생:", error);
+      }
     }
+
   };
 
   const openImageModal = (images) => {
@@ -307,7 +310,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
   };
@@ -359,9 +362,10 @@ const Housework2 = () => {
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span>{task.workContent}</span>
-          <div className={styles.userContainer}>
-            {renderCompletedTaskUsers(task)}
-          </div>
+          <div className={styles.userContainer}>{renderCompletedTaskUsers(task)}</div>
+          <p className={styles.completedDate}>
+            완료일: {task.completedAt ? task.completedAt.toLocaleDateString() : "완료일 정보 없음"}
+          </p>
         </div>
         <div className={styles.dropdownContainer}>
           <div className={styles.taskRight}>
@@ -417,7 +421,7 @@ const Housework2 = () => {
           <span className={styles.taskPoints}>{task.points} 포인트</span>
 
           {!isCompleted && (
-            <BsThreeDotsVertical
+            <BsThreeDots
               className={styles.taskIcon}
               onClick={(e) => {
                 e.stopPropagation();
