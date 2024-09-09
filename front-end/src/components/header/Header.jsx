@@ -6,6 +6,8 @@ import { toggleLeftSidebar } from "../../features/leftSidebarSlice";
 import styles from "./Header.module.css";
 import { HiMiniBars3 } from "react-icons/hi2";
 import logo from "../../assets/images/logo-text-segoe.png";
+import iconHeaderAlarm from "../../assets/images/icon-header-alarm.png";
+import iconHeaderTrophy from "../../assets/images/icon-header-trophy.png";
 import { GoBell } from "react-icons/go";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import AlarmModal from "./AlarmModal";
@@ -130,7 +132,17 @@ const Header = () => {
                 onClick={handleBellClick}
                 ref={bellRef}
               >
-                <GoBell />
+                <img
+                  src={iconHeaderAlarm}
+                  alt=""
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    display: "inline-block",
+                    padding: "2px",
+                  }}
+                />
+                {/* <GoBell /> */}
                 {filteredNotifications.length > 0 && (
                   <div
                     style={{
@@ -159,7 +171,19 @@ const Header = () => {
                 </div>
               )}
               <div className={styles.icon} onClick={handleTrophyClick}>
-                <HiOutlineTrophy />
+                <i
+                  style={{
+                    backgroundImage:
+                      'url("https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/jGIHAYEO3Pc.png")',
+                    backgroundSize: "auto",
+                    width: "36px",
+                    height: "36px",
+                    backgroundRepeat: "no-repeat",
+                    display: "inline-block",
+                  }}
+                  aria-hidden="true"
+                ></i>
+                {/* <HiOutlineTrophy /> */}
               </div>
               <div
                 className={styles.profileImageWrapper}

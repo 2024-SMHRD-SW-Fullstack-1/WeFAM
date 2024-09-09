@@ -22,6 +22,8 @@ import { IoSparklesOutline } from "react-icons/io5";
 import { MdOutlineEditNote } from "react-icons/md";
 import AiModal from "./AiModal";
 import { MemoModal } from "./MemoModal";
+import { useSelector } from "react-redux";
+
 
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,8 +68,8 @@ const EventModal = ({
   onClose,
   onSave,
   isDetailOpen: initialIsDetailOpen,
-  familyUsers,
-  familyName,
+  familyUsers = [],
+  familyName = "",
 }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(initialIsDetailOpen); // 초기값을 prop으로 받음
   const [showAlarmSetting, setShowAlarmSetting] = useState(false); // 알림 설정 표시 여부
@@ -81,7 +83,7 @@ const EventModal = ({
   const [endDate, setEndDate] = useState(new Date(event.end));
   const [isAllDay, setIsAllDay] = useState(event.allDay || false); // 종일 이벤트 여부
   const [title, setTitle] = useState(event.title);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState(event.location || "");
   const [coordinates, setCoordinates] = useState({
     lat: event.latitude,
     lng: event.longitude,
@@ -92,6 +94,7 @@ const EventModal = ({
   const [deletedFileIds, setDeletedFileIds] = useState([]);
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false); // MemoModal 열림/닫힘 상태 관리
   const [memoContent, setMemoContent] = useState(event.content); // 메모 내용 상태 관리
+  const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
 
   // MemoModal을 열기 위한 함수
   const openMemoModal = () => {
@@ -122,6 +125,11 @@ const EventModal = ({
   };
 
   useEffect(() => {
+    console.log(startDate);
+    console.log(event.setEndDate);
+    console.log(location);
+    
+    
     setIsDetailOpen(initialIsDetailOpen);
   }, [initialIsDetailOpen]);
 
@@ -129,6 +137,10 @@ const EventModal = ({
     setLocation(""); // 지명 초기화
     setCoordinates({ lat: 0, lng: 0 }); // 좌표 초기화
   };
+
+  useEffect(() => {
+    console.log("리덕스에서 가져온 locationInput: ", locationInput); 
+  }, [locationInput]);
 
   useEffect(() => {
     // event가 변경되고, coordinates가 초기화되지 않았을 때만 좌표를 설정
@@ -210,10 +222,11 @@ const EventModal = ({
     setIsDetailOpen((prevState) => !prevState);
   };
 
-  const toggleAlarmSetting = () => {
-    setShowAlarmSetting((prevState) => !prevState); // 알림 설정 토글
-    setAlarmText(showAlarmSetting ? "알림 없음" : "10분 전"); // 알림 상태 텍스트 변경
-  };
+  // 알람 설정 (미사용)
+  // const toggleAlarmSetting = () => {
+  //   setShowAlarmSetting((prevState) => !prevState); // 알림 설정 토글
+  //   setAlarmText(showAlarmSetting ? "알림 없음" : "10분 전"); // 알림 상태 텍스트 변경
+  // };
 
   useEffect(() => {
     // 모달이 열릴 때, 이미 선택된 색상이 있으면 라벨 설정
@@ -380,6 +393,10 @@ const EventModal = ({
   const placeholderColor = "gray"; // placeholder 색상
   const textColor = memoContent ? "black" : placeholderColor; // 색상 결정
 
+  const handlePlaceSelectFromChatbot = (placeName) => {
+    setLocation(placeName); // 장소 입력란에 선택한 장소 이름을 설정
+};
+
   return ReactDOM.createPortal(
     <div className={styles.modal}>
       <div className={styles["modal-content"]}>
@@ -508,7 +525,7 @@ const EventModal = ({
             placeholder={
               selectedColor
                 ? colorOptions.find((option) => option.color === selectedColor)
-                  ?.label || "색상을 선택하세요"
+                    ?.label || "색상을 선택하세요"
                 : "색상을 선택하세요"
             }
           />
@@ -687,7 +704,15 @@ const EventModal = ({
             저장
           </button>
         </div>
-        {isModalOpen && <AiModal onClose={closeModal} />}
+        {isModalOpen && (
+          <AiModal
+            onClose={closeModal}
+            startDate={startDate}
+            endDate={endDate}
+            location={location}
+            onSelectPlace={handlePlaceSelectFromChatbot} // Chatbot에서 선택된 장소를 받아 처리
+             />
+        )}
       </div>
     </div>,
     document.body // 모달을 body에 추가

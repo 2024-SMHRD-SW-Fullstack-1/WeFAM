@@ -1,26 +1,69 @@
-.albumHead {
-  display: flex;
-  justify-content: space-between; /* 요소들을 양쪽 끝에 배치 */
-  width: 100%; /* 앨범헤드가 전체 폭을 차지하게 함 */
-  padding: var(--space-sm) 180px;
-  box-sizing: border-box; /* 패딩 포함된 width 계산 */
-  margin-bottom: 20px; /* 컨테이너와 약간의 간격 추가 */
+.album {
+  width: 960px;
+  background-color: var(--color-white);
+  margin: var(--space-xl) 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
 }
 
-.albumWrapper {
+@media (max-width: 767px) {
+  /* 모바일 스타일 */
+  .album {
+    width: 90%;
+  }
+}
+
+.header {
   width: 100%;
-}
-
-.folderName {
+  height: calc(80px + var(--space-md));
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-4xl);
+  font-weight: var(--weight-bold);
+}
+.header .title {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  gap: var(--space-sm);
+}
+.header .title h1 {
+  margin: 0;
+}
+.header .title img {
+  width: 40px;
+  height: 40px;
 }
 
-.folderNameText {
-  margin-left: 5px;
-  color: #646464;
+.controller {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
+.controller .selectController {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.controller .selectController p {
+  display: flex;
+  align-items: center;
+}
+.controller .manageController {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.controller .manageController button {
+  width: 30px;
+  padding: 0;
+}
 .selectBtn,
 .resetBtn {
   background-color: var(--color-sunset);
@@ -30,12 +73,18 @@
   border-radius: var(--radius-sm);
   font-size: var(--font-md);
 }
-
+.dateInput {
+  width: 140px;
+  padding: 8px;
+  border-radius: 5px;
+  border-color: transparent;
+  background-color: #f9f9f9;
+  color: #333;
+}
 .selectBtn:hover,
 .resetBtn:hover {
   background-color: var(--color-sunset-hover);
 }
-
 .btnDelete {
   width: 60px;
   display: flex;
@@ -43,7 +92,6 @@
   align-items: center;
   font-size: var(--font-2xl);
 }
-
 .btnAdd {
   width: 60px;
   font-size: medium;
@@ -52,7 +100,6 @@
   background-color: #e1888b;
   border-radius: 10px;
 }
-
 .btnPlus {
   font-size: var(--font-2xl);
   text-align: center;
@@ -65,38 +112,12 @@
 .btnPlus:hover {
   color: var(--color-sunset-hover);
 }
-.imgArray {
+
+.selectAllContainer {
+  width: 100%;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.imgArray p {
-  font-weight: var(--weight-semi-bold);
-}
-
-.imgArray select {
-  padding: 3px;
-  margin-top: 1px;
-  border: 2px solid var(--color-coral);
-  border-radius: 10px;
-  text-align: center;
-}
-
-.imgArray select:focus {
-  border-color: var(--color-coral);
-  outline: none;
-}
-
-.imgSetting {
-  display: flex;
-  align-items: end;
-  padding-top: 10px;
-}
-
-.saveAndCheckbox {
-  padding: var(--space-sm);
-  width: 1110px;
 }
 
 .checkboxLabel {
@@ -109,6 +130,7 @@ input[type="checkbox"] {
 }
 
 .folderContainer {
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -341,9 +363,6 @@ input[type="checkbox"] {
   margin-top: 20px;
 }
 
-.slider {
-}
-
 @media (max-width: 768px) {
   .folder {
     width: 150px;
@@ -375,10 +394,19 @@ input[type="checkbox"] {
 }
 
 .imageGrid {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5개의 열로 변경 */
+  grid-template-columns: repeat(4, 1fr); /* 4개의 열로 변경 */
   gap: 10px; /* 이미지 간격 */
   grid-auto-rows: 1fr; /* 자동으로 동일한 높이의 행을 생성 */
+  place-items: center;
+}
+
+.imageGrid img {
+  width: 100%; /* 그리드 셀의 너비에 맞춤 */
+  height: 100%; /* 그리드 셀의 높이에 맞춤 */
+  object-fit: cover; /* 이미지를 셀 크기에 맞게 조절 */
+  display: block; /* 이미지의 기본 블록 레벨 동작 */
 }
 
 /* 버튼 공통 스타일 */
@@ -398,55 +426,66 @@ input[type="checkbox"] {
 }
 
 .leftButton {
-  grid-row: 2;
-  grid-column: 1;
-  left: 70px; /* 버튼을 이미지 왼쪽에 배치 */
+  position: absolute;
+  top: 50%;
+  left: calc(-1 * var(--space-lg));
+  transition: transform var(--animation-duration) ease,
+    color var(--animation-duration) ease;
 }
 
 .leftButton:hover {
-  transform: translateX(-20px); /* 마우스 올렸을 때 왼쪽으로 튕김 효과 */
+  color: var(--color-sunset-hover);
+  transform: scale(1.2);
 }
 
 .rightButton {
-  grid-row: 2;
-  grid-column: 5;
-  right: 70px; /* 버튼을 이미지 오른쪽에 배치 */
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--space-lg));
+  transition: transform var(--animation-duration) ease,
+    color var(--animation-duration) ease;
 }
 
 .rightButton:hover {
-  transform: translateX(20px); /* 마우스 올렸을 때 오른쪽으로 튕김 효과 */
+  color: var(--color-sunset-hover);
+  transform: scale(1.2);
 }
 
-@media (max-width: 1600px) {
-  .imageGrid {
-    grid-template-columns: repeat(
-      4,
-      1fr
-    ); /* 화면 너비가 1200px 이하일 때 4개의 열 */
-  }
-}
-
-@media (max-width: 1400px) {
-  .imageGrid {
-    grid-template-columns: repeat(
-      3,
-      1fr
-    ); /* 화면 너비가 992px 이하일 때 3개의 열 */
-  }
-}
-
-@media (max-width: 768px) {
+/* 반응형 디자인 */
+@media (max-width: 767px) {
+  /* 모바일 스타일 */
   .imageGrid {
     grid-template-columns: repeat(
       2,
       1fr
-    ); /* 화면 너비가 768px 이하일 때 2개의 열 */
+    ); /* 화면 너비가 1200px 이하일 때 4개의 열 */
   }
 }
-
-@media (max-width: 576px) {
+@media (min-width: 768px) and (max-width: 991px) {
+  /* 태블릿 세로 스타일 */
   .imageGrid {
-    grid-template-columns: 1fr; /* 화면 너비가 576px 이하일 때 1개의 열 */
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 화면 너비가 1200px 이하일 때 4개의 열 */
+  }
+}
+@media (min-width: 992px) and (max-width: 1399px) {
+  /* 태블릿 가로 스타일 */
+  .imageGrid {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 화면 너비가 1200px 이하일 때 4개의 열 */
+  }
+}
+@media (min-width: 1400px) {
+  /* 데스크탑 스타일 */
+  .imageGrid {
+    grid-template-columns: repeat(
+      4,
+      1fr
+    ); /* 화면 너비가 1400px 이하일 때 4개의 열 */
   }
 }
 

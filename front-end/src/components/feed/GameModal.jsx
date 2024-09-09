@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import modalStyles from "../modal/Modal.module.css";
 import styles from "./GameModal.module.css";
 import roulette from "../../assets/images/roulette.png";
+import ghostleg from "../../assets/images/ghostleg.png";
 
 const GameModal = ({ onSaveRoulette, onClose, openRouletteModal }) => {
   const handleRouletteOpen = () => {
@@ -23,10 +24,13 @@ const GameModal = ({ onSaveRoulette, onClose, openRouletteModal }) => {
             </button>
             <span>룰렛</span>
           </div>
-          {/* <button onClick={() => setIsGhostLegModalOpen(true)}>
-            <img src="" alt="사다리타기 아이콘" />
+
+          <div className={styles.ghostlegContainer}>
+            <button className={styles.gameBtn}>
+              <img className={styles.gameImg} src={ghostleg} alt="사다리타기" />
+            </button>
             <span>사다리타기</span>
-          </button> */}
+          </div>
         </div>
         {/* 모달 하단 버튼들 */}
         <div className={modalStyles.modalFooter}>
