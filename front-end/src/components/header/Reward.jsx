@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
-import { HiOutlineTrophy } from "react-icons/hi2";
+import DeleteModal from "../modal/DeleteModal";
 
 const Reward = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
@@ -16,6 +16,10 @@ const Reward = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 훅
   const userId = useSelector((state) => state.user.userData.id);
   const dropdownRef = useRef([]); // 각 드롭다운의 참조 배열
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false); // 삭제 모달 상태
+  const [rewardToDelete, setRewardToDelete] = useState(null); // 삭제할 보상 아이템 저장
+
+
 
   const goToRewardPoint = () => {
     navigate("/main/reward-point");
@@ -114,17 +118,28 @@ const Reward = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteReward = async (reward) => {
-    if (window.confirm("이 보상을 삭제하시겠습니까?")) {
+  const handleDeleteConfirm = async () => {
+    if (rewardToDelete) {
       try {
         await axios.post(
-          `http://localhost:8089/wefam/rewards/${reward.reward.rewardIdx}/delete`
+          `http://localhost:8089/wefam/rewards/${rewardToDelete.reward.rewardIdx}/delete`
         );
-        fetchRewards();
+        fetchRewards(); // 보상 목록 새로고침
+        setIsDeleteOpen(false); // 모달 닫기
+        setRewardToDelete(null); // 삭제할 보상 초기화
       } catch (error) {
         console.error("보상 삭제 중 오류 발생:", error);
       }
     }
+  };
+
+  const handleDeleteClick = (reward) => {
+    setRewardToDelete(reward); // 삭제할 보상 설정
+    setIsDeleteOpen(true); // 모달 열기
+  };
+
+  const handleDeleteReward = (reward) => {
+    handleDeleteClick(reward); // 보상 삭제 클릭 시 모달 열기
   };
 
   const handlePurchaseReward = async (reward) => {
@@ -156,7 +171,21 @@ const Reward = () => {
         <div className={styles.titleGroup}>
           <div className={styles.leftTitleGroup}>
             <div className={styles.iconTitleGroup}>
-              <HiOutlineTrophy />
+              <div className={styles.icon}>
+                <i
+                  style={{
+                    backgroundImage:
+                      'url("https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/jGIHAYEO3Pc.png")',
+                    backgroundSize: "auto",
+                    width: "36px",
+                    height: "36px",
+                    backgroundRepeat: "no-repeat",
+                    display: "inline-block",
+                  }}
+                  aria-hidden="true"
+                ></i>
+                {/* <HiOutlineTrophy /> */}
+              </div>
               <h1>포인트 상점</h1>
             </div>
             <div>
@@ -187,10 +216,7 @@ const Reward = () => {
                   onClick={() => toggleDropdown(index)}
                 />
                 {dropdownOpen === index && (
-                  <div
-                    className={styles.dropdownMenu}
-                    ref={(el) => (dropdownRef.current[index] = el)}
-                  >
+                  <div className={styles.dropdownMenu} ref={(el) => (dropdownRef.current[index] = el)}>
                     <p onClick={() => handleEditReward(rewardItem)}>수정</p>
                     <p onClick={() => handleDeleteReward(rewardItem)}>삭제</p>
                   </div>
@@ -220,6 +246,12 @@ const Reward = () => {
           onRequestClose={() => setIsModalOpen(false)}
           onAddReward={handleAddReward}
           selectedReward={selectedReward}
+        />
+
+        <DeleteModal
+          showModal={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)} // 모달 닫기
+          onConfirm={handleDeleteConfirm} // 삭제 확인 시 실제 삭제 실행
         />
       </div>
     </div>

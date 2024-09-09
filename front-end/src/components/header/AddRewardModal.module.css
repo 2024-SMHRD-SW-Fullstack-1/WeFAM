@@ -3,10 +3,12 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 450px; /* 더 넓게 설정 */
+  width: 450px;
+  /* 더 넓게 설정 */
   padding: 25px;
   background-color: white;
-  border-radius: 12px; /* 둥근 테두리 */
+  border-radius: 12px;
+  /* 둥근 테두리 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -47,8 +49,14 @@
 }
 
 .icon {
-  font-size: 22px;
+  height: 20px;
+  width: 20px;
   color: #ff4d4d;
+}
+
+.Imgicon {
+  height: 20px;
+  width: 20px;
 }
 
 /* 숫자 화살표 제거 (크롬, 사파리) */
