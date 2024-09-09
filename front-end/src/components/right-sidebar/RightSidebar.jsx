@@ -19,6 +19,8 @@ const RightSidebar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   useEffect(() => {
+    console.log("???!",isPopupVisible);
+    
     // 사용자 데이터를 가져오는 axios 요청
     axios
       .get("http://localhost:8089/wefam/get-family")
@@ -65,9 +67,19 @@ const RightSidebar = () => {
 
   const handleProfileClick = (user, event) => {
     setSelectedUser(user);
-    setIsModalOpen(true);
-    setPopupPosition({ x: event.clientX, y: event.clientY }); // 클릭한 위치 설정
-    setIsPopupVisible(true); // 팝업 표시
+
+    // 클릭한 프로필 이미지의 위치를 계산
+  const profileImage = event.currentTarget.getBoundingClientRect();
+  
+  const popupX = profileImage.left;
+  const popupY = profileImage.top + window.scrollY + profileImage.height;
+  console.log("x축",popupX);
+  console.log("y축",popupY);
+
+  // 팝업 위치를 설정
+  setPopupPosition({ x: popupX, y: popupY });
+  setIsPopupVisible(true);
+    
     // 선택된 사용자의 정보를 서버에서 가져오기
     axios
       .get(`http://localhost:8089/wefam/get-user/${user.id}`)
@@ -173,15 +185,21 @@ const RightSidebar = () => {
 
       {/* 팝업 메뉴 */}
       {isPopupVisible && (
-        <ul
-          className={styles.popupMenu}
-          style={{ top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }}
-        >
-          <li onClick={handleSendMessageClick}>쪽지 보내기</li>
-          <li onClick={handleViewProfileClick}>정보 확인</li>
-          <li onClick={() => setIsPopupVisible(false)}>취소</li>
-        </ul>
-      )}
+        <div
+        className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
+        style={{ top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }}
+      >
+        <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
+          쪽지 보내기
+        </div>
+        <div onClick={handleViewProfileClick} className={styles.popupMenuItem}>
+          정보 확인
+        </div>
+        <div onClick={() => setIsPopupVisible(false)} className={styles.popupMenuItem}>
+          취소
+        </div>
+      </div>
+    )}
 
       {/* 쪽지 보내기 모달 */}
       {isFamilyModalOpen && (
