@@ -307,7 +307,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
   };
