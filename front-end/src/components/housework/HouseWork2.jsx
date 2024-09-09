@@ -8,6 +8,7 @@ import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 import { FcRating } from "react-icons/fc";
 import Modal from "react-modal";
 import DeleteModal from "../modal/DeleteModal";
+import modalPointIcon from "../../assets/images/modalPointIcon.png";
 
 Modal.setAppElement("#root");
 
@@ -388,7 +389,10 @@ const Housework2 = () => {
                 className={styles.taskIcon}
                 onClick={() => openImageModal(task.images)}
               />
-              <span className={styles.taskPoints}>{task.points} 포인트</span>
+              <span className={styles.taskPoints}>
+                {task.points}
+                <img src={modalPointIcon} className={styles.Imgicon} />
+              </span>
             </div>
           </div>
         </div>
@@ -433,8 +437,11 @@ const Housework2 = () => {
           <div className={styles.userContainer}>{renderTaskUsers(task)}</div>
         </div>
 
-        <div className={styles.taskRight}>
-          <span className={styles.taskPoints}>{task.points} 포인트</span>
+        <div>
+          <span className={styles.taskPoints}>
+            {task.points}
+            <img src={modalPointIcon} className={styles.Imgicon} />
+          </span>
 
           {!isCompleted && (
             <BsThreeDots

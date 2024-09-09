@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import { useState, useEffect, useRef } from "react";
 import {
   BsXLg,
-  BsThreeDotsVertical,
+  BsThreeDots,
   BsChevronCompactRight,
   BsPinMap,
   BsImages,
@@ -208,7 +208,7 @@ const EventDetail = ({
         </div>
 
         <div className={styles.icon} style={{ marginLeft: "auto" }}>
-          <BsThreeDotsVertical onClick={handleMenuClick} />
+          <BsThreeDots onClick={handleMenuClick} />
           {isMenuOpen && (
             <div className={styles.menu} ref={menuRef}>
               <div
