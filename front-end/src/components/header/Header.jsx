@@ -12,6 +12,7 @@ import { GoBell } from "react-icons/go";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import AlarmModal from "./AlarmModal";
 import { NotificationContext } from "../../NotificationContext";
+import ProfileModal from "../user-setting/ProfileModal";
 
 const Header = () => {
   const nav = useNavigate();
@@ -25,10 +26,7 @@ const Header = () => {
   const alarmRef = useRef(null); // 알람 모달 감지용 ref
   const bellRef = useRef(null); // bell 아이콘 감지용 ref
   const { notifications } = React.useContext(NotificationContext);
-
-  const handleMenuClick = () => {
-    dispatch(toggleLeftSidebar());
-  };
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
@@ -98,7 +96,15 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
-    alert("프로필 클릭");
+    if (userData) {
+      setIsProfileModalOpen(true); // 프로필 모달 열기
+    } else {
+      alert("사용자 데이터가 없습니다.");
+    }
+  };
+
+  const closeProfileModal = () => {
+    setIsProfileModalOpen(false); // 프로필 모달 닫기
   };
 
   return (
@@ -110,18 +116,16 @@ const Header = () => {
               {/* 왼쪽 미니바 */}
               <HiMiniBars3
                 className={styles.menuIcon}
-                onClick={handleMenuClick}
+                onClick={() => dispatch(toggleLeftSidebar())}
               />
             </button>
           </div>
           <div
             className={styles.logoContainer}
-            onClick={() => {
-              nav("/main");
-            }}
+            onClick={() => nav("/main")}
             style={{ cursor: "pointer" }}
           >
-            {/* WeFAM로고 */}
+            {/* WeFAM 로고 */}
             <img className={styles.logo} src={logo}></img>
           </div>
           <div className={styles.groupContainer}>{familyMotto}</div>
@@ -199,6 +203,16 @@ const Header = () => {
           </div>
         </nav>
       </div>
+
+      {/* ProfileModal - 모달이 열려 있을 때만 렌더링 */}
+      {isProfileModalOpen && (
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onRequestClose={closeProfileModal}
+          profile={userData} // userData를 profile prop으로 넘겨줌
+          isEditing={true} // 자기 자신만 수정 가능
+        />
+      )}
     </div>
   );
 };

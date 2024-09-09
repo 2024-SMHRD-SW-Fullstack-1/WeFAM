@@ -1,31 +1,22 @@
-.container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  width: 80%;
-  background-color: #ffffff;
-  border-radius: 12px;
-  margin-top: 40px;
-}
-
 .logContainer {
   display: flex;
-  justify-content: space-around;
-  /* 좌우로 나눔 */
   width: 100%;
-  /* 부모 컨테이너 전체 너비 사용 */
   margin-right: 15px;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.pointLog {
-  width: 500px;
+.pointLog,
+.buyContainer {
+  width: 300px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
   margin: 0 10px;
+  max-height: 300px; /* 컨테이너의 최대 높이 설정 */
+  overflow-y: auto; /* 내용이 넘치면 스크롤 활성화 */
+  max-height: 100%;
 }
 
 .completedTaskList {
@@ -50,6 +41,16 @@
 .completedTaskDetails {
   text-align: right; /* 완료일과 포인트는 오른쪽 정렬 */
   color: gray;
+  font-size: 13px;
+}
+
+.taskPoints {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 5px;
+  color: #e74c3c;
+  font-weight: bold;
   font-size: 15px;
 }
 
@@ -64,23 +65,15 @@
   font-size: 15px;
 }
 
-.completedTask span {
-  display: block;
-  margin: 5px 0;
-}
-
-.taskPoints {
-  color: #e74c3c;
-  font-weight: bold;
-  font-size: 15px;
-}
-
 .familyPointsContainer {
-  width: 330px; /* 섹션의 전체 너비를 줄임 */
-  text-align: left;
-  padding: 20px;
+  width: 250px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 0 10px;
+  height: auto; /* 높이를 내용에 맞게 자동으로 설정 */
+  overflow-y: auto; /* 만약 내용이 넘칠 경우 스크롤 가능하게 설정 */
 }
 
 .familyMember {
@@ -92,8 +85,8 @@
 }
 
 .familyMemberImg {
-  width: 50px; /* 프로필 이미지의 크기를 줄임 */
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   margin-right: 10px;
   object-fit: cover;
@@ -102,21 +95,20 @@
 .memberInfo {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   font-size: 15px;
   font-weight: bold;
+  width: calc(100% - 50px);
 }
 
 .memberInfo span:first-child {
-  margin-right: 10px; /* 이름과 포인트 사이 간격 조정 */
+  margin-right: 10px;
 }
 
-.buyContainer {
-  width: 400px; /* 완료한 작업들과 동일한 너비로 조정 */
-  text-align: left;
-  padding: 20px;
-  border: 1px solid #b8b7b7;
-  border-radius: 12px;
-  margin-right: 15px;
+.memberInfo span {
+  display: flex;
+  align-items: center;
 }
 
 .purchasedRewardsList {
@@ -134,8 +126,8 @@
 }
 
 .rewardImage {
-  width: 100px; /* 이미지 크기 조절 */
-  height: 100px;
+  width: 80px; /* 이미지 크기 조절 */
+  height: 80px;
   border-radius: 12px;
   object-fit: contain;
   margin-right: 20px;
@@ -153,6 +145,8 @@
 }
 
 .rewardDetails p {
+  display: flex;
+  align-items: center;
   margin: 5px 0;
   font-size: 15px;
 }
@@ -160,5 +154,11 @@
 .rewardDetails span {
   display: block;
   color: gray;
-  font-size: 15px;
+  font-size: 13px;
+}
+
+.Imgicon {
+  height: 20px;
+  width: 20px;
+  margin-left: 5px; /* 아이콘과 포인트 텍스트 사이 간격 추가 */
 }

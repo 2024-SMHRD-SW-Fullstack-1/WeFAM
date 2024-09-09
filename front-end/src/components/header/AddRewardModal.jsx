@@ -4,6 +4,8 @@ import styles from "./AddRewardModal.module.css";
 import { useDropzone } from "react-dropzone";
 import { FiEdit } from "react-icons/fi";
 import { TbCoin } from "react-icons/tb";
+import modalPointIcon from "../../assets/images/modalPointIcon.png";
+
 
 Modal.setAppElement("#root");
 
@@ -90,7 +92,7 @@ const AddRewardModal = ({
         </div>
 
         <div className={styles.inputGroup}>
-          <TbCoin className={styles.icon} />
+          <img src={modalPointIcon} className={styles.Imgicon} />
           <input
             type="number"
             value={rewardPoints}

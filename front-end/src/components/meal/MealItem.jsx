@@ -4,6 +4,7 @@ import axios from "axios";
 import styles from "./MealItem.module.css";
 import EditMealModal from "./EditMealModal";
 import DeleteModal from "../modal/DeleteModal";
+
 import { elapsedTime } from "../../elapsedTime";
 
 import { BsThreeDots } from "react-icons/bs";

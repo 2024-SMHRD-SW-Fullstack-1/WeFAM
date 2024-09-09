@@ -13,6 +13,7 @@ import Reward from "./components/header/Reward";
 import RewardPoint from "./components/header/RewardPoint";
 import Chatbot from "./components/chatbot/Chatbot";
 import GroupManagement from "./components/user-setting/GroupManagement";
+import ProfileModal from "./components/user-setting/ProfileModal";
 
 import "./css/App.css";
 import "./css/Test.css";
@@ -37,9 +38,10 @@ function App() {
             <Route path="chatbot" element={<Chatbot />} />
             <Route path="reward-point" element={<RewardPoint />} />
           </Route>
-            <Route path="chatbot" element={<Chatbot />} />
+          <Route path="chatbot" element={<Chatbot />} />
           <Route path="group-management" element={<GroupManagement />} />
-      </Routes>
+          <Route path="profileModal" element={<ProfileModal />} />
+        </Routes>
       </NotificationProvider>
     </div>
   );

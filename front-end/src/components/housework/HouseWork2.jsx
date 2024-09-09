@@ -4,9 +4,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import WorkModal from "./WorkModal";
 import CompleteModal from "./CompleteModal";
-import { BsThreeDotsVertical, BsPlusCircle } from "react-icons/bs";
+import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 import { FcRating } from "react-icons/fc";
 import Modal from "react-modal";
+import DeleteModal from "../modal/DeleteModal";
 
 Modal.setAppElement("#root");
 
@@ -34,6 +35,8 @@ const Housework2 = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState();
   const [completedTasks, setCompletedTasks] = useState([]);
   const [existingPostedAt, setExistingPostedAt] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false); // 삭제 모달 상태
+  const [taskToDelete, setTaskToDelete] = useState(null); // 삭제할 작업 저장
 
   // 모달을 여는 함수
   const openDailyModal = () => {
@@ -221,21 +224,30 @@ const Housework2 = () => {
   };
 
   // 선택한 작업 삭제하는 함수
-  const deleteSelectedTasks = async (workIdx, taskType) => {
-    try {
-      await axios.delete(`http://localhost:8089/wefam/delete-work/${workIdx}`);
-
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [taskType]: prevTasks[taskType].filter(
-          (task) => task.workIdx !== workIdx
-        ),
-      }));
-
-      fetchTasks();
-    } catch (error) {
-      console.error("작업 삭제 중 오류 발생:", error);
+  const handleDeleteConfirm = async () => {
+    if (taskToDelete) {
+      try {
+        await axios.delete(
+          `http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`
+        );
+        setTasks((prevTasks) => ({
+          ...prevTasks,
+          [taskToDelete.taskType]: prevTasks[taskToDelete.taskType].filter(
+            (task) => task.workIdx !== taskToDelete.workIdx
+          ),
+        }));
+        setIsDeleteOpen(false); // 모달 닫기
+        setTaskToDelete(null); // 삭제할 작업 초기화
+        fetchTasks(); // 작업 목록 새로 고침
+      } catch (error) {
+        console.error("작업 삭제 중 오류 발생:", error);
+      }
     }
+  };
+
+  const handleDeleteClick = (task) => {
+    setTaskToDelete(task); // 삭제할 작업 설정
+    setIsDeleteOpen(true); // 삭제 모달 열기
   };
 
   const openImageModal = (images) => {
@@ -362,6 +374,12 @@ const Housework2 = () => {
           <div className={styles.userContainer}>
             {renderCompletedTaskUsers(task)}
           </div>
+          <p className={styles.completedDate}>
+            완료일:{" "}
+            {task.completedAt
+              ? task.completedAt.toLocaleDateString()
+              : "완료일 정보 없음"}
+          </p>
         </div>
         <div className={styles.dropdownContainer}>
           <div className={styles.taskRight}>
@@ -396,7 +414,8 @@ const Housework2 = () => {
         key={task.workIdx}
         className={`${styles.taskItem} ${
           isCompleted ? styles.completedTask : ""
-        }`}>
+        }`}
+      >
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
@@ -405,7 +424,8 @@ const Housework2 = () => {
             {isLongContent && (
               <button
                 onClick={toggleReadMore}
-                className={styles.readMoreButton}>
+                className={styles.readMoreButton}
+              >
                 {isExpanded ? "간략히" : "더보기"}
               </button>
             )}
@@ -417,7 +437,7 @@ const Housework2 = () => {
           <span className={styles.taskPoints}>{task.points} 포인트</span>
 
           {!isCompleted && (
-            <BsThreeDotsVertical
+            <BsThreeDots
               className={styles.taskIcon}
               onClick={(e) => {
                 e.stopPropagation();
@@ -433,28 +453,25 @@ const Housework2 = () => {
             onClick={(e) => {
               e.stopPropagation(); // 클릭 이벤트 버블링 방지
               setDropdownOpen(null); // 드롭다운 메뉴를 클릭하면 닫음
-            }}>
+            }}
+          >
             <button
               onClick={() => {
                 handleMissionComplete(task);
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}>
+              }}
+            >
               미션 성공
             </button>
             <button
               onClick={() => {
                 handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}>
+              }}
+            >
               수정
             </button>
-            <button
-              onClick={() => {
-                deleteSelectedTasks(task.workIdx, taskType); // workIdx로 삭제
-                setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}>
-              삭제
-            </button>
+            <button onClick={() => handleDeleteClick(task)}>삭제</button>
           </div>
         )}
       </li>
@@ -476,15 +493,16 @@ const Housework2 = () => {
   };
 
   return (
-    <div className='main' onClick={handleOutsideClick}>
+    <div className="main" onClick={handleOutsideClick}>
       <div
         style={{
           backgroundColor: "#ffffff",
           marginTop: "2rem",
           borderRadius: "1rem",
           padding: "1rem",
-          height: "631px",
-        }}>
+          height: "710px",
+        }}
+      >
         <div className={styles.board}>
           <div className={styles.column}>
             <div className={styles.column_header}>
@@ -494,7 +512,8 @@ const Housework2 = () => {
                   tasks.daily.length > 0
                     ? styles.circleDaily
                     : styles.circleZero
-                }>
+                }
+              >
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -517,7 +536,8 @@ const Housework2 = () => {
                   tasks.shortTerm.length > 0
                     ? styles.circleShortTerm
                     : styles.circleZero
-                }>
+                }
+              >
                 {tasks.shortTerm.length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
@@ -540,7 +560,8 @@ const Housework2 = () => {
                   completedTasks.length > 0
                     ? styles.circleFinished
                     : styles.circleZero
-                }>
+                }
+              >
                 {completedTasks.length}
               </span>
             </div>
@@ -582,13 +603,18 @@ const Housework2 = () => {
             fetchCompletedTasks();
           }}
         />
-
+        <DeleteModal
+          showModal={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)} // 모달 닫기
+          onConfirm={handleDeleteConfirm} // 삭제 확인 시 실제 삭제 실행
+        />
         <Modal
           isOpen={isImageModalOpen}
           onRequestClose={closeImageModal}
-          contentLabel='작업 이미지'
+          contentLabel="작업 이미지"
           className={styles.imageModalContent}
-          overlayClassName={styles.imageModalOverlay}>
+          overlayClassName={styles.imageModalOverlay}
+        >
           <div className={styles.modalBody}>
             <h2>작업 이미지</h2>
             <div className={styles.imagePreviewContainer}>

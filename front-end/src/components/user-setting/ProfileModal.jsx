@@ -1,29 +1,62 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import styles from './ProfileModal.module.css';
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
+import axios from "axios";
+import styles from "./ProfileModal.module.css";
 
 Modal.setAppElement("#root");
 
-const emojis = ['👩', '👨', '👧', '🧑','👴','🧓']; // 이모티콘 선택 목록
+const emojis = ["👩", "👨", "👧", "🧑", "👴", "🧓"]; // 이모티콘 선택 목록
 
-const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing, handleInputChange, handleSaveChanges }) => {
-  const [selectedEmoji, setSelectedEmoji] = useState(''); // 선택된 이모티콘 상태
+const ProfileModal = ({ isOpen, onRequestClose, profile, isEditing }) => {
+  const [selectedProfile, setSelectedProfile] = useState(profile); // 수정된 프로필 정보 저장
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // 이모티콘 선택창 표시 상태
 
-  // 이모티콘을 닉네임에서 제거하고 새로운 이모티콘을 추가하는 함수
-const handleEmojiClick = (emoji) => {
-  const regex = new RegExp('[' + emojis.join('') + ']', 'g'); // 이전에 선택한 모든 이모티콘 제거를 위한 정규식
-  const updatedNick = profile.nick.replace(regex, ''); // 기존 이모티콘 모두 제거
-  setSelectedEmoji(emoji); // 새로운 이모티콘 상태 저장
-  handleInputChange({ target: { name: 'nick', value: emoji + updatedNick } }); // 새로운 이모티콘 추가
-  setShowEmojiPicker(false); // 이모티콘 선택창 닫기
-};
+  useEffect(() => {
+    console.log(selectedProfile);
+    if (isOpen) {
+      setSelectedProfile(profile);
+    }
+  }, [isOpen, profile]);
+
+  // 입력값 변경 핸들러
+  const handleInputChange = (e) => {
+    setSelectedProfile({
+      ...selectedProfile,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // 이모티콘 선택 핸들러
+  const handleEmojiClick = (emoji) => {
+    const regex = new RegExp("[" + emojis.join("") + "]", "g");
+    const updatedNick = selectedProfile.nick.replace(regex, ""); // 기존 이모티콘 제거
+    setSelectedProfile({
+      ...selectedProfile,
+      nick: emoji + updatedNick, // 새로운 이모티콘 추가
+    });
+    setShowEmojiPicker(false); // 이모티콘 선택창 닫기
+  };
+
+  // 프로필 업데이트 후 저장
+  const handleSaveChanges = () => {
+    axios
+      .put("http://localhost:8089/wefam/update-profile", selectedProfile)
+      .then((response) => {
+        console.log("프로필 업데이트 성공:", response.data);
+        console.log("생일" + selectedProfile.birth);
+        onRequestClose(); // 저장 후 모달 닫기
+      })
+      .catch((error) => {
+        console.error("프로필 업데이트 실패:", error);
+        console.log(selectedProfile.name);
+      });
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="프로필 보기"
+      contentLabel="프로필 수정"
       className={styles.modal}
       overlayClassName={styles.overlay}
     >
@@ -32,43 +65,54 @@ const handleEmojiClick = (emoji) => {
       </h2>
 
       <div className={styles.profileContainer}>
-        <img src={profile.profileImg} alt="Profile" className={styles.profileImage} />
+        <img
+          src={selectedProfile.profileImg}
+          alt="Profile"
+          className={styles.profileImage}
+        />
         <div className={styles.profile}>
+          {/* 이름 */}
           <div className={styles.profileInfoRow}>
             <label className={styles.modalLabel}>이름 :</label>
             {isEditing ? (
               <input
                 type="text"
                 name="name"
-                value={profile.name}
+                value={selectedProfile.name}
                 onChange={handleInputChange}
                 className={`${styles.modalInput} ${styles.modalInputText}`}
               />
             ) : (
-              <p>{profile.name}</p>
+              <p>{selectedProfile.name}</p>
             )}
           </div>
+
+          {/* 생년월일 추가 */}
           <div className={styles.profileInfoRow}>
             <label className={styles.modalLabel}>생년월일 :</label>
             {isEditing ? (
               <input
                 type="date"
                 name="birth"
-                value={profile.birth}
+                value={selectedProfile.birth}
                 onChange={handleInputChange}
                 className={`${styles.modalInput} ${styles.modalInputDate}`}
               />
             ) : (
-              <p>{profile.birth}</p>
+              <p>{selectedProfile.birth}</p>
             )}
           </div>
+
+          {/* 닉네임 */}
           <div className={styles.profileInfoRow}>
             <label className={styles.modalLabel}>닉네임 :</label>
             {isEditing ? (
               <div className={styles.what}>
-                {/* 이모티콘 선택 토글 버튼 */}
                 <div className={styles.emojiSelector}>
-                  <span onClick={() => setShowEmojiPicker(!showEmojiPicker)} style={{ cursor: 'pointer' }}>
+                  <span
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    style={{ cursor: "pointer" }}
+                  >
                     👨‍👩‍👦‍👦(이모티콘 변경)
                   </span>
                   {showEmojiPicker && (
@@ -88,13 +132,13 @@ const handleEmojiClick = (emoji) => {
                 <input
                   type="text"
                   name="nick"
-                  value={selectedEmoji + profile.nick.replace(selectedEmoji, '')} // 중복 방지
+                  value={selectedProfile.nick}
                   onChange={handleInputChange}
-                 className={`${styles.modalInput} ${styles.modalInputText}`}
+                  className={`${styles.modalInput} ${styles.modalInputText}`}
                 />
               </div>
             ) : (
-              <p>{profile.nick}</p>
+              <p>{selectedProfile.nick}</p>
             )}
           </div>
         </div>
