@@ -76,7 +76,6 @@ const Housework2 = () => {
         daily: works.filter((task) => task.taskType === "daily"),
         shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
-      console.log("작업 데이터:", works); // 작업 데이터에 completed 필드가 있는지 확인
     } catch (error) {
       console.error("작업 데이터를 가져오는 중 오류 발생:", error);
     }
