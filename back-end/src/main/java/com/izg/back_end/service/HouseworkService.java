@@ -33,11 +33,13 @@ public class HouseworkService {
 
 	// 집안일 추가
 	public HouseworkDTO createHousework(HouseworkDTO houseworkDTO) {
-		HouseworkModel houseworkModel = convertDtoToModel(houseworkDTO);
-		HouseworkModel savedWork = houseworkRepository.save(houseworkModel);
-		participantService.saveParticipants(savedWork.getWorkIdx(), houseworkDTO.getWorkUserIds(),
-				houseworkDTO.getUserId());
-		return convertModelToDto(savedWork, houseworkDTO.getWorkUserIds());
+	    if (houseworkDTO.getPostedAt() == null) {
+	        houseworkDTO.setPostedAt(LocalDateTime.now()); // 현재 시간을 설정
+	    }
+	    HouseworkModel houseworkModel = convertDtoToModel(houseworkDTO);
+	    HouseworkModel savedWork = houseworkRepository.save(houseworkModel);
+	    participantService.saveParticipants(savedWork.getWorkIdx(), houseworkDTO.getWorkUserIds(), houseworkDTO.getUserId());
+	    return convertModelToDto(savedWork, houseworkDTO.getWorkUserIds());
 	}
 
 	// 집안일 수정

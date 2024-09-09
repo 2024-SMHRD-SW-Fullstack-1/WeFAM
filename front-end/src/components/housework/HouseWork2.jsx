@@ -33,6 +33,8 @@ const Housework2 = () => {
   const [selectedTaskImages, setSelectedTaskImages] = useState();
   const [isImageModalOpen, setIsImageModalOpen] = useState();
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [existingPostedAt, setExistingPostedAt] = useState(null);
+
 
   // 모달을 여는 함수
   const openDailyModal = () => {
@@ -71,7 +73,6 @@ const Housework2 = () => {
       );
 
       const { works } = response.data;
-      console.log(works);
 
       setTasks({
         daily: works.filter((task) => task.taskType === "daily"),
@@ -117,10 +118,18 @@ const Housework2 = () => {
           images: item.images,
           userProfileImg: item.userProfileImg,
           userName: item.userName,
+          completedAt: item.workLog.completedAt ? new Date(item.workLog.completedAt) : null,  // completedAt을 Date 객체로 변환
         };
       });
 
-      setCompletedTasks(completedTasksWithImages);
+      // completedAt을 기준으로 정렬 (completedAt이 null일 경우를 처리)
+      const sortedCompletedTasks = completedTasksWithImages.sort((a, b) => {
+        if (!a.completedAt) return 1;
+        if (!b.completedAt) return -1;
+        return b.completedAt - a.completedAt;  // 최신 완료 작업이 위로 오도록 정렬
+      });
+
+      setCompletedTasks(sortedCompletedTasks);
     } catch (error) {
       console.error("완료된 작업을 가져오는 중 오류 발생:", error);
     }
@@ -166,6 +175,8 @@ const Housework2 = () => {
         taskType === "daily" && workUser.length > 0
           ? workUser.map((user) => user.id)
           : [],
+      postedAt: editTaskIndex !== null ? existingPostedAt : new Date().toISOString(), // posted_at 필드를 추가
+
     };
 
     try {
@@ -204,22 +215,20 @@ const Housework2 = () => {
   const addTaskToState = (newTask, taskType) => {
     setTasks((prevTasks) => ({
       ...prevTasks,
-      [taskType]: [...prevTasks[taskType], newTask],
+      [taskType]: [newTask, ...prevTasks[taskType]], // 새 작업을 목록의 맨 위로 추가
     }));
   };
 
   // 선택한 작업 삭제하는 함수
-  const deleteSelectedTasks = async (index, taskType) => {
+  const deleteSelectedTasks = async (workIdx, taskType) => {
     try {
-      const taskList = tasks[taskType];
-      const taskToDelete = taskList[index];
       await axios.delete(
-        `http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`
+        `http://localhost:8089/wefam/delete-work/${workIdx}`
       );
 
       setTasks((prevTasks) => ({
         ...prevTasks,
-        [taskType]: taskList.filter((t) => t.workIdx !== taskToDelete.workIdx),
+        [taskType]: prevTasks[taskType].filter((task) => task.workIdx !== workIdx),
       }));
 
       fetchTasks();
@@ -227,6 +236,7 @@ const Housework2 = () => {
       console.error("작업 삭제 중 오류 발생:", error);
     }
   };
+
 
   const openImageModal = (images) => {
     setSelectedTaskImages(images);
@@ -249,13 +259,13 @@ const Housework2 = () => {
     setIsCompleteModalOpen(true);
   };
 
-  const handleTaskEdit = (taskIndex, taskList, taskType) => {
-    // taskList에서 해당 task를 찾음
-    const task = taskList[taskIndex];
+  const handleTaskEdit = (taskWorkIdx, taskList, taskType) => {
+    // taskList에서 해당 task를 고유한 workIdx로 찾음
+    const task = taskList.find((t) => t.workIdx === taskWorkIdx);
 
     // task가 존재하는지 확인
     if (!task) {
-      console.error(`Task at index ${taskIndex} not found in taskList`);
+      console.error(`Task with workIdx ${taskWorkIdx} not found`);
       return; // task가 없으면 함수 실행 중단
     }
 
@@ -263,14 +273,17 @@ const Housework2 = () => {
     setTaskName(task.workTitle);
     setTaskContent(task.workContent);
 
-    if (typeof task.participantNames === "string") {
-      setWorkUser(task.participantNames.split(", "));
+    // participantNames가 배열로 올 경우 그대로 사용
+    if (Array.isArray(task.participantNames)) {
+      setWorkUser(task.participantNames);
     } else {
-      setWorkUser([]);
+      setWorkUser([]); // participantNames가 존재하지 않으면 빈 배열로 설정
     }
+
     setTaskPoint(task.points.toString());
     setTaskType(taskType);
-    setEditTaskIndex(task.workIdx);
+    setEditTaskIndex(task.workIdx);  // 작업의 고유 ID로 설정
+    setExistingPostedAt(task.postedAt);  // postedAt 값을 상태로 설정
     setIsModalOpen(true);
   };
 
@@ -336,9 +349,15 @@ const Housework2 = () => {
 
   // 완료된 작업 리스트도 동일하게 정렬해서 렌더링
   const renderCompletedTaskList = (tasks) => {
-    const sortedCompletedTasks = sortTasks(tasks); // 완료된 작업도 정렬
+    const sortedCompletedTasks = tasks
+      .slice()
+      .sort((a, b) => {
+        if (!a.completedAt) return 1;
+        if (!b.completedAt) return -1;
+        return new Date(b.completedAt) - new Date(a.completedAt); // 최신 completedAt 기준으로 정렬
+      });
 
-    return sortedCompletedTasks.map((task, index) => (
+    return sortedCompletedTasks.map((task) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
@@ -361,8 +380,9 @@ const Housework2 = () => {
     ));
   };
 
+
   // 작업 항목 렌더링 함수
-  const TaskItem = ({ task, index, taskType }) => {
+  const TaskItem = ({ task, taskType }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const isCompleted = task.completed;
     const toggleReadMore = () => setIsExpanded(!isExpanded);
@@ -377,8 +397,7 @@ const Housework2 = () => {
     return (
       <li
         key={task.workIdx}
-        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""
-          }`}
+        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""}`}
       >
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
@@ -386,10 +405,7 @@ const Housework2 = () => {
           <span className={styles.taskDescription}>
             {displayedContent}
             {isLongContent && (
-              <button
-                onClick={toggleReadMore}
-                className={styles.readMoreButton}
-              >
+              <button onClick={toggleReadMore} className={styles.readMoreButton}>
                 {isExpanded ? "간략히" : "더보기"}
               </button>
             )}
@@ -400,20 +416,18 @@ const Housework2 = () => {
         <div className={styles.taskRight}>
           <span className={styles.taskPoints}>{task.points} 포인트</span>
 
-          {/* 완료된 작업일 경우 드롭다운 아이콘을 클릭할 수 없게 설정 */}
           {!isCompleted && (
             <BsThreeDotsVertical
               className={styles.taskIcon}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleDropdown(`${taskType}-${index}`);
+                toggleDropdown(task.workIdx); // workIdx로 드롭다운 상태 관리
               }}
             />
           )}
         </div>
 
-        {/* 드롭다운 메뉴 */}
-        {dropdownOpen === `${taskType}-${index}` && (
+        {dropdownOpen === task.workIdx && (
           <div
             className={styles.dropdownMenu}
             onClick={(e) => {
@@ -431,7 +445,7 @@ const Housework2 = () => {
             </button>
             <button
               onClick={() => {
-                handleTaskEdit(index, tasks[taskType], taskType);
+                handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
               }}
             >
@@ -439,7 +453,7 @@ const Housework2 = () => {
             </button>
             <button
               onClick={() => {
-                deleteSelectedTasks(index, taskType);
+                deleteSelectedTasks(task.workIdx, taskType); // workIdx로 삭제
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
               }}
             >
@@ -450,6 +464,7 @@ const Housework2 = () => {
       </li>
     );
   };
+
 
   // 작업 목록을 렌더링하는 함수
   const renderTaskList = (tasks, taskType) => {
