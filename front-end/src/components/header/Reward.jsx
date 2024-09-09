@@ -1,157 +1,233 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./Reward.module.css";
+import AddRewardModal from "./AddRewardModal";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import AddRewardModal from "./AddRewardModal";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const Reward = () => {
-  const userData = useSelector((state) => state.user.userData);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [rewards, setRewards] = useState([]); // 보상 리스트 상태
-  const [completedTasks, setCompletedTasks] = useState([]); // 완료된 작업들
-  const [familyPoints, setFamilyPoints] = useState([]); // 가족 구성원 포인트 상태
+  const [selectedReward, setSelectedReward] = useState(null); // 선택된 보상 아이템
+  const [dropdownOpen, setDropdownOpen] = useState(null); // 드롭다운 상태
+  const [totalPoints, setTotalPoints] = useState(0); // 유저의 총 포인트 상태 추가
+  const navigate = useNavigate(); // 페이지 이동을 위한 훅
+  const userId = useSelector((state) => state.user.userData.id);
+  const dropdownRef = useRef(null); // 드롭다운 참조
 
-
-  // 완료된 하우스워크 로그 가져오기
-  useEffect(() => {
-    const fetchCompletedTasks = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8089/wefam/completed-works"
-        );
-
-        const completedTasksWithImages = response.data.map((item) => {
-          return {
-            ...item.workLog, // 작업 로그 데이터
-            images: item.images, // 이미지 데이터
-          };
-        });
-
-        setCompletedTasks(completedTasksWithImages); // 응답 데이터를 상태로 설정
-      } catch (error) {
-        console.error("완료된 작업을 가져오는 중 오류 발생:", error);
-      }
-    };
-
-    if (userData) {
-      fetchCompletedTasks();
-    }
-  }, [userData]);
-
-  // 가족 구성원 포인트 가져오기
-  useEffect(() => {
-    const fetchFamilyPoints = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8089/wefam/get-family-members/${userData.id}`
-        );
-        const members = response.data;
-        console.log(members.profileImg);
-
-        // 각 구성원의 포인트 가져오기
-        const pointsPromises = members.map((member) =>
-          axios.get(`http://localhost:8089/wefam/get-total-points?userId=${member.userId}`)
-        );
-
-        const pointsResponses = await Promise.all(pointsPromises);
-        const familyPointsData = members.map((member, index) => ({
-          ...member,
-          points: pointsResponses[index].data,
-        }));
-
-        setFamilyPoints(familyPointsData); // 구성원과 그들의 포인트를 상태에 저장
-      } catch (error) {
-        console.error("가족 구성원 포인트를 가져오는 중 오류 발생:", error);
-      }
-    };
-
-    if (userData) {
-      fetchFamilyPoints(); // 로그인된 유저 데이터가 있으면 실행
-    }
-  }, [userData]);
-
-
-  const handleAddReward = (newReward) => {
-    setRewards([...rewards, newReward]);
-    // 추가된 보상을 서버로 전송하는 로직을 여기에 작성 가능
-    // 예: axios.post('/wefam/add-reward', newReward);
+  const goToRewardPoint = () => {
+    navigate("/main/reward-point");
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  // 유저의 총 포인트 불러오기
+  const fetchTotalPoints = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/get-user-data?userId=${userId}`
+      );
+      setTotalPoints(response.data.points); // 유저의 총 포인트 상태 설정
+    } catch (error) {
+      console.error("유저의 포인트를 불러오는 중 오류 발생:", error);
+    }
+  };
+
+  // 보상 데이터 불러오기
+  const fetchRewards = async () => {
+    try {
+      const response = await axios.get("http://localhost:8089/wefam/rewards");
+      // 구매되지 않은 보상만 표시
+      const availableRewards = response.data.filter(
+        (reward) => !reward.reward.isSold
+      );
+      setRewards(availableRewards);
+    } catch (error) {
+      console.error("보상 목록 불러오기 오류 발생:", error);
+    }
+  };
+
+  const handleAddReward = async (newReward) => {
+    try {
+      const formData = new FormData();
+      formData.append("rewardName", newReward.rewardName);
+      formData.append("rewardPoints", newReward.rewardPoints || 0);
+      formData.append("userId", userId);
+      if (newReward.image) {
+        formData.append("image", newReward.image);
+      }
+
+      // 보상 ID가 있으면 수정, 없으면 추가
+      if (newReward.rewardIdx) {
+        const response = await axios.post(
+          `http://localhost:8089/wefam/rewards/${newReward.rewardIdx}/update`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("보상 수정 성공:", response.data);
+      } else {
+        const response = await axios.post(
+          "http://localhost:8089/wefam/rewards",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("보상 추가 성공:", response.data);
+      }
+
+      fetchRewards(); // 보상 목록 다시 불러오기
+    } catch (error) {
+      console.error("보상 저장 중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRewards();
+    fetchTotalPoints(); // 유저의 총 포인트도 불러오기
+  }, []);
+
+  // 드롭다운 열기 및 닫기
+  const toggleDropdown = (index) => {
+    if (dropdownOpen === index) {
+      setDropdownOpen(null); // 현재 열려있는 드롭다운을 닫음
+    } else {
+      setDropdownOpen(index); // 선택한 드롭다운을 엶
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(null); // 외부 클릭 시 드롭다운 닫기
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const handleEditReward = (reward) => {
+    setSelectedReward(reward); // 선택된 보상 데이터를 설정
+    setIsModalOpen(true); // 모달 열기
+  };
+
+  const handleDeleteReward = async (reward) => {
+    if (window.confirm("이 보상을 삭제하시겠습니까?")) {
+      try {
+        await axios.post(
+          `http://localhost:8089/wefam/rewards/${reward.reward.rewardIdx}/delete`
+        );
+        console.log("삭제 성공:", reward.reward.rewardName);
+        fetchRewards(); // 삭제 후 보상 목록 다시 불러오기
+      } catch (error) {
+        console.error("보상 삭제 중 오류 발생:", error);
+      }
+    }
+  };
+
+  const handlePurchaseReward = async (reward) => {
+    if (reward.reward.rewardPoint > totalPoints) {
+      alert("포인트가 부족합니다!");
+      return;
+    }
+
+    if (window.confirm(`${reward.reward.rewardName}을(를) 구매하시겠습니까?`)) {
+      try {
+        const response = await axios.post(
+          `http://localhost:8089/wefam/rewards/${reward.reward.rewardIdx}/purchase`,
+          null,
+          {
+            params: {
+              userId: userId,
+            },
+          }
+        );
+        console.log("구매 성공:", response.data);
+
+        // 보상 구매 후 유저의 포인트 다시 불러오기
+        await fetchTotalPoints();
+
+        fetchRewards(); // 구매 후 보상 목록 다시 불러오기
+      } catch (error) {
+        console.error("구매 중 오류 발생:", error);
+      }
+    }
   };
 
   return (
     <div className="main">
       <div className={styles.container}>
-        <button
-          className={styles.addButton}
-          onClick={() => setIsModalOpen(true)}
-        >
-          보상 추가
-        </button>
+        <div className={styles.buttonGroup}>
+          {/* RewardPoint 페이지로 이동 버튼 */}
+          <button
+            className={styles.rewardPointButton}
+            onClick={goToRewardPoint}
+          >
+            포인트 확인하기
+          </button>
+
+          {/* 보상 추가 버튼 */}
+          <button
+            className={styles.addButton}
+            onClick={() => {
+              setSelectedReward(null); // 추가 버튼을 눌렀을 때 선택된 보상 데이터를 초기화
+              setIsModalOpen(true);
+            }}
+          >
+            보상 추가
+          </button>
+        </div>
 
         {/* 보상 아이템들을 보여주는 영역 */}
         <div className={styles.itemsContainer}>
-          {rewards.map((reward, index) => (
+          {rewards.map((rewardItem, index) => (
             <div key={index} className={styles.itemCard}>
+              <div className={styles.cardHeader}>
+                <BsThreeDotsVertical
+                  className={styles.menuIcon}
+                  onClick={() => toggleDropdown(index)}
+                />
+                {dropdownOpen === index && (
+                  <div className={styles.dropdownMenu} ref={dropdownRef}>
+                    <p onClick={() => handleEditReward(rewardItem)}>수정</p>
+                    <p onClick={() => handleDeleteReward(rewardItem)}>삭제</p>
+                  </div>
+                )}
+              </div>
               <img
-                src={reward.image}
-                alt={reward.name}
+                src={rewardItem.imageBase64}
+                alt={rewardItem.reward.rewardName}
                 className={styles.rewardImage}
               />
-              <h2>{reward.name}</h2>
-              <p>{reward.points} Points</p>
+              <h2>{rewardItem.reward.rewardName}</h2>
+              <p>{rewardItem.reward.rewardPoint} Points</p>
+              <div>
+                <button
+                  onClick={() => handlePurchaseReward(rewardItem)}
+                  className={styles.buyButton}
+                >
+                  구매
+                </button>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* 완료된 작업들 표시 */}
-        <div className={styles.logContainer}>
-          <div className={styles.pointLog}>
-            <h2>완료한 작업들</h2>
-            <ul className={styles.completedTaskList}>
-              {completedTasks.map((task, index) => (
-                <li key={index} className={styles.completedTask}>
-                  <h3>{task.workTitle}</h3>
-                  <p>{task.workContent}</p>
-                  <span>완료일: {formatDate(task.completedAt)}</span>
-                  <span className={styles.taskPoints}>{task.points} 포인트</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* 포인트 정보 및 가족 구성원 포인트 */}
-          <div className={styles.point}>
-            <div className={styles.familyPointsContainer}>
-              <h2>가족 구성원 포인트</h2>
-              <ul>
-                {familyPoints.map((member) => (
-                  <li key={member.userId} className={styles.familyMember}>
-                    <img
-                      src={member.profileImg || "default_profile_image_url"}
-                      alt={member.name}
-                      className={styles.familyMemberImg}
-                    />
-                    <div className={styles.memberInfo}>
-                      <span>{member.points} 포인트</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        {/* 보상 추가 또는 수정 모달 */}
+        <AddRewardModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          onAddReward={handleAddReward}
+          selectedReward={selectedReward}
+        />
       </div>
-
-      {/* 보상 추가 모달 */}
-      <AddRewardModal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        onAddReward={handleAddReward}
-      />
     </div>
   );
 };

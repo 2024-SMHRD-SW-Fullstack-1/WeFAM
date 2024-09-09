@@ -1,26 +1,28 @@
+// ReplyModal.js
 import React, { useState } from "react";
-import styles from "./FamilyModal.module.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import styles from "../right-sidebar/FamilyModal.module.css"; // 새롭게 만든 CSS 파일
 
-const FamilyModal = ({ user, onClose }) => {
+const ReplyModal = ({ notification, onClose }) => {
   const [message, setMessage] = useState("");
-  const userData = useSelector((state) => state.user.userData);
   const [isSending, setIsSending] = useState(false);
+  const userData = useSelector((state) => state.user.userData);
+  const [users, setUsers] = useState([]);
 
   const handleSendMessage = () => {
     if (!message || isSending) {
       return;
     }
-    setIsSending(true); // 메시지 전송 중 상태로 설정
+    setIsSending(true);
 
     const data = {
       senderId: userData.id,
       senderNick: userData.nick,
-      receiverId: user.id,
+      receiverId: notification.senderId, // 알림을 보낸 사용자에게 답장
       message: message,
       time: new Date().toISOString(),
-      type: "쪽지",
+      type: "답장",
       profileImg: userData.profileImg,
     };
 
@@ -28,11 +30,10 @@ const FamilyModal = ({ user, onClose }) => {
       .post("http://localhost:8089/wefam/send-message", data)
       .then((response) => {
         setIsSending(false);
-        onClose();
+        onClose(); // 모달 닫기
       })
       .catch((error) => {
-        console.error("쪽지 전송 실패:", error);
-
+        console.error("메시지 전송 실패:", error);
         setIsSending(false);
       });
   };
@@ -41,11 +42,11 @@ const FamilyModal = ({ user, onClose }) => {
     <div className="main">
       <div className={styles.modalOverlay}>
         <div className="modal-content">
-          <h2>{user.nick} 에게 쪽지 보내기</h2>
+          <h2>{notification.senderNick}에게 답장 보내기</h2>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="쪽지 내용을 입력하세요..."
+            placeholder="답장 내용을 입력하세요..."
             className="textarea"
           />
           <div className={styles.modalActions}>
@@ -62,4 +63,4 @@ const FamilyModal = ({ user, onClose }) => {
   );
 };
 
-export default FamilyModal;
+export default ReplyModal;
