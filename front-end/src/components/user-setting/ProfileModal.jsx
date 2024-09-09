@@ -69,7 +69,7 @@ const handleEmojiClick = (emoji) => {
                 {/* 이모티콘 선택 토글 버튼 */}
                 <div className={styles.emojiSelector}>
                   <span onClick={() => setShowEmojiPicker(!showEmojiPicker)} style={{ cursor: 'pointer' }}>
-                    (선택)
+                    👨‍👩‍👦‍👦(이모티콘 변경)
                   </span>
                   {showEmojiPicker && (
                     <div className={styles.emojiPicker}>

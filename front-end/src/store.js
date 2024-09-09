@@ -4,10 +4,11 @@ import userReducer from "./features/userSlice";
 import leftSidebarReducer from "./features/leftSidebarSlice";
 import imagesOnFeedReducer from "./features/imagesOnFeedSlice";
 import pollsReducer from "./features/pollsSlice";
+import familyReducer from "./features/familySlice"; // familySlice 추가
+import locationInputReducer from "./features/locationSlice"; // locationSlice 추가
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 import { combineReducers } from "redux";
-import familyReducer from "./features/familySlice"; // familySlice 추가
 import { thunk } from 'redux-thunk'; // named import로 변경
 
 // persist 설정
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   // imagesOnFeed: imagesOnFeedReducer,
   polls: pollsReducer,
   family: familyReducer,
+  locationInput: locationInputReducer, // locationReducer 추가
 });
 
 // persistReducer로 감싸기

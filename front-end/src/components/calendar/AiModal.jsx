@@ -7,10 +7,14 @@ import festival from "../../assets/images/festival.png";
 import activity from "../../assets/images/gliding.png";
 import Chatbot from "../chatbot/Chatbot"; // Chatbot 컴포넌트 임포트
 import dot from "../../assets/images/dot.png";
+import { useSelector } from "react-redux";
 
 const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
+  
+  const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Chatbot 모달 상태 관리
+    
 
   const themes = [
     { id: 1, name: "산", image: mountain },
@@ -27,6 +31,8 @@ const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
     const handleComplete = () => {
         if (selectedTheme) {
             setIsChatbotOpen(true); // 완료 버튼을 누르면 Chatbot 모달 열기
+            console.log("입력받은 곳"+locationInput);
+            
         } else {
             alert('테마를 선택해 주세요.');
         }
@@ -92,7 +98,7 @@ const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
                             theme={selectedTheme.name}
                             startDate={startDate}
                             endDate={endDate}
-                            location={location}
+                            location={location || locationInput}
                             onSelectPlace={handlePlaceSelectFromChatbot}
                             /> {/* 선택된 테마 전달 */}
                         <button className={style.closeButton} onClick={handleChatbotClose}>챗봇 닫기</button>
