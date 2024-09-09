@@ -1,9 +1,11 @@
 import React from "react";
 import styles from "./CustomToast.module.css"; // CSS 모듈 경로
+import { CiCircleCheck } from "react-icons/ci";
+import { BsTrash } from "react-icons/bs";
 
 const CustomToast = ({ type, message, onClose }) => {
   const getIcon = () => {
-    return type === "success" ? "✅" : "❌";
+    return type === "success" ? <CiCircleCheck /> : <BsTrash />;
   };
 
   const getTitle = () => {

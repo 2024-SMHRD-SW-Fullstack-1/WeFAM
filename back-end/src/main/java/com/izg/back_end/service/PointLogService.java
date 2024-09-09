@@ -17,4 +17,6 @@ public class PointLogService {
 		Integer totalPoints = pointLogRepository.getTotalPointsByUserId(userId);
 		return totalPoints != null ? totalPoints : 0; // null일 경우 0 반환
 	}
+	
+	
 }

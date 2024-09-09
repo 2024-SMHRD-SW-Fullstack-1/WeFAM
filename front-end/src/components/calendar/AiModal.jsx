@@ -6,7 +6,7 @@ import inside from "../../assets/images/inside.png";
 import festival from "../../assets/images/festival.png";
 import activity from "../../assets/images/gliding.png";
 import Chatbot from "../chatbot/Chatbot"; // Chatbot 컴포넌트 임포트
-import dot from "../../assets/images/dot.png";
+import dot from "../../assets/images/dot11.png";
 import { useSelector } from "react-redux";
 
 const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
@@ -16,17 +16,17 @@ const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Chatbot 모달 상태 관리
     
 
-  const themes = [
-    { id: 1, name: "산", image: mountain },
-    { id: 2, name: "실내여행지", image: inside },
-    { id: 3, name: "액티비티", image: activity },
-    { id: 4, name: "축제", image: festival },
-    { id: 5, name: "상관없음", image: dot },
-  ];
+    const themes = [
+        { id: 1, name: '산', image: mountain },
+        { id: 2, name: '실내여행지', image: inside },
+        { id: 3, name: '액티비티', image: activity },
+        { id: 4, name: '축제', image: festival },
+        { id: 5, name: '상관없음', image: dot }
+    ];
 
-  const handleThemeClick = (theme) => {
-    setSelectedTheme(theme);
-  };
+    const handleThemeClick = (theme) => {
+        setSelectedTheme(theme);
+    };
 
     const handleComplete = () => {
         if (selectedTheme) {
@@ -53,40 +53,31 @@ const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
     setIsChatbotOpen(false); // Chatbot 모달 닫기
   };
 
-  return (
-    <div className={styles.modal}>
-      <div className={style.aimodal}>
-        <div className={style.themeHead}>
-          <h1>가족이 원하는 여행 테마를 1개 선택해 주세요.</h1>
-        </div>
-        <div className={style.themeContainer}>
-          {themes.map((theme) => (
-            <div
-              key={theme.id}
-              className={`${style.theme} ${
-                selectedTheme?.id === theme.id ? style.selected : ""
-              }`}
-              onClick={() => handleThemeClick(theme)}>
-              {theme.image && (
-                <img
-                  src={theme.image}
-                  alt={theme.name}
-                  className={style.themeImage}
-                />
-              )}
-              {<div className={style.themeName}>{theme.name}</div>}
+    return (
+        <div className={styles.modal}>
+            <div className={style.aimodal}>
+                <div className={style.themeHead}>
+                    <h1>가족이 원하는 여행 테마를 1개 선택해 주세요.</h1>
+                </div>
+                <div className={style.themeContainer}>
+                    {themes.map((theme) => (
+                        <div
+                            key={theme.id}
+                            className={`${style.theme} ${selectedTheme?.id === theme.id ? style.selected : ''}`}
+                            onClick={() => handleThemeClick(theme)}
+                        >
+                            {theme.image && (
+                                <img src={theme.image} alt={theme.name} className={style.themeImage} />
+                            )}
+                            {<div className={style.themeName}>{theme.name}</div>}
+                        </div>
+                    ))}
+                </div>
+                <div className={style.buttonContainer}>
+                    <button className={style.cancelButton} onClick={handleClose}>취소</button>
+                    <button className={style.completeButton} onClick={handleComplete}>완료</button>
+                </div>
             </div>
-          ))}
-        </div>
-        <div className={style.buttonContainer}>
-          <button className={style.cancelButton} onClick={handleClose}>
-            취소
-          </button>
-          <button className={style.completeButton} onClick={handleComplete}>
-            완료
-          </button>
-        </div>
-      </div>
 
             {/* Chatbot 모달 렌더링 */}
             {isChatbotOpen && (

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import modalStyles from "../modal/Modal.module.css";
-import styles from "./AddPollModal.module.css";
+import styles from "./PollModal.module.css";
 import Preloader from "../preloader/Preloader";
 import axios from "axios";
 
@@ -15,6 +15,7 @@ const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
   const [selectedOptionNum, setSelectedOptionNum] = useState(null);
   const [voteResult, setVoteResult] = useState(null); // 추가: 투표 결과 상태
   const userData = useSelector((state) => state.user.userData);
+  const totalSize = 4; // 최대 투표 수
 
   useEffect(() => {
     const fetchPollData = async () => {
@@ -122,28 +123,46 @@ const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
               readOnly={true}
             />
             <div className={styles.optionsContainer}>
-              {options.map((option, index) => (
-                <div
-                  key={index}
-                  className={`${styles.option} ${
-                    selectedOptionNum === index ? styles.selected : ""
-                  }`}
-                >
-                  <input
-                    type="text"
-                    placeholder={`투표 항목 ${index + 1}`}
-                    value={option}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                    className={styles.inputOption}
-                    readOnly={true}
-                  />
-                  <input
-                    type="radio"
-                    checked={selectedOptionNum === index}
-                    onChange={() => setSelectedOptionNum(index)}
-                  />
-                </div>
-              ))}
+              {options.map((option, index) => {
+                // 해당 항목의 투표 수 가져오기
+                const result = voteResult?.find(
+                  (res) => res.choiceIndex === index
+                );
+                const voteCount = result ? result.voteCount : 0;
+
+                // 백그라운드 비율 계산
+                const percentage = (voteCount / totalSize) * 100;
+
+                return (
+                  <div key={index} className={styles.option}>
+                    <div className={styles.inputOptionContainer}>
+                      <input
+                        type="text"
+                        placeholder={`투표 항목 ${index + 1}`}
+                        value={option}
+                        onChange={(e) =>
+                          handleOptionChange(index, e.target.value)
+                        }
+                        className={styles.inputOption}
+                        readOnly={true}
+                        style={{
+                          background: `linear-gradient(to right, #ff4d4d ${percentage}%, transparent ${percentage}%)`,
+                          zIndex: "990",
+                        }}
+                      />
+                    </div>
+                    {/* 투표 수 표시 */}
+                    <span
+                      className={styles.voteCount}
+                    >{`(${voteCount}표)`}</span>
+                    <input
+                      type="radio"
+                      checked={selectedOptionNum === index}
+                      onChange={() => setSelectedOptionNum(index)}
+                    />
+                  </div>
+                );
+              })}
             </div>
 
             <div className={modalStyles.modalFooter}>
@@ -152,22 +171,6 @@ const PollModal = ({ feed, poll, onSavePoll, onClose }) => {
               </button>
               {isVoted ? (
                 <>
-                  <div>
-                    투표 결과:
-                    {voteResult && voteResult.length > 0
-                      ? // choiceIndex를 기준으로 오름차순 정렬
-                        voteResult
-                          .slice() // 원본 배열을 변경하지 않도록 복사
-                          .sort((a, b) => a.choiceIndex - b.choiceIndex) // 오름차순 정렬
-                          .map((result, index) => (
-                            <div key={index}>
-                              {`투표 항목 ${result.choiceIndex + 1} : ${
-                                result.voteCount
-                              }표`}
-                            </div>
-                          ))
-                      : "결과 없음"}
-                  </div>
                   <button className={modalStyles.saveButton} onClick={onVote}>
                     다시 투표하기
                   </button>

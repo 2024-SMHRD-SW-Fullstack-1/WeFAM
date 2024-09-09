@@ -37,15 +37,12 @@
   border: none;
   border-radius: 10px;
   padding: 5% 10%;
-
   box-shadow: 0px 12px 24.8px 0px rgba(0, 0, 0, 0.2);
 }
 
 .rightSidebar {
   padding: 5px;
   width: 250px;
-  margin-top: 20px;
-  margin-right: 30px;
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
@@ -98,7 +95,7 @@
   /* 원하는 크기로 조정 */
   height: 20px;
   /* transform: rotate(-45deg); */
-    /* 요소를 반시계 방향으로 45도 회전 */
+  /* 요소를 반시계 방향으로 45도 회전 */
 }
 
 .userName {
