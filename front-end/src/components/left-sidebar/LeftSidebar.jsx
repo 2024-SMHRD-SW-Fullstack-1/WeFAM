@@ -14,6 +14,11 @@ import { CiForkAndKnife } from "react-icons/ci";
 import { CiImageOn } from "react-icons/ci";
 import { CiSettings } from "react-icons/ci";
 import { CiLogout } from "react-icons/ci";
+import iconMenuAlbum from "../../assets/images/icon-menu-album.png";
+import iconMenuMeal from "../../assets/images/icon-menu-meal.png";
+import iconMenuHousework from "../../assets/images/icon-menu-housework.png";
+import iconMenuFamily from "../../assets/images/icon-menu-family.png";
+import iconMenuLogout from "../../assets/images/icon-menu-logout.png";
 import axios from "axios";
 
 // 카카오 로그인
@@ -22,7 +27,7 @@ const REDIRECT_URI = "http://localhost:3000";
 const kakaoToken = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
 const LeftSidebar = () => {
-  const [familyNick, setFamilyNick] = useState("");
+  const [familyMotto, setFamilyMotto] = useState("");
   const [profileImage, setProfileImage] = useState(null); // 가족 프로필 이미지 상태
   const userData = useSelector((state) => state.user.userData);
   const nav = useNavigate();
@@ -35,18 +40,18 @@ const LeftSidebar = () => {
       axios
         .get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
         .then((response) => {
-          setFamilyNick(response.data);
+          setFamilyMotto(response.data);
         })
         .catch((error) => {
           console.error("가족 이름을 가져오는 중 에러 발생:", error);
         });
 
-      // 프로필 이미지 불러오기
-      fetchProfileImage(); // 추가한 함수 호출
+      // 프로필 이미지 불러오기 (미사용)
+      fetchProfileImage();
     }
   }, [userData]);
 
-  // 프로필 이미지 불러오는 함수 추가
+  // 프로필 이미지 불러오는 함수 추가 (미사용)
   const fetchProfileImage = () => {
     const url = `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}?entityType=family`;
 
@@ -115,14 +120,15 @@ const LeftSidebar = () => {
         className={styles.profile}
         style={{ backgroundImage: `url(${profileImage})` }} // 동적으로 불러온 이미지 적용
       >
-        <img
+        {/* 미사용 */}
+        {/* <img
           className={styles.profileThumbnail}
           src={userData.profileImg || profileThumbnail}
           alt="프로필"
-        />
-        <div className={styles.profileName}>
-          <p>{familyNick}</p>
-        </div>
+        /> */}
+      </div>
+      <div className={styles.familyMotto}>
+        <p>{familyMotto}</p>
       </div>
 
       {/* 카테고리 */}
@@ -136,7 +142,20 @@ const LeftSidebar = () => {
               }}
               style={{ cursor: "pointer" }}
             >
-              <CiHome className={styles.categoryItemLogo} />
+              {/* <CiHome className={styles.categoryItemLogo} /> */}
+              <i
+                className="xz74otr"
+                style={{
+                  backgroundImage:
+                    'url("https://static.xx.fbcdn.net/rsrc.php/v3/yb/r/eECk3ceTaHJ.png")',
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                }}
+                aria-hidden="true"
+              ></i>
               <span>홈</span>
             </span>
           </li>
@@ -147,7 +166,20 @@ const LeftSidebar = () => {
               }}
               style={{ cursor: "pointer" }}
             >
-              <CiCalendar className={styles.categoryItemLogo} />
+              <i
+                data-visualcompletion="css-img"
+                style={{
+                  backgroundImage:
+                    'url("https://static.xx.fbcdn.net/rsrc.php/v3/yV/r/vTDQ3deAsEh.png")',
+                  backgroundPosition: "0px -37px",
+                  backgroundSize: "auto",
+                  width: "36px",
+                  height: "36px",
+                  backgroundRepeat: "no-repeat",
+                  display: "inline-block",
+                }}
+              ></i>
+              {/* <CiCalendar className={styles.categoryItemLogo} /> */}
               <span>달력</span>
             </span>
           </li>
@@ -158,7 +190,17 @@ const LeftSidebar = () => {
               }}
               style={{ cursor: "pointer" }}
             >
-              <CiCircleList className={styles.categoryItemLogo} />
+              <img
+                src={iconMenuHousework}
+                alt=""
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                  padding: "2px",
+                }}
+              />
+              {/* <CiCircleList className={styles.itemLogo} /> */}
               <span>집안일</span>
             </span>
           </li>
@@ -169,8 +211,17 @@ const LeftSidebar = () => {
               }}
               style={{ cursor: "pointer" }}
             >
-              <CiForkAndKnife className={styles.categoryItemLogo} />
-              <span>요리법</span>
+              <img
+                src={iconMenuMeal}
+                alt=""
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                }}
+              />
+              {/* <CiForkAndKnife className={styles.itemLogo} /> */}
+              <span>가족 식사</span>
             </span>
           </li>
           <li>
@@ -180,7 +231,16 @@ const LeftSidebar = () => {
               }}
               style={{ cursor: "pointer" }}
             >
-              <CiImageOn className={styles.categoryItemLogo} />
+              <img
+                src={iconMenuAlbum}
+                alt=""
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                }}
+              />
+              {/* <CiImageOn className={styles.itemLogo} /> */}
               <span>가족 앨범</span>
             </span>
           </li>
@@ -194,13 +254,33 @@ const LeftSidebar = () => {
                 nav("/main/settings");
               }}
             >
-              <CiSettings className={styles.categoryItemLogo} />
+              <img
+                src={iconMenuFamily}
+                alt=""
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                  padding: "2px",
+                }}
+              />
+              {/* <CiSettings className={styles.itemLogo} /> */}
               <span>가족정보</span>
             </span>
           </li>
           <li>
             <span onClick={handleLogout}>
-              <CiLogout className={styles.categoryItemLogo} />
+              <img
+                src={iconMenuLogout}
+                alt=""
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  display: "inline-block",
+                  padding: "2px",
+                }}
+              />
+              {/* <CiLogout className={styles.itemLogo} /> */}
               <span>로그아웃</span>
             </span>
           </li>

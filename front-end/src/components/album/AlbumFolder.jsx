@@ -7,11 +7,11 @@ import styles from "./AlbumFolder.module.css";
 import axios from "axios";
 import { BsPlusCircle } from "react-icons/bs";
 import { BsTrash } from "react-icons/bs";
+import albumIcon from "../../assets/images/icon-album.png";
 
 Modal.setAppElement("#root");
 
 const AlbumFolder = () => {
-  const { name } = useParams();
   const userId = useSelector((state) => state.user.userData.id);
   const userData = useSelector((state) => state.user.userData);
 
@@ -25,7 +25,7 @@ const AlbumFolder = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const imagesPerPage = 15;
+  const imagesPerPage = 12;
 
   // 초기 이미지 불러오기
   useEffect(() => {
@@ -195,22 +195,26 @@ const AlbumFolder = () => {
 
   return (
     <div className="main">
-      <div className={styles.albumWrapper}>
-        <div className={styles.albumHead}>
-          <div className={styles.headTitle}>
-            <div className={styles.folderName}>
-              <h1>가족 앨범</h1>
-              <p className={styles.folderNameText}>{name}</p>
+      <div className={styles.album}>
+        <div className={styles.header}>
+          <div className={styles.title}>
+            <div>
+              <img src={albumIcon} alt="" />
             </div>
-            <div className={styles.imgArray}>
+            <h1>가족 앨범</h1>
+          </div>
+          <div className={styles.controller}>
+            <div className={styles.selectController}>
               <p>시작일</p>
               <input
+                className={styles.dateInput}
                 type="date"
                 onChange={handleStartDateChange}
                 value={startDate}
               />
               <p>종료일</p>
               <input
+                className={styles.dateInput}
                 type="date"
                 onChange={handleEndDateChange}
                 value={endDate}
@@ -225,23 +229,25 @@ const AlbumFolder = () => {
                 초기화
               </button>
             </div>
-          </div>
-
-          <div className={styles.imgSetting}>
-            <button className={styles.btnDelete} onClick={deleteSelectedImages}>
-              <BsTrash />
-            </button>
-            <button
-              className={styles.btnPlus}
-              onClick={() => setIsModalOpen(true)}
-            >
-              <BsPlusCircle />
-            </button>
+            <div className={styles.manageController}>
+              <button
+                className={styles.btnDelete}
+                onClick={deleteSelectedImages}
+              >
+                <BsTrash />
+              </button>
+              <button
+                className={styles.btnPlus}
+                onClick={() => setIsModalOpen(true)}
+              >
+                <BsPlusCircle />
+              </button>
+            </div>
           </div>
         </div>
 
         <div className={styles.folderContainer}>
-          <div className={styles.saveAndCheckbox}>
+          <div className={styles.selectAllContainer}>
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -277,28 +283,23 @@ const AlbumFolder = () => {
                   </div>
                 ))}
               {/* 왼쪽 버튼 */}
-              <button className={`${styles.navigateButton} ${styles.leftButton}`} onClick={handlePrevPage}>
+              <button
+                className={`${styles.navigateButton} ${styles.leftButton}`}
+                onClick={handlePrevPage}
+              >
                 {"<"}
               </button>
 
               {/* 오른쪽 버튼 */}
-              <button className={`${styles.navigateButton} ${styles.rightButton}`} onClick={handleNextPage}>
+              <button
+                className={`${styles.navigateButton} ${styles.rightButton}`}
+                onClick={handleNextPage}
+              >
                 {">"}
               </button>
             </div>
           ) : (
             <p>이미지가 없습니다.</p>
-          )}
-
-          {images.length > imagesPerPage && (
-            <div className={styles.slider}>
-              <button className={styles.prevButton} onClick={handlePrevPage}>
-                &lt;
-              </button>
-              <button className={styles.nextButton} onClick={handleNextPage}>
-                &gt;
-              </button>
-            </div>
           )}
         </div>
 
@@ -326,8 +327,18 @@ const AlbumFolder = () => {
                 />
                 {selectedFiles.length > 1 && (
                   <div className={styles.slideButtons}>
-                    <button onClick={showPreviousFile} className={styles.addleftButton}>{"<"}</button>
-                    <button onClick={showNextFile} className={styles.addrightButton}>{">"}</button>
+                    <button
+                      onClick={showPreviousFile}
+                      className={styles.addleftButton}
+                    >
+                      {"<"}
+                    </button>
+                    <button
+                      onClick={showNextFile}
+                      className={styles.addrightButton}
+                    >
+                      {">"}
+                    </button>
                   </div>
                 )}
               </div>
@@ -339,7 +350,9 @@ const AlbumFolder = () => {
               <li key={file.name} className={styles.fileItem}>
                 {file.name}
                 <div className={styles.buttonContainer}>
-                  <button onClick={open} className={styles.inputButton}>추가</button>
+                  <button onClick={open} className={styles.inputButton}>
+                    추가
+                  </button>
                   <button onClick={() => removeFile(file.name)}>삭제</button>
                 </div>
               </li>
@@ -350,10 +363,13 @@ const AlbumFolder = () => {
             <button className={styles.modalButton} onClick={saveImages}>
               저장
             </button>
-            <button className={styles.modalButton} onClick={() => {
-              setSelectedFiles([]); // 선택된 파일 초기화
-              setIsModalOpen(false); // 모달 닫기
-            }}>
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                setSelectedFiles([]); // 선택된 파일 초기화
+                setIsModalOpen(false); // 모달 닫기
+              }}
+            >
               취소
             </button>
           </div>
@@ -368,13 +384,23 @@ const AlbumFolder = () => {
           overlayClassName={styles.folderOverlay}
         >
           <div className={styles.imageModalContent}>
-            <button onClick={showPreviousImage} className={styles.leftimageModalContent}>{"<"}</button>
+            <button
+              onClick={showPreviousImage}
+              className={styles.leftimageModalContent}
+            >
+              {"<"}
+            </button>
             <img
               src={images[currentImageIndex]?.url}
               alt={`img-${currentImageIndex}`}
               className={styles.modalImage}
             />
-            <button onClick={showNextImage} className={styles.rightimageModalContent}>{">"}</button>
+            <button
+              onClick={showNextImage}
+              className={styles.rightimageModalContent}
+            >
+              {">"}
+            </button>
           </div>
         </Modal>
       </div>

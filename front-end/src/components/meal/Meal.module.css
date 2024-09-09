@@ -1,6 +1,9 @@
 .meal {
   width: 640px;
-  padding: var(--space-lg) var(--space-md);
+  margin: var(--space-xl) 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  background-color: var(--color-white);
 }
 
 @media (max-width: 767px) {
@@ -8,15 +11,6 @@
   .meal {
     width: 90%;
   }
-}
-
-.content {
-  width: 100%;
-  height: calc(100% - 40px);
-  padding-top: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .header {
@@ -45,7 +39,6 @@
 .header .title h1 {
   margin: 0;
 }
-
 .header > .controller button {
   padding: 0;
   display: flex;
@@ -53,17 +46,25 @@
   align-items: center;
   font-size: var(--font-2xl);
 }
-
 .header > .controller button:hover {
   color: var(--color-sunset-hover);
 }
-
 .header > .controller {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: var(--space-md);
 }
+
+.content {
+  width: 100%;
+  height: calc(100% - 40px);
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .recipeImgContainer {
   position: relative;
   width: 300px;
