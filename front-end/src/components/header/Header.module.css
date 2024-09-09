@@ -258,6 +258,8 @@ nav {
   font-size: 24px;
   padding: 4px;
   display: flex;
+  position: relative;
+  cursor: pointer;
 }
 
 .profileImageWrapper {
@@ -268,7 +270,7 @@ nav {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--color-black);
+  border: 1px solid var(--color-white);
 }
 
 .infoContainer {
@@ -277,6 +279,7 @@ nav {
   display: flex;
   align-items: center;
   z-index: 100;
+  position: relative;
 }
 
 .infoField {
@@ -284,4 +287,26 @@ nav {
   align-items: center;
   padding: 0 20px;
   gap: 10px;
+}
+
+.alarmModal {
+  position: absolute;
+  /* 모달의 위치를 절대 위치로 설정 */
+  top: 30px;
+  /* 아이콘 바로 아래에 위치하도록 설정 */
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  z-index: 2000;
+  /* 모달이 다른 요소들 위에 표시되도록 설정 */
+}
+
+/* 반응형 디자인 */
+@media (max-width: 767px) {
+  .groupContainer {
+    display: none;
+  }
 }

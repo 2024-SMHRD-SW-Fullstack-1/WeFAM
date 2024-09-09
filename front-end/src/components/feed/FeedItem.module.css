@@ -95,12 +95,14 @@
   flex-wrap: wrap; /* 자동으로 줄 바꿈 */
   width: 100%;
 }
+
 .roulettesContent > .roulette,
 .pollsContent > .poll {
   display: flex;
   align-items: center;
   height: 100%;
 }
+
 .roulettesContent > .roulette button,
 .pollsContent > .poll button {
   padding: var(--space-sm);
@@ -113,6 +115,7 @@
   background-color: var(--color-sunset);
   border-radius: var(--radius-md);
 }
+
 .roulettesContent > .roulette button:hover,
 .pollsContent > .poll button:hover {
   background-color: var(--color-sunset-hover);
@@ -260,7 +263,7 @@
   position: absolute;
   width: 32px;
   height: 32px;
-  top: calc(50% - 16px);
+  top: 50%;
   transform: translateY(-50%);
   display: flex;
   justify-content: center;

@@ -4,7 +4,7 @@ import styles from "./FeedList.module.css";
 import FeedItem from "./FeedItem";
 
 const FeedList = React.memo(
-  ({ feeds, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
+  ({ feeds, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
     return (
       <div className={styles.feedList}>
         {feeds.map((feed) => (
@@ -12,9 +12,9 @@ const FeedList = React.memo(
           <FeedItem
             key={feed.feedIdx}
             feed={feed}
+            getAllFeeds={getAllFeeds}
             onGetFeedDetail={onGetFeedDetail}
             onUpdateFeed={onUpdateFeed}
-            onDeleteFeed={onDeleteFeed}
           />
         ))}
       </div>

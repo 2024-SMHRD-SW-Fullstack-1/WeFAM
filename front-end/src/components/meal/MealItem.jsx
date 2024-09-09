@@ -3,11 +3,13 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import styles from "./MealItem.module.css";
 import EditMealModal from "./EditMealModal";
+import DeleteModal from "../modal/DeleteModal";
 import { elapsedTime } from "../../elapsedTime";
 
 import { BsThreeDots } from "react-icons/bs";
 
 const MealItem = ({ meal, onSelect, getAllMeals }) => {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   // Redux에서 로그인한 사용자 데이터 및 이미지를 가져오기
   const userData = useSelector((state) => state.user.userData);
   const optionsRef = useRef(null); // 옵션 메뉴
@@ -23,22 +25,25 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
   };
 
   // 가족 식사 수정 클릭!
-  const handleUpdateMeal = () => {
+  const handleUpdateMeal = (e) => {
+    e.stopPropagation(); // 이벤트 버블링 막기
     setSelectedMeal({ mealIdx: meal.mealIdx });
     setIsEditMealModalOpen(true);
   };
 
+  // 삭제 클릭 시 삭제 확인 모달 열기
+  const handleDeleteClick = () => {
+    setIsDeleteOpen(true); // 삭제 모달을 열기
+  };
+
+  // 삭제 확인 후 실제 삭제 처리
+  const handleDeleteConfirm = () => {
+    setIsDeleteOpen(false); // 삭제 모달 닫기
+    handleDeleteMeal(); // 삭제 로직 실행
+  };
+
   // 가족 식사 삭제
-  const handleDeleteMeal = async (e) => {
-    e.stopPropagation(); // 이벤트 버블링 막기
-
-    // 삭제 전 확인
-    const confirmDelete = window.confirm("정말로 삭제하시겠습니까?");
-
-    if (!confirmDelete) {
-      return;
-    }
-
+  const handleDeleteMeal = async () => {
     try {
       await axios.delete(`http://localhost:8089/wefam/meals/${meal.mealIdx}`);
       console.log("식사가 성공적으로 삭제되었습니다.");
@@ -74,57 +79,62 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
   }, [isOptionsVisible, handleClickOutside]);
 
   return (
-    <div className={styles.mealItem} onClick={handleItemClick}>
-      <div className={styles.header}>
-        <div className={styles.metaContainer}>
-          <div className={styles.profileImgContainer}>
-            <img src={userData.profileImg} alt="" />
-          </div>
-          <div className={styles.meta}>
-            <div className={styles.authorTime}>
-              <span className={styles.author}>{meal.userNick}</span>
-              <span>ㆍ</span>
-              <span className={styles.time}>{elapsedTime(meal.postedAt)}</span>
+    <div className={styles.mealItem}>
+      <div className={styles.mealClickZone} onClick={handleItemClick}>
+        <div className={styles.header}>
+          <div className={styles.metaContainer}>
+            <div className={styles.profileImgContainer}>
+              <img src={userData.profileImg} alt="" />
             </div>
-            <div className={styles.location}></div>
+            <div className={styles.meta}>
+              <div className={styles.authorTime}>
+                <span className={styles.author}>{meal.userNick}</span>
+                <span>ㆍ</span>
+                <span className={styles.time}>
+                  {elapsedTime(meal.postedAt)}
+                </span>
+              </div>
+              <div className={styles.location}></div>
+            </div>
           </div>
+
+          {userData.id === meal.userId && (
+            <div
+              className={styles.mealOptionsContainer}
+              onClick={toggleOption}
+              ref={optionsRef}
+            >
+              <BsThreeDots />
+              {isOptionsVisible && (
+                <ul className={styles.options}>
+                  <>
+                    <li>
+                      <button className="option" onClick={handleUpdateMeal}>
+                        수정
+                      </button>
+                    </li>
+                    <li>
+                      <button className="option" onClick={handleDeleteClick}>
+                        삭제
+                      </button>
+                    </li>
+                  </>
+                </ul>
+              )}
+            </div>
+          )}
         </div>
 
-        {userData.id === meal.userId && (
-          <div
-            className={styles.mealOptionsContainer}
-            onClick={toggleOption}
-            ref={optionsRef}
-          >
-            <BsThreeDots />
-            {isOptionsVisible && (
-              <ul className={styles.options}>
-                <>
-                  <li>
-                    <button className="option" onClick={handleUpdateMeal}>
-                      수정
-                    </button>
-                  </li>
-                  <li>
-                    <button className="option" onClick={handleDeleteMeal}>
-                      삭제
-                    </button>
-                  </li>
-                </>
-              </ul>
-            )}
-          </div>
-        )}
+        <div className={styles.content}>
+          <p>
+            식사 일정 : {meal.mealDate}ㆍ{meal.mealType}
+          </p>
+          <p>요리 제목 : {meal.mealName}</p>
+          <img src={meal.mealThumbnail} alt={meal.mealName} />
+          <div>{meal.mealContent}</div>
+        </div>
       </div>
 
-      <div className={styles.content}>
-        <p>
-          식사 일정 : {meal.mealDate}ㆍ{meal.mealType}
-        </p>
-        <p>요리 제목 : {meal.mealName}</p>
-        <img src={meal.mealThumbnail} alt={meal.mealName} />
-        <div>{meal.mealContent}</div>
-      </div>
       {isEditMealModalOpen && (
         <EditMealModal
           meal={selectedMeal}
@@ -133,6 +143,11 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
           onClose={() => setIsEditMealModalOpen(false)}
         />
       )}
+      <DeleteModal
+        showModal={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)} // 모달 닫기
+        onConfirm={handleDeleteConfirm} // 삭제 확인 시 실제 삭제 실행
+      />
     </div>
   );
 };

@@ -57,6 +57,7 @@
   background-color: var(--color-sunset);
   color: white;
 }
+
 .saveButton:hover {
   background-color: var(--color-sunset-hover);
 }
