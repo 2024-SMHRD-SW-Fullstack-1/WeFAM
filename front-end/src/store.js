@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/userSlice";
 import leftSidebarReducer from "./features/leftSidebarSlice";
 import imagesOnFeedReducer from "./features/imagesOnFeedSlice";
+import roulettesReducer from "./features/roulettesSlice";
 import pollsReducer from "./features/pollsSlice";
 import familyReducer from "./features/familySlice"; // familySlice 추가
 import locationInputReducer from "./features/locationSlice"; // locationSlice 추가
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   leftSidebar: leftSidebarReducer,
   // imagesOnFeed: imagesOnFeedReducer,
+  roulettes: roulettesReducer,
   polls: pollsReducer,
   family: familyReducer,
   locationInput: locationInputReducer, // locationReducer 추가

@@ -37,7 +37,7 @@ public class ChatbotController {
       conversationHistory.add(new ChatbotMessage("system", "대답중 마지막엔 `마음에 드시는 계획을 선택해 주세요! \\n\\n 마음에 드시지 않는다면 저에게 다시 물어봐주세요😘😘` 이렇게 말해줘"));
       conversationHistory.add(new ChatbotMessage("system", "유저가 여행테마를 산, 실내여행지, 액티비티, 축제, 상관없음 다섯개중에 고를건데"
       		+ " 선택한 테마와 날짜를 기반으로 선택한 장소가 있는 지역에 고른 테마에 맞는 주변 추천 정확한 장소명칭을 꼭 세개정도 알려줘. 만약 상관없음을 고른다면 선택한 장소 주변에서 방문할만한 곳을 추천해주면돼."));
-//      conversationHistory.add(new ChatbotMessage("system", "답변을 해줄땐 꼭 정확한 장소명칭만을 말해주고 부가적인 설명은 줄바꿈된 곳에 설명해줘 꼭!"));
+      conversationHistory.add(new ChatbotMessage("system", "답변을 해줄땐 꼭 정확한 장소명칭만을 말해주고 부가적인 설명은 줄바꿈된 곳에 설명해줘 꼭!"));
 //      conversationHistory.add(new ChatbotMessage("system", "답변 형태는 (숫자). ** 답변 ** 이러한 형태로해줘."));
 //      conversationHistory.add(new ChatbotMessage("system", "사용자가 테마를 골랐다면 그 테마를 할 수 있는 장소를 알려줘야돼. "
 //      		+ "예를들어 장소는 해운대해수욕장을고르고 테마는 축제를 골랐다면 해운대해수욕장 근처에서 열리는 축제 장소위치를 알려주는거야. "));

@@ -3,8 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styles from "./LeftSidebar.module.css";
 
+import profileThumbnail from "../../assets/images/gucci-cat.png";
 import familyPT from "../../assets/images/famaily.png";
-import { CiHome, CiCalendar, CiCircleList, CiForkAndKnife, CiImageOn, CiSettings, CiLogout } from "react-icons/ci";
+
+import { CiHome } from "react-icons/ci";
+import { CiCalendar } from "react-icons/ci";
+import { CiStickyNote } from "react-icons/ci";
+import { CiCircleList } from "react-icons/ci";
+import { CiForkAndKnife } from "react-icons/ci";
+import { CiImageOn } from "react-icons/ci";
+import { CiSettings } from "react-icons/ci";
+import { CiLogout } from "react-icons/ci";
 import axios from "axios";
 
 const LeftSidebar = () => {
@@ -104,7 +113,12 @@ const LeftSidebar = () => {
             </span>
           </li>
           <li>
-            <span onClick={() => nav("/main/recipe")} style={{ cursor: "pointer" }}>
+            <span
+              onClick={() => {
+                nav("/main/meal");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <CiForkAndKnife className={styles.categoryItemLogo} />
               <span>요리법</span>
             </span>
