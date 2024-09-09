@@ -98,6 +98,7 @@ public class UserController {
 			return ResponseEntity.ok(savedUser);
 		} catch (Exception e) {
 			System.out.println("테스트"+updatedUser);
+
 			return ResponseEntity.status(500).body(null);
 		}
 	}
@@ -112,7 +113,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
 	}
-	
+
 	@GetMapping("/get-user/{id}")
 	public ResponseEntity<UserModel> getUserById(@PathVariable("id") String id) {
 	    try {

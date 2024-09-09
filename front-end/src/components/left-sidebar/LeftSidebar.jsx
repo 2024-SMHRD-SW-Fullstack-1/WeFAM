@@ -93,7 +93,11 @@ const LeftSidebar = () => {
   };
 
   return (
-    <div className={`${styles.leftSidebar} ${isOpen ? "" : styles.closed}`}>
+    <div
+      className={`${styles.leftSidebar} ${
+        isOpen ? styles.opened : styles.closed
+      }`}
+    >
       {/* 프로필 */}
       <div
         className={styles.profile}

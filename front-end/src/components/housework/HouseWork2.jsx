@@ -320,7 +320,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
   };
@@ -518,9 +518,8 @@ const Housework2 = () => {
                 className={
                   tasks.daily.length > 0
                     ? styles.circleDaily
-                    : styles.circleZero
-                }
-              >
+                    : styles.circleZero         
+                    }>
                 {tasks.daily.length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
@@ -610,7 +609,6 @@ const Housework2 = () => {
             fetchCompletedTasks();
           }}
         />
-
         <DeleteModal
           showModal={isDeleteOpen}
           onClose={() => setIsDeleteOpen(false)} // 모달 닫기
@@ -622,8 +620,7 @@ const Housework2 = () => {
           onRequestClose={closeImageModal}
           contentLabel="작업 이미지"
           className={styles.imageModalContent}
-          overlayClassName={styles.imageModalOverlay}
-        >
+          overlayClassName={styles.imageModalOverlay}>
           <div className={styles.modalBody}>
             <h2>작업 이미지</h2>
             <div className={styles.imagePreviewContainer}>
