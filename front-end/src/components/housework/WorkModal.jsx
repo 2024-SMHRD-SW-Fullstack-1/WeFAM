@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import { FiList, FiEdit, FiUser, FiAlertCircle } from "react-icons/fi";
 import { TbCoin } from "react-icons/tb";
 import styles from "./WorkModal.module.css";
+import point from "../../assets/images/pointicon.png";
 
 // 모달이 렌더링될 DOM 요소 설정
 Modal.setAppElement("#root");
@@ -170,7 +171,7 @@ const WorkModal = ({
 
       {/* 작업 포인트 입력 */}
       <div className={styles.inputContainer}>
-        <TbCoin className={styles.icon} />
+        <img src={point} className={styles.icon} />
         <div style={{ width: "100%" }}>
           <input
             type="text"

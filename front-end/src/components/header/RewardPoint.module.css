@@ -16,6 +16,7 @@
   /* 좌우로 나눔 */
   width: 100%;
   /* 부모 컨테이너 전체 너비 사용 */
+  margin-right: 15px;
 }
 
 .pointLog {
@@ -49,18 +50,18 @@
 .completedTaskDetails {
   text-align: right; /* 완료일과 포인트는 오른쪽 정렬 */
   color: gray;
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .completedTask h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
 }
 
 .completedTask p {
   margin: 5px 0;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .completedTask span {
@@ -71,7 +72,7 @@
 .taskPoints {
   color: #e74c3c;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .familyPointsContainer {
@@ -91,8 +92,8 @@
 }
 
 .familyMemberImg {
-  width: 60px; /* 프로필 이미지의 크기를 줄임 */
-  height: 60px;
+  width: 50px; /* 프로필 이미지의 크기를 줄임 */
+  height: 50px;
   border-radius: 50%;
   margin-right: 10px;
   object-fit: cover;
@@ -101,7 +102,7 @@
 .memberInfo {
   display: flex;
   flex-direction: row;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -110,11 +111,12 @@
 }
 
 .buyContainer {
-  width: 500px; /* 완료한 작업들과 동일한 너비로 조정 */
+  width: 400px; /* 완료한 작업들과 동일한 너비로 조정 */
   text-align: left;
   padding: 20px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
+  margin-right: 15px;
 }
 
 .purchasedRewardsList {
@@ -132,8 +134,8 @@
 }
 
 .rewardImage {
-  width: 150px; /* 이미지 크기 조절 */
-  height: 150px;
+  width: 100px; /* 이미지 크기 조절 */
+  height: 100px;
   border-radius: 12px;
   object-fit: contain;
   margin-right: 20px;
@@ -146,17 +148,17 @@
 
 .rewardDetails h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
 }
 
 .rewardDetails p {
   margin: 5px 0;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .rewardDetails span {
   display: block;
   color: gray;
-  font-size: 16px;
+  font-size: 15px;
 }

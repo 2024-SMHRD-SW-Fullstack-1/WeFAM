@@ -33,6 +33,7 @@ const Housework2 = () => {
   const [selectedTaskImages, setSelectedTaskImages] = useState();
   const [isImageModalOpen, setIsImageModalOpen] = useState();
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [existingPostedAt, setExistingPostedAt] = useState(null);
 
   // 모달을 여는 함수
   const openDailyModal = () => {
@@ -116,10 +117,20 @@ const Housework2 = () => {
           images: item.images,
           userProfileImg: item.userProfileImg,
           userName: item.userName,
+          completedAt: item.workLog.completedAt
+            ? new Date(item.workLog.completedAt)
+            : null, // completedAt을 Date 객체로 변환
         };
       });
 
-      setCompletedTasks(completedTasksWithImages);
+      // completedAt을 기준으로 정렬 (completedAt이 null일 경우를 처리)
+      const sortedCompletedTasks = completedTasksWithImages.sort((a, b) => {
+        if (!a.completedAt) return 1;
+        if (!b.completedAt) return -1;
+        return b.completedAt - a.completedAt; // 최신 완료 작업이 위로 오도록 정렬
+      });
+
+      setCompletedTasks(sortedCompletedTasks);
     } catch (error) {
       console.error("완료된 작업을 가져오는 중 오류 발생:", error);
     }
@@ -165,6 +176,8 @@ const Housework2 = () => {
         taskType === "daily" && workUser.length > 0
           ? workUser.map((user) => user.id)
           : [],
+      postedAt:
+        editTaskIndex !== null ? existingPostedAt : new Date().toISOString(), // posted_at 필드를 추가
     };
 
     try {
@@ -203,22 +216,20 @@ const Housework2 = () => {
   const addTaskToState = (newTask, taskType) => {
     setTasks((prevTasks) => ({
       ...prevTasks,
-      [taskType]: [...prevTasks[taskType], newTask],
+      [taskType]: [newTask, ...prevTasks[taskType]], // 새 작업을 목록의 맨 위로 추가
     }));
   };
 
   // 선택한 작업 삭제하는 함수
-  const deleteSelectedTasks = async (index, taskType) => {
+  const deleteSelectedTasks = async (workIdx, taskType) => {
     try {
-      const taskList = tasks[taskType];
-      const taskToDelete = taskList[index];
-      await axios.delete(
-        `http://localhost:8089/wefam/delete-work/${taskToDelete.workIdx}`
-      );
+      await axios.delete(`http://localhost:8089/wefam/delete-work/${workIdx}`);
 
       setTasks((prevTasks) => ({
         ...prevTasks,
-        [taskType]: taskList.filter((t) => t.workIdx !== taskToDelete.workIdx),
+        [taskType]: prevTasks[taskType].filter(
+          (task) => task.workIdx !== workIdx
+        ),
       }));
 
       fetchTasks();
@@ -248,13 +259,13 @@ const Housework2 = () => {
     setIsCompleteModalOpen(true);
   };
 
-  const handleTaskEdit = (taskIndex, taskList, taskType) => {
-    // taskList에서 해당 task를 찾음
-    const task = taskList[taskIndex];
+  const handleTaskEdit = (taskWorkIdx, taskList, taskType) => {
+    // taskList에서 해당 task를 고유한 workIdx로 찾음
+    const task = taskList.find((t) => t.workIdx === taskWorkIdx);
 
     // task가 존재하는지 확인
     if (!task) {
-      console.error(`Task at index ${taskIndex} not found in taskList`);
+      console.error(`Task with workIdx ${taskWorkIdx} not found`);
       return; // task가 없으면 함수 실행 중단
     }
 
@@ -262,14 +273,17 @@ const Housework2 = () => {
     setTaskName(task.workTitle);
     setTaskContent(task.workContent);
 
-    if (typeof task.participantNames === "string") {
-      setWorkUser(task.participantNames.split(", "));
+    // participantNames가 배열로 올 경우 그대로 사용
+    if (Array.isArray(task.participantNames)) {
+      setWorkUser(task.participantNames);
     } else {
-      setWorkUser([]);
+      setWorkUser([]); // participantNames가 존재하지 않으면 빈 배열로 설정
     }
+
     setTaskPoint(task.points.toString());
     setTaskType(taskType);
-    setEditTaskIndex(task.workIdx);
+    setEditTaskIndex(task.workIdx); // 작업의 고유 ID로 설정
+    setExistingPostedAt(task.postedAt); // postedAt 값을 상태로 설정
     setIsModalOpen(true);
   };
 
@@ -293,9 +307,22 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        <span className={styles.userName}>{user.name}</span>
+        {/* <span className={styles.userName}>{user.name}</span> */}
       </div>
     ));
+  };
+
+  // 작업 목록을 정렬하는 함수
+  const sortTasks = (tasks) => {
+    return tasks.slice().sort((a, b) => {
+      if (a.completed && !b.completed) return 1;
+      if (!a.completed && b.completed) return -1;
+
+      // postedAt 기준으로 내림차순 정렬
+      const dateA = new Date(a.postedAt);
+      const dateB = new Date(b.postedAt);
+      return dateB - dateA; // 최신 작업이 맨 위로 오게 정렬
+    });
   };
 
   // 완료된 작업의 유저 정보를 렌더링하는 함수
@@ -318,16 +345,23 @@ const Housework2 = () => {
     );
   };
 
-  // 완료된 작업 리스트 렌더링 함수
+  // 완료된 작업 리스트도 동일하게 정렬해서 렌더링
   const renderCompletedTaskList = (tasks) => {
-    return tasks.map((task, index) => (
+    const sortedCompletedTasks = tasks.slice().sort((a, b) => {
+      if (!a.completedAt) return 1;
+      if (!b.completedAt) return -1;
+      return new Date(b.completedAt) - new Date(a.completedAt); // 최신 completedAt 기준으로 정렬
+    });
+
+    return sortedCompletedTasks.map((task) => (
       <li key={task.workIdx} className={styles.taskItem}>
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
-          <span className={styles.taskContent}>{task.workContent}</span>
-          <br />
-          {renderCompletedTaskUsers(task)}
+          <span>{task.workContent}</span>
+          <div className={styles.userContainer}>
+            {renderCompletedTaskUsers(task)}
+          </div>
         </div>
         <div className={styles.dropdownContainer}>
           <div className={styles.taskRight}>
@@ -345,7 +379,7 @@ const Housework2 = () => {
   };
 
   // 작업 항목 렌더링 함수
-  const TaskItem = ({ task, index, taskType }) => {
+  const TaskItem = ({ task, taskType }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const isCompleted = task.completed;
     const toggleReadMore = () => setIsExpanded(!isExpanded);
@@ -362,8 +396,7 @@ const Housework2 = () => {
         key={task.workIdx}
         className={`${styles.taskItem} ${
           isCompleted ? styles.completedTask : ""
-        }`}
-      >
+        }`}>
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
@@ -372,8 +405,7 @@ const Housework2 = () => {
             {isLongContent && (
               <button
                 onClick={toggleReadMore}
-                className={styles.readMoreButton}
-              >
+                className={styles.readMoreButton}>
                 {isExpanded ? "간략히" : "더보기"}
               </button>
             )}
@@ -384,49 +416,43 @@ const Housework2 = () => {
         <div className={styles.taskRight}>
           <span className={styles.taskPoints}>{task.points} 포인트</span>
 
-          {/* 완료된 작업일 경우 드롭다운 아이콘을 클릭할 수 없게 설정 */}
           {!isCompleted && (
             <BsThreeDotsVertical
               className={styles.taskIcon}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleDropdown(`${taskType}-${index}`);
+                toggleDropdown(task.workIdx); // workIdx로 드롭다운 상태 관리
               }}
             />
           )}
         </div>
 
-        {/* 드롭다운 메뉴 */}
-        {dropdownOpen === `${taskType}-${index}` && (
+        {dropdownOpen === task.workIdx && (
           <div
             className={styles.dropdownMenu}
             onClick={(e) => {
               e.stopPropagation(); // 클릭 이벤트 버블링 방지
               setDropdownOpen(null); // 드롭다운 메뉴를 클릭하면 닫음
-            }}
-          >
+            }}>
             <button
               onClick={() => {
                 handleMissionComplete(task);
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               미션 성공
             </button>
             <button
               onClick={() => {
-                handleTaskEdit(index, tasks[taskType], taskType);
+                handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               수정
             </button>
             <button
               onClick={() => {
-                deleteSelectedTasks(index, taskType);
+                deleteSelectedTasks(task.workIdx, taskType); // workIdx로 삭제
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               삭제
             </button>
           </div>
@@ -437,7 +463,9 @@ const Housework2 = () => {
 
   // 작업 목록을 렌더링하는 함수
   const renderTaskList = (tasks, taskType) => {
-    return tasks.map((task, index) => (
+    const sortedTasks = sortTasks(tasks); // 정렬된 작업 목록
+
+    return sortedTasks.map((task, index) => (
       <TaskItem
         key={task.workIdx}
         task={task}
@@ -448,131 +476,138 @@ const Housework2 = () => {
   };
 
   return (
-    <div className="main" onClick={handleOutsideClick}>
-      <div className={styles.board}>
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>매일 할 일</h3>
-            <span
-              className={
-                tasks.daily.length > 0 ? styles.circleDaily : styles.circleZero
-              }
-            >
-              {tasks.daily.length}
-            </span>
-            <div className={styles.add_task} onClick={openDailyModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#e74c3c", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.daily, "daily")}
-          </ul>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>오늘의 미션</h3>
-            <span
-              className={
-                tasks.shortTerm.length > 0
-                  ? styles.circleShortTerm
-                  : styles.circleZero
-              }
-            >
-              {tasks.shortTerm.length}
-            </span>
-            <div className={styles.add_task} onClick={openShortTermModal}>
-              <BsPlusCircle
-                styles={styles.icon}
-                style={{ color: "#ff9203", fontSize: "24px" }}
-              />
-            </div>
-          </div>
-          <ul className={styles.taskList}>
-            {renderTaskList(tasks.shortTerm, "shortTerm")}
-          </ul>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.column_header}>
-            <h3>완료된 할 일</h3>
-            <span
-              className={
-                completedTasks.length > 0
-                  ? styles.circleFinished
-                  : styles.circleZero
-              }
-            >
-              {completedTasks.length}
-            </span>
-          </div>
-          <ul className={styles.taskList}>
-            {renderCompletedTaskList(completedTasks)}
-          </ul>
-        </div>
-      </div>
-
-      <WorkModal
-        isModalOpen={isModalOpen}
-        closeModal={closeModal}
-        taskType={taskType}
-        taskName={taskName}
-        taskContent={taskContent}
-        taskPoint={taskPoint}
-        workUser={workUser}
-        warningMessages={warningMessages}
-        familyMembers={localFamilyMembers}
-        handleTaskTypeChange={handleTaskTypeChange}
-        handleTaskNameChange={handleTaskNameChange}
-        handleTaskContentChange={handleTaskContentChange}
-        handleTaskPointChange={handleTaskPointChange}
-        handleWorkUserChange={handleWorkUserChange}
-        addOrUpdateTask={addOrUpdateTask}
-        editTaskIndex={editTaskIndex}
-      />
-
-      <CompleteModal
-        isOpen={isCompleteModalOpen}
-        onRequestClose={() => setIsCompleteModalOpen(false)}
-        taskName={selectedTask?.workTitle || ""}
-        selectedTask={selectedTask}
-        selectedFiles={selectedFiles}
-        setSelectedFiles={setSelectedFiles}
-        onComplete={() => {
-          setIsCompleteModalOpen(false);
-          fetchTasks();
-          fetchCompletedTasks();
-        }}
-      />
-
-      <Modal
-        isOpen={isImageModalOpen}
-        onRequestClose={closeImageModal}
-        contentLabel="작업 이미지"
-        className={styles.imageModalContent}
-        overlayClassName={styles.imageModalOverlay}
-      >
-        <div className={styles.modalBody}>
-          <h2>작업 이미지</h2>
-          <div className={styles.imagePreviewContainer}>
-            {selectedTaskImages && selectedTaskImages.length > 0 ? (
-              selectedTaskImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`작업 이미지 ${index}`}
-                  className={styles.modalImage}
+    <div className='main' onClick={handleOutsideClick}>
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          marginTop: "2rem",
+          borderRadius: "1rem",
+          padding: "1rem",
+          height: "631px",
+        }}>
+        <div className={styles.board}>
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>매일 할 일</h3>
+              <span
+                className={
+                  tasks.daily.length > 0
+                    ? styles.circleDaily
+                    : styles.circleZero
+                }>
+                {tasks.daily.length}
+              </span>
+              <div className={styles.add_task} onClick={openDailyModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#e74c3c", fontSize: "24px" }}
                 />
-              ))
-            ) : (
-              <p>이미지가 없습니다.</p>
-            )}
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.daily, "daily")}
+            </ul>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>오늘의 미션</h3>
+              <span
+                className={
+                  tasks.shortTerm.length > 0
+                    ? styles.circleShortTerm
+                    : styles.circleZero
+                }>
+                {tasks.shortTerm.length}
+              </span>
+              <div className={styles.add_task} onClick={openShortTermModal}>
+                <BsPlusCircle
+                  styles={styles.icon}
+                  style={{ color: "#ff9203", fontSize: "24px" }}
+                />
+              </div>
+            </div>
+            <ul className={styles.taskList}>
+              {renderTaskList(tasks.shortTerm, "shortTerm")}
+            </ul>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.column_header}>
+              <h3>완료된 할 일</h3>
+              <span
+                className={
+                  completedTasks.length > 0
+                    ? styles.circleFinished
+                    : styles.circleZero
+                }>
+                {completedTasks.length}
+              </span>
+            </div>
+            <ul className={styles.taskList}>
+              {renderCompletedTaskList(completedTasks)}
+            </ul>
           </div>
         </div>
-      </Modal>
+
+        <WorkModal
+          isModalOpen={isModalOpen}
+          closeModal={closeModal}
+          taskType={taskType}
+          taskName={taskName}
+          taskContent={taskContent}
+          taskPoint={taskPoint}
+          workUser={workUser}
+          warningMessages={warningMessages}
+          familyMembers={localFamilyMembers}
+          handleTaskTypeChange={handleTaskTypeChange}
+          handleTaskNameChange={handleTaskNameChange}
+          handleTaskContentChange={handleTaskContentChange}
+          handleTaskPointChange={handleTaskPointChange}
+          handleWorkUserChange={handleWorkUserChange}
+          addOrUpdateTask={addOrUpdateTask}
+          editTaskIndex={editTaskIndex}
+        />
+
+        <CompleteModal
+          isOpen={isCompleteModalOpen}
+          onRequestClose={() => setIsCompleteModalOpen(false)}
+          taskName={selectedTask?.workTitle || ""}
+          selectedTask={selectedTask}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          onComplete={() => {
+            setIsCompleteModalOpen(false);
+            fetchTasks();
+            fetchCompletedTasks();
+          }}
+        />
+
+        <Modal
+          isOpen={isImageModalOpen}
+          onRequestClose={closeImageModal}
+          contentLabel='작업 이미지'
+          className={styles.imageModalContent}
+          overlayClassName={styles.imageModalOverlay}>
+          <div className={styles.modalBody}>
+            <h2>작업 이미지</h2>
+            <div className={styles.imagePreviewContainer}>
+              {selectedTaskImages && selectedTaskImages.length > 0 ? (
+                selectedTaskImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`작업 이미지 ${index}`}
+                    className={styles.modalImage}
+                  />
+                ))
+              ) : (
+                <p>이미지가 없습니다.</p>
+              )}
+            </div>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };
