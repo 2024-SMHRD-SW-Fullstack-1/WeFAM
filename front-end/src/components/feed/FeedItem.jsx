@@ -110,18 +110,6 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
     }
   }, [feed.feedIdx]);
 
-  // getRoulettes를 useCallback으로 메모이제이션
-  const getRoulettes = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8089/wefam/feed/${feed.feedIdx}/roulettes`
-      );
-      setRoulettes(Array.from(response.data));
-    } catch (error) {
-      console.error(`피드 ${feed.feedIdx}번 룰렛 요청 에러 :`, error);
-    }
-  }, [feed.feedIdx]);
-
   // getPolls를 useCallback으로 메모이제이션
   const getPolls = useCallback(async () => {
     try {
@@ -270,13 +258,6 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
     },
     [userData.id, userData.familyIdx, getAllFeeds]
   );
-
-  // 피드 룰렛 클릭!
-  const handleOpenRoulette = (rouletteIdx) => {
-    setSelectedFeed({ feedIdx: feed.feedIdx });
-    setSelectedRoulette({ rouletteIdx }); // 선택된 rouletteIdx로 상태를 설정
-    setIsRouletteModalOpen(true);
-  };
 
   // 피드 룰렛 클릭!
   const handleOpenRoulette = (rouletteIdx) => {
