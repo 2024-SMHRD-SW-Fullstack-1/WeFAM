@@ -129,6 +129,8 @@
 }
 
 .taskPoints {
+  display: flex;
+  align-items: center;
   position: absolute;
   bottom: 12px;
   /* 하단에 배치 */
@@ -336,4 +338,10 @@
 .userProfile:hover .userName {
   display: block;
   z-index: 100;
+}
+
+.Imgicon {
+  height: 16px;
+  width: 16px;
+  margin-left: 5px; /* 아이콘과 포인트 텍스트 사이 간격 추가 */
 }

@@ -148,3 +148,14 @@
   text-align: center;
   font-size: 15px;
 }
+
+.pointGroup p {
+  display: flex;
+  align-items: center;
+}
+
+.Imgicon {
+  height: 16px;
+  width: 16px;
+  margin-left: 5px; /* 아이콘과 포인트 텍스트 사이 간격 추가 */
+}

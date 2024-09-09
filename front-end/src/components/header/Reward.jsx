@@ -6,6 +6,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { BsThreeDots, BsPlusCircle } from "react-icons/bs";
 import DeleteModal from "../modal/DeleteModal";
+import modalPointIcon from "../../assets/images/modalPointIcon.png";
 
 const Reward = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
@@ -18,8 +19,6 @@ const Reward = () => {
   const dropdownRef = useRef([]); // 각 드롭다운의 참조 배열
   const [isDeleteOpen, setIsDeleteOpen] = useState(false); // 삭제 모달 상태
   const [rewardToDelete, setRewardToDelete] = useState(null); // 삭제할 보상 아이템 저장
-
-
 
   const goToRewardPoint = () => {
     navigate("/main/reward-point");
@@ -71,15 +70,11 @@ const Reward = () => {
           }
         );
       } else {
-        await axios.post(
-          "http://localhost:8089/wefam/rewards",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        await axios.post("http://localhost:8089/wefam/rewards", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
 
       fetchRewards();
@@ -102,7 +97,10 @@ const Reward = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       // 드롭다운 메뉴 외부 클릭 시
-      if (dropdownRef.current && dropdownRef.current.some(ref => ref && !ref.contains(event.target))) {
+      if (
+        dropdownRef.current &&
+        dropdownRef.current.some((ref) => ref && !ref.contains(event.target))
+      ) {
         setDropdownOpen(null); // 드롭다운 닫기
       }
     };
@@ -216,7 +214,10 @@ const Reward = () => {
                   onClick={() => toggleDropdown(index)}
                 />
                 {dropdownOpen === index && (
-                  <div className={styles.dropdownMenu} ref={(el) => (dropdownRef.current[index] = el)}>
+                  <div
+                    className={styles.dropdownMenu}
+                    ref={(el) => (dropdownRef.current[index] = el)}
+                  >
                     <p onClick={() => handleEditReward(rewardItem)}>수정</p>
                     <p onClick={() => handleDeleteReward(rewardItem)}>삭제</p>
                   </div>
@@ -228,7 +229,12 @@ const Reward = () => {
                 className={styles.rewardImage}
               />
               <h2>{rewardItem.reward.rewardName}</h2>
-              <p>{rewardItem.reward.rewardPoint} Points</p>
+              <div className={styles.pointGroup}>
+                <p>
+                  {rewardItem.reward.rewardPoint}
+                  <img src={modalPointIcon} className={styles.Imgicon} />
+                </p>
+              </div>
               <div>
                 <button
                   onClick={() => handlePurchaseReward(rewardItem)}
