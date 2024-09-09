@@ -5,6 +5,7 @@ import Calendar from "./components/calendar/Calendar";
 import Meal from "./components/meal/Meal";
 import AlbumFolder from "./components/album/AlbumFolder";
 import Login from "./components/login/Login";
+import RightSidebar from "./components/right-sidebar/RightSidebar";
 import Settings from "./components/user-setting/Settings";
 import HouseWork2 from "./components/housework/HouseWork2";
 import { MemoModal } from "./components/calendar/MemoModal";

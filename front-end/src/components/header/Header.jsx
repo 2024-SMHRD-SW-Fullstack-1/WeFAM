@@ -30,7 +30,6 @@ const Header = () => {
 
   // Redux에서 사용자 정보 가져오기
   const userData = useSelector((state) => state.user.userData);
-  console.log(userData);
 
   // 본인 계정과 일치하는 알림 개수 필터링
   const filteredNotifications = userData
