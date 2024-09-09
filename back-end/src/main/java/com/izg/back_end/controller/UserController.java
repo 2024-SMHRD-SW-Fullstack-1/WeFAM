@@ -97,6 +97,7 @@ public class UserController {
 			UserModel savedUser = userService.updateUserProfile(updatedUser);
 			return ResponseEntity.ok(savedUser);
 		} catch (Exception e) {
+			System.out.println("테스트"+updatedUser);
 			return ResponseEntity.status(500).body(null);
 		}
 	}
