@@ -1,11 +1,5 @@
 package com.izg.back_end.model;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,10 +18,6 @@ public class RecipeModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_idx", nullable = false)
     private int recipeIdx;
-    
-    // 가족의 고유 ID
-    @Column(name = "family_idx", nullable = false)
-    private int familyIdx;
     
     // 레시피 카테고리
     @Column(name = "recipe_category", nullable = false)
@@ -60,8 +50,4 @@ public class RecipeModel {
     // 레시피 요리 방법
     @Column(name = "recipe_cook", nullable = false)
     private String recipeCook;
-    
-    // 레시피 업로드 일자
-    @Column(name = "posted_at")
-    private LocalDateTime postedAt;
 }

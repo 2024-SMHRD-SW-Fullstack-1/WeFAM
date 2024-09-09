@@ -1,11 +1,13 @@
 package com.izg.back_end.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.izg.back_end.model.FamilyModel;
@@ -61,4 +63,16 @@ public class FamilyController {
 			return ResponseEntity.status(500).body(null);
 		}
 	}
+	
+	// 가족 생성자 조회 엔드포인트
+	@GetMapping("/family/user-id/{familyIdx}")
+    public ResponseEntity<String> getUserIdByFamilyIdx(@PathVariable("familyIdx") int familyIdx) {
+		
+		 try {
+		        String userId = familyService.getUserIdByFamilyIdx(familyIdx);
+		        return ResponseEntity.ok(userId); // 응답을 JSON 형식으로 반환
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user ID");
+		    }
+    }
 }

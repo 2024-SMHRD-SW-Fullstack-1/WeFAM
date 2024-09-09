@@ -17,14 +17,14 @@ const PollModal = ({ onSavePoll, onClose }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(""); // 투표 제목
-  const [options, setOptions] = useState(["", ""]); // 투표 항목 기본 2개, 최대 5개
+  const [options, setOptions] = useState(["", ""]); // 투표 항목 기본 2개, 최대 6개
 
   // Redux에서 로그인한 사용자 데이터 및 이미지를 가져오기
   const userData = useSelector((state) => state.user.userData);
 
   // 투표 항목 추가
   const addOption = () => {
-    if (options.length < 5) {
+    if (options.length < 6) {
       setOptions([...options, ""]);
     }
   };
@@ -113,7 +113,7 @@ const PollModal = ({ onSavePoll, onClose }) => {
               ))}
             </div>
 
-            {options.length < 5 && (
+            {options.length < 6 && (
               <button onClick={addOption} className={styles.addOptionBtn}>
                 <BsPlusCircle /> &nbsp; 항목 추가
               </button>

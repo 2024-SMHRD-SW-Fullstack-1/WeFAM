@@ -6,9 +6,11 @@ import styles from "./FeedItem.module.css";
 import FeedDetailModal from "./FeedDetailModal";
 import FeedEditModal from "./FeedEditModal";
 import FeedComment from "./FeedComment";
+import RouletteModal from "./RouletteModal";
 import PollModal from "./PollModal";
 import { elapsedTime } from "../../elapsedTime";
 import { CiSquareCheck } from "react-icons/ci";
+import { PiGameControllerLight } from "react-icons/pi";
 
 import {
   BsSuitHeart,
@@ -23,9 +25,11 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null);
+  const [selectedRoulette, setSelectedRoulette] = useState([]);
   const [selectedPoll, setSelectedPoll] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isRouletteModalOpen, setIsRouletteModalOpen] = useState(false);
   const [isPollModalOpen, setIsPollModalOpen] = useState(false);
   const [writerProfileImg, setWriterProfileImg] = useState("");
   const [writerId, setWriterId] = useState("");
@@ -34,6 +38,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   const imageMaxCount = 9;
   const imagePreCount = 3;
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 룰렛
+  const [roulettes, setRoulettes] = useState([]);
   // 투표
   const [polls, setPolls] = useState([]);
   // 좋아요
@@ -84,6 +90,18 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       setImages(response.data);
     } catch (error) {
       console.error(`피드 ${feed.feedIdx}번 이미지 요청 에러 :`, error);
+    }
+  }, [feed.feedIdx]);
+
+  // getRoulettes를 useCallback으로 메모이제이션
+  const getRoulettes = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8089/wefam/feed/${feed.feedIdx}/roulettes`
+      );
+      setRoulettes(Array.from(response.data));
+    } catch (error) {
+      console.error(`피드 ${feed.feedIdx}번 룰렛 요청 에러 :`, error);
     }
   }, [feed.feedIdx]);
 
@@ -143,8 +161,9 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
   useEffect(() => {
     fetchWriter();
     fetchImages();
+    getRoulettes();
     getPolls();
-  }, [fetchWriter, fetchImages, getPolls]);
+  }, [fetchWriter, fetchImages, getRoulettes, getPolls]);
 
   useEffect(() => {
     getAllCmts();
@@ -200,6 +219,13 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
     if (window.confirm(`${feed.feedIdx}번 피드를 삭제하시겠습니까?`)) {
       await onDeleteFeed(feed.feedIdx);
     }
+  };
+
+  // 피드 룰렛 클릭!
+  const handleOpenRoulette = (rouletteIdx) => {
+    setSelectedFeed({ feedIdx: feed.feedIdx });
+    setSelectedRoulette({ rouletteIdx }); // 선택된 rouletteIdx로 상태를 설정
+    setIsRouletteModalOpen(true);
   };
 
   // 피드 투표 클릭!
@@ -304,8 +330,9 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
       <div className={styles.header}>
         <div className={styles.feedInfoContainer}>
           <div className={styles.profileImg}>
-            <img src={writerProfileImg} alt='Profile' />
+            <img src={writerProfileImg} alt="Profile" />
           </div>
+
           <div className={styles.feedInfo}>
             <div className={styles.wrTime}>
               <span className={styles.writer}>{writerNick}</span>
@@ -315,22 +342,24 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             <div className={styles.location}>{feed.feedLocation}</div>
           </div>
         </div>
+
         {writerId === userData.id && (
           <div
             className={styles.feedOptionsContainer}
             onClick={toggleOptions}
-            ref={optionsRef}>
+            ref={optionsRef}
+          >
             <BsThreeDots />
             {isOptionsVisible && (
               <ul className={styles.options}>
                 <>
                   <li>
-                    <button className='option' onClick={handleUpdateFeed}>
+                    <button className="option" onClick={handleUpdateFeed}>
                       수정
                     </button>
                   </li>
                   <li>
-                    <button className='option' onClick={handleDeleteFeed}>
+                    <button className="option" onClick={handleDeleteFeed}>
                       삭제
                     </button>
                   </li>
@@ -350,7 +379,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 className={`${styles.leftArrowBtn} ${
                   currentSlide === 0 ? styles.hidden : ""
                 }`}
-                onClick={handlePrevSlide}>
+                onClick={handlePrevSlide}
+              >
                 <MdKeyboardArrowLeft />
               </button>
               {images
@@ -377,7 +407,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                     ? styles.hidden
                     : ""
                 }`}
-                onClick={handleNextSlide}>
+                onClick={handleNextSlide}
+              >
                 <MdKeyboardArrowRight />
               </button>
             </div>
@@ -386,11 +417,31 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
             <div
               className={`${styles.slideNumber} ${
                 totalSlides === 1 ? styles.hidden : ""
-              }`}>
+              }`}
+            >
               {totalSlides > 1 && `${currentSlideNumber} / ${totalSlides}`}
             </div>
           </div>
         )}
+
+        {/* 내용 - 룰렛 */}
+        {roulettes.length > 0 ? (
+          <div className={styles.roulettesContent}>
+            <div className={styles.roulette}>
+              {roulettes.map((roulette, index) => (
+                <span key={index}>
+                  <button
+                    onClick={() => handleOpenRoulette(roulette.rouletteIdx)}
+                  >
+                    {" "}
+                    <PiGameControllerLight />
+                    <span>{roulette.rouletteTitle}</span>
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {/* 내용 - 투표 */}
         {polls.length > 0 ? (
@@ -400,7 +451,6 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
                     {" "}
-                    {/* pollIdx 전달 */}
                     <CiSquareCheck />
                     <span>{poll.pollTitle}</span>
                   </button>
@@ -450,8 +500,8 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
         <div className={styles.comment}>
           <textarea
             ref={textarea}
-            rows='1'
-            placeholder='댓글 달기...'
+            rows="1"
+            placeholder="댓글 달기..."
             value={newCmtContent} // 상태 값으로 textarea의 내용 설정
             onChange={(e) => setNewCmtContent(e.target.value)} // 댓글 내용 상태 업데이트
             onInput={handleResizeHeight}
@@ -492,7 +542,14 @@ const FeedItem = ({ feed, onGetFeedDetail, onUpdateFeed, onDeleteFeed }) => {
           onClose={() => setIsDetailModalOpen(false)}
         />
       )}
-
+      {isRouletteModalOpen && (
+        <RouletteModal
+          feed={selectedFeed}
+          roulette={selectedRoulette}
+          onShow={onGetFeedDetail}
+          onClose={() => setIsRouletteModalOpen(false)}
+        />
+      )}
       {isPollModalOpen && (
         <PollModal
           feed={selectedFeed}

@@ -186,7 +186,7 @@ const WorkModal = ({
 
       {/* 모달 버튼 (취소, 추가 또는 수정) */}
       <div className={styles.houseworkModalButtonContainer}>
-        <button className={styles.houseworkModalButton} onClick={closeModal}>
+        <button className={styles.houseworkCloseButton} onClick={closeModal}>
           취소
         </button>
         <button
