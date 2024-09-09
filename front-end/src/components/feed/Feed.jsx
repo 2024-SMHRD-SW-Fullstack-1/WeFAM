@@ -93,7 +93,7 @@ const Feed = () => {
         setIsLoading(false);
       }
     },
-    [fetchWriter, userData.id, userData.familyIdx, getAllFeeds]
+    [userData.id, userData.familyIdx, getAllFeeds]
   );
 
   useEffect(() => {
