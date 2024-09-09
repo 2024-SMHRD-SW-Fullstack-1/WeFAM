@@ -5,6 +5,8 @@
   width: var(--rightSidebar-width);
   height: 100%;
   transition: all var(--animation-duration);
+  margin: 20px;
+  
 }
 
 /* 반응형 디자인 */
