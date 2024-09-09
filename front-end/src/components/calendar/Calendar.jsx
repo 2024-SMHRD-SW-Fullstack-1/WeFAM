@@ -7,13 +7,13 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import EventModal from "./EventModal";
-import { BsSearch, BsPlus } from "react-icons/bs";
+import { BsSearch, BsPlusCircle } from "react-icons/bs";
 import styles from "./Calendar.module.css";
 import EventDetail from "./EventDetail";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { toastSuccess, toastError } from "../Toast/showCustomToast";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 import SearchResults from "./SearchResults";
 
 const Calendar = () => {
@@ -345,6 +345,8 @@ const Calendar = () => {
           ...selectedEvent,
           ...updatedEvent,
         }); // 변경된 이벤트로 selectedEvent 업데이트
+        toastSuccess("일정이 성공적으로 등록되었습니다!"); // 성공 토스트 메시지
+
         savedEvent = response.data;
       }
       // savedEvent가 undefined인 경우를 처리
@@ -440,12 +442,6 @@ const Calendar = () => {
       console.error("선택된 이벤트가 없습니다.");
       return;
     }
-    const userConfirmed = window.confirm("정말 삭제하시겠습니까?");
-
-    // 사용자가 '취소'를 클릭하면 함수 종료
-    if (!userConfirmed) {
-      return;
-    }
 
     const eventIdx = selectedEvent.id;
     try {
@@ -455,7 +451,7 @@ const Calendar = () => {
       );
 
       if (response.status === 200) {
-        toastSuccess("일정이 성공적으로 삭제되었습니다!"); // 삭제 성공 메시지 표시
+        toastDelete("일정이 성공적으로 삭제되었습니다!"); // 삭제 성공 메시지 표시
 
         // 이벤트 목록에서 삭제된 이벤트 제거
         setEvents((prevEvents) =>
@@ -466,11 +462,9 @@ const Calendar = () => {
         setIsEventOpen(false);
         setIsDeatilOpen(false);
       } else {
-        toastError("일정 삭제에 실패했습니다."); // 삭제 실패 메시지 표시
       }
     } catch (error) {
       console.error("Error deleting event:", error);
-      toastError("일정 삭제 중 오류가 발생했습니다."); // 에러 메시지 표시
     }
   };
 
@@ -714,11 +708,11 @@ const Calendar = () => {
         <div>
           <BsSearch
             style={{
-              width: "20px",
+              width: "24px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: "30px",
+              height: "24px",
             }}
           />
         </div>
@@ -730,9 +724,9 @@ const Calendar = () => {
         addButton._root = createRoot(addButton);
       }
       addButton._root.render(
-        <BsPlus
+        <BsPlusCircle
           style={{
-            fontSize: "30px",
+            fontSize: "24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

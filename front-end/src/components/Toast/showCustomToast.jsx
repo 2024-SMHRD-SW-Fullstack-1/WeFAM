@@ -39,6 +39,6 @@ export const toastSuccess = (message) => {
 };
 
 // 에러 토스트 함수
-export const toastError = (message) => {
+export const toastDelete = (message) => {
   showCustomToast(message, "error");
 };

@@ -104,10 +104,12 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  /* 텍스트를 세로로 쌓이도록 함 */
   margin-right: 40px;
-  /* 포인트와 아이콘과의 간격 확보 */
   font-size: 15px;
+  max-width: 100%; /* 최대 너비를 100%로 설정 */
+  overflow-wrap: break-word; /* 단어가 길 경우 줄바꿈 */
+  word-wrap: break-word; /* 추가적으로 긴 단어 줄바꿈 */
+  white-space: normal; /* 줄바꿈을 허용 */
 }
 
 .taskTitle {
@@ -143,7 +145,8 @@
   /* 상단에 배치 */
   right: 10px;
   /* 우측에 배치 */
-  font-size: 20px;
+  font-size: 1.1em;
+  color: #7c7c7c;
   cursor: pointer;
 }
 
@@ -306,4 +309,10 @@
 .userName {
   font-size: 14px;
   color: #333;
+}
+
+.completedDate {
+  font-size: 14px;
+  color: #727272;  
+  margin-top: 5px; 
 }
