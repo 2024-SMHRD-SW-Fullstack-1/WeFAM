@@ -319,7 +319,7 @@ const Housework2 = () => {
           alt={user.name}
           className={styles.userImage}
         />
-        {/* <span className={styles.userName}>{user.name}</span> */}
+        <span className={styles.userName}>{user.name}</span>
       </div>
     ));
   };
@@ -371,9 +371,14 @@ const Housework2 = () => {
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
           <span>{task.workContent}</span>
-          <div className={styles.userContainer}>{renderCompletedTaskUsers(task)}</div>
+          <div className={styles.userContainer}>
+            {renderCompletedTaskUsers(task)}
+          </div>
           <p className={styles.completedDate}>
-            완료일: {task.completedAt ? task.completedAt.toLocaleDateString() : "완료일 정보 없음"}
+            완료일:{" "}
+            {task.completedAt
+              ? task.completedAt.toLocaleDateString()
+              : "완료일 정보 없음"}
           </p>
         </div>
         <div className={styles.dropdownContainer}>
@@ -490,7 +495,7 @@ const Housework2 = () => {
           marginTop: "2rem",
           borderRadius: "1rem",
           padding: "1rem",
-          height: "631px",
+          height: "710px",
         }}>
         <div className={styles.board}>
           <div className={styles.column}>

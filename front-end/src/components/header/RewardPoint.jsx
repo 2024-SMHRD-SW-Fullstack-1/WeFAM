@@ -112,7 +112,13 @@ const RewardPoint = () => {
 
   return (
     <div className="main">
-      <div className={styles.container}>
+      <div style={{
+        backgroundColor: "#ffffff",
+        marginTop: "2rem",
+        borderRadius: "1rem",
+        padding: "1rem",
+        height: "710px",
+      }}>
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
@@ -180,7 +186,7 @@ const RewardPoint = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

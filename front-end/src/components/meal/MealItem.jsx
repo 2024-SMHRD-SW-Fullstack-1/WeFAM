@@ -78,7 +78,7 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
       <div className={styles.header}>
         <div className={styles.metaContainer}>
           <div className={styles.profileImgContainer}>
-            <img src={userData.profileImg} alt="" />
+            <img src={userData.profileImg} alt='' />
           </div>
           <div className={styles.meta}>
             <div className={styles.authorTime}>
@@ -94,19 +94,18 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
           <div
             className={styles.mealOptionsContainer}
             onClick={toggleOption}
-            ref={optionsRef}
-          >
+            ref={optionsRef}>
             <BsThreeDots />
             {isOptionsVisible && (
               <ul className={styles.options}>
                 <>
                   <li>
-                    <button className="option" onClick={handleUpdateMeal}>
+                    <button className='option' onClick={handleUpdateMeal}>
                       수정
                     </button>
                   </li>
                   <li>
-                    <button className="option" onClick={handleDeleteMeal}>
+                    <button className='option' onClick={handleDeleteMeal}>
                       삭제
                     </button>
                   </li>
