@@ -303,3 +303,10 @@ nav {
   z-index: 2000;
   /* 모달이 다른 요소들 위에 표시되도록 설정 */
 }
+
+/* 반응형 디자인 */
+@media (max-width: 767px) {
+  .groupContainer {
+    display: none;
+  }
+}
