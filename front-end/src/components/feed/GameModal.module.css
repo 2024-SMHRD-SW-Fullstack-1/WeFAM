@@ -1,4 +1,11 @@
-.rouletteContainer {
+.content {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-md);
+}
+
+.rouletteContainer,
+.ghostlegContainer {
   width: 128px;
   display: flex;
   flex-direction: column;
