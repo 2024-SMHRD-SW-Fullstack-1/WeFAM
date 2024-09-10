@@ -1,7 +1,6 @@
 .logContainer {
   display: flex;
   width: 100%;
-  margin-right: 15px;
   height: 100%;
   overflow-y: auto;
 }
@@ -11,7 +10,7 @@
   width: 300px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   margin: 0 10px;
   max-height: 300px; /* 컨테이너의 최대 높이 설정 */
@@ -37,6 +36,12 @@
   text-align: left;
 }
 
+.completedTaskContent span {
+  display: block;
+  color: gray;
+  font-size: 13px;
+}
+
 .completedTaskDetails {
   flex: 1;
   text-align: right; /* 완료일과 포인트는 오른쪽 정렬 */
@@ -47,16 +52,14 @@
 .taskPoints {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   margin-top: 5px;
-  color: #e74c3c;
   font-weight: bold;
   font-size: 15px;
 }
 
 .completedTask h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -66,15 +69,17 @@
 }
 
 .familyPointsContainer {
-  width: 250px;
+  width: 300px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   margin: 0 10px;
   height: auto; /* 높이를 내용에 맞게 자동으로 설정 */
   overflow-y: auto; /* 만약 내용이 넘칠 경우 스크롤 가능하게 설정 */
 }
+
+
 
 .familyMember {
   display: flex;
@@ -140,7 +145,7 @@
 
 .rewardDetails h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: bold;
 }
 
