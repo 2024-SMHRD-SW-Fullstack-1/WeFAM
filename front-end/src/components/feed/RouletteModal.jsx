@@ -111,6 +111,7 @@ const RouletteModal = ({ feed, roulette, onSaveRoulette, onClose }) => {
   }, [feed.feedIdx, roulette.rouletteIdx]);
 
   const rotate = () => {
+    setIsRotated(true);
     const canvas = canvasRef.current;
     const arc = 360 / options.length;
 
@@ -122,7 +123,6 @@ const RouletteModal = ({ feed, roulette, onSaveRoulette, onClose }) => {
     // 애니메이션이 끝나면 결과 표시
     setTimeout(() => {
       setShowResult(true);
-      setIsRotated(true);
     }, 2000); // 애니메이션 시간과 동일하게 설정
   };
 

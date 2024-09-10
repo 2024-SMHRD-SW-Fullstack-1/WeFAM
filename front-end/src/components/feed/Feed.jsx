@@ -5,6 +5,8 @@ import styles from "./Feed.module.css";
 import AddFeed from "./AddFeed";
 import FeedList from "./FeedList";
 import Preloader from "../preloader/Preloader";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 const Feed = () => {
   // 현재 getAllFeeds로 가족 피드들을 모두 불러와서 피드 데이터가 feed에 들어옴
@@ -83,6 +85,7 @@ const Feed = () => {
             }
           );
           await getAllFeeds(userData.familyIdx);
+          toastSuccess("피드가 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
           console.log("피드의 내용만 업데이트");
         } else {
           alert("피드 수정 중에 오류가 발생하였습니다. 수정 권한이 없습니다.");

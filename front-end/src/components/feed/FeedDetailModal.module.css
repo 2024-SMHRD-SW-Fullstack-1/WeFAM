@@ -42,10 +42,14 @@
 
 .leftArrowBtn {
   left: var(--space-sm); /* 공간을 고려해 왼쪽 위치 조정 */
+  display: flex;
+  align-items: center;
   transform: translateX(calc(-1 * var(--space-lg)));
 }
 .rightArrowBtn {
   right: var(--space-sm); /* 공간을 고려해 오른쪽 위치 조정 */
+  display: flex;
+  align-items: center;
   transform: translateX(calc(1 * var(--space-lg)));
 }
 .leftArrowBtn:hover {
@@ -122,4 +126,5 @@
   font-size: var(--font-md);
   border: none;
   outline: none;
+  white-space: pre-wrap;
 }

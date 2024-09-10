@@ -8,10 +8,13 @@ import axios from "axios";
 import { BsPlusCircle } from "react-icons/bs";
 import { BsTrash } from "react-icons/bs";
 import albumIcon from "../../assets/images/icon-album.png";
+import Preloader from "../preloader/Preloader";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 Modal.setAppElement("#root");
 
 const AlbumFolder = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const userId = useSelector((state) => state.user.userData.id);
   const userData = useSelector((state) => state.user.userData);
 
@@ -34,11 +37,12 @@ const AlbumFolder = () => {
 
   // 이미지 조회 함수
   const fetchImages = (start = "", end = "") => {
+    setIsLoading(true);
     const effectiveEndDate = end || new Date().toISOString().split("T")[0];
-    
+
     const url = start
-    ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
-    : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
+      ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
+      : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
 
     axios
       .get(url)
@@ -52,10 +56,12 @@ const AlbumFolder = () => {
             url: `data:image/${image.fileExtension};base64,${image.fileData}`,
           }));
           setImages(fetchedImages.reverse());
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         console.error("이미지를 불러오는 중 오류 발생:", error);
+        setIsLoading(false);
       });
   };
 
@@ -71,7 +77,6 @@ const AlbumFolder = () => {
       setCurrentPage(currentPage - 1);
     }
   };
-
   // react-dropzone 설정
   const onDrop = (acceptedFiles) => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
@@ -164,8 +169,10 @@ const AlbumFolder = () => {
   };
 
   const openImageModal = (index) => {
-    setCurrentImageIndex(index);
+    const totalIndex = currentPage * imagesPerPage + index;
+    setCurrentImageIndex(totalIndex);
     setIsImageModalOpen(true);
+    npm;
   };
 
   const closeImageModal = () => setIsImageModalOpen(false);
@@ -196,215 +203,228 @@ const AlbumFolder = () => {
 
   return (
     <div className="main">
-      <div className={styles.album}>
-        <div className={styles.header}>
-          <div className={styles.title}>
-            <div>
-              <img src={albumIcon} alt="" />
+      {isLoading ? (
+        <Preloader isLoading={isLoading} />
+      ) : (
+        <div className={styles.album}>
+          <div className={styles.header}>
+            <div className={styles.title}>
+              <div>
+                <img src={albumIcon} alt="" />
+              </div>
+              <h1>가족 앨범</h1>
             </div>
-            <h1>가족 앨범</h1>
+            <div className={styles.controller}>
+              <div className={styles.selectController}>
+                <p>시작일</p>
+                <input
+                  className={styles.dateInput}
+                  type="date"
+                  onChange={handleStartDateChange}
+                  value={startDate}
+                />
+                <p>종료일</p>
+                <input
+                  className={styles.dateInput}
+                  type="date"
+                  onChange={handleEndDateChange}
+                  value={endDate}
+                />
+                <button
+                  className={styles.selectBtn}
+                  onClick={() => fetchImages(startDate, endDate)}
+                >
+                  조회
+                </button>
+                <button
+                  className={styles.resetBtn}
+                  onClick={() => fetchImages()}
+                >
+                  초기화
+                </button>
+              </div>
+              <div className={styles.manageController}>
+                <button
+                  className={styles.btnDelete}
+                  onClick={deleteSelectedImages}
+                >
+                  <BsTrash />
+                </button>
+                <button
+                  className={styles.btnPlus}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <BsPlusCircle />
+                </button>
+              </div>
+            </div>
           </div>
-          <div className={styles.controller}>
-            <div className={styles.selectController}>
-              <p>시작일</p>
-              <input
-                className={styles.dateInput}
-                type="date"
-                onChange={handleStartDateChange}
-                value={startDate}
-              />
-              <p>종료일</p>
-              <input
-                className={styles.dateInput}
-                type="date"
-                onChange={handleEndDateChange}
-                value={endDate}
-              />
-              <button
-                className={styles.selectBtn}
-                onClick={() => fetchImages(startDate, endDate)}
-              >
-                조회
-              </button>
-              <button className={styles.resetBtn} onClick={() => fetchImages()}>
-                초기화
-              </button>
-            </div>
-            <div className={styles.manageController}>
-              <button
-                className={styles.btnDelete}
-                onClick={deleteSelectedImages}
-              >
-                <BsTrash />
-              </button>
-              <button
-                className={styles.btnPlus}
-                onClick={() => setIsModalOpen(true)}
-              >
-                <BsPlusCircle />
-              </button>
-            </div>
-          </div>
-        </div>
 
-        <div className={styles.folderContainer}>
-          <div className={styles.selectAllContainer}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                onChange={toggleAllImages}
-                checked={
-                  selectedImages.length === images.length && images.length > 0
-                }
-              />
-              전체선택
-            </label>
+          <div className={styles.folderContainer}>
+            <div className={styles.selectAllContainer}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  onChange={toggleAllImages}
+                  checked={
+                    selectedImages.length === images.length && images.length > 0
+                  }
+                />
+                전체선택
+              </label>
+            </div>
+            {images.length > 0 ? (
+              <div className={styles.imageGrid}>
+                {images
+                  .slice(
+                    currentPage * imagesPerPage,
+                    (currentPage + 1) * imagesPerPage
+                  )
+                  .map((image, index) => (
+                    <div key={image.id} className={styles.folder}>
+                      <input
+                        type="checkbox"
+                        className={styles.folderCheckbox}
+                        checked={selectedImages.includes(image.id)}
+                        onChange={() => toggleImageSelection(image.id)}
+                      />
+                      <img
+                        src={image.url}
+                        alt={`img-${image.id}`}
+                        className={styles.image}
+                        onClick={() => openImageModal(index)}
+                      />
+                    </div>
+                  ))}
+                <button
+                  className={`${styles.navigateButton} ${styles.leftButton} ${
+                    currentPage === 0 ? styles.disabled : styles.abled
+                  }`}
+                  disabled={currentPage === 0}
+                  onClick={handlePrevPage}
+                >
+                  <MdKeyboardArrowLeft />
+                </button>
+
+                <button
+                  className={`${styles.navigateButton} ${styles.rightButton} ${
+                    (currentPage + 1) * imagesPerPage >= images.length
+                      ? styles.disabled
+                      : styles.abled
+                  }`}
+                  disabled={(currentPage + 1) * imagesPerPage >= images.length}
+                  onClick={handleNextPage}
+                >
+                  <MdKeyboardArrowRight />
+                </button>
+              </div>
+            ) : (
+              <p>이미지가 없습니다.</p>
+            )}
           </div>
-          {images.length > 0 ? (
-            <div className={styles.imageGrid}>
-              {images
-                .slice(
-                  currentPage * imagesPerPage,
-                  (currentPage + 1) * imagesPerPage
-                )
-                .map((image, index) => (
-                  <div key={image.id} className={styles.folder}>
-                    <input
-                      type="checkbox"
-                      className={styles.folderCheckbox}
-                      checked={selectedImages.includes(image.id)}
-                      onChange={() => toggleImageSelection(image.id)}
-                    />
-                    <img
-                      src={image.url}
-                      alt={`img-${image.id}`}
-                      className={styles.image}
-                      onClick={() => openImageModal(index)}
-                    />
+
+          {/* 이미지 추가 모달 */}
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+            contentLabel="이미지 등록"
+            className={styles.folderModal}
+            overlayClassName={styles.folderOverlay}
+          >
+            <h1>이미지 추가</h1>
+            <div {...getRootProps({ className: styles.dropzone })}>
+              <input {...getInputProps()} />
+              {selectedFiles.length === 0 ? (
+                <p onClick={open} style={{ cursor: "pointer" }}>
+                  여기를 클릭하거나 파일을 드롭해주세요
+                </p>
+              ) : (
+                <div className={styles.previewArea}>
+                  <img
+                    src={URL.createObjectURL(selectedFiles[currentImageIndex])}
+                    alt={selectedFiles[currentImageIndex].name}
+                    className={styles.previewImage}
+                  />
+                  {selectedFiles.length > 1 && (
+                    <div className={styles.slideButtons}>
+                      <button
+                        onClick={showPreviousFile}
+                        className={styles.addleftButton}
+                      >
+                        {"<"}
+                      </button>
+                      <button
+                        onClick={showNextFile}
+                        className={styles.addrightButton}
+                      >
+                        {">"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <ul className={styles.fileList}>
+              {selectedFiles.map((file) => (
+                <li key={file.name} className={styles.fileItem}>
+                  {file.name}
+                  <div className={styles.buttonContainer}>
+                    <button onClick={open} className={styles.inputButton}>
+                      추가
+                    </button>
+                    <button onClick={() => removeFile(file.name)}>삭제</button>
                   </div>
-                ))}
-              {/* 왼쪽 버튼 */}
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.modalButtons}>
+              <button className={styles.modalButton} onClick={saveImages}>
+                저장
+              </button>
               <button
-                className={`${styles.navigateButton} ${styles.leftButton}`}
-                onClick={handlePrevPage}
+                className={styles.modalButton}
+                onClick={() => {
+                  setSelectedFiles([]); // 선택된 파일 초기화
+                  setIsModalOpen(false); // 모달 닫기
+                }}
+              >
+                취소
+              </button>
+            </div>
+          </Modal>
+
+          {/* 이미지 확대 모달 */}
+          <Modal
+            isOpen={isImageModalOpen}
+            onRequestClose={closeImageModal}
+            contentLabel="이미지 보기"
+            className={styles.imageModal}
+            overlayClassName={styles.folderOverlay}
+          >
+            <div className={styles.imageModalContent}>
+              <button
+                onClick={showPreviousImage}
+                className={styles.leftimageModalContent}
               >
                 {"<"}
               </button>
-
-              {/* 오른쪽 버튼 */}
+              <img
+                src={images[currentImageIndex]?.url}
+                alt={`img-${currentImageIndex}`}
+                className={styles.modalImage}
+              />
               <button
-                className={`${styles.navigateButton} ${styles.rightButton}`}
-                onClick={handleNextPage}
+                onClick={showNextImage}
+                className={styles.rightimageModalContent}
               >
                 {">"}
               </button>
             </div>
-          ) : (
-            <p>이미지가 없습니다.</p>
-          )}
+          </Modal>
         </div>
-
-        {/* 이미지 추가 모달 */}
-        <Modal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          contentLabel="이미지 등록"
-          className={styles.folderModal}
-          overlayClassName={styles.folderOverlay}
-        >
-          <h1>이미지 추가</h1>
-          <div {...getRootProps({ className: styles.dropzone })}>
-            <input {...getInputProps()} />
-            {selectedFiles.length === 0 ? (
-              <p onClick={open} style={{ cursor: "pointer" }}>
-                여기를 클릭하거나 파일을 드롭해주세요
-              </p>
-            ) : (
-              <div className={styles.previewArea}>
-                <img
-                  src={URL.createObjectURL(selectedFiles[currentImageIndex])}
-                  alt={selectedFiles[currentImageIndex].name}
-                  className={styles.previewImage}
-                />
-                {selectedFiles.length > 1 && (
-                  <div className={styles.slideButtons}>
-                    <button
-                      onClick={showPreviousFile}
-                      className={styles.addleftButton}
-                    >
-                      {"<"}
-                    </button>
-                    <button
-                      onClick={showNextFile}
-                      className={styles.addrightButton}
-                    >
-                      {">"}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <ul className={styles.fileList}>
-            {selectedFiles.map((file) => (
-              <li key={file.name} className={styles.fileItem}>
-                {file.name}
-                <div className={styles.buttonContainer}>
-                  <button onClick={open} className={styles.inputButton}>
-                    추가
-                  </button>
-                  <button onClick={() => removeFile(file.name)}>삭제</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className={styles.modalButtons}>
-            <button className={styles.modalButton} onClick={saveImages}>
-              저장
-            </button>
-            <button
-              className={styles.modalButton}
-              onClick={() => {
-                setSelectedFiles([]); // 선택된 파일 초기화
-                setIsModalOpen(false); // 모달 닫기
-              }}
-            >
-              취소
-            </button>
-          </div>
-        </Modal>
-
-        {/* 이미지 확대 모달 */}
-        <Modal
-          isOpen={isImageModalOpen}
-          onRequestClose={closeImageModal}
-          contentLabel="이미지 보기"
-          className={styles.imageModal}
-          overlayClassName={styles.folderOverlay}
-        >
-          <div className={styles.imageModalContent}>
-            <button
-              onClick={showPreviousImage}
-              className={styles.leftimageModalContent}
-            >
-              {"<"}
-            </button>
-            <img
-              src={images[currentImageIndex]?.url}
-              alt={`img-${currentImageIndex}`}
-              className={styles.modalImage}
-            />
-            <button
-              onClick={showNextImage}
-              className={styles.rightimageModalContent}
-            >
-              {">"}
-            </button>
-          </div>
-        </Modal>
-      </div>
+      )}
     </div>
   );
 };

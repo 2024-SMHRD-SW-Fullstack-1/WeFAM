@@ -6,7 +6,8 @@
   overflow-y: auto;
 }
 
-.pointLog, .buyContainer {
+.pointLog,
+.buyContainer {
   width: 300px;
   border: 1px solid #b8b7b7;
   border-radius: 12px;

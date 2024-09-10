@@ -10,6 +10,8 @@ import Preloader from "../preloader/Preloader";
 import MealItem from "./MealItem";
 import AddMealModal from "./AddMealModal";
 import RecipeModal from "./RecipeModal";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 const Meal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,13 +61,15 @@ const Meal = () => {
   const addMeal = async (newMeal) => {
     setIsLoading(true);
     try {
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:8089/wefam/families/${userData.familyIdx}/meals`,
         newMeal
       );
-      alert("새로운 식사가 성공적으로 추가되었습니다.");
+      // if (response.status === 200) { 이 조건문으로 하면 지연이 있는 지 아래 코드 작동 불가
+      toastSuccess("가족 식사가 성공적으로 등록되었습니다!");
       getAllMeals(); // Refresh the meal list
       setIsAddMealModalOpen(false); // Close the modal
+      // }
     } catch (error) {
       console.error("새 식사 추가 중 오류 발생:", error);
     } finally {

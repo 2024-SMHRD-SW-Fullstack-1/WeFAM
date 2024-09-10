@@ -416,8 +416,9 @@ const Housework2 = () => {
     return (
       <li
         key={task.workIdx}
-        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""
-          }`}
+        className={`${styles.taskItem} ${
+          isCompleted ? styles.completedTask : ""
+        }`}
       >
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
