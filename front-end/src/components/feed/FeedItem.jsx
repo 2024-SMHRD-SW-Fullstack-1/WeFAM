@@ -241,7 +241,6 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
         console.log("writerId : ", response.data.userId);
         if (userData.id === response.data.userId) {
           console.log("삭제 시도");
-
           // API 호출하여 피드 삭제
           const response = await axios.delete(
             `http://localhost:8089/wefam/delete-feed/${feedIdx}`

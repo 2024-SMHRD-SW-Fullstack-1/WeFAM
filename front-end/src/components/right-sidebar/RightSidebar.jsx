@@ -19,8 +19,8 @@ const RightSidebar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   useEffect(() => {
-    console.log("???!",isPopupVisible);
-    
+    console.log("???!", isPopupVisible);
+
     // 사용자 데이터를 가져오는 axios 요청
     axios
       .get("http://localhost:8089/wefam/get-family")
@@ -69,17 +69,17 @@ const RightSidebar = () => {
     setSelectedUser(user);
 
     // 클릭한 프로필 이미지의 위치를 계산
-  const profileImage = event.currentTarget.getBoundingClientRect();
-  
-  const popupX = profileImage.left;
-  const popupY = profileImage.top + window.scrollY + profileImage.height;
-  console.log("x축",popupX);
-  console.log("y축",popupY);
+    const profileImage = event.currentTarget.getBoundingClientRect();
 
-  // 팝업 위치를 설정
-  setPopupPosition({ x: popupX, y: popupY });
-  setIsPopupVisible(true);
-    
+    const popupX = profileImage.left;
+    const popupY = profileImage.top + window.scrollY + profileImage.height;
+    console.log("x축", popupX);
+    console.log("y축", popupY);
+
+    // 팝업 위치를 설정
+    setPopupPosition({ x: popupX, y: popupY });
+    setIsPopupVisible(true);
+
     // 선택된 사용자의 정보를 서버에서 가져오기
     axios
       .get(`http://localhost:8089/wefam/get-user/${user.id}`)
@@ -138,8 +138,9 @@ const RightSidebar = () => {
                     alt={users[0].name}
                   />
                   <span
-                    className={`${styles.status} ${users[0].online ? styles.online : styles.offline
-                      }`}
+                    className={`${styles.status} ${
+                      users[0].online ? styles.online : styles.offline
+                    }`}
                   ></span>
                   {users[0].id == creatorUserId && (
                     <img
@@ -169,8 +170,9 @@ const RightSidebar = () => {
                   alt={user.name}
                 />
                 <span
-                  className={`${styles.status} ${user.online ? styles.online : styles.offline
-                    }`}
+                  className={`${styles.status} ${
+                    user.online ? styles.online : styles.offline
+                  }`}
                 ></span>
                 {user.id == creatorUserId && (
                   <img src={crown} alt="Creator" className={styles.crownIcon} />
@@ -181,25 +183,35 @@ const RightSidebar = () => {
             </li>
           ))}
         </ul>
+        {/* 팝업 메뉴 */}
+        {isPopupVisible && (
+          <div
+            className={`${styles.popupMenu} ${
+              isPopupVisible ? styles.open : ""
+            }`}
+            style={{ top: `${popupPosition.y - 130}px` }}
+          >
+            <div
+              onClick={handleSendMessageClick}
+              className={styles.popupMenuItem}
+            >
+              쪽지 보내기
+            </div>
+            <div
+              onClick={handleViewProfileClick}
+              className={styles.popupMenuItem}
+            >
+              정보 확인
+            </div>
+            <div
+              onClick={() => setIsPopupVisible(false)}
+              className={styles.popupMenuItem}
+            >
+              취소
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* 팝업 메뉴 */}
-      {isPopupVisible && (
-        <div
-        className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
-        style={{ top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }}
-      >
-        <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
-          쪽지 보내기
-        </div>
-        <div onClick={handleViewProfileClick} className={styles.popupMenuItem}>
-          정보 확인
-        </div>
-        <div onClick={() => setIsPopupVisible(false)} className={styles.popupMenuItem}>
-          취소
-        </div>
-      </div>
-    )}
 
       {/* 쪽지 보내기 모달 */}
       {isFamilyModalOpen && (

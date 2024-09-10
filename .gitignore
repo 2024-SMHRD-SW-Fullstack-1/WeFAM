@@ -731,4 +731,6 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,macos,git,java,maven,gradle,netbeans,visualstudio,eclipse,intellij
+# End of https://www.toptal.com/developers/gitignore/api/windows,macos,git,java,maven,gradle,netbeans,visualstudio,eclipse,intellijback-end/src/main/resources/application.properties
+back-end/src/main/resources/application.properties
+back-end/src/main/resources/application.properties

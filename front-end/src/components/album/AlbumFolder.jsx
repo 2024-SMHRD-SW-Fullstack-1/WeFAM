@@ -39,6 +39,7 @@ const AlbumFolder = () => {
   const fetchImages = (start = "", end = "") => {
     setIsLoading(true);
     const effectiveEndDate = end || new Date().toISOString().split("T")[0];
+
     const url = start
       ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
       : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
@@ -168,8 +169,10 @@ const AlbumFolder = () => {
   };
 
   const openImageModal = (index) => {
-    setCurrentImageIndex(index);
+    const totalIndex = currentPage * imagesPerPage + index;
+    setCurrentImageIndex(totalIndex);
     setIsImageModalOpen(true);
+    npm;
   };
 
   const closeImageModal = () => setIsImageModalOpen(false);
