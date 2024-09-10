@@ -416,9 +416,8 @@ const Housework2 = () => {
     return (
       <li
         key={task.workIdx}
-        className={`${styles.taskItem} ${
-          isCompleted ? styles.completedTask : ""
-        }`}
+        className={`${styles.taskItem} ${isCompleted ? styles.completedTask : ""
+          }`}
       >
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
@@ -521,7 +520,7 @@ const Housework2 = () => {
                     : styles.circleZero
                 }
               >
-                {tasks.daily.length}
+                {tasks.daily.filter((task) => !task.completed).length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
                 <BsPlusCircle
@@ -545,7 +544,7 @@ const Housework2 = () => {
                     : styles.circleZero
                 }
               >
-                {tasks.shortTerm.length}
+                {tasks.shortTerm.filter((task) => !task.completed).length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
                 <BsPlusCircle
