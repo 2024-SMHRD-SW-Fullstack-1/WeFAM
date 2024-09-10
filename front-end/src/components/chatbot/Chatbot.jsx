@@ -3,7 +3,7 @@ import styles from "./Chatbot.module.css";
 import { useSelector } from "react-redux";
 
 
-const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace}) => {
+const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
@@ -44,18 +44,19 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace})
     };
 
     // 장소를 클릭했을 때 이벤트 핸들러
-    const handlePlaceClick = (placeName) => {
+    const handlePlaceClick = (fullResponse) => {
         if (typeof onSelectPlace === 'function') {
-            onSelectPlace(placeName); // EventModal의 '장소' 필드에 해당 장소 이름을 넣음
-            console.log("클릭한 장소" + placeName);
+            // EventModal의 메모 필드에 선택된 장소와 설명을 넣음
+            onSelectPlace(fullResponse);
+            console.log("클릭한 장소와 설명: " + fullResponse);
 
-            // AiModal과 Chatbot 모달을 닫는 함수 호출
-        onClose();
+            // AiModal과 Chatbot 모달을 닫음
+            onClose();
 
         } else {
             console.error("onSelectPlace 함수가 전달되지 않았습니다.");
         }
-        setChatContent([...chatContent, { message: `선택하신 장소는 ${placeName}입니다!`, isUserChat: false }]);
+        setChatContent([...chatContent, { message: `선택하신 장소는 ${fullResponse}입니다!`, isUserChat: false }]);
     };
 
     // 사용자가 입력한 메시지 보내기
@@ -141,27 +142,20 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace})
                         {chat.aiResponse ? (
                             chat.aiResponse.map((line, idx) => {
 
-                                let placeName = null;
+                                let fullResponse = null;
 
-                                // (숫자). **장소명** - 또는 : 을 제외한 장소명을 추출하는 정규식
-                                const match1 = line.match(/\d+\.\s*\*\*(.*?)\*\*/); // 형식 1 처리 (숫자. **장소명**)
-                                const match2 = line.match(/\d+\.\s*(.*?):/);         // 형식 2 처리 (숫자. 장소명:)
+                                // (숫자). **장소명** 과 그 뒤의 설명까지 모두 추출
+                                const matchFull = line.match(/\d+\.\s*\*\*(.*?)\*\*\s*[-:]?\s*(.*)/); // 장소명과 설명을 모두 추출
 
-                                // 형식 1이 매칭될 경우
-                                if (match1) {
-                                    placeName = match1[1].trim(); // **을 제외한 장소명 추출
+                                if (matchFull) {
+                                    fullResponse = `${matchFull[1].trim()}: ${matchFull[2].trim()}`; // 장소명과 설명을 합쳐 하나의 문자열로
                                 }
-                                // 형식 2가 매칭될 경우
-                                else if (match2) {
-                                    placeName = match2[1].trim(); // : 앞의 장소명 추출
-                                }
-                                if (placeName) {
-                                    // console.log("추출된 장소 이름:", placeName); // placeName 값 확인
 
+                                if (fullResponse) {
                                     return (
                                         <React.Fragment key={idx}>
                                             <span
-                                                onClick={() => handlePlaceClick(placeName)}
+                                                onClick={() => handlePlaceClick(fullResponse)} // 응답 전체를 메모에 넣기 위한 처리
                                                 style={{
                                                     cursor: "pointer",
                                                     color: "black",

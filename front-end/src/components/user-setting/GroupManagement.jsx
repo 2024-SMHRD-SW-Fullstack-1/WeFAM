@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./GroupManagement.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import familyPT from "../../assets/images/famaily.png"; // 가족 프로필 사진 기본 이미지
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const GroupManagement = () => {
@@ -13,8 +12,8 @@ const GroupManagement = () => {
   const userId = useSelector((state) => state.user.userData.id);
   const [familyNick, setFamilyNick] = useState(""); // 현재 가족 이름
   const [newFamilyNick, setNewFamilyNick] = useState(""); // 수정할 가족 이름 상태
-  const [familyMotto, setFamilyMotto] = useState(""); // 현재 가족 가훈
-  const [newFamilyMotto, setNewFamilyMotto] = useState(""); // 수정할 가족 가훈 상태
+  // const [familyMotto, setFamilyMotto] = useState(""); // 현재 가족 가훈
+  // const [newFamilyMotto, setNewFamilyMotto] = useState(""); // 수정할 가족 가훈 상태
   const [profileImage, setProfileImage] = useState(null); // 프로필 이미지 상태
   const [selectedImage, setSelectedImage] = useState(null); // 선택된 이미지 파일 상태
   const [selectedFiles, setSelectedFiles] = useState([]); // 여러 파일을 저장할 배열 상태 추가
@@ -36,14 +35,14 @@ const GroupManagement = () => {
         });
 
       // 가족 가훈 불러오기
-      axios.get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
-        .then(response => {
-          setFamilyMotto(response.data); // 서버에서 가져온 가훈 설정
-          setNewFamilyMotto(response.data); // 수정할 가훈을 현재 가훈으로 설정
-        })
-        .catch(error => {
-          console.error("가훈을 가져오는 중 에러 발생:", error);
-        });
+      // axios.get(`http://localhost:8089/wefam/get-family-motto/${userData.id}`)
+      //   .then(response => {
+      //     setFamilyMotto(response.data); // 서버에서 가져온 가훈 설정
+      //     setNewFamilyMotto(response.data); // 수정할 가훈을 현재 가훈으로 설정
+      //   })
+      //   .catch(error => {
+      //     console.error("가훈을 가져오는 중 에러 발생:", error);
+      //   });
 
       fetchProfileImage();
     }
@@ -54,10 +53,10 @@ const GroupManagement = () => {
     setFamilyNick(e.target.value); // 입력된 가족 이름을 상태로 설정
   };
 
-  // 가족 가훈 입력 필드의 값이 변경될 때 호출되는 함수
-  const handleFamilyMottoChange = (e) => {
-    setNewFamilyMotto(e.target.value); // 입력된 가훈을 상태로 설정
-  };
+  //  가족 가훈 입력 필드의 값이 변경될 때 호출되는 함수
+  // const handleFamilyMottoChange = (e) => {
+  //   setNewFamilyMotto(e.target.value); // 입력된 가훈을 상태로 설정
+  // };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);  // 여러 파일을 배열로 저장
@@ -88,23 +87,23 @@ const GroupManagement = () => {
       });
   };
 
-  // 가족 가훈을 서버에 업데이트하는 함수
-  const updateFamilyMotto = () => {
-    const updatedFamily = {
-      familyIdx: 1, // 가족 ID (실제로는 동적으로 받아와야 함)
-      familyMotto: newFamilyMotto, // 업데이트할 가족 가훈
-      userId: userData.id, // 현재 사용자의 ID
-    };
+  // // 가족 가훈을 서버에 업데이트하는 함수
+  // const updateFamilyMotto = () => {
+  //   const updatedFamily = {
+  //     familyIdx: 1, // 가족 ID (실제로는 동적으로 받아와야 함)
+  //     familyMotto: newFamilyMotto, // 업데이트할 가족 가훈
+  //     userId: userData.id, // 현재 사용자의 ID
+  //   };
 
-    axios.put('http://localhost:8089/wefam/update-family-motto', updatedFamily)
-      .then(response => {
-        setFamilyMotto(newFamilyMotto); // 상태를 직접 업데이트하여 화면에 즉시 반영
-        console.log('가훈 업데이트 성공:', response.data);
-      })
-      .catch(error => {
-        console.error('가훈 업데이트 실패:', error); // 에러 처리
-      });
-  };
+  //   axios.put('http://localhost:8089/wefam/update-family-motto', updatedFamily)
+  //     .then(response => {
+  //       setFamilyMotto(newFamilyMotto); // 상태를 직접 업데이트하여 화면에 즉시 반영
+  //       console.log('가훈 업데이트 성공:', response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('가훈 업데이트 실패:', error); // 에러 처리
+  //     });
+  // };
 
   // 가족 프로필 사진 저장 함수
   const saveProfileImage = async () => {
@@ -174,8 +173,9 @@ const GroupManagement = () => {
     alert("저장하신 내용이 변경되었습니다.");
     // 가족 이름, 가훈, 프로필 사진을 모두 저장
     updateFamilyNick();
-    updateFamilyMotto();
+    // updateFamilyMotto();
     saveProfileImage();
+    window.location.reload();
   };
   return (
     <div className="main">
@@ -196,7 +196,7 @@ const GroupManagement = () => {
               <img
                 src={profileImage} // 프로필 이미지 또는 기본 이미지
                 className={styles.profileImg}
-                alt="Family"
+                alt="가족사진"
               />
               <input
                 type="file"

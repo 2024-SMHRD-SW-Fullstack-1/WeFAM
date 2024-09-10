@@ -42,8 +42,8 @@ const AiModal = ({ onClose, startDate, endDate, location, onSelectPlace }) => {
   };
 
   // 장소를 선택했을 때 Chatbot과 AiModal을 닫는 함수
-  const handlePlaceSelectFromChatbot = (placeName) => {
-    onSelectPlace(placeName); // 선택된 장소를 EventModal로 전달
+  const handlePlaceSelectFromChatbot = (memoContent) => {
+    onSelectPlace(memoContent); // 선택된 장소를 EventModal로 전달
     setIsChatbotOpen(false); // Chatbot 모달 닫기
     onClose(); // AiModal 닫기
   };
