@@ -67,7 +67,7 @@
 }
 
 .saveImgButton {
-    margin-left: 20px; 
+    margin-left: 390px; 
     background-color: #E1888B;
     color: white;
     border: none;
@@ -75,7 +75,6 @@
     border-radius: 8px;
     cursor: pointer;
     height: 50px; 
-    display: flex;
     align-items: center; 
     justify-content: center; 
 }

@@ -183,9 +183,7 @@ const GroupManagement = () => {
         <div className={styles.personalInfo}>
           <div className={styles.titleAndButton}>
             <h1>가족 정보 관리</h1>
-            <label className={styles.saveImgButton} onClick={handleSaveAll}>
-              변경사항 전체 저장
-            </label>
+
           </div>
           <hr />
 
@@ -223,6 +221,9 @@ const GroupManagement = () => {
                 value={familyNick}
                 onChange={handleFamilyNickChange}
               />
+              <label className={styles.saveImgButton} onClick={handleSaveAll}>
+                변경사항 전체 저장
+              </label>
             </div>
           </div>
           <hr className={styles.halfHr} />

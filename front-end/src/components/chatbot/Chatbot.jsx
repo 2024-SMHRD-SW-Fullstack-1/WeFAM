@@ -43,21 +43,20 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }
         return `${year}-${month}-${day}`;
     };
 
-    // 장소를 클릭했을 때 이벤트 핸들러
-    const handlePlaceClick = (fullResponse) => {
+    const handlePlaceClick = (placeTitle, placeDescription) => {
         if (typeof onSelectPlace === 'function') {
-            // EventModal의 메모 필드에 선택된 장소와 설명을 넣음
-            onSelectPlace(fullResponse);
-            console.log("클릭한 장소와 설명: " + fullResponse);
+            const fullResponse = `${placeTitle}: ${placeDescription}`;  // 장소와 설명 결합
+            onSelectPlace(fullResponse);  // 선택된 장소를 EventModal로 전달
+            onClose();  // AiModal 닫기
+            console.log("장소?", placeTitle);
+            console.log("내용?", placeDescription);
 
-            // AiModal과 Chatbot 모달을 닫음
-            onClose();
 
         } else {
             console.error("onSelectPlace 함수가 전달되지 않았습니다.");
         }
-        setChatContent([...chatContent, { message: `선택하신 장소는 ${fullResponse}입니다!`, isUserChat: false }]);
     };
+
 
     // 사용자가 입력한 메시지 보내기
     const startChat = () => {
@@ -141,30 +140,22 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }
                     <div className={styles.chatbot__content__box} key={index}>
                         {chat.aiResponse ? (
                             chat.aiResponse.map((line, idx) => {
-
-                                let fullResponse = null;
-
-                                // (숫자). **장소명** 과 그 뒤의 설명까지 모두 추출
-                                const matchFull = line.match(/\d+\.\s*\*\*(.*?)\*\*\s*[-:]?\s*(.*)/); // 장소명과 설명을 모두 추출
-
+                                // 정규 표현식을 통해 장소명과 부가 설명을 추출
+                                const matchFull = line.match(/\d+\.\s*\*\*(.*?)\*\*\s*[:-]\s*(.+)/);
                                 if (matchFull) {
-                                    fullResponse = `${matchFull[1].trim()}: ${matchFull[2].trim()}`; // 장소명과 설명을 합쳐 하나의 문자열로
-                                }
-
-                                if (fullResponse) {
+                                    const placeTitle = matchFull[1].trim();  // 장소명 추출
+                                    const placeDescription = matchFull[2].trim();  // 부가 설명 추출
                                     return (
-                                        <React.Fragment key={idx}>
+                                        <div key={idx} style={{ cursor: "pointer", color: "black" }}>
                                             <span
-                                                onClick={() => handlePlaceClick(fullResponse)} // 응답 전체를 메모에 넣기 위한 처리
-                                                style={{
-                                                    cursor: "pointer",
-                                                    color: "black",
-                                                    fontWeight: "bold"
-                                                }}>
-                                                {line}
+                                                onClick={() => handlePlaceClick(placeTitle, placeDescription)}  // 클릭 시 장소와 설명을 전달
+                                                style={{ fontWeight: "bold", cursor: "pointer" }}  // 커서 스타일 추가
+                                            >
+                                                {placeTitle}
                                             </span>
+                                            <span style={{ cursor: "pointer" }}>: {placeDescription}</span>  {/* 설명 부분도 클릭 가능하게 설정 */}
                                             <br />
-                                        </React.Fragment>
+                                        </div>
                                     );
                                 }
                                 return (
@@ -184,8 +175,6 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }
                         )}
                     </div>
                 ))}
-
-
             </div>
 
             <div className={styles.chatbot__footer}>
