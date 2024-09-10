@@ -20,7 +20,7 @@
   }
   
   .profileContainer span {
-    font-size: 20px; /* 글씨 크기를 키웁니다 */
+    font-size: 25px; /* 글씨 크기를 키웁니다 */
     font-weight: bold; /* 글씨를 굵게 만듭니다 */
   }
 
@@ -88,6 +88,9 @@
     border-radius: 6px;
     justify-content: flex-start;
     margin-top: 20px;
+    padding: 5px;
+    font-size: 20px;
+    font-weight: bold;
   }
 
   .editNickButton{
