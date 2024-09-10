@@ -185,7 +185,7 @@ const RightSidebar = () => {
         {isPopupVisible && (
           <div
             className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
-            style={{ top: `${popupPosition.y-110}px` }}
+            style={{ top: `${popupPosition.y-130}px` }}
           >
             <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
               쪽지 보내기

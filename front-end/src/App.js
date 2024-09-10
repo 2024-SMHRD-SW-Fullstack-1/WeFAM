@@ -40,7 +40,6 @@ function App() {
           </Route>
           <Route path="chatbot" element={<Chatbot />} />
           <Route path="profileModal" element={<ProfileModal />} />
-
         </Routes>
       </NotificationProvider>
     </div>

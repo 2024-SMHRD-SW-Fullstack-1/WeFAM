@@ -50,7 +50,7 @@ const ProfileModal = ({
       .put("http://localhost:8089/wefam/update-profile", selectedProfile)
       .then((response) => {
         console.log("프로필 업데이트 성공:", response.data);
-  
+
         // 사용자 정보를 다시 가져오는 로직 추가
         axios
           .get(`http://localhost:8089/wefam/get-family-nick/${selectedProfile.id}`)
@@ -62,7 +62,7 @@ const ProfileModal = ({
           .catch((error) => {
             console.error("최신 사용자 정보 가져오기 실패:", error);
           });
-  
+      
         onRequestClose(); // 저장 후 모달 닫기
       })
       .catch((error) => {

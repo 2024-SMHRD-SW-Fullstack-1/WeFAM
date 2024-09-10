@@ -29,14 +29,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+	
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private JoiningRepository joiningRepository;
-
-	@Autowired
-	private FileRepository fileRepository; // FileRepository 주입
+	
+	 @Autowired
+	    private FileRepository fileRepository;  // FileRepository 주입
+	
 
 	// 인가 코드를 사용하여 액세스 토큰을 가져옴
 	public String getKakaoAccessToken(String code) {
@@ -131,6 +133,7 @@ public class UserService {
 			}
 
 //			// 3. 프로필 이미지 업데이트 조건
+
 //			if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
 //				userDTO.setProfileImg(existingUser.getProfileImg()); // 기존 프로필 이미지 유지
 //			}
@@ -201,5 +204,4 @@ public class UserService {
 	public UserModel getUserById(String id) {
 	    return userRepository.findById(id).orElse(null);
 	}
-
 }
