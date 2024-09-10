@@ -19,8 +19,6 @@ const RightSidebar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   useEffect(() => {
-    console.log("???!", isPopupVisible);
-
     // 사용자 데이터를 가져오는 axios 요청
     axios
       .get("http://localhost:8089/wefam/get-family")
@@ -47,8 +45,6 @@ const RightSidebar = () => {
 
   useEffect(() => {
     const fetchFamilyCreator = async () => {
-      console.log("확인",users[0]);
-      
       try {
         // 패밀리 생성한 유저 id 가져오기
         const response = await axios.get(
@@ -168,8 +164,7 @@ const RightSidebar = () => {
                 onClick={(e) => handleProfileClick(users[0], e)} // 팝업 열기
                 style={{
                   cursor: users[0].id !== userData.id ? "pointer" : "default",
-                }}
-              >
+                }}>
                 <div className={styles.userImageContainer}>
                   <img
                     src={users[0].image}
@@ -179,12 +174,11 @@ const RightSidebar = () => {
                   <span
                     className={`${styles.status} ${
                       users[0].online ? styles.online : styles.offline
-                    }`}
-                  ></span>
+                    }`}></span>
                   {users[0].id == creatorUserId && (
                     <img
                       src={crown}
-                      alt="Creator"
+                      alt='Creator'
                       className={styles.crownIcon}
                     />
                   )}
@@ -211,10 +205,9 @@ const RightSidebar = () => {
                 <span
                   className={`${styles.status} ${
                     user.online ? styles.online : styles.offline
-                  }`}
-                ></span>
+                  }`}></span>
                 {user.id == creatorUserId && (
-                  <img src={crown} alt="Creator" className={styles.crownIcon} />
+                  <img src={crown} alt='Creator' className={styles.crownIcon} />
                 )}
               </div>
               <span className={styles.userName}>{user.name}</span>
@@ -228,24 +221,20 @@ const RightSidebar = () => {
             className={`${styles.popupMenu} ${
               isPopupVisible ? styles.open : ""
             }`}
-            style={{ top: `${popupPosition.y - 130}px` }}
-          >
+            style={{ top: `${popupPosition.y - 130}px` }}>
             <div
               onClick={handleSendMessageClick}
-              className={styles.popupMenuItem}
-            >
+              className={styles.popupMenuItem}>
               쪽지 보내기
             </div>
             <div
               onClick={handleViewProfileClick}
-              className={styles.popupMenuItem}
-            >
+              className={styles.popupMenuItem}>
               정보 확인
             </div>
             <div
               onClick={() => setIsPopupVisible(false)}
-              className={styles.popupMenuItem}
-            >
+              className={styles.popupMenuItem}>
               취소
             </div>
           </div>
