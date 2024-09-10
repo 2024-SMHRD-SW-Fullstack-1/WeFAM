@@ -133,7 +133,6 @@ public class UserService {
 			}
 
 //			// 3. 프로필 이미지 업데이트 조건
-
 //			if (!existingUser.getProfileImg().equals(userDTO.getProfileImg())) {
 //				userDTO.setProfileImg(existingUser.getProfileImg()); // 기존 프로필 이미지 유지
 //			}

@@ -19,8 +19,8 @@ const RightSidebar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태
 
   useEffect(() => {
-    console.log("???!",isPopupVisible);
-    
+    console.log("???!", isPopupVisible);
+
     // 사용자 데이터를 가져오는 axios 요청
     axios
       .get("http://localhost:8089/wefam/get-family")
@@ -30,7 +30,7 @@ const RightSidebar = () => {
           image: user.profileImg,
           nick: user.nick,
           id: user.id,
-          online: true,
+          online: user.id === userData.id ? true : false,
         }));
 
         // userData.id와 일치하는 사용자를 배열의 첫 번째로 이동
@@ -47,6 +47,8 @@ const RightSidebar = () => {
 
   useEffect(() => {
     const fetchFamilyCreator = async () => {
+      console.log("확인",users[0]);
+      
       try {
         // 패밀리 생성한 유저 id 가져오기
         const response = await axios.get(
@@ -65,21 +67,58 @@ const RightSidebar = () => {
     }
   }, []);
 
+  // 온라인 오프라인 적용하기
+
+  // useEffect(()=>{
+  //   let idleTime = 0;
+  //   const idleLimit =0.5; // 1분 비활성화 시 오프라인 전환
+
+  //   const resetIdleTimer = () => {
+  //     idleTime = 0;
+  //     updateUserStatus(true) // 활동이 감지되면 온라인으로 변경
+  //   };
+
+  //   const updateUserStatus = (isOnline) => {
+  //     const updatedUsers = users.map((user) => ({
+  //       ...user,
+  //       online: user.id === userData.id ? user.online : isOnline // 본인프로필은 상태 안변함
+  //     }));
+  //     setUsers(updatedUsers);
+  //   }
+
+  //   // 활동 감지 이벤트 설정
+  //   window.addEventListener("mousemove", resetIdleTimer);
+  //   window.addEventListener("keypress", resetIdleTimer);
+
+  //   const idleCheckInterval = setInterval(() =>{
+  //     idleTime += 1;
+  //     if (idleTime >= idleLimit) {
+  //       updateUserStatus(false); // 1분 비활성화 시 오프라인으로 전환
+  //     }
+  //   }, 200); // 30초마다 체크
+
+  //   return () => {
+  //     window.removeEventListener("mousemove", resetIdleTimer);
+  //     window.removeEventListener("keypress", resetIdleTimer);
+  //     clearInterval(idleCheckInterval); // 컨포넌트가 aunmount될 때 정리
+  //   };
+  // }, [users]);
+
   const handleProfileClick = (user, event) => {
     setSelectedUser(user);
 
     // 클릭한 프로필 이미지의 위치를 계산
-  const profileImage = event.currentTarget.getBoundingClientRect();
-  
-  const popupX = profileImage.left;
-  const popupY = profileImage.top + window.scrollY + profileImage.height;
-  console.log("x축",popupX);
-  console.log("y축",popupY);
+    const profileImage = event.currentTarget.getBoundingClientRect();
 
-  // 팝업 위치를 설정
-  setPopupPosition({ x: popupX, y: popupY });
-  setIsPopupVisible(true);
-    
+    const popupX = profileImage.left;
+    const popupY = profileImage.top + window.scrollY + profileImage.height;
+    console.log("x축", popupX);
+    console.log("y축", popupY);
+
+    // 팝업 위치를 설정
+    setPopupPosition({ x: popupX, y: popupY });
+    setIsPopupVisible(true);
+
     // 선택된 사용자의 정보를 서버에서 가져오기
     axios
       .get(`http://localhost:8089/wefam/get-user/${user.id}`)
@@ -138,8 +177,9 @@ const RightSidebar = () => {
                     alt={users[0].name}
                   />
                   <span
-                    className={`${styles.status} ${users[0].online ? styles.online : styles.offline
-                      }`}
+                    className={`${styles.status} ${
+                      users[0].online ? styles.online : styles.offline
+                    }`}
                   ></span>
                   {users[0].id == creatorUserId && (
                     <img
@@ -169,8 +209,9 @@ const RightSidebar = () => {
                   alt={user.name}
                 />
                 <span
-                  className={`${styles.status} ${user.online ? styles.online : styles.offline
-                    }`}
+                  className={`${styles.status} ${
+                    user.online ? styles.online : styles.offline
+                  }`}
                 ></span>
                 {user.id == creatorUserId && (
                   <img src={crown} alt="Creator" className={styles.crownIcon} />
@@ -184,23 +225,32 @@ const RightSidebar = () => {
         {/* 팝업 메뉴 */}
         {isPopupVisible && (
           <div
-            className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
-            style={{ top: `${popupPosition.y-130}px` }}
+            className={`${styles.popupMenu} ${
+              isPopupVisible ? styles.open : ""
+            }`}
+            style={{ top: `${popupPosition.y - 130}px` }}
           >
-            <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
+            <div
+              onClick={handleSendMessageClick}
+              className={styles.popupMenuItem}
+            >
               쪽지 보내기
             </div>
-            <div onClick={handleViewProfileClick} className={styles.popupMenuItem}>
+            <div
+              onClick={handleViewProfileClick}
+              className={styles.popupMenuItem}
+            >
               정보 확인
             </div>
-            <div onClick={() => setIsPopupVisible(false)} className={styles.popupMenuItem}>
+            <div
+              onClick={() => setIsPopupVisible(false)}
+              className={styles.popupMenuItem}
+            >
               취소
             </div>
           </div>
         )}
       </div>
-
-      
 
       {/* 쪽지 보내기 모달 */}
       {isFamilyModalOpen && (
