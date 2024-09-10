@@ -4,13 +4,12 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import modalPointIcon from "../../assets/images/modalPointIcon.png";
 
-
 const RewardPoint = () => {
   const userData = useSelector((state) => state.user.userData);
   const [completedTasks, setCompletedTasks] = useState([]);
-  const [familyPoints, setFamilyPoints] = useState([]);
+  const [familyMembers, setFamilyMembers] = useState([]);
   const [purchasedRewards, setPurchasedRewards] = useState([]);
-  const [totalPoints, setTotalPoints] = useState(0); // 유저의 총 포인트 상태
+  const [totalPoints, setTotalPoints] = useState(0);
 
   // 완료된 하우스워크 로그 가져오기
   useEffect(() => {
@@ -19,12 +18,10 @@ const RewardPoint = () => {
         const response = await axios.get(
           `http://localhost:8089/wefam/completed-user-works?userId=${userData.id}`
         );
-        const completedTasksWithImages = response.data.map((item) => {
-          return {
-            ...item.workLog,
-            images: item.images,
-          };
-        });
+        const completedTasksWithImages = response.data.map((item) => ({
+          ...item.workLog,
+          images: item.images,
+        }));
 
         setCompletedTasks(completedTasksWithImages);
       } catch (error) {
@@ -39,34 +36,35 @@ const RewardPoint = () => {
 
   // 가족 구성원 포인트 가져오기
   useEffect(() => {
-    const fetchFamilyPoints = async () => {
+    const fetchFamilyMembers = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8089/wefam/get-family-members/${userData.id}`
-        );
-        const members = response.data;
+        const familyResponse = await axios.get("http://localhost:8089/wefam/get-family");
+        const members = familyResponse.data;
 
-        const userDataPromises = members.map((member) =>
-          axios.get(
-            `http://localhost:8089/wefam/get-user-data?userId=${member.userId}`
-          )
+        const memberPointPromises = members.map(async (member) => {
+          const userResponse = await axios.get(
+            `http://localhost:8089/wefam/get-user-data?userId=${member.id}`
+          );
+          return {
+            ...member,
+            points: userResponse.data.points,
+          };
+        });
+
+        const familyMembersWithPoints = await Promise.all(memberPointPromises);
+
+        const sortedMembers = familyMembersWithPoints.sort((a, b) =>
+          a.id === userData.id ? -1 : b.id === userData.id ? 1 : 0
         );
 
-        const userDataResponses = await Promise.all(userDataPromises);
-        const familyPointsData = userDataResponses.map(
-          (response) => response.data
-        );
-
-        setFamilyPoints(familyPointsData);
+        setFamilyMembers(sortedMembers);
       } catch (error) {
         console.error("가족 구성원 데이터를 가져오는 중 오류 발생:", error);
       }
     };
 
-    if (userData) {
-      fetchFamilyPoints();
-    }
-  }, [userData, totalPoints]); // totalPoints가 변경되면 다시 데이터를 가져옴
+    fetchFamilyMembers();
+  }, [userData]);
 
   // 유저 총 포인트 불러오기
   useEffect(() => {
@@ -75,7 +73,7 @@ const RewardPoint = () => {
         const response = await axios.get(
           `http://localhost:8089/wefam/get-user-data?userId=${userData.id}`
         );
-        setTotalPoints(response.data.points); // 유저 총 포인트 상태 설정
+        setTotalPoints(response.data.points);
       } catch (error) {
         console.error("포인트 정보를 가져오는 중 오류 발생:", error);
       }
@@ -106,21 +104,22 @@ const RewardPoint = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")}`;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
   };
 
   return (
     <div className="main">
-      <div style={{
-        backgroundColor: "#ffffff",
-        marginTop: "2rem",
-        borderRadius: "1rem",
-        padding: "1rem",
-        height: "710px",
-      }}>
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          marginTop: "2rem",
+          borderRadius: "1rem",
+          padding: "1rem",
+          height: "710px",
+        }}
+      >
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
@@ -162,8 +161,7 @@ const RewardPoint = () => {
                       <img src={modalPointIcon} className={styles.Imgicon} />
                     </p>
                     <span>
-                      구매일:{" "}
-                      {new Date(rewardItem.reward.soldAt).toLocaleDateString()}
+                      구매일: {new Date(rewardItem.reward.soldAt).toLocaleDateString()}
                     </span>
                   </div>
                 </li>
@@ -173,21 +171,18 @@ const RewardPoint = () => {
 
           {/* 가족 구성원 포인트 */}
           <div className={styles.familyPointsContainer}>
-        
             <h2>가족 구성원 포인트</h2>
-
-            
             <ul>
-              {familyPoints.map((member) => (
-                <li key={member.userId} className={styles.familyMember}>
+              {familyMembers.map((member) => (
+                <li key={member.id} className={styles.familyMember}>
                   <img
                     src={member.profileImg || "default_profile_image_url"}
                     alt={member.name}
                     className={styles.familyMemberImg}
                   />
                   <div className={styles.memberInfo}>
-                    <span style={{flexGrow:1}}>{member.name}</span>
-                    <span style={{marginLeft:"auto"}}>
+                    <span style={{ flexGrow: 1 }}>{member.name}</span>
+                    <span style={{ marginLeft: "auto" }}>
                       {member.points}
                       <img src={modalPointIcon} className={styles.Imgicon} />
                     </span>
@@ -198,7 +193,7 @@ const RewardPoint = () => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
