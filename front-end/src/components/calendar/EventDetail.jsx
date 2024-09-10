@@ -10,6 +10,7 @@ import {
   BsImages,
   BsChevronDown,
   BsChevronUp,
+  BsBorderBottom,
 } from "react-icons/bs";
 import { RiArrowRightWideLine } from "react-icons/ri";
 import { MdOutlineEditNote } from "react-icons/md";
@@ -322,6 +323,20 @@ const EventDetail = ({
       </div>
 
       {/* 지도  */}
+
+      {!coordinates && (
+        <div className={styles.locationContainer}>
+          <div className={styles.field}>
+            <FiMapPin
+              className={styles.icon}
+              style={{ color: eventColor }} // 선택된 색상이 없으면 기본값
+            />
+            <div>
+              <h3 className={styles.locationName}>장소</h3>
+            </div>
+          </div>
+        </div>
+      )}
       {coordinates && (
         <div className={styles.locationContainer}>
           <div className={styles.field}>
@@ -339,16 +354,18 @@ const EventDetail = ({
           </div>
         </div>
       )}
-
+      <div className={styles.field}>
+        <BsImages className={styles.icon} style={{ color: eventColor }} />
+        <div>
+          <h3 className={styles.locationName}>추억의 순간</h3>
+        </div>
+      </div>
+      {event.files && event.files.length <= 0 && (
+        <div style={{ borderTop: "1px solid #f5f5dc" }}></div>
+      )}
       {/* 이미지 슬라이더 부분 */}
       {event.files && event.files.length > 0 && (
         <>
-          <div className={styles.field}>
-            <BsImages className={styles.icon} style={{ color: eventColor }} />
-            <div>
-              <h3 className={styles.locationName}>추억의 순간</h3>
-            </div>
-          </div>
           <div className={styles.sliderContainer}>
             <Slider {...settings}>
               {event.files.map((file, index) => (

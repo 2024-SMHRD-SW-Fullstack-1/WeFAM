@@ -40,6 +40,9 @@ const Feed = () => {
           setTotalPages(response.data.totalPages || 1);
           if (page === 1) {
             setIsFirstPageLoaded(true); // 첫 페이지가 로드되었음을 표시
+            console.log("첫번째 페이지 로드!");
+          } else if (page === 2) {
+            console.log("두번째 페이지 로드");
           }
         }
       } catch (error) {
