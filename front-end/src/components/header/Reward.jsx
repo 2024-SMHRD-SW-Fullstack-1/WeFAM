@@ -40,9 +40,9 @@ const Reward = () => {
   const fetchRewards = async () => {
     try {
       const response = await axios.get("http://localhost:8089/wefam/rewards");
-      const availableRewards = response.data.filter(
-        (reward) => !reward.reward.isSold
-      );
+      const availableRewards = response.data
+        .filter((reward) => !reward.reward.isSold) // 판매되지 않은 보상만 필터링
+        .sort((a, b) => b.reward.rewardPoint - a.reward.rewardPoint); // 포인트별로 내림차순 정렬
       setRewards(availableRewards);
     } catch (error) {
       console.error("보상 목록 불러오기 오류 발생:", error);

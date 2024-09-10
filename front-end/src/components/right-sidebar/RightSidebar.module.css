@@ -6,7 +6,6 @@
   height: 100%;
   transition: all var(--animation-duration);
   margin: 20px;
-  
 }
 
 /* 반응형 디자인 */
@@ -134,7 +133,6 @@
 
 .popupMenu {
   position: absolute;
-
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -157,8 +155,6 @@
   transform: scaleY(1); /* 클릭 시 팝업이 수직으로 열리는 애니메이션 */
   max-height: 500px;
 }
-
-
 
 .popupMenuItem {
   padding: 10px;

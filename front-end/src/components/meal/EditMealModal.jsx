@@ -6,6 +6,8 @@ import modalStyles from "../modal/Modal.module.css";
 import styles from "./AddMealModal.module.css";
 import Preloader from "../preloader/Preloader";
 import logoFoodie from "../../assets/images/logo-foodie.png";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 const AddMealModal = ({ meal, getAllMeals, onSave, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +72,7 @@ const AddMealModal = ({ meal, getAllMeals, onSave, onClose }) => {
         `http://localhost:8089/wefam/meals/${meal.mealIdx}`,
         updatedMeal
       );
+      toastSuccess("가족 식사가 성공적으로 업데이트되었습니다!");
       console.log("수정된 응답 : ", response.data);
       getAllMeals();
       onClose();
