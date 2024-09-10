@@ -76,8 +76,9 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             "Content-Type": "application/json", // 서버가 JSON 형식을 기대할 경우
           },
         });
+        setContent("");
         toastSuccess("피드가 성공적으로 등록되었습니다!");
-        await onGetAllFeeds(userData.familyIdx);
+        await onGetAllFeeds(1);
       } catch (error) {
         console.error("addFeed 함수 에러 : ", error);
       } finally {
@@ -140,6 +141,11 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
 
   const handleDeletePoll = (pollId) => {
     dispatch(deletePoll({ pollId }));
+  };
+
+  // 업로드이미지모달에서 피드 add 후에 content 빈값 처리
+  const handleResetContent = () => {
+    setContent("");
   };
 
   return (
@@ -219,6 +225,7 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
               content={content}
               onHandleAddFeed={handleAddFeed}
               onGetAllFeeds={onGetAllFeeds}
+              onResetContent={handleResetContent}
               onClose={() => setIsUploadImageModalOpen(false)}
             />
           )}
