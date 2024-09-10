@@ -164,7 +164,8 @@ const AlbumFolder = () => {
   };
 
   const openImageModal = (index) => {
-    setCurrentImageIndex(index);
+    const totalIndex = currentPage * imagesPerPage + index;
+    setCurrentImageIndex(totalIndex);
     setIsImageModalOpen(true);
   };
 

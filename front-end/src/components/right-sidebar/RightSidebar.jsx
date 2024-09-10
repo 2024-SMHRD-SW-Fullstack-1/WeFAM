@@ -30,7 +30,7 @@ const RightSidebar = () => {
           image: user.profileImg,
           nick: user.nick,
           id: user.id,
-          online: true,
+          online: user.id === userData.id ? true : false,
         }));
 
         // userData.id와 일치하는 사용자를 배열의 첫 번째로 이동
@@ -47,6 +47,8 @@ const RightSidebar = () => {
 
   useEffect(() => {
     const fetchFamilyCreator = async () => {
+      console.log("확인",users[0]);
+      
       try {
         // 패밀리 생성한 유저 id 가져오기
         const response = await axios.get(
@@ -64,6 +66,43 @@ const RightSidebar = () => {
       fetchFamilyCreator();
     }
   }, []);
+
+  // 온라인 오프라인 적용하기
+
+  // useEffect(()=>{
+  //   let idleTime = 0;
+  //   const idleLimit =0.5; // 1분 비활성화 시 오프라인 전환
+
+  //   const resetIdleTimer = () => {
+  //     idleTime = 0;
+  //     updateUserStatus(true) // 활동이 감지되면 온라인으로 변경
+  //   };
+
+  //   const updateUserStatus = (isOnline) => {
+  //     const updatedUsers = users.map((user) => ({
+  //       ...user,
+  //       online: user.id === userData.id ? user.online : isOnline // 본인프로필은 상태 안변함
+  //     }));
+  //     setUsers(updatedUsers);
+  //   }
+
+  //   // 활동 감지 이벤트 설정
+  //   window.addEventListener("mousemove", resetIdleTimer);
+  //   window.addEventListener("keypress", resetIdleTimer);
+
+  //   const idleCheckInterval = setInterval(() =>{
+  //     idleTime += 1;
+  //     if (idleTime >= idleLimit) {
+  //       updateUserStatus(false); // 1분 비활성화 시 오프라인으로 전환
+  //     }
+  //   }, 200); // 30초마다 체크
+
+  //   return () => {
+  //     window.removeEventListener("mousemove", resetIdleTimer);
+  //     window.removeEventListener("keypress", resetIdleTimer);
+  //     clearInterval(idleCheckInterval); // 컨포넌트가 aunmount될 때 정리
+  //   };
+  // }, [users]);
 
   const handleProfileClick = (user, event) => {
     setSelectedUser(user);
