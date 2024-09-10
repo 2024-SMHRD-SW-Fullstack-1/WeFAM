@@ -14,10 +14,13 @@ import { clearImages } from "../../features/imagesOnFeedSlice";
 import { deleteRoulette, clearRoulettes } from "../../features/roulettesSlice";
 import { deletePoll, clearPolls } from "../../features/pollsSlice";
 import Preloader from "../preloader/Preloader";
-import AddRouletteModal from "./AddRouletteModal"; // 룰렛 컴포넌트 임포트
+import AddRouletteModal from "./AddRouletteModal";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 const AddFeed = React.memo(({ onGetAllFeeds }) => {
   const [isLoading, setIsLoading] = useState(false);
+
   const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
@@ -73,6 +76,7 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             "Content-Type": "application/json", // 서버가 JSON 형식을 기대할 경우
           },
         });
+        toastSuccess("피드가 성공적으로 등록되었습니다!");
         await onGetAllFeeds(userData.familyIdx);
       } catch (error) {
         console.error("addFeed 함수 에러 : ", error);

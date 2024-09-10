@@ -29,7 +29,7 @@
   height: 100%;
 }
 .leftSidebar.closed .category ul li span span {
-  display: none !important;
+  display: none;
 }
 
 .profile {
@@ -131,6 +131,30 @@
   .leftSidebar .category ul > li > span > span {
     display: none;
   }
+
+  /* 모바일 화면 왼쪽 사이드바 열었을 떄 */
+  .leftSidebar.opened {
+    left: 0;
+    width: var(--leftSidebarSmall-width);
+  }
+  .leftSidebar.opened .category {
+    height: 100%;
+  }
+  .leftSidebar.opened .category ul > li > span > span {
+    display: none;
+  }
+  .leftSidebar.opened .profile {
+    display: none;
+  }
+
+  /* 모바일 화면 왼쪽 사이드바 닫았을 떄 */
+  .leftSidebar.closed {
+    left: calc(-1 * var(--leftSidebarSmall-width));
+    width: 0;
+  }
+  .leftSidebar.closed .category ul > li > span > span {
+    display: none;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
@@ -153,8 +177,20 @@
   .category ul li span span {
     display: none;
   }
-  .leftSidebar .category ul li > span {
-    padding-left: 0;
-    justify-content: center;
+
+  /* 태블릿 화면 */
+  .leftSidebar.opened {
+    left: 0;
+    width: var(--leftSidebarSmall-width);
+  }
+  .leftSidebar.opened .category ul > li > span > span {
+    display: block;
+  }
+
+  .leftSidebar.opened .profile {
+    display: none;
+  }
+  .leftSidebar.opened .category ul > li > span > span {
+    display: none;
   }
 }

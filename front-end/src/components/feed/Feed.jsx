@@ -5,6 +5,8 @@ import styles from "./Feed.module.css";
 import AddFeed from "./AddFeed";
 import FeedList from "./FeedList";
 import Preloader from "../preloader/Preloader";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 const Feed = () => {
   // 현재 getAllFeeds로 가족 피드들을 모두 불러와서 피드 데이터가 feed에 들어옴
@@ -83,6 +85,7 @@ const Feed = () => {
             }
           );
           await getAllFeeds(userData.familyIdx);
+          toastSuccess("피드가 성공적으로 업데이트되었습니다!"); // 성공 토스트 메시지
           console.log("피드의 내용만 업데이트");
         } else {
           alert("피드 수정 중에 오류가 발생하였습니다. 수정 권한이 없습니다.");
@@ -93,37 +96,7 @@ const Feed = () => {
         setIsLoading(false);
       }
     },
-    [fetchWriter, userData.id, userData.familyIdx, getAllFeeds]
-  );
-
-  // 피드를 삭제하는 함수
-  const deleteFeed = useCallback(
-    async (feedIdx) => {
-      try {
-        console.log(`deleteFeed 함수 실행 : ${feedIdx}번 피드 삭제 요청`);
-        setIsLoading(true);
-        const writerId = await fetchWriter(feedIdx); // 작성자 ID 가져오기
-        console.log("userData.id : ", userData.id);
-        console.log("writerId : ", writerId);
-        if (userData.id === writerId) {
-          // API 호출하여 피드 삭제
-          await axios.delete(
-            `http://localhost:8089/wefam/delete-feed/${feedIdx}`
-          );
-          // 삭제 후 다시 피드 데이터를 가져오기 (리렌더링 필요)
-          await getAllFeeds(userData.familyIdx);
-          console.log("피드 삭제 완료");
-        } else {
-          alert("피드 삭제 중에 오류가 발생하였습니다. 삭제 권한이 없습니다.");
-        }
-      } catch (error) {
-        // 에러 발생 시 콘솔에 에러 메시지 출력
-        console.error("deleteFeed 함수 에러 : ", error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [fetchWriter, userData.id, userData.familyIdx, getAllFeeds]
+    [userData.id, userData.familyIdx, getAllFeeds]
   );
 
   useEffect(() => {
@@ -140,9 +113,9 @@ const Feed = () => {
             <AddFeed onGetAllFeeds={getAllFeeds} />
             <FeedList
               feeds={feeds}
+              getAllFeeds={getAllFeeds}
               onGetFeedDetail={getFeedDetail}
               onUpdateFeed={updateFeed}
-              onDeleteFeed={deleteFeed}
             />
           </div>
         )}

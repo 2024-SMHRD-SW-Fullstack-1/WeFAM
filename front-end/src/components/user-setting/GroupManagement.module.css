@@ -1,3 +1,11 @@
+.family{
+  width: 1000px;
+  background-color: var(--color-white);
+  margin: var(--space-xl) 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
 .personalInfo {
     padding: 10px;
   }
@@ -26,8 +34,8 @@
   }
   
   .profileImg {
-    width: 300px;
-    height: 200px;
+    width: 500px;
+    height: 300px;
     border-radius: 8%;
     object-fit: cover;
     margin-right: 20px;
@@ -43,22 +51,33 @@
     
   }
   
-  .editImgButton, .saveImgButton {
+  .editImgButton {
     background-color: #E1888B;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 160px;
     height: 50px; 
     display: flex;
     align-items: center; 
     justify-content: center; 
+    position: relative;
+    top: 115px;
 }
 
 .saveImgButton {
     margin-left: 20px; 
+    background-color: #E1888B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    height: 50px; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
 }
 
 .editImgButton:hover, .saveImgButton:hover {
@@ -68,6 +87,7 @@
   .editNick{
     border-radius: 6px;
     justify-content: flex-start;
+    margin-top: 20px;
   }
 
   .editNickButton{
@@ -82,7 +102,21 @@
   }
 
   .halfHr{
-    width: 70%; /* hr 태그의 길이를 절반으로 설정 */
+    width: 90%; /* hr 태그의 길이를 절반으로 설정 */
   margin-left: 0; /* 중앙 정렬 */
   margin-right: auto; /* 중앙 정렬 */
+  }
+
+  .titleAndButton {
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    margin-bottom: 20px; /* 아래쪽에 약간의 간격 추가 */
+    width: auto; /* div가 컨텐츠에 맞게 크기 조정 */
+    padding: 0; /* 불필요한 패딩 제거 */
+  }
+  
+  .titleAndButton h1 {
+    position: relative;
+    top: 1px;
   }

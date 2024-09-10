@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "./RewardPoint.module.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import modalPointIcon from "../../assets/images/modalPointIcon.png";
+
 
 const RewardPoint = () => {
   const userData = useSelector((state) => state.user.userData);
@@ -107,14 +109,18 @@ const RewardPoint = () => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
       2,
       "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    )}-${String(date.getDate()).padStart(2, "0")}`;
   };
 
   return (
     <div className="main">
-      <div className={styles.container}>
+      <div style={{
+        backgroundColor: "#ffffff",
+        marginTop: "2rem",
+        borderRadius: "1rem",
+        padding: "1rem",
+        height: "710px",
+      }}>
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
@@ -129,7 +135,8 @@ const RewardPoint = () => {
                   <div className={styles.completedTaskDetails}>
                     <span>완료일: {formatDate(task.completedAt)}</span>
                     <span className={styles.taskPoints}>
-                      {task.points} 포인트
+                      {task.points}
+                      <img src={modalPointIcon} className={styles.Imgicon} />
                     </span>
                   </div>
                 </li>
@@ -150,7 +157,10 @@ const RewardPoint = () => {
                   />
                   <div className={styles.rewardDetails}>
                     <h3>{rewardItem.reward.rewardName}</h3>
-                    <p>{rewardItem.reward.rewardPoint} Points</p>
+                    <p>
+                      {rewardItem.reward.rewardPoint}
+                      <img src={modalPointIcon} className={styles.Imgicon} />
+                    </p>
                     <span>
                       구매일:{" "}
                       {new Date(rewardItem.reward.soldAt).toLocaleDateString()}
@@ -163,7 +173,10 @@ const RewardPoint = () => {
 
           {/* 가족 구성원 포인트 */}
           <div className={styles.familyPointsContainer}>
+        
             <h2>가족 구성원 포인트</h2>
+
+            
             <ul>
               {familyPoints.map((member) => (
                 <li key={member.userId} className={styles.familyMember}>
@@ -173,8 +186,11 @@ const RewardPoint = () => {
                     className={styles.familyMemberImg}
                   />
                   <div className={styles.memberInfo}>
-                    <span>{member.name}</span>
-                    <span>{member.points} 포인트</span>
+                    <span style={{flexGrow:1}}>{member.name}</span>
+                    <span style={{marginLeft:"auto"}}>
+                      {member.points}
+                      <img src={modalPointIcon} className={styles.Imgicon} />
+                    </span>
                   </div>
                 </li>
               ))}
@@ -182,7 +198,7 @@ const RewardPoint = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

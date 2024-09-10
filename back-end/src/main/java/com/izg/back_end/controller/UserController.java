@@ -97,6 +97,8 @@ public class UserController {
 			UserModel savedUser = userService.updateUserProfile(updatedUser);
 			return ResponseEntity.ok(savedUser);
 		} catch (Exception e) {
+			System.out.println("테스트"+updatedUser);
+
 			return ResponseEntity.status(500).body(null);
 		}
 	}
@@ -110,5 +112,19 @@ public class UserController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
+	}
+
+	@GetMapping("/get-user/{id}")
+	public ResponseEntity<UserModel> getUserById(@PathVariable("id") String id) {
+	    try {
+	        UserModel user = userService.getUserById(id);
+	        if (user != null) {
+	            return ResponseEntity.ok(user);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	        }
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 }
