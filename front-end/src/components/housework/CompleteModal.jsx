@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux"; // Redux에서 사용자 정보를 가져오기 위한 import
 import styles from "./CompleteModal.module.css";
 import modalStyles from "../modal/Modal.module.css";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 Modal.setAppElement("#root");
 
@@ -72,13 +73,13 @@ const CompleteModal = ({
         }
       );
       if (response.status === 200) {
-        alert("작업 완료 및 이미지 저장이 완료되었습니다.");
+        toastSuccess("집안일이 성공적으로 완료되었습니다!");
         onComplete(); // 완료 후 호출
       } else {
-        console.error("서버 오류:", response);
+        toastDelete("작업에 실패했습니다!")
       }
     } catch (error) {
-      console.error("작업 완료 및 이미지 저장 중 오류 발생:", error);
+      toastDelete("작업에 실패했습니다!")
     }
   };
 

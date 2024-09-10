@@ -138,38 +138,30 @@ public class RewardService {
 	// 보상구매시 업데이트
 	@Transactional
 	public RewardModel purchaseReward(int rewardIdx, String userId) {
-	    // 1. 구매할 보상 정보 조회
-	    RewardModel reward = rewardRepository.findById(rewardIdx)
-	            .orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
+		// 1. 구매할 보상 정보 조회
+		RewardModel reward = rewardRepository.findById(rewardIdx)
+				.orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
 
-	    // 2. 이미 구매된 보상인지 확인
-	    if (reward.isSold()) {
-	        throw new IllegalStateException("이미 구매된 보상입니다.");
-	    }
+		// 2. 유저의 현재 총 포인트 확인
+		int userPoints = pointLogService.getTotalPointsByUserId(userId);
+		if (userPoints < reward.getRewardPoint()) {
+			throw new IllegalStateException("포인트가 부족합니다.");
+		}
 
-	    // 3. 유저의 현재 총 포인트 확인
-	    int userPoints = pointLogService.getTotalPointsByUserId(userId);
-	    if (userPoints < reward.getRewardPoint()) {
-	        throw new IllegalStateException("포인트가 부족합니다.");
-	    }
+		// 3. 포인트 차감 로그 기록 (음수 포인트로 기록)
+		PointLogModel pointLog = new PointLogModel();
+		pointLog.setUserId(userId);
+		pointLog.setEntityType("buy"); // 구매 시 차감 로그임을 나타냄
+		pointLog.setEntityIdx(reward.getRewardIdx());
+		pointLog.setPoints(-reward.getRewardPoint()); // 음수로 포인트 차감
+		pointLogRepository.save(pointLog); // 로그 저장
 
-	    // 4. 포인트 차감 로그 기록 (음수 포인트로 기록)
-	    PointLogModel pointLog = new PointLogModel();
-	    pointLog.setUserId(userId);
-	    pointLog.setEntityType("buy"); // 구매 시 차감 로그임을 나타냄
-	    pointLog.setEntityIdx(reward.getRewardIdx());
-	    pointLog.setPoints(-reward.getRewardPoint()); // 음수로 포인트 차감
-	    pointLogRepository.save(pointLog); // 로그 저장
+		// 4. 보상 상태는 업데이트하지 않음 (isSold를 변경하지 않음)
+		// reward.setSold(false); // 상태 변경하지 않음
 
-	    // 5. 보상 상태 업데이트
-	    reward.setSold(true);
-	    reward.setPurchase(userId);
-	    reward.setSoldAt(LocalDateTime.now());
-
-	    return rewardRepository.save(reward); // 보상 정보 저장
+		return rewardRepository.save(reward); // 보상 정보 저장
 	}
 
-	
 	// 구매된 보상 목록과 이미지 Base64를 함께 반환하는 메서드
 	public List<Map<String, Object>> getPurchasedRewardsWithBase64Images(String userId) {
 		// 구매된 보상 목록 조회

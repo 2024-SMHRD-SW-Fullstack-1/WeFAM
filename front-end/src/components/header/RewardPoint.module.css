@@ -21,14 +21,13 @@
 .completedTaskList {
   list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
 .completedTask {
   display: flex;
   justify-content: space-between; /* 좌우로 요소를 배치 */
   align-items: center; /* 수직으로 가운데 정렬 */
-  padding: 5px;
+  padding: 10px;
   border-bottom: 1px solid #eee;
 }
 
@@ -47,6 +46,14 @@
   text-align: right; /* 완료일과 포인트는 오른쪽 정렬 */
   color: gray;
   font-size: 13px;
+}
+
+.completedTaskImage {
+  width: 80px; /* 이미지 크기 조절 */
+  height: 80px;
+  border-radius: 12px;
+  object-fit: contain;
+  margin-right: 20px;
 }
 
 .taskPoints {

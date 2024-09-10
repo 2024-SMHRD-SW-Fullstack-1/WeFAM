@@ -9,6 +9,8 @@ import { FcRating } from "react-icons/fc";
 import Modal from "react-modal";
 import DeleteModal from "../modal/DeleteModal";
 import modalPointIcon from "../../assets/images/modalPointIcon.png";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
+
 
 Modal.setAppElement("#root");
 
@@ -82,7 +84,7 @@ const Housework2 = () => {
         shortTerm: works.filter((task) => task.taskType === "shortTerm"),
       });
     } catch (error) {
-      console.error("작업 데이터를 가져오는 중 오류 발생:", error);
+      toastDelete("작업데이터를 불러오는데 실패했습니다!")
     }
   };
 
@@ -101,7 +103,7 @@ const Housework2 = () => {
           }));
           setFamilyMembers(members);
         } catch (error) {
-          console.error("가족 구성원 정보를 불러오는 중 오류 발생:", error);
+          toastDelete("가족구성원 정보를 불러오는데 실패했습니다!")
         }
       }
     };
@@ -136,7 +138,7 @@ const Housework2 = () => {
 
       setCompletedTasks(sortedCompletedTasks);
     } catch (error) {
-      console.error("완료된 작업을 가져오는 중 오류 발생:", error);
+      toastDelete("완료한 작업을 불러오는데 실패했습니다!")
     }
   };
 
@@ -191,6 +193,7 @@ const Housework2 = () => {
           `http://localhost:8089/wefam/update-work/${task.workIdx}`,
           task
         );
+        toastSuccess("집안일이 성공적으로 수정되었습니다!");
         updateTaskInState(response.data, taskType);
       } else {
         response = await axios.post(
@@ -198,11 +201,12 @@ const Housework2 = () => {
           task
         );
         addTaskToState(response.data, taskType);
+        toastSuccess("집안일이 성공적으로 등록되었습니다!");
       }
       closeModal();
       fetchTasks();
     } catch (error) {
-      console.error("작업 추가 또는 수정 중 오류 발생:", error);
+      toastDelete("작업에 실패했습니다!")
     }
   };
 
@@ -240,8 +244,9 @@ const Housework2 = () => {
         setIsDeleteOpen(false); // 모달 닫기
         setTaskToDelete(null); // 삭제할 작업 초기화
         fetchTasks(); // 작업 목록 새로 고침
+        toastSuccess("집안일이 성공적으로 삭제되었습니다!");
       } catch (error) {
-        console.error("작업 삭제 중 오류 발생:", error);
+        toastDelete("집안일을 삭제하는데 실패했습니다!")
       }
     }
   };
@@ -263,7 +268,7 @@ const Housework2 = () => {
   const handleMissionComplete = (task) => {
     if (task.taskType !== "shortTerm") {
       if (!task.participantNames.includes(userData.name)) {
-        alert("작업을 완료할 권한이 없습니다. 담당자가 아닙니다.");
+        toastDelete("작업을 완료할 권한이 없습니다. 담당자가 아닙니다!")
         return;
       }
     }
@@ -278,7 +283,6 @@ const Housework2 = () => {
 
     // task가 존재하는지 확인
     if (!task) {
-      console.error(`Task with workIdx ${taskWorkIdx} not found`);
       return; // task가 없으면 함수 실행 중단
     }
 
