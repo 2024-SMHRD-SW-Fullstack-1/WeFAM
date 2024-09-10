@@ -517,7 +517,7 @@ const Housework2 = () => {
                     ? styles.circleDaily
                     : styles.circleZero
                 }>
-                {tasks.daily.length}
+                {tasks.daily.filter((task) => !task.completed).length}
               </span>
               <div className={styles.add_task} onClick={openDailyModal}>
                 <BsPlusCircle
@@ -540,7 +540,7 @@ const Housework2 = () => {
                     ? styles.circleShortTerm
                     : styles.circleZero
                 }>
-                {tasks.shortTerm.length}
+                {tasks.shortTerm.filter((task) => !task.completed).length}
               </span>
               <div className={styles.add_task} onClick={openShortTermModal}>
                 <BsPlusCircle

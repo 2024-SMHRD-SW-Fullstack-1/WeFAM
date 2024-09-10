@@ -100,8 +100,12 @@
 }
 
 .itemCard h2 {
+  display: flex;
+  align-items: center;
   margin: 0 0 10px;
   font-size: 17px;
+  height: 40px; /* h2가 들어가는 칸의 높이를 더 넓게 설정 */
+
 }
 
 .itemCard p {

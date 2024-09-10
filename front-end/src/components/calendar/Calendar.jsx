@@ -358,7 +358,6 @@ const Calendar = () => {
       if (!savedEvent) {
         throw new Error("Event could not be saved.");
       }
-      console.log("savedEvent", savedEvent);
 
       // 이벤트가 저장된 후, 파일 업로드 처리
       if (updatedEvent.newFiles && updatedEvent.newFiles.length > 0) {
@@ -369,7 +368,7 @@ const Calendar = () => {
         formData.append("familyIdx", savedEvent.familyIdx);
         formData.append("userId", savedEvent.userId);
         formData.append("entityIdx", savedEvent.eventIdx); // 저장된 이벤트의 ID를 사용
-        console.log([...formData.entries()]);
+
         await axios.post(
           `http://localhost:8089/wefam/event/image/upload`,
           formData,

@@ -12,6 +12,8 @@ import DeleteModal from "../modal/DeleteModal";
 import { elapsedTime } from "../../elapsedTime";
 import { CiSquareCheck } from "react-icons/ci";
 import { PiGameControllerLight } from "react-icons/pi";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 import {
   BsSuitHeart,
@@ -240,12 +242,15 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
         if (userData.id === response.data.userId) {
           console.log("삭제 시도");
           // API 호출하여 피드 삭제
-          await axios.delete(
+          const response = await axios.delete(
             `http://localhost:8089/wefam/delete-feed/${feedIdx}`
           );
-          // 삭제 후 다시 피드 데이터를 가져오기 (리렌더링 필요)
-          await getAllFeeds(userData.familyIdx);
-          console.log("피드 삭제 완료");
+          if (response.status === 200) {
+            toastDelete("피드가 성공적으로 삭제되었습니다!");
+            // 삭제 후 다시 피드 데이터를 가져오기 (리렌더링 필요)
+            await getAllFeeds(userData.familyIdx);
+            console.log("피드 삭제 완료");
+          }
         } else {
           alert("피드 삭제 중에 오류가 발생하였습니다. 삭제 권한이 없습니다.");
         }

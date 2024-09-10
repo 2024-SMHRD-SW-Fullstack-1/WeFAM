@@ -5,6 +5,8 @@ import styles from "./MealItem.module.css";
 import EditMealModal from "./EditMealModal";
 import DeleteModal from "../modal/DeleteModal";
 import { elapsedTime } from "../../elapsedTime";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
 
 import { BsThreeDots } from "react-icons/bs";
 
@@ -46,6 +48,7 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
   const handleDeleteMeal = async () => {
     try {
       await axios.delete(`http://localhost:8089/wefam/meals/${meal.mealIdx}`);
+      toastDelete("가족 식사가 성공적으로 삭제되었습니다!");
       console.log("식사가 성공적으로 삭제되었습니다.");
       onSelect(null);
       getAllMeals();
