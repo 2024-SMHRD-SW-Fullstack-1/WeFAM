@@ -123,20 +123,18 @@ const RewardPoint = () => {
         {/* 완료된 작업들 표시 */}
         <div className={styles.logContainer}>
           <div className={styles.pointLog}>
-            <h2>완료한 작업들</h2>
+            <h2>내가 한일</h2>
             <ul className={styles.completedTaskList}>
               {completedTasks.map((task, index) => (
                 <li key={index} className={styles.completedTask}>
                   <div className={styles.completedTaskContent}>
                     <h3>{task.workTitle}</h3>
-                    <p>{task.workContent}</p>
-                  </div>
-                  <div className={styles.completedTaskDetails}>
-                    <span>완료일: {formatDate(task.completedAt)}</span>
-                    <span className={styles.taskPoints}>
+                    {/* <p>{task.workContent}</p> */}
+                    <p className={styles.taskPoints}>
                       {task.points}
                       <img src={modalPointIcon} className={styles.Imgicon} />
-                    </span>
+                    </p>
+                    <span>완료일: {formatDate(task.completedAt)}</span>
                   </div>
                 </li>
               ))}
@@ -156,7 +154,7 @@ const RewardPoint = () => {
                   />
                   <div className={styles.rewardDetails}>
                     <h3>{rewardItem.reward.rewardName}</h3>
-                    <p>
+                    <p className={styles.taskPoints}>
                       {rewardItem.reward.rewardPoint}
                       <img src={modalPointIcon} className={styles.Imgicon} />
                     </p>
