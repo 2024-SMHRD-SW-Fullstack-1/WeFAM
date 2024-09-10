@@ -14,6 +14,7 @@ const UploadImageModal = ({
   onClose,
   onGetJoiningData,
   onGetAllFeeds,
+  onResetContent,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector((state) => state.user.userData);
@@ -151,11 +152,12 @@ const UploadImageModal = ({
 
     try {
       if (userData.familyIdx) {
-        await onGetAllFeeds(userData.familyIdx);
+        await onGetAllFeeds(1);
       }
     } catch (error) {
       console.error("피드를 가져오는 중 오류 발생:", error);
     } finally {
+      onResetContent();
       setIsLoading(false);
       onClose();
     }

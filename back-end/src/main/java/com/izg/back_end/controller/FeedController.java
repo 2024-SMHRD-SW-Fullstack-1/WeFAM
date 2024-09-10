@@ -1,10 +1,13 @@
 package com.izg.back_end.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,13 +18,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.izg.back_end.dto.FeedDetailDto;
 import com.izg.back_end.dto.FeedDto;
 import com.izg.back_end.dto.ImageUploadDto;
 import com.izg.back_end.dto.PollDto;
-import com.izg.back_end.dto.PollOptionDto;
 import com.izg.back_end.dto.RouletteDto;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
@@ -114,10 +117,15 @@ public class FeedController {
 	}
 
 	@GetMapping("/get-all-feeds/{familyIdx}")
-	public List<FeedModel> getAllFeeds(@PathVariable("familyIdx") Integer familyIdx) {
-		System.out.println("Gotten my group's feeds : " + feedService.getAllFeeds(familyIdx));
-		return feedService.getAllFeeds(familyIdx);
-	}
+	public Page<FeedModel> getAllFeeds(
+	        @PathVariable("familyIdx") Integer familyIdx,
+	        @RequestParam("page") int page,
+	        @RequestParam("size") int size) {
+
+	        // Pageable 객체를 생성할 때 Sort를 추가하여 postedAt 필드에 대해 내림차순 정렬
+	        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("postedAt")));
+	        return feedService.getAllFeeds(familyIdx, pageable);
+	    }
 
 	// 피드에 있는 이미지 가져오기
 	@GetMapping("/get-feed-img/{feedIdx}")
