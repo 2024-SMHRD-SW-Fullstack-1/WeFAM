@@ -296,7 +296,6 @@ const Calendar = () => {
       const seconds = date.getSeconds().toString().padStart(2, "0");
       return `${hours}:${minutes}:${seconds}`; // 'HH:MM:SS' 형식으로 변환
     };
-    console.log("어떤 값이 오니", updatedEvent);
 
     // 날짜와 시간으로 분리
     const eventToSave = {
@@ -637,8 +636,7 @@ const Calendar = () => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-        }}
-      >
+        }}>
         {/* allDay가 true이거나 날짜가 다를 때 바 형태로 표시 */}
         {event.allDay || !sameDate ? (
           <>
@@ -649,8 +647,7 @@ const Calendar = () => {
                 backgroundColor: event.backgroundColor || "#FF4D4D",
                 borderRadius: "2px",
                 position: "relative",
-              }}
-            >
+              }}>
               <span
                 style={{
                   position: "relative",
@@ -662,8 +659,7 @@ const Calendar = () => {
                   textOverflow: "ellipsis",
                   lineHeight: "8px",
                   color: "#fff", // 바 형태에서는 흰색 글씨로 표시
-                }}
-              >
+                }}>
                 {event.title}
               </span>
             </div>
@@ -687,8 +683,7 @@ const Calendar = () => {
                 whiteSpace: "nowrap",
                 flexGrow: 1, // 제목이 가능한 공간을 많이 차지하도록
                 minWidth: "0",
-              }}
-            >
+              }}>
               {event.title}
             </span>
             <span
@@ -697,8 +692,7 @@ const Calendar = () => {
                 fontSize: "0.9em",
                 color: "#666",
                 flexShrink: 0,
-              }}
-            >
+              }}>
               {startTime}
             </span>
           </>
@@ -748,7 +742,7 @@ const Calendar = () => {
   }, []);
 
   return (
-    <div className="main">
+    <div className='main'>
       {/* 검색 기능 */}
       <div style={{ width: "80%" }}>
         <div
@@ -758,12 +752,11 @@ const Calendar = () => {
             gap: "6px",
             padding: "5px",
             position: "relative", // 검색 결과를 검색창 아래에 위치시키기 위해 relative 설정
-          }}
-        >
+          }}>
           <input
             ref={searchInputRef} // 검색창을 참조
-            type="text"
-            placeholder="일정 검색"
+            type='text'
+            placeholder='일정 검색'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
             className={`${styles["search-input"]} ${
@@ -784,13 +777,12 @@ const Calendar = () => {
             marginTop: "2rem",
             borderRadius: "1rem",
             padding: "1rem",
-          }}
-        >
+          }}>
           <FullCalendar
             ref={calendarRef} // ref 연결
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-            initialView="dayGridMonth"
-            locale="ko"
+            initialView='dayGridMonth'
+            locale='ko'
             nowIndicator={true}
             selectable={true}
             headerToolbar={{
@@ -806,7 +798,7 @@ const Calendar = () => {
               day: "일간",
               allDay: "하루종일",
             }}
-            height="80vh"
+            height='80vh'
             dayCellContent={renderDayCellContent}
             allDaySlot={true}
             droppable={true}
@@ -819,7 +811,7 @@ const Calendar = () => {
             // 날짜 셀 클릭 시 새로운 이벤트를 추가하기 위한 모달 열기
             dateClick={handleDateDoubleClick}
             dayMaxEvents={3}
-            moreLinkClick="popover" // 'View More' 클릭 시 팝업으로 나머지 일정 표시
+            moreLinkClick='popover' // 'View More' 클릭 시 팝업으로 나머지 일정 표시
             eventContent={renderEventContent}
             customButtons={{
               customSearch: {
