@@ -181,25 +181,26 @@ const RightSidebar = () => {
             </li>
           ))}
         </ul>
+        {/* 팝업 메뉴 */}
+        {isPopupVisible && (
+          <div
+            className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
+            style={{ top: `${popupPosition.y-130}px` }}
+          >
+            <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
+              쪽지 보내기
+            </div>
+            <div onClick={handleViewProfileClick} className={styles.popupMenuItem}>
+              정보 확인
+            </div>
+            <div onClick={() => setIsPopupVisible(false)} className={styles.popupMenuItem}>
+              취소
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* 팝업 메뉴 */}
-      {isPopupVisible && (
-        <div
-        className={`${styles.popupMenu} ${isPopupVisible ? styles.open : ""}`}
-        style={{ top: `${popupPosition.y}px`, left: `${popupPosition.x}px` }}
-      >
-        <div onClick={handleSendMessageClick} className={styles.popupMenuItem}>
-          쪽지 보내기
-        </div>
-        <div onClick={handleViewProfileClick} className={styles.popupMenuItem}>
-          정보 확인
-        </div>
-        <div onClick={() => setIsPopupVisible(false)} className={styles.popupMenuItem}>
-          취소
-        </div>
-      </div>
-    )}
+      
 
       {/* 쪽지 보내기 모달 */}
       {isFamilyModalOpen && (

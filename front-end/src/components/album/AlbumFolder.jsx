@@ -35,9 +35,10 @@ const AlbumFolder = () => {
   // 이미지 조회 함수
   const fetchImages = (start = "", end = "") => {
     const effectiveEndDate = end || new Date().toISOString().split("T")[0];
+    
     const url = start
-      ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
-      : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
+    ? `http://localhost:8089/wefam/get-album-images-by-date-range/${userData.familyIdx}/${start}/${effectiveEndDate}`
+    : `http://localhost:8089/wefam/get-album-images/${userData.familyIdx}`;
 
     axios
       .get(url)
