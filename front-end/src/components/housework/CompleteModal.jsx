@@ -76,10 +76,10 @@ const CompleteModal = ({
         toastSuccess("집안일이 성공적으로 완료되었습니다!");
         onComplete(); // 완료 후 호출
       } else {
-        toastDelete("작업에 실패했습니다!")
+        console.error("Failed to complete task:", response);
       }
     } catch (error) {
-      toastDelete("작업에 실패했습니다!")
+      console.error("Error completing task:", error);
     }
   };
 

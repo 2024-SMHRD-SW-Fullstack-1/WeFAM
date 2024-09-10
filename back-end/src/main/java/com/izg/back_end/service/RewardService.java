@@ -164,24 +164,31 @@ public class RewardService {
 
 	// 구매된 보상 목록과 이미지 Base64를 함께 반환하는 메서드
 	public List<Map<String, Object>> getPurchasedRewardsWithBase64Images(String userId) {
-		// 구매된 보상 목록 조회
-		List<RewardModel> purchasedRewards = rewardRepository.findByPurchase(userId);
+	    // 포인트 로그에서 구매 항목 조회
+	    List<PointLogModel> purchaseLogs = pointLogRepository.findPurchaseLogsByUserId(userId);
 
-		return purchasedRewards.stream().map(reward -> {
-			Map<String, Object> rewardWithImage = new HashMap<>();
-			rewardWithImage.put("reward", reward);
+	    // 각 로그에 해당하는 보상 데이터를 조회
+	    return purchaseLogs.stream().map(log -> {
+	        Map<String, Object> rewardWithImage = new HashMap<>();
 
-			// 보상에 연결된 이미지 찾기
-			List<FileModel> images = fileRepository.findByEntityTypeAndEntityIdx("reward", reward.getRewardIdx());
-			if (!images.isEmpty()) {
-				FileModel image = images.get(0);
-				// 이미지 데이터를 Base64로 인코딩
-				String base64File = Base64.getEncoder().encodeToString(image.getFileData());
-				String base64Image = "data:image/" + image.getFileExtension() + ";base64," + base64File;
-				rewardWithImage.put("imageBase64", base64Image); // Base64 인코딩된 이미지 추가
-			}
+	        // 보상 정보 가져오기 (log의 entity_idx가 reward의 reward_idx와 동일)
+	        RewardModel reward = rewardRepository.findById(log.getEntityIdx())
+	                .orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
 
-			return rewardWithImage;
-		}).collect(Collectors.toList());
+	        rewardWithImage.put("reward", reward);
+	        rewardWithImage.put("purchaseDate", log.getPointedAt());  // 구매 일자 추가
+
+	        // 보상에 연결된 이미지 찾기
+	        List<FileModel> images = fileRepository.findByEntityTypeAndEntityIdx("reward", reward.getRewardIdx());
+	        if (!images.isEmpty()) {
+	            FileModel image = images.get(0);
+	            String base64File = Base64.getEncoder().encodeToString(image.getFileData());
+	            String base64Image = "data:image/" + image.getFileExtension() + ";base64," + base64File;
+	            rewardWithImage.put("imageBase64", base64Image);  // Base64 인코딩된 이미지 추가
+	        }
+
+	        return rewardWithImage;
+	    }).collect(Collectors.toList());
 	}
+
 }
