@@ -14,6 +14,9 @@ const UploadImageModal = ({
   onClose,
   onGetJoiningData,
   onGetAllFeeds,
+  currentPage,
+  setCurrentPage,
+  onResetContent,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector((state) => state.user.userData);
@@ -25,7 +28,7 @@ const UploadImageModal = ({
   const [modalContent, setModalContent] = useState("");
   const [location, setLocation] = useState("");
 
-  const maxImageCnt = 10;
+  const maxImageCnt = 9;
 
   // content 프롭스가 변경될 때마다 상태를 업데이트
   useEffect(() => {
@@ -35,7 +38,7 @@ const UploadImageModal = ({
   // 이미지 미리보기 함수
   const showPreview = (selectedImages) => {
     if (selectedImages.length > maxImageCnt) {
-      alert("이미지는 최대 10개까지 업로드 가능합니다!");
+      alert("이미지는 최대 9개까지 업로드 가능합니다!");
       return;
     }
 
@@ -151,11 +154,13 @@ const UploadImageModal = ({
 
     try {
       if (userData.familyIdx) {
-        await onGetAllFeeds(userData.familyIdx);
+        setCurrentPage(1);
+        await onGetAllFeeds(1);
       }
     } catch (error) {
       console.error("피드를 가져오는 중 오류 발생:", error);
     } finally {
+      onResetContent();
       setIsLoading(false);
       onClose();
     }

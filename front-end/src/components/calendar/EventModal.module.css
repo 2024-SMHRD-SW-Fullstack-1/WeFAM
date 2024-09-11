@@ -1,11 +1,13 @@
 /* 모달 창 전체 화면을 덮는 배경 */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 반투명 배경 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,6 +50,7 @@
   background-color: #fff;
   cursor: pointer;
 }
+
 .saveButton {
   padding: 10px 20px;
   border-radius: 5px;
@@ -101,7 +104,8 @@
 }
 
 .dateInput {
-  width: 130px; /* 날짜는 좀 더 넓게 */
+  width: 130px;
+  /* 날짜는 좀 더 넓게 */
 }
 
 .icon {
@@ -146,11 +150,13 @@
   font-size: 1.3rem;
   align-items: center;
 }
+
 .previewIcon {
   display: flex;
   justify-content: center;
   padding-right: 6px;
 }
+
 .ai {
   position: relative;
   display: inline-block;
@@ -175,7 +181,8 @@
   /* Position the tooltip text */
   position: absolute;
   z-index: 1;
-  top: 100%; /* Position the tooltip above the icon */
+  top: 100%;
+  /* Position the tooltip above the icon */
   left: 50%;
   margin-left: -50px;
   opacity: 0;
@@ -191,7 +198,7 @@
   /* 내용물 여백 */
   color: #000000;
   /* 텍스트 색상 */
-  width: 100%;
+  width: 491.59px;
   /* 넓이 */
   height: 38px;
   margin-right: 10px;
@@ -221,27 +228,31 @@
   justify-content: space-between;
   margin-right: 10px;
 }
+
 .fileName {
   margin-right: 8px;
 
   color: #333;
 }
+
 .memoWrapper {
   display: flex;
   align-items: center;
-  width: 100%; /* 부모 요소의 크기에 맞춤 */
+  width: 100%;
+  /* 부모 요소의 크기에 맞춤 */
   background-color: #f8f8f8;
   border: transparent;
   justify-content: space-between;
   overflow: hidden; /* 넘치는 텍스트 숨김 처리 */
 }
+
 .memoText {
   display: flex;
   align-items: center;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 0.7;
+  text-overflow: ellipsis !important;
+  flex-grow: 1;
   /* 텍스트가 가능한 공간을 최대한 차지하게 함 */
   width: 250px;
   min-height: 38px;
@@ -267,12 +278,13 @@
   align-items: center;
   justify-content: center;
   margin-left: auto;
-  flex-shrink: 1;
+  flex-shrink: 0;
 }
 
 .removeButton:hover {
   color: red;
 }
+
 .preview {
   position: fixed;
   top: 50%;
@@ -299,8 +311,11 @@
 }
 
 .aiBtn {
-  width: 60px; /* 원하는 너비 */
-  height: 60px; /* 원하는 높이 */
-  cursor: pointer; /* 클릭 가능하게 포인터 변경 */
+  width: 60px;
+  /* 원하는 너비 */
+  height: 60px;
+  /* 원하는 높이 */
+  cursor: pointer;
+  /* 클릭 가능하게 포인터 변경 */
   border-radius: 50%;
 }

@@ -24,7 +24,6 @@ import AiModal from "./AiModal";
 import { MemoModal } from "./MemoModal";
 import { useSelector } from "react-redux";
 
-
 const AiEventModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 };
@@ -94,7 +93,9 @@ const EventModal = ({
   const [deletedFileIds, setDeletedFileIds] = useState([]);
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false); // MemoModal 열림/닫힘 상태 관리
   const [memoContent, setMemoContent] = useState(event.content); // 메모 내용 상태 관리
-  const locationInput = useSelector((state) => state.locationInput.locationInput); // 리덕스 상태 가져오기
+  const locationInput = useSelector(
+    (state) => state.locationInput.locationInput
+  ); // 리덕스 상태 가져오기
 
   // MemoModal을 열기 위한 함수
   const openMemoModal = () => {
@@ -128,8 +129,7 @@ const EventModal = ({
     console.log(startDate);
     console.log(event.setEndDate);
     console.log(location);
-    
-    
+
     setIsDetailOpen(initialIsDetailOpen);
   }, [initialIsDetailOpen]);
 
@@ -139,7 +139,7 @@ const EventModal = ({
   };
 
   useEffect(() => {
-    console.log("리덕스에서 가져온 locationInput: ", locationInput); 
+    console.log("리덕스에서 가져온 locationInput: ", locationInput);
   }, [locationInput]);
 
   useEffect(() => {
@@ -240,6 +240,14 @@ const EventModal = ({
     }
   }, [event.backgroundColor]);
 
+  // 무한 루프 방지
+  useEffect(() => {
+    if (event && event.start && event.end) {
+      setStartDate(new Date(event.start));
+      setEndDate(new Date(event.end)); // endDate만 따로 설정
+    }
+  }, [event.start, event.end]); // 의존성 배열을 event.start, event.end로 설정
+
   // ISO 8601 형식의 시간을 "오전/오후" 형식으로 변환하는 함수
   const formatTimeForSelect = (isoString) => {
     if (!isoString) return "오전 12:00"; // isoString이 없는 경우 기본값 반환
@@ -309,13 +317,17 @@ const EventModal = ({
     setEndDate(newEndDate);
   };
 
+  // 종일 이벤트 토글
+  const toggleAllDay = () => {
+    setIsAllDay((prev) => !prev);
+  };
+
   useEffect(() => {
     if (isAllDay) {
       // 종일 이벤트일 경우 시간을 자정으로 설정
       const newStartDate = new Date(startDate);
       const newEndDate = new Date(endDate);
 
-      // startDate와 endDate가 이미 설정된 값과 동일한지 확인
       if (newStartDate.getHours() !== 0 || newStartDate.getMinutes() !== 0) {
         newStartDate.setHours(0, 0, 0, 0);
         setStartDate(newStartDate);
@@ -326,28 +338,25 @@ const EventModal = ({
         newEndDate.getMinutes() !== 59 ||
         newEndDate.getSeconds() !== 59
       ) {
-        newEndDate.setHours(23, 50, 59, 999);
+        newEndDate.setHours(23, 59, 59, 999);
         setEndDate(newEndDate);
       }
-    }
-  }, [isAllDay, startDate, endDate]);
-
-  // 종일 이벤트 토글
-  const toggleAllDay = () => {
-    setIsAllDay((prev) => !prev);
-    // allDay가 false로 바뀔 때, 시간을 초기화
-    if (isAllDay) {
+    } else {
+      // 종일 이벤트가 아닌 경우 기본 시간 설정
       const newStartDate = new Date(startDate);
       const newEndDate = new Date(endDate);
 
-      // 기본적으로 시작 시간을 00:00, 종료 시간을 23:59로 설정
-      newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
-      newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+      if (newStartDate.getHours() === 0 && newStartDate.getMinutes() === 0) {
+        newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
+        setStartDate(newStartDate);
+      }
 
-      setStartDate(newStartDate);
-      setEndDate(newEndDate);
+      if (newEndDate.getHours() === 23 && newEndDate.getMinutes() === 59) {
+        newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+        setEndDate(newEndDate);
+      }
     }
-  };
+  }, [isAllDay, startDate, endDate]); // 의존성 배열에 startDate와 endDate를 추가
 
   // 파일 선택 핸들러
   const handleFileChange = (event) => {
@@ -409,16 +418,17 @@ const EventModal = ({
             <input
               className={styles.title}
               value={title || ""}
-              placeholder='제목'
+              placeholder="제목"
               onChange={handleTitleChange}
             />
           </div>
           {isDetailOpen && (
             <div className={styles.ai} onClick={openModal}>
-              <img src={ai} alt='AI 버튼' style={{ height: 48, width: 48 }} />
+              <img src={ai} alt="AI 버튼" style={{ height: 48, width: 48 }} />
               <div
                 className={styles.tooltip}
-                style={{ backgroundColor: selectedColor }}>
+                style={{ backgroundColor: selectedColor }}
+              >
                 AI 일정 추천
               </div>
             </div>
@@ -436,7 +446,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -444,7 +454,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -459,7 +470,8 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}>
+                className={styles.timeInput}
+              >
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -471,7 +483,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat='yyyy년 MM월 dd일'
+              dateFormat="yyyy년 MM월 dd일"
               className={styles.dateInput}
             />
           </div>
@@ -486,7 +498,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type='checkbox'
+                type="checkbox"
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -584,14 +596,16 @@ const EventModal = ({
                   <div
                     className={styles.memoText}
                     onClick={openMemoModal}
-                    style={{ color: textColor }}>
+                    style={{ color: textColor }}
+                  >
                     {memoContent || "메모를 입력하세요"}
                   </div>
                   {memoContent !== "" && (
                     <button
-                      type='button'
+                      type="button"
                       className={styles.removeButton}
-                      onClick={handelDeleteMemo}>
+                      onClick={handelDeleteMemo}
+                    >
                       &times;
                     </button>
                   )}
@@ -628,13 +642,13 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <label htmlFor='file-upload'>
+              <label htmlFor="file-upload">
                 <span className={styles.commonBox}>사진 추가</span>
               </label>
               <input
-                id='file-upload'
-                type='file'
-                accept='image/*'
+                id="file-upload"
+                type="file"
+                accept="image/*"
                 multiple
                 style={{ display: "none" }}
                 onChange={handleFileChange}
@@ -661,7 +675,8 @@ const EventModal = ({
                         if (preview) {
                           preview.style.display = "none";
                         }
-                      }}>
+                      }}
+                    >
                       <BsSearch />
                     </span>
                     <span className={styles.fileName}>
@@ -669,9 +684,10 @@ const EventModal = ({
                     </span>
 
                     <button
-                      type='button'
+                      type="button"
                       className={styles.removeButton}
-                      onClick={() => handleRemoveFile(index)}>
+                      onClick={() => handleRemoveFile(index)}
+                    >
                       &times;
                     </button>
                   </span>
@@ -681,7 +697,7 @@ const EventModal = ({
                         file.url ||
                         `data:image/${file.fileExtension};base64,${file.fileData}`
                       }
-                      alt='Selected file preview'
+                      alt="Selected file preview"
                     />
                   </div>
                 </div>
@@ -714,7 +730,7 @@ const EventModal = ({
             endDate={endDate}
             location={location}
             onSelectPlace={handlePlaceSelectFromChatbot} // Chatbot에서 선택된 장소를 받아 처리
-             />
+          />
         )}
       </div>
     </div>,

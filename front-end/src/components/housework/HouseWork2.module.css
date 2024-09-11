@@ -152,6 +152,17 @@
   cursor: pointer;
 }
 
+.successIcon {
+  position: absolute;
+  top: 12px;
+  /* 상단에 배치 */
+  right: 10px;
+  /* 우측에 배치 */
+  font-size: 24px;
+  color: #7c7c7c;
+  cursor: pointer;
+}
+
 .add_task {
   display: flex;
   justify-content: space-between;
@@ -171,7 +182,17 @@
 }
 
 .completedTask {
-  background-color: #c2c2c2; /* 회색 배경 */
+  /* background-color: #c2c2c2; */
+  position: relative;
+}
+
+.missionicon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 110px; /* 원하는 크기 설정 */
+  height: 110px; /* 원하는 크기 설정 */
 }
 
 .dropdownContainer {
@@ -344,4 +365,9 @@
   height: 16px;
   width: 16px;
   margin-left: 5px; /* 아이콘과 포인트 텍스트 사이 간격 추가 */
+}
+
+.leftAlignedButton {
+  margin-right: 10px; /* 원하는 만큼 왼쪽으로 조정 */
+  font-size: 0.9rem; /* 버튼 크기를 텍스트와 맞추기 위해 조정 */
 }

@@ -53,10 +53,6 @@ const AddRewardModal = ({
   });
 
   const handleAddReward = () => {
-    console.log("보상 이름:", rewardName);
-    console.log("보상 포인트:", rewardPoints);
-    console.log("이미지:", selectedFiles[0]);
-
     if (rewardName && rewardPoints) {
       onAddReward({
         rewardIdx: selectedReward ? selectedReward.reward.rewardIdx : null, // 수정 시 기존 ID 포함
@@ -88,6 +84,7 @@ const AddRewardModal = ({
             onChange={(e) => setRewardName(e.target.value)}
             placeholder="보상 이름"
             className={styles.inputField}
+            maxLength={16} // 16글자 제한 설정
           />
         </div>
 

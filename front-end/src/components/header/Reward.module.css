@@ -4,6 +4,7 @@
   margin: var(--space-xl) 0;
   border-radius: var(--radius-md);
   padding: var(--space-md);
+  position: relative; /* 컨테이너 내부에서 버튼을 배치 */
 }
 
 .titleGroup {
@@ -62,6 +63,7 @@
   width: 100%;
   justify-items: center;
   align-items: start;
+  position: relative; /* 부모로서 absolute 위치 조정을 허용 */
 }
 
 .itemCard {
@@ -100,8 +102,11 @@
 }
 
 .itemCard h2 {
+  display: flex;
+  align-items: center;
   margin: 0 0 10px;
   font-size: 17px;
+  height: 40px; /* h2가 들어가는 칸의 높이를 더 넓게 설정 */
 }
 
 .itemCard p {
@@ -118,7 +123,6 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
   width: 100px;
   /* 드롭다운의 고정된 너비 설정 */
   padding: 0;
@@ -158,4 +162,49 @@
   height: 16px;
   width: 16px;
   margin-left: 5px; /* 아이콘과 포인트 텍스트 사이 간격 추가 */
+}
+
+.slideButtons {
+  position: absolute;
+  top: 50%; /* 컨테이너의 중간에 위치 */
+  left: -10px; /* 버튼이 더 바깥쪽으로 위치할 수 있도록 */
+  right: -10px; /* 오른쪽 버튼도 바깥쪽으로 이동 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% + 20px); /* 좌우 버튼 사이에 더 넓은 공간을 추가 */
+  pointer-events: none; /* 부모 영역에 클릭되지 않도록 설정 */
+}
+
+.addleftButton,
+.addrightButton {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 30px; /* 버튼의 크기를 크게 설정 */
+  height: 30px; /* 버튼의 크기를 크게 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* 패딩을 없앰 */
+  box-sizing: border-box; /* 버튼 크기에 패딩과 테두리가 포함되지 않도록 설정 */
+  pointer-events: all; /* 버튼은 클릭 가능하도록 설정 */}
+
+.addleftButton:hover,
+.addrightButton:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.addleftButton:disabled,
+.addrightButton:disabled {
+  background-color: rgba(0, 0, 0, 0.3);
+  cursor: not-allowed;
+}
+
+.addleftButton svg,
+.addrightButton svg {
+  width: 24px; /* 아이콘의 너비를 고정 */
+  height: 24px; /* 아이콘의 높이를 고정 */
 }
