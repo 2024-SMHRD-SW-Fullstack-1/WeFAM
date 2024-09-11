@@ -17,8 +17,9 @@ import Preloader from "../preloader/Preloader";
 import AddRouletteModal from "./AddRouletteModal";
 import { ToastContainer, toast } from "react-toastify";
 import { toastSuccess, toastDelete } from "../Toast/showCustomToast";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-const AddFeed = React.memo(({ onGetAllFeeds }) => {
+const AddFeed = React.memo(({ onGetAllFeeds, currentPage, setCurrentPage }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [writer, setWriter] = useState("");
@@ -28,7 +29,12 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
   const [isRouletteModalOpen, setIsRouletteModalOpen] = useState(false);
   const [isPollModalOpen, setIsPollModalOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const maxImgCnt = 9;
+  const perImgCnt = 3;
+  const [images, setImages] = useState([]);
+  const [imagePreview, setImagePreview] = useState([]);
+  const [dragging, setDragging] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [roulettes, setRoulettes] = useState([]); // 룰렛 데이터 상태
   const [polls, setPolls] = useState([]); // 투표 데이터 상태
 
@@ -93,35 +99,205 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
       alert("내용을 입력하세요.");
       return;
     }
+
     try {
-      const newFeed = {
-        familyIdx: userData.familyIdx,
-        userId: userData.id,
-        feedContent: content,
-        feedLocation: location,
-      };
+      // 이미지가 있는 경우
+      if (images.length > 0) {
+        const formData = new FormData();
+        formData.append("familyIdx", userData.familyIdx);
+        formData.append("userId", userData.id);
+        formData.append("entityType", "feed");
+        formData.append("entityIdx", 0); // 우선 feed 저장 전 테스트용
+        formData.append("feedContent", content);
+        formData.append("feedLocation", location);
 
-      // pollsContent가 비어 있지 않은 경우에만 polls 추가
-      if (roulettes.length > 0) {
-        newFeed.roulettes = roulettes;
+        images.forEach((file) => {
+          formData.append("images", file);
+          formData.append("fileNames", file.name);
+          formData.append("fileExtensions", file.name.split(".").pop());
+          formData.append("fileSizes", file.size);
+        });
+
+        if (roulettes.length > 0) {
+          // 'id' 필드 제거
+          const filteredRoulettes = roulettes.map(({ id, ...rest }) => rest);
+          const roulettesJson = JSON.stringify(filteredRoulettes);
+          formData.append("roulettesJson", roulettesJson);
+        }
+
+        if (polls.length > 0) {
+          const filteredPolls = polls.map(({ id, ...rest }) => rest);
+          const pollsJson = JSON.stringify(filteredPolls);
+          formData.append("pollsJson", pollsJson);
+        }
+
+        const response = await fetch(
+          "http://localhost:8089/wefam/add-feed-all",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+              // 'Content-Type': 'multipart/form-data'는 자동으로 설정됩니다.
+            },
+          }
+        );
+
+        if (response.ok) {
+          setContent("");
+          toastSuccess("피드가 성공적으로 등록되었습니다!");
+          setCurrentPage(1);
+          await onGetAllFeeds(1);
+          const text = await response.text();
+        } else {
+          console.error("서버 오류:", response.statusText);
+        }
+      } else {
+        const newFeed = {
+          familyIdx: userData.familyIdx,
+          userId: userData.id,
+          feedContent: content,
+          feedLocation: location,
+        };
+
+        if (roulettes.length > 0) {
+          newFeed.roulettes = roulettes;
+        }
+        if (polls.length > 0) {
+          newFeed.polls = polls;
+        }
+
+        await addFeed(newFeed);
       }
 
-      // pollsContent가 비어 있지 않은 경우에만 polls 추가
-      if (polls.length > 0) {
-        newFeed.polls = polls;
-      }
-      console.log(newFeed);
-      await addFeed(newFeed);
       setContent("");
       setLocation("");
-      setRoulettes([]); // 피드를 추가한 후 룰렛 내용도 초기화
-      dispatch(clearRoulettes()); // 리덕스의 roulettes 상태 초기화
-      setPolls([]); // 피드를 추가한 후 투표 내용도 초기화
-      dispatch(clearPolls()); // 리덕스의 polls 상태 초기화
+      setImages([]);
+      setImagePreview([]);
+      setRoulettes([]);
+      dispatch(clearRoulettes());
+      setPolls([]);
+      dispatch(clearPolls());
     } catch (error) {
       console.error("AddFeed 함수에서 오류 발생:", error);
     }
   };
+
+  // 이미지 미리보기 함수
+  // const showPreview = (selectedImages) => {
+  //   const totalImages = images.length + selectedImages.length;
+  //   if (totalImages > maxImgCnt) {
+  //     alert(`이미지는 최대 ${maxImgCnt}개까지 업로드 가능합니다!`);
+  //     return;
+  //   }
+
+  //   const imageUrls = selectedImages.map((image) => URL.createObjectURL(image));
+  //   setImagePreview((prev) => [...prev, ...imageUrls]);
+  // };
+
+  // 파일 선택 핸들러
+  const onFileChange = (event) => {
+    // 파일 검증 (예: 이미지 파일만 허용)
+    const validFiles = Array.from(event.target.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    // 기존 이미지 목록과 드롭된 파일을 결합하여 상태 업데이트
+    setImages((prevImages) => [...prevImages, ...validFiles]);
+
+    setImagePreview((prevPreviews) => {
+      // 기존 미리보기 URL과 새로 생성된 미리보기 URL을 결합
+      const newPreviews = validFiles.map((file) => {
+        const url = URL.createObjectURL(file);
+        return url;
+      });
+      return [...prevPreviews, ...newPreviews];
+    });
+  };
+
+  // Drag & Drop 핸들러
+  const handleDragOver = useCallback((event) => {
+    event.preventDefault();
+    setDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    console.log("드랍 완료");
+    const droppedFiles = Array.from(event.dataTransfer.files);
+
+    // 파일 검증 (예: 이미지 파일만 허용)
+    const validFiles = droppedFiles.filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    // 기존 이미지 목록과 드롭된 파일을 결합하여 상태 업데이트
+    setImages((prevImages) => [...prevImages, ...validFiles]);
+
+    setImagePreview((prevPreviews) => {
+      // 기존 미리보기 URL과 새로 생성된 미리보기 URL을 결합
+      const newPreviews = validFiles.map((file) => {
+        const url = URL.createObjectURL(file);
+        return url;
+      });
+      return [...prevPreviews, ...newPreviews];
+    });
+
+    // 파일이 드롭되었을 때 입력 창 초기화 방지
+    event.dataTransfer.clearData();
+    setDragging(false);
+  }, []);
+
+  const handlePrevSlide = (e) => {
+    e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
+    setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNextSlide = (e) => {
+    e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
+    setCurrentSlide((prev) =>
+      Math.min(prev + 1, Math.ceil(Math.min(images.length, 9) / 3) - 1)
+    );
+  };
+
+  const handleDeleteImage = (index) => {
+    setImagePreview((prevImages) => {
+      // FileList를 배열로 변환
+      const imagesArray = Array.from(prevImages);
+
+      // 필터링하여 이미지를 제거
+      const updatedImages = imagesArray.filter((_, i) => i !== index);
+
+      // 상태 업데이트
+      setImagePreview(updatedImages);
+
+      // DB에 업로드할 이미지 배열도 업데이트
+      setImages((prevImages) => {
+        const imagesArray = Array.from(prevImages);
+        return imagesArray.filter((_, i) => i !== index);
+      });
+
+      // 총 슬라이드 수 조정
+      const totalSlides = Math.ceil(updatedImages.length / perImgCnt);
+
+      // 현재 슬라이드 조정: 이미지를 모두 지우면 currentSlide는 0으로, 그 외에는 현재 슬라이드를 유지
+      const newSlide =
+        totalSlides > 0 ? Math.min(currentSlide, totalSlides - 1) : 0;
+      console.log("현재슬라이드 번호 : ", newSlide);
+
+      setCurrentSlide(newSlide);
+
+      return updatedImages;
+    });
+  };
+
+  const dropzoneClassName = `${styles.dropzone} ${
+    dragging ? styles.dragging : ""
+  }`;
 
   const openRouletteModal = () => setIsRouletteModalOpen(true);
 
@@ -148,8 +324,17 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
     setContent("");
   };
 
+  // 현재 슬라이드 번호와 전체 슬라이드 수
+  const currentSlideNumber = currentSlide + 1;
+  const totalSlides = Math.ceil(Math.min(images.length, 9) / 3);
+
   return (
-    <div className={styles.addFeed}>
+    <div
+      className={`${styles.addFeed}  ${dropzoneClassName}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {isLoading ? (
         <Preloader isLoading={isLoading} />
       ) : (
@@ -161,10 +346,10 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
-          <div className={styles.imagesContent}></div>
-          {roulettes.length > 0 ? (
-            <div className={styles.roulettesContent}>
-              {roulettes.map((roulette, index) => (
+
+          <div className={styles.specialContent}>
+            {roulettes.length > 0 &&
+              roulettes.map((roulette, index) => (
                 <div key={index} className={styles.roulette}>
                   <button>
                     <PiGameControllerLight />
@@ -178,11 +363,8 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
                   </button>
                 </div>
               ))}
-            </div>
-          ) : null}
-          {polls.length > 0 ? (
-            <div className={styles.pollsContent}>
-              {polls.map((poll, index) => (
+            {polls.length > 0 &&
+              polls.map((poll, index) => (
                 <div key={index} className={styles.poll}>
                   <button>
                     <CiSquareCheck />
@@ -196,14 +378,87 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
                   </button>
                 </div>
               ))}
+          </div>
+
+          {/* 이미지 슬라이더 추가 */}
+          {imagePreview.length > 0 && <hr className={styles.customHr}></hr>}
+
+          {imagePreview.length > 0 && (
+            <div className={styles.imageSlider}>
+              <div className={styles.imagesContainer}>
+                <button
+                  className={`${styles.leftArrowBtn} ${
+                    currentSlide === 0 ? styles.hidden : ""
+                  }`}
+                  onClick={handlePrevSlide}
+                >
+                  <MdKeyboardArrowLeft />
+                </button>
+                <div className={styles.preview}>
+                  {imagePreview
+                    .slice(
+                      currentSlide * perImgCnt,
+                      (currentSlide + 1) * perImgCnt
+                    )
+                    .slice(0, maxImgCnt) // 최대 9개의 이미지만 표시
+                    .map((imageUrl, index) => (
+                      <div key={index} className={styles.imageWrapper}>
+                        <img
+                          src={imageUrl} // imageUrl을 직접 img src에 할당
+                          alt={`preview-${index}`} // currentSlide 대신 index 사용
+                        />
+                        {/* X 버튼 추가 */}
+                        <button
+                          className={styles.deleteImageBtn}
+                          onClick={() => handleDeleteImage(index)}
+                        >
+                          X
+                        </button>
+                      </div>
+                    ))}
+                </div>
+                <button
+                  className={`${styles.rightArrowBtn} ${
+                    currentSlide >=
+                    Math.ceil(Math.min(images.length, maxImgCnt) / perImgCnt) -
+                      1
+                      ? styles.hidden
+                      : ""
+                  }`}
+                  onClick={handleNextSlide}
+                >
+                  <MdKeyboardArrowRight />
+                </button>
+              </div>
+
+              {/* 현재 이미지 번호와 전체 이미지 번호 표시 */}
+              <div
+                className={`${styles.slideNumber} ${
+                  totalSlides === 1 ? styles.hidden : ""
+                }`}
+              >
+                {totalSlides > 1 && `${currentSlideNumber} / ${totalSlides}`}
+              </div>
             </div>
-          ) : null}
+          )}
           <hr className={styles.customHr}></hr>
           <div className={styles.footer}>
             <span>
-              <button onClick={() => setIsUploadImageModalOpen(true)}>
-                <CiImageOn />
+              {/* 파일 선택 방식 사용 */}
+              {/* <button onClick={() => setIsUploadImageModalOpen(true)}> */}
+              <button>
+                <label className={styles.selectLabel} htmlFor="file">
+                  <CiImageOn />
+                </label>
+                <input
+                  className={styles.selectInput}
+                  type="file"
+                  id="file"
+                  multiple
+                  onChange={onFileChange}
+                />
               </button>
+              {/* </button> */}
               <button>
                 <CiCalendar />
               </button>
@@ -225,6 +480,8 @@ const AddFeed = React.memo(({ onGetAllFeeds }) => {
               content={content}
               onHandleAddFeed={handleAddFeed}
               onGetAllFeeds={onGetAllFeeds}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
               onResetContent={handleResetContent}
               onClose={() => setIsUploadImageModalOpen(false)}
             />

@@ -40,7 +40,7 @@ public class FeedService {
 
 	// 피드에서 이미지 업로드하여 피드 추가
 	@Transactional
-	public void addFeedWithImages(int familyIdx, String userId, String entityType, int entityIdx,
+	public int addFeedWithImages(int familyIdx, String userId, String entityType, int entityIdx,
 			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
 			String content, String location) throws IOException {
 		// 1. 피드 정보 저장
@@ -74,6 +74,8 @@ public class FeedService {
 
 			fileRepository.save(fileModel);
 		}
+		
+		return entityIdx;
 	}
 
 	// feedRepository는 JpaRepository를 상속받아야 합니다.

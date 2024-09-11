@@ -19,4 +19,7 @@ public class ImageUploadDto {
     private List<String> fileExtensions;
     private List<Long> fileSizes;
     private String fileData;
+    // 추가된 필드
+    private List<PollDto> polls;
+    private List<RouletteDto> roulettes;
 }
