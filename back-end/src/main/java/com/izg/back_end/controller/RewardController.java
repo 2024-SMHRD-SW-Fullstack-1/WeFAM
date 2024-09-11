@@ -95,9 +95,9 @@ public class RewardController {
 	// 구매한 보상 목록 조회 API
 	@GetMapping("/rewards/purchased/{userId}")
 	public ResponseEntity<List<Map<String, Object>>> getPurchasedRewards(@PathVariable("userId") String userId) {
-		List<Map<String, Object>> purchasedRewardsWithImages = rewardService
-				.getPurchasedRewardsWithBase64Images(userId);
-		return ResponseEntity.ok(purchasedRewardsWithImages);
+	    List<Map<String, Object>> purchasedRewardsWithImages = rewardService
+	            .getPurchasedRewardsWithBase64Images(userId);
+	    return ResponseEntity.ok(purchasedRewardsWithImages);
 	}
 
 	// 사용자별 총 포인트와 프로필 이미지 가져오기 API

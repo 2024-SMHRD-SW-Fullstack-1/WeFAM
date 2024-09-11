@@ -402,9 +402,12 @@ const EventModal = ({
   const placeholderColor = "gray"; // placeholder 색상
   const textColor = memoContent ? "black" : placeholderColor; // 색상 결정
 
-  const handlePlaceSelectFromChatbot = (placeName) => {
-    setLocation(placeName); // 장소 입력란에 선택한 장소 이름을 설정
-  };
+  // 챗봇한테 받아온거 입력해주는거
+  const handlePlaceSelectFromChatbot = (memoContent) => {
+    // 장소 입력란을 변경하지 않고, 메모 필드만 업데이트
+    setMemoContent(memoContent);
+    console.log("Chatbot에서 받아온 메모 내용: ", memoContent);
+};
 
   return ReactDOM.createPortal(
     <div className={styles.modal}>

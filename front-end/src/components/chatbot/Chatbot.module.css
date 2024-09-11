@@ -77,3 +77,7 @@
     cursor: pointer;
   }
   
+  .clickable {
+    cursor: pointer;
+    z-index: 100; /* 최상위로 설정 */
+  }

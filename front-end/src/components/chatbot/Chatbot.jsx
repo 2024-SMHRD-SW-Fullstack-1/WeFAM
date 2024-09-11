@@ -3,7 +3,7 @@ import styles from "./Chatbot.module.css";
 import { useSelector } from "react-redux";
 
 
-const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace}) => {
+const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }) => {
     const [isChatGPT, setIsChatGPT] = useState(true);
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const [chatContent, setChatContent] = useState([]);
@@ -43,20 +43,20 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace})
         return `${year}-${month}-${day}`;
     };
 
-    // 장소를 클릭했을 때 이벤트 핸들러
-    const handlePlaceClick = (placeName) => {
+    const handlePlaceClick = (placeTitle, placeDescription) => {
         if (typeof onSelectPlace === 'function') {
-            onSelectPlace(placeName); // EventModal의 '장소' 필드에 해당 장소 이름을 넣음
-            console.log("클릭한 장소" + placeName);
+            const fullResponse = `${placeTitle}: ${placeDescription}`;  // 장소와 설명 결합
+            onSelectPlace(fullResponse);  // 선택된 장소를 EventModal로 전달
+            onClose();  // AiModal 닫기
+            console.log("장소?", placeTitle);
+            console.log("내용?", placeDescription);
 
-            // AiModal과 Chatbot 모달을 닫는 함수 호출
-        onClose();
 
         } else {
             console.error("onSelectPlace 함수가 전달되지 않았습니다.");
         }
-        setChatContent([...chatContent, { message: `선택하신 장소는 ${placeName}입니다!`, isUserChat: false }]);
     };
+
 
     // 사용자가 입력한 메시지 보내기
     const startChat = () => {
@@ -140,39 +140,31 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace})
                     <div className={styles.chatbot__content__box} key={index}>
                         {chat.aiResponse ? (
                             chat.aiResponse.map((line, idx) => {
+                                let title = "";
+                                let desc = "";
 
-                                let placeName = null;
-
-                                // (숫자). **장소명** - 또는 : 을 제외한 장소명을 추출하는 정규식
-                                const match1 = line.match(/\d+\.\s*\*\*(.*?)\*\*/); // 형식 1 처리 (숫자. **장소명**)
-                                const match2 = line.match(/\d+\.\s*(.*?):/);         // 형식 2 처리 (숫자. 장소명:)
-
-                                // 형식 1이 매칭될 경우
-                                if (match1) {
-                                    placeName = match1[1].trim(); // **을 제외한 장소명 추출
+                                // **로 텍스트를 나누고 장소명 추출
+                                const parts = line.split('**');
+                                if (parts.length > 1) {
+                                    title = parts[1].trim();  // **사이에 있는 장소명 추출
                                 }
-                                // 형식 2가 매칭될 경우
-                                else if (match2) {
-                                    placeName = match2[1].trim(); // : 앞의 장소명 추출
-                                }
-                                if (placeName) {
-                                    // console.log("추출된 장소 이름:", placeName); // placeName 값 확인
 
+                                // 다음 줄에 설명이 위치하므로 idx + 1을 desc로 사용
+                                if (chat.aiResponse[idx + 1]) {
+                                    desc = chat.aiResponse[idx + 1].trim();  // 설명 추출
+                                }
+
+                                // title과 desc가 있을 때 렌더링
+                                if (title && desc) {
                                     return (
-                                        <React.Fragment key={idx}>
-                                            <span
-                                                onClick={() => handlePlaceClick(placeName)}
-                                                style={{
-                                                    cursor: "pointer",
-                                                    color: "black",
-                                                    fontWeight: "bold"
-                                                }}>
-                                                {line}
-                                            </span>
+                                        <div key={idx} style={{ cursor: "pointer", color: "black" }} onClick={() => handlePlaceClick(title, desc)}>
+                                            <span style={{ fontWeight: "bold", cursor: "pointer" }}>{title}</span>  {/* 장소명 */}
+                                            <span>: {desc}</span>  {/* 설명 */}
                                             <br />
-                                        </React.Fragment>
+                                        </div>
                                     );
                                 }
+
                                 return (
                                     <React.Fragment key={idx}>
                                         {line}
@@ -190,8 +182,6 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace})
                         )}
                     </div>
                 ))}
-
-
             </div>
 
             <div className={styles.chatbot__footer}>

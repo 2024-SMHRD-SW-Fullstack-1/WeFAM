@@ -243,6 +243,7 @@
   background-color: #f8f8f8;
   border: transparent;
   justify-content: space-between;
+  overflow: hidden; /* 넘치는 텍스트 숨김 처리 */
 }
 
 .memoText {
@@ -253,7 +254,7 @@
   text-overflow: ellipsis !important;
   flex-grow: 1;
   /* 텍스트가 가능한 공간을 최대한 차지하게 함 */
-  width: 100%;
+  width: 250px;
   min-height: 38px;
   /* 최소 높이 설정 (commonBox와 동일한 높이) */
   padding: 8px 0px;

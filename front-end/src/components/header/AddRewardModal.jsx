@@ -84,6 +84,7 @@ const AddRewardModal = ({
             onChange={(e) => setRewardName(e.target.value)}
             placeholder="보상 이름"
             className={styles.inputField}
+            maxLength={16} // 16글자 제한 설정
           />
         </div>
 
