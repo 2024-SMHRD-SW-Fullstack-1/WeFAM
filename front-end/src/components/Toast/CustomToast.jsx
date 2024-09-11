@@ -5,6 +5,10 @@ import { BsTrash } from "react-icons/bs";
 
 const CustomToast = ({ type, message, onClose }) => {
   const getIcon = () => {
+    // 메시지가 '포인트가 부족합니다'일 경우 아이콘을 숨김
+    if (message === "포인트가 부족합니다!") {
+      return null; // 아이콘을 숨김
+    }
     return type === "success" ? <CiCircleCheck /> : <BsTrash />;
   };
 

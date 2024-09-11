@@ -138,58 +138,57 @@ public class RewardService {
 	// 보상구매시 업데이트
 	@Transactional
 	public RewardModel purchaseReward(int rewardIdx, String userId) {
-	    // 1. 구매할 보상 정보 조회
-	    RewardModel reward = rewardRepository.findById(rewardIdx)
-	            .orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
+		// 1. 구매할 보상 정보 조회
+		RewardModel reward = rewardRepository.findById(rewardIdx)
+				.orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
 
-	    // 2. 이미 구매된 보상인지 확인
-	    if (reward.isSold()) {
-	        throw new IllegalStateException("이미 구매된 보상입니다.");
-	    }
+		// 2. 유저의 현재 총 포인트 확인
+		int userPoints = pointLogService.getTotalPointsByUserId(userId);
+		if (userPoints < reward.getRewardPoint()) {
+			throw new IllegalStateException("포인트가 부족합니다.");
+		}
 
-	    // 3. 유저의 현재 총 포인트 확인
-	    int userPoints = pointLogService.getTotalPointsByUserId(userId);
-	    if (userPoints < reward.getRewardPoint()) {
-	        throw new IllegalStateException("포인트가 부족합니다.");
-	    }
+		// 3. 포인트 차감 로그 기록 (음수 포인트로 기록)
+		PointLogModel pointLog = new PointLogModel();
+		pointLog.setUserId(userId);
+		pointLog.setEntityType("buy"); // 구매 시 차감 로그임을 나타냄
+		pointLog.setEntityIdx(reward.getRewardIdx());
+		pointLog.setPoints(-reward.getRewardPoint()); // 음수로 포인트 차감
+		pointLogRepository.save(pointLog); // 로그 저장
 
-	    // 4. 포인트 차감 로그 기록 (음수 포인트로 기록)
-	    PointLogModel pointLog = new PointLogModel();
-	    pointLog.setUserId(userId);
-	    pointLog.setEntityType("buy"); // 구매 시 차감 로그임을 나타냄
-	    pointLog.setEntityIdx(reward.getRewardIdx());
-	    pointLog.setPoints(-reward.getRewardPoint()); // 음수로 포인트 차감
-	    pointLogRepository.save(pointLog); // 로그 저장
+		// 4. 보상 상태는 업데이트하지 않음 (isSold를 변경하지 않음)
+		// reward.setSold(false); // 상태 변경하지 않음
 
-	    // 5. 보상 상태 업데이트
-	    reward.setSold(true);
-	    reward.setPurchase(userId);
-	    reward.setSoldAt(LocalDateTime.now());
-
-	    return rewardRepository.save(reward); // 보상 정보 저장
+		return rewardRepository.save(reward); // 보상 정보 저장
 	}
 
-	
 	// 구매된 보상 목록과 이미지 Base64를 함께 반환하는 메서드
 	public List<Map<String, Object>> getPurchasedRewardsWithBase64Images(String userId) {
-		// 구매된 보상 목록 조회
-		List<RewardModel> purchasedRewards = rewardRepository.findByPurchase(userId);
+	    // 포인트 로그에서 구매 항목 조회
+	    List<PointLogModel> purchaseLogs = pointLogRepository.findPurchaseLogsByUserId(userId);
 
-		return purchasedRewards.stream().map(reward -> {
-			Map<String, Object> rewardWithImage = new HashMap<>();
-			rewardWithImage.put("reward", reward);
+	    // 각 로그에 해당하는 보상 데이터를 조회
+	    return purchaseLogs.stream().map(log -> {
+	        Map<String, Object> rewardWithImage = new HashMap<>();
 
-			// 보상에 연결된 이미지 찾기
-			List<FileModel> images = fileRepository.findByEntityTypeAndEntityIdx("reward", reward.getRewardIdx());
-			if (!images.isEmpty()) {
-				FileModel image = images.get(0);
-				// 이미지 데이터를 Base64로 인코딩
-				String base64File = Base64.getEncoder().encodeToString(image.getFileData());
-				String base64Image = "data:image/" + image.getFileExtension() + ";base64," + base64File;
-				rewardWithImage.put("imageBase64", base64Image); // Base64 인코딩된 이미지 추가
-			}
+	        // 보상 정보 가져오기 (log의 entity_idx가 reward의 reward_idx와 동일)
+	        RewardModel reward = rewardRepository.findById(log.getEntityIdx())
+	                .orElseThrow(() -> new IllegalArgumentException("해당 보상이 존재하지 않습니다."));
 
-			return rewardWithImage;
-		}).collect(Collectors.toList());
+	        rewardWithImage.put("reward", reward);
+	        rewardWithImage.put("purchaseDate", log.getPointedAt());  // 구매 일자 추가
+
+	        // 보상에 연결된 이미지 찾기
+	        List<FileModel> images = fileRepository.findByEntityTypeAndEntityIdx("reward", reward.getRewardIdx());
+	        if (!images.isEmpty()) {
+	            FileModel image = images.get(0);
+	            String base64File = Base64.getEncoder().encodeToString(image.getFileData());
+	            String base64Image = "data:image/" + image.getFileExtension() + ";base64," + base64File;
+	            rewardWithImage.put("imageBase64", base64Image);  // Base64 인코딩된 이미지 추가
+	        }
+
+	        return rewardWithImage;
+	    }).collect(Collectors.toList());
 	}
+
 }
