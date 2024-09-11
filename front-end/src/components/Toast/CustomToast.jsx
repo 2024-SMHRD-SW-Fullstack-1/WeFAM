@@ -9,7 +9,7 @@ const CustomToast = ({ type, message, onClose }) => {
   };
 
   const getTitle = () => {
-    return type === "success" ? "Success" : "Error";
+    return type === "success" ? "성공" : "삭제";
   };
 
   return (
