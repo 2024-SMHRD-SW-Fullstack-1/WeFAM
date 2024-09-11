@@ -177,7 +177,6 @@
 }
 
 .locationContainer {
-  padding-bottom: 10px;
   /* 지도의 상단 여백 */
   border-bottom: 1px solid beige;
 }
@@ -214,7 +213,7 @@
   align-items: center;
   width: 100%;
   padding: 0 10px;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 
 .icon {

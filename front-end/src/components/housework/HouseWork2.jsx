@@ -82,6 +82,9 @@ const Housework2 = () => {
 
       const { works } = response.data;
 
+      // completed가 0인 항목 필터링
+      const incompleteTasks = works.filter((task) => task.completed === 0);
+
       setTasks({
         daily: works.filter((task) => task.taskType === "daily"),
         shortTerm: works.filter((task) => task.taskType === "shortTerm"),
@@ -421,8 +424,7 @@ const Housework2 = () => {
         key={task.workIdx}
         className={`${styles.taskItem} ${
           isCompleted ? styles.completedTask : ""
-        }`}
-      >
+        }`}>
         <div className={styles.taskContent}>
           <span className={styles.taskTitle}>{task.workTitle}</span>
           <br />
@@ -468,22 +470,19 @@ const Housework2 = () => {
             onClick={(e) => {
               e.stopPropagation(); // 클릭 이벤트 버블링 방지
               setDropdownOpen(null); // 드롭다운 메뉴를 클릭하면 닫음
-            }}
-          >
+            }}>
             <button
               onClick={() => {
                 handleMissionComplete(task);
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               미션 성공
             </button>
             <button
               onClick={() => {
                 handleTaskEdit(task.workIdx, tasks[taskType], taskType); // workIdx로 수정
                 setDropdownOpen(null); // 클릭 시 드롭다운 닫기
-              }}
-            >
+              }}>
               수정
             </button>
             <button onClick={() => handleDeleteClick(task)}>삭제</button>

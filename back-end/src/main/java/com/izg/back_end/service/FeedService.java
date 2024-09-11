@@ -1,14 +1,14 @@
 package com.izg.back_end.service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.izg.back_end.dto.FeedDetailDto;
 import com.izg.back_end.model.FeedModel;
 import com.izg.back_end.model.FileModel;
-import com.izg.back_end.model.PollModel;
 import com.izg.back_end.model.UserModel;
 import com.izg.back_end.repository.FeedRepository;
 import com.izg.back_end.repository.FileRepository;
@@ -41,7 +40,7 @@ public class FeedService {
 
 	// 피드에서 이미지 업로드하여 피드 추가
 	@Transactional
-	public void addFeedWithImages(int familyIdx, String userId, String entityType, int entityIdx,
+	public int addFeedWithImages(int familyIdx, String userId, String entityType, int entityIdx,
 			List<String> fileNames, List<String> fileExtensions, List<Long> fileSizes, List<MultipartFile> images,
 			String content, String location) throws IOException {
 		// 1. 피드 정보 저장
@@ -75,12 +74,15 @@ public class FeedService {
 
 			fileRepository.save(fileModel);
 		}
+		
+		return entityIdx;
 	}
 
-	@Transactional(readOnly = true)
-	public List<FeedModel> getAllFeeds(int familyIdx) {
-		return feedRepository.findByFamilyIdxOrderByPostedAtDesc(familyIdx);
-	}
+	// feedRepository는 JpaRepository를 상속받아야 합니다.
+	// Pageable을 매개변수로 받도록 메서드 시그니처 수정
+    public Page<FeedModel> getAllFeeds(Integer familyIdx, Pageable pageable) {
+        return feedRepository.findAllByFamilyIdx(familyIdx, pageable);
+    }
 
 	@Transactional(readOnly = true)
 	public List<FileModel> getFilesByFeedIdx(Integer feedIdx) throws IOException {

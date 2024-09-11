@@ -13,7 +13,7 @@ import { HiOutlineTrophy } from "react-icons/hi2";
 import AlarmModal from "./AlarmModal";
 import { NotificationContext } from "../../NotificationContext";
 import ProfileModal from "../user-setting/ProfileModal";
-import { updateUserData } from "../../features/userSlice";  // 유저 데이터를 업데이트하는 액션 임포트
+import { updateUserData } from "../../features/userSlice"; // 유저 데이터를 업데이트하는 액션 임포트
 
 const Header = () => {
   const nav = useNavigate();
@@ -39,30 +39,29 @@ const Header = () => {
       )
     : [];
 
-    useEffect(() => {
-      if (userData) {
-        console.log('Updated userData:', userData); // 최신 userData 확인
-        // 여기서 최신 데이터를 불러오는 로직
-        axios
-          .get("http://localhost:8089/wefam/get-family")
-          .then((response) => {
-            const loadedImages = response.data.map((user) => user.profileImg);
-            setUserImages(loadedImages); // 이미지 업데이트
-          })
-          .catch((error) => {
-            console.error("가져오기 에러!!", error);
-          });
-    
-        axios
-          .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
-          .then((response) => {
-            setFamilyMotto(response.data); // 가훈 업데이트
-          })
-          .catch((error) => {
-            console.error("가훈 가져오기 에러:", error);
-          });
-      }
-    }, [userData]); // userData가 변경될 때마다 실행
+  useEffect(() => {
+    if (userData) {
+      // 여기서 최신 데이터를 불러오는 로직
+      axios
+        .get("http://localhost:8089/wefam/get-family")
+        .then((response) => {
+          const loadedImages = response.data.map((user) => user.profileImg);
+          setUserImages(loadedImages); // 이미지 업데이트
+        })
+        .catch((error) => {
+          console.error("가져오기 에러!!", error);
+        });
+
+      axios
+        .get(`http://localhost:8089/wefam/get-family-nick/${userData.id}`)
+        .then((response) => {
+          setFamilyMotto(response.data); // 가훈 업데이트
+        })
+        .catch((error) => {
+          console.error("가훈 가져오기 에러:", error);
+        });
+    }
+  }, [userData]); // userData가 변경될 때마다 실행
 
   const handleMottoChange = (e) => {
     setFamilyMotto(e.target.value);
@@ -107,8 +106,7 @@ const Header = () => {
 
   const closeProfileModal = () => {
     setIsProfileModalOpen(false);
-    console.log("ㅅㅂ",userData.birth);
-    
+    console.log("ㅅㅂ", userData.birth);
 
     // 모달이 닫힌 후, DB에서 최신 사용자 정보 다시 가져오기
     axios
@@ -137,8 +135,7 @@ const Header = () => {
           <div
             className={styles.logoContainer}
             onClick={() => nav("/main")}
-            style={{ cursor: "pointer" }}
-          >
+            style={{ cursor: "pointer" }}>
             {/* WeFAM 로고 */}
             <img className={styles.logo} src={logo}></img>
           </div>
@@ -148,11 +145,10 @@ const Header = () => {
               <div
                 className={styles.icon}
                 onClick={handleBellClick}
-                ref={bellRef}
-              >
+                ref={bellRef}>
                 <img
                   src={iconHeaderAlarm}
-                  alt=""
+                  alt=''
                   style={{
                     width: "36px",
                     height: "36px",
@@ -177,8 +173,7 @@ const Header = () => {
                       justifyContent: "center",
                       fontSize: "12px",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {filteredNotifications.length}
                   </div>
                 )}
@@ -199,18 +194,16 @@ const Header = () => {
                     backgroundRepeat: "no-repeat",
                     display: "inline-block",
                   }}
-                  aria-hidden="true"
-                ></i>
+                  aria-hidden='true'></i>
                 {/* <HiOutlineTrophy /> */}
               </div>
               <div
                 className={styles.profileImageWrapper}
-                onClick={handleProfileClick}
-              >
+                onClick={handleProfileClick}>
                 <img
                   src={userData.profileImg}
                   className={styles.profileImage}
-                  alt="사용자 프로필"
+                  alt='사용자 프로필'
                 />
               </div>
             </div>

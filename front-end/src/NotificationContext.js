@@ -6,7 +6,6 @@ export const NotificationContext = createContext();
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const userData = useSelector((state) => state.user.userData); // Redux에서 userData 가져오기
-  console.log("구독할 userData: ", userData); // userData 값이 정확한지 확인
 
   useEffect(() => {
     if (!userData || !userData.id) {
@@ -19,7 +18,6 @@ export const NotificationProvider = ({ children }) => {
     const eventSource = new EventSource(
       `http://localhost:8089/wefam/notifications/${userData.id}`
     );
-    console.log("EventSource 구독 시작: ", userData.id);
 
     eventSource.onmessage = (event) => {
       const newNotification = JSON.parse(event.data);
@@ -27,7 +25,6 @@ export const NotificationProvider = ({ children }) => {
         newNotification,
         ...prevNotifications,
       ]);
-      console.log("새 알림 수신: ", newNotification);
     };
 
     eventSource.onerror = (error) => {
