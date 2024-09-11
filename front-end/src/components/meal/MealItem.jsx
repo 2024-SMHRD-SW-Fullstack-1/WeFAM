@@ -87,7 +87,7 @@ const MealItem = ({ meal, onSelect, getAllMeals }) => {
         <div className={styles.header}>
           <div className={styles.metaContainer}>
             <div className={styles.profileImgContainer}>
-              <img src={userData.profileImg} alt="" />
+              <img src={meal.profileImg} alt="" />
             </div>
             <div className={styles.meta}>
               <div className={styles.authorTime}>
