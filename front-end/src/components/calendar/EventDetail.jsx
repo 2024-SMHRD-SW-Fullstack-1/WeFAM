@@ -296,14 +296,14 @@ const EventDetail = ({
               color: eventColor,
             }}>
             {event.content !== "" && !isMemoOpen && (
-              <BsChevronDown onClick={handleMemoClick} />
+              <BsChevronUp onClick={handleMemoClick} />
             )}
             {event.content !== "" && isMemoOpen && (
-              <BsChevronUp onClick={handleMemoClick} />
+              <BsChevronDown onClick={handleMemoClick} />
             )}
           </div>
         </div>
-        {isMemoOpen && (
+        {!isMemoOpen && event.content !== "" && (
           <div style={{ padding: "0 18px", marginBottom: "10px" }}>
             <p>
               {event.content.split("\n").map((line, index) => (
