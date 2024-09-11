@@ -485,7 +485,9 @@ const FeedItem = ({
                     onClick={() => handleOpenRoulette(roulette.rouletteIdx)}
                   >
                     {" "}
-                    <PiGameControllerLight />
+                    <span>
+                      <PiGameControllerLight />
+                    </span>
                     <span>{roulette.rouletteTitle}</span>
                   </button>
                 </span>
@@ -499,7 +501,9 @@ const FeedItem = ({
                 <span key={index}>
                   <button onClick={() => handleOpenPoll(poll.pollIdx)}>
                     {" "}
-                    <CiSquareCheck />
+                    <span>
+                      <CiSquareCheck />
+                    </span>
                     <span>{poll.pollTitle}</span>
                   </button>
                 </span>
