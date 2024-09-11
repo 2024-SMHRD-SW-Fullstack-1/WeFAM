@@ -95,7 +95,7 @@ const Feed = () => {
             `http://localhost:8089/wefam/update-feed/${feedIdx}`,
             { feedContent }
           );
-          await getAllFeeds(currentPage);
+          await getAllFeeds(1);
           toastSuccess("피드가 성공적으로 업데이트되었습니다!");
           console.log("피드의 내용만 업데이트");
         } else {
@@ -125,10 +125,10 @@ const Feed = () => {
           setIsLoading(true); // 로딩 상태를 true로 설정
           setTimeout(() => {
             setCurrentPage((prevPage) => prevPage + 1); // 1초 후에 페이지 변경
-            setIsLoading(false); // 페이지가 변경된 후 로딩 상태를 false로 설정
           }, 1000); // 1초 지연
         } else if (currentPage === totalPages) {
           setIsLoading(false);
+          observer.disconnect(); // 마지막 페이지일 때 옵저버 해제
         }
       },
       { threshold: 1.0 }
@@ -143,7 +143,7 @@ const Feed = () => {
         observer.unobserve(loaderRef.current);
       }
     };
-  }, [isLoading, currentPage, totalPages, isFirstPageLoaded]);
+  }, [isLoading, currentPage, totalPages]);
 
   // 이거는 이전과 다음 버튼 이용한 경우... 페이징 처리
   // const handlePageChange = (newPage) => {
@@ -163,10 +163,16 @@ const Feed = () => {
           <Preloader isLoading={isLoading} />
         ) : (
           <div className={styles.feedContent}>
-            <AddFeed onGetAllFeeds={getAllFeeds} />
+            <AddFeed
+              onGetAllFeeds={getAllFeeds}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
             <FeedList
               feeds={feeds}
               getAllFeeds={getAllFeeds}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
               onGetFeedDetail={getFeedDetail}
               onUpdateFeed={updateFeed}
             />

@@ -24,7 +24,14 @@ import {
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { PiArrowBendDownLeft } from "react-icons/pi";
 
-const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
+const FeedItem = ({
+  feed,
+  getAllFeeds,
+  currentPage,
+  setCurrentPage,
+  onGetFeedDetail,
+  onUpdateFeed,
+}) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
@@ -248,7 +255,8 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
           if (response.status === 200) {
             toastDelete("피드가 성공적으로 삭제되었습니다!");
             // 삭제 후 다시 피드 데이터를 가져오기 (리렌더링 필요)
-            await getAllFeeds(userData.familyIdx);
+            setCurrentPage(1);
+            await getAllFeeds(1);
             console.log("피드 삭제 완료");
           }
         } else {
@@ -467,9 +475,9 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
           </div>
         )}
 
-        {/* 내용 - 룰렛 */}
-        {roulettes.length > 0 ? (
-          <div className={styles.roulettesContent}>
+        <div className={styles.specialContent}>
+          {/* 내용 - 룰렛 */}
+          {roulettes.length > 0 ? (
             <div className={styles.roulette}>
               {roulettes.map((roulette, index) => (
                 <span key={index}>
@@ -483,12 +491,9 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
                 </span>
               ))}
             </div>
-          </div>
-        ) : null}
-
-        {/* 내용 - 투표 */}
-        {polls.length > 0 ? (
-          <div className={styles.pollsContent}>
+          ) : null}
+          {/* 내용 - 투표 */}
+          {polls.length > 0 ? (
             <div className={styles.poll}>
               {polls.map((poll, index) => (
                 <span key={index}>
@@ -500,8 +505,8 @@ const FeedItem = ({ feed, getAllFeeds, onGetFeedDetail, onUpdateFeed }) => {
                 </span>
               ))}
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
 
         {(() => {
           let content;

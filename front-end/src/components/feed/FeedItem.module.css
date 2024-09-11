@@ -89,13 +89,17 @@
   height: 100%;
 }
 
+.specialContent,
 .roulettesContent,
 .pollsContent {
   display: flex;
   flex-wrap: wrap; /* 자동으로 줄 바꿈 */
+  gap: var(--space-sm);
   width: 100%;
 }
 
+.specialContent > .roulette,
+.specialContent > .poll,
 .roulettesContent > .roulette,
 .pollsContent > .poll {
   display: flex;
@@ -103,6 +107,8 @@
   height: 100%;
 }
 
+.specialContent > .roulette button,
+.specialContent > .poll button,
 .roulettesContent > .roulette button,
 .pollsContent > .poll button {
   padding: var(--space-sm);
@@ -114,8 +120,11 @@
   color: var(--color-white);
   background-color: var(--color-sunset);
   border-radius: var(--radius-md);
+  font-weight: var(--weight-semi-bold);
 }
 
+.specialContent > .roulette button:hover,
+.specialContent > .poll button:hover,
 .roulettesContent > .roulette button:hover,
 .pollsContent > .poll button:hover {
   background-color: var(--color-sunset-hover);
@@ -299,9 +308,6 @@
   background-color: rgba(0, 0, 0, 0.8); /* 검은색 배경, 70% 투명도 */
 }
 
-.hidden {
-  display: none;
-}
 .slideNumber {
   position: absolute;
   top: 0;
@@ -316,6 +322,7 @@
   justify-content: center;
   align-items: center;
 }
+
 .hidden {
-  display: none;
+  display: none !important;
 }

@@ -12,7 +12,7 @@ public interface MealRepository extends JpaRepository<MealModel, Integer>{
 	
 	// 가족 ID에 해당하는 모든 레시피 목록을 반환
 	@Query("SELECT m FROM MealModel m WHERE m.familyIdx = :familyIdx ORDER BY " +
-	           "m.mealDate ASC, " + // 먼저 날짜로 정렬
+	           "m.postedAt DESC, " + // 먼저 날짜로 정렬
 	           "CASE m.mealType " +
 	           "WHEN '아침' THEN 1 " +
 	           "WHEN '점심' THEN 2 " +
