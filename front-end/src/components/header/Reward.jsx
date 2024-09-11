@@ -104,12 +104,14 @@ const Reward = () => {
   const handleEditReward = (reward) => {
     setSelectedReward(reward); // 선택된 보상 설정
     setIsModalOpen(true); // 수정 모달 열기
+    setDropdownOpen(null); // 수정 클릭 후 드롭다운 닫기
   };
 
   // 보상 삭제 클릭 시 삭제 모달 열기
   const handleDeleteClick = (reward) => {
     setRewardToDelete(reward); // 삭제할 보상 설정
     setIsDeleteOpen(true); // 삭제 모달 열기
+    setDropdownOpen(null); // 삭제 클릭 후 드롭다운 닫기
   };
 
   // 보상 삭제 처리
@@ -176,6 +178,7 @@ const Reward = () => {
   // 외부 클릭 감지로 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // 드롭다운 메뉴 내부를 클릭했을 때는 닫지 않도록 처리
       if (dropdownRef.current && dropdownRef.current.length > 0) {
         const isClickOutside = dropdownRef.current.every((ref) => {
           return ref && !ref.contains(event.target); // 클릭한 대상이 드롭다운 메뉴 외부인지 확인
