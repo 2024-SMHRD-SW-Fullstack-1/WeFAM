@@ -28,7 +28,7 @@ const RightSidebar = () => {
           image: user.profileImg,
           nick: user.nick,
           id: user.id,
-          online: user.id === userData.id ? true : false,
+          online: false, // 처음엔 전부 오프라인으로 초기화
         }));
 
         // userData.id와 일치하는 사용자를 배열의 첫 번째로 이동
@@ -41,7 +41,35 @@ const RightSidebar = () => {
       .catch((error) => {
         console.error("가져오기 에러!!", error);
       });
-  }, [userData]); // userData가 변경될 때마다 실행
+  }, [userData]);
+
+  useEffect(() => {
+    // 온라인 상태 가져오기
+    const fetchOnlineUsers = () => {
+      axios
+        .get("http://localhost:8089/wefam/online-users")
+        .then((response) => {
+          const onlineUserIds = response.data; // 온라인 유저 ID 목록
+
+          // 온라인 상태 업데이트
+          setUsers((prevUsers) =>
+            prevUsers.map((user) => ({
+              ...user,
+              online: onlineUserIds.includes(user.id),
+            }))
+          );
+        })
+        .catch((error) => {
+          console.error("온라인 상태 가져오기 에러:", error);
+        });
+    };
+
+    // 컴포넌트가 마운트될 때와 주기적으로 온라인 상태를 가져옴
+    fetchOnlineUsers();
+    const intervalId = setInterval(fetchOnlineUsers, 1000); // 10초마다 상태 업데이트
+
+    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 제거
+  }, []);
 
   useEffect(() => {
     const fetchFamilyCreator = async () => {
