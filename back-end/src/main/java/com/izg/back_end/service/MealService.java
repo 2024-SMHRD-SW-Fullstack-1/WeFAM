@@ -87,6 +87,7 @@ public class MealService {
 			UserModel user = optionalUser.get();
 
 			mealDto.setUserNick(user.getNick());
+			mealDto.setProfileImg(user.getProfileImg());
 			mealDto.setPostedAt(meal.getPostedAt());
 			mealDto.setMealDate(meal.getMealDate());
 			mealDto.setMealType(meal.getMealType());

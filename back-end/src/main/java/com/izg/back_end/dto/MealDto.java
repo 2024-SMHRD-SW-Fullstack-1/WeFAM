@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class MealDto {
     private int mealIdx;
     private String userId;
+    private String profileImg;
     private String userNick;
     private LocalDateTime postedAt;
     private LocalDate mealDate;
