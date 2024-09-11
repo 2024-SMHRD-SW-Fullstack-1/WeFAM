@@ -15,6 +15,7 @@ const Feed = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(4); // 페이지당 항목 수
   const [isFirstPageLoaded, setIsFirstPageLoaded] = useState(false);
+  const [isSpinnerOn, setIsSpinnerOn] = useState(false);
 
   const userData = useSelector((state) => state.user.userData);
   const loaderRef = useRef(null);
@@ -22,35 +23,31 @@ const Feed = () => {
   const getAllFeeds = useCallback(
     async (page) => {
       try {
-        // setIsLoading(true);
         console.log("현재 요청 페이지 : ", page);
+        setIsLoading(true); // 데이터 요청 시작 전에 로딩 상태 true로 설정
         const response = await axios.get(
           `http://localhost:8089/wefam/get-all-feeds/${
             userData.familyIdx
           }?page=${page - 1}&size=${itemsPerPage}`
         );
         if (response.data) {
-          console.log("feeds : ", response.data.content);
-          console.log("총 페이지 수: ", response.data.totalPages);
           setFeeds((prevFeeds) =>
             page === 1
               ? response.data.content
               : [...prevFeeds, ...response.data.content]
           );
           setTotalPages(response.data.totalPages || 1);
-          if (page === 1) {
-            setIsFirstPageLoaded(true); // 첫 페이지가 로드되었음을 표시
-            console.log("첫번째 페이지 로드!");
-          } else if (page === 2) {
-            console.log("두번째 페이지 로드");
-          }
+          console.log("피드 데이터 업데이트 완료");
         }
       } catch (error) {
         console.error(
           `${userData.familyIdx}번 가족 getAllFeeds 함수 에러 : ${error}`
         );
       } finally {
-        // setIsLoading(false);
+        setIsLoading(false); // 데이터 요청이 끝난 후 로딩 상태 false로 설정
+        if (page === 1) {
+          setIsFirstPageLoaded(true); // 첫 페이지가 로드되었음을 표시
+        }
       }
     },
     [userData.familyIdx, itemsPerPage]
@@ -125,18 +122,27 @@ const Feed = () => {
         console.log("로딩 중인가요? : ", isLoading);
         console.log("currentPage : ", currentPage);
         console.log("totalPages : ", totalPages);
+
         if (
           entries[0].isIntersecting &&
           !isLoading &&
-          currentPage < totalPages
+          currentPage < totalPages &&
+          isFirstPageLoaded // 첫페이지가 로드된 이후에만 페이지 증가
         ) {
-          setIsLoading(true); // 로딩 상태를 true로 설정
           console.log("페이지 증가");
+          setIsSpinnerOn(true);
+          // 1초 지연 후 페이지 증가
           setTimeout(() => {
-            setCurrentPage((prevPage) => prevPage + 1); // 1초 후에 페이지 변경
+            setCurrentPage((prevPage) => {
+              const newPage = prevPage + 1;
+              if (newPage <= totalPages) {
+                setIsSpinnerOn(false);
+                setIsLoading(true); // 페이지 변경을 위해 로딩 상태 true로 설정
+              }
+              return newPage;
+            });
           }, 1000); // 1초 지연
         } else if (currentPage === totalPages) {
-          setIsLoading(false);
           observer.disconnect(); // 마지막 페이지일 때 옵저버 해제
         }
       },
@@ -203,7 +209,7 @@ const Feed = () => {
                 다음
               </button>
             </div> */}
-          {isLoading && currentPage >= 1 ? (
+          {isSpinnerOn && currentPage >= 1 ? (
             <div className={styles.spinnerContainer}>
               <div className={styles.spinner}></div>
             </div>

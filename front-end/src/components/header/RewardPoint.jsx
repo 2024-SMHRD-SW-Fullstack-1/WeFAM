@@ -178,8 +178,11 @@ const RewardPoint = () => {
                       <span>
                         구매일:{" "}
                         {rewardItem.reward.soldAt
-                          ? new Date(rewardItem.reward.soldAt).toLocaleDateString() // 정상적인 날짜 값일 경우
-                          : new Date().toLocaleDateString()} {/* soldAt이 null일 경우 현재 날짜 */}
+                          ? new Date(
+                              rewardItem.reward.soldAt
+                            ).toLocaleDateString() // 정상적인 날짜 값일 경우
+                          : new Date().toLocaleDateString()}{" "}
+                        {/* soldAt이 null일 경우 현재 날짜 */}
                       </span>
                     </div>
                   </li>
