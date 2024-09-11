@@ -107,10 +107,7 @@
   height: 100%;
 }
 
-.specialContent > .roulette button,
-.specialContent > .poll button,
-.roulettesContent > .roulette button,
-.pollsContent > .poll button {
+.specialContent > .roulette button {
   padding: var(--space-sm);
   display: flex;
   align-items: center;
@@ -118,16 +115,36 @@
   gap: var(--space-xs);
   font-size: var(--font-md);
   color: var(--color-white);
-  background-color: var(--color-sunset);
+  background-color: var(--color-roulette);
   border-radius: var(--radius-md);
   font-weight: var(--weight-semi-bold);
 }
 
-.specialContent > .roulette button:hover,
-.specialContent > .poll button:hover,
-.roulettesContent > .roulette button:hover,
-.pollsContent > .poll button:hover {
-  background-color: var(--color-sunset-hover);
+.specialContent > .roulette button > span:first-child,
+.specialContent > .poll button > span:first-child {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-2xl);
+}
+
+.specialContent > .poll button {
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--space-xs);
+  font-size: var(--font-md);
+  color: var(--color-white);
+  background-color: var(--color-poll);
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-semi-bold);
+}
+
+.specialContent > .roulette button:hover {
+  background-color: var(--color-roulette-hover);
+}
+.specialContent > .poll button:hover {
+  background-color: var(--color-poll-hover);
 }
 
 .footer {

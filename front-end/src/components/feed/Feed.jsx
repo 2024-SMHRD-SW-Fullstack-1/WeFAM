@@ -13,7 +13,7 @@ const Feed = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [itemsPerPage] = useState(2); // 페이지당 항목 수
+  const [itemsPerPage] = useState(4); // 페이지당 항목 수
   const [isFirstPageLoaded, setIsFirstPageLoaded] = useState(false);
 
   const userData = useSelector((state) => state.user.userData);
@@ -22,7 +22,7 @@ const Feed = () => {
   const getAllFeeds = useCallback(
     async (page) => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         console.log("현재 요청 페이지 : ", page);
         const response = await axios.get(
           `http://localhost:8089/wefam/get-all-feeds/${
@@ -50,7 +50,7 @@ const Feed = () => {
           `${userData.familyIdx}번 가족 getAllFeeds 함수 에러 : ${error}`
         );
       } finally {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     },
     [userData.familyIdx, itemsPerPage]
@@ -115,14 +115,23 @@ const Feed = () => {
   }, [getAllFeeds, currentPage]);
 
   useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        console.log("교차중? : ", entries[0].isIntersecting);
+        console.log("로딩 중인가요? : ", isLoading);
+        console.log("currentPage : ", currentPage);
+        console.log("totalPages : ", totalPages);
         if (
           entries[0].isIntersecting &&
           !isLoading &&
           currentPage < totalPages
         ) {
           setIsLoading(true); // 로딩 상태를 true로 설정
+          console.log("페이지 증가");
           setTimeout(() => {
             setCurrentPage((prevPage) => prevPage + 1); // 1초 후에 페이지 변경
           }, 1000); // 1초 지연
@@ -159,25 +168,25 @@ const Feed = () => {
   return (
     <div className="main">
       <div className={styles.feed}>
-        {isLoading && currentPage === 1 ? (
+        {/* {isLoading && currentPage === 1 ? (
           <Preloader isLoading={isLoading} />
-        ) : (
-          <div className={styles.feedContent}>
-            <AddFeed
-              onGetAllFeeds={getAllFeeds}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            />
-            <FeedList
-              feeds={feeds}
-              getAllFeeds={getAllFeeds}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              onGetFeedDetail={getFeedDetail}
-              onUpdateFeed={updateFeed}
-            />
-            <div ref={loaderRef} className={styles.loader}></div>
-            {/* <div className={styles.pagination}>
+        ) : ( */}
+        <div className={styles.feedContent}>
+          <AddFeed
+            onGetAllFeeds={getAllFeeds}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <FeedList
+            feeds={feeds}
+            getAllFeeds={getAllFeeds}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onGetFeedDetail={getFeedDetail}
+            onUpdateFeed={updateFeed}
+          />
+          <div ref={loaderRef} className={styles.loader}></div>
+          {/* <div className={styles.pagination}>
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -194,13 +203,13 @@ const Feed = () => {
                 다음
               </button>
             </div> */}
-            {isLoading && currentPage >= 3 ? (
-              <div className={styles.spinnerContainer}>
-                <div className={styles.spinner}></div>
-              </div>
-            ) : null}
-          </div>
-        )}
+          {isLoading && currentPage >= 1 ? (
+            <div className={styles.spinnerContainer}>
+              <div className={styles.spinner}></div>
+            </div>
+          ) : null}
+        </div>
+        {/* )} */}
         <ToastContainer />
       </div>
     </div>
