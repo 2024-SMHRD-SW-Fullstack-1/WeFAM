@@ -140,24 +140,31 @@ const Chatbot = ({ onClose, theme, startDate, endDate, location, onSelectPlace }
                     <div className={styles.chatbot__content__box} key={index}>
                         {chat.aiResponse ? (
                             chat.aiResponse.map((line, idx) => {
-                                // 정규 표현식을 통해 장소명과 부가 설명을 추출
-                                const matchFull = line.match(/\d+\.\s*\*\*(.*?)\*\*\s*[:-]\s*(.+)/);
-                                if (matchFull) {
-                                    const placeTitle = matchFull[1].trim();  // 장소명 추출
-                                    const placeDescription = matchFull[2].trim();  // 부가 설명 추출
+                                let title = "";
+                                let desc = "";
+
+                                // **로 텍스트를 나누고 장소명 추출
+                                const parts = line.split('**');
+                                if (parts.length > 1) {
+                                    title = parts[1].trim();  // **사이에 있는 장소명 추출
+                                }
+
+                                // 다음 줄에 설명이 위치하므로 idx + 1을 desc로 사용
+                                if (chat.aiResponse[idx + 1]) {
+                                    desc = chat.aiResponse[idx + 1].trim();  // 설명 추출
+                                }
+
+                                // title과 desc가 있을 때 렌더링
+                                if (title && desc) {
                                     return (
-                                        <div key={idx} style={{ cursor: "pointer", color: "black" }}>
-                                            <span
-                                                onClick={() => handlePlaceClick(placeTitle, placeDescription)}  // 클릭 시 장소와 설명을 전달
-                                                style={{ fontWeight: "bold", cursor: "pointer" }}  // 커서 스타일 추가
-                                            >
-                                                {placeTitle}
-                                            </span>
-                                            <span style={{ cursor: "pointer" }}>: {placeDescription}</span>  {/* 설명 부분도 클릭 가능하게 설정 */}
+                                        <div key={idx} style={{ cursor: "pointer", color: "black" }} onClick={() => handlePlaceClick(title, desc)}>
+                                            <span style={{ fontWeight: "bold", cursor: "pointer" }}>{title}</span>  {/* 장소명 */}
+                                            <span>: {desc}</span>  {/* 설명 */}
                                             <br />
                                         </div>
                                     );
                                 }
+
                                 return (
                                     <React.Fragment key={idx}>
                                         {line}
