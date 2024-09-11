@@ -322,41 +322,22 @@ const EventModal = ({
     setIsAllDay((prev) => !prev);
   };
 
+  // 새로운 일정 시간 초기값 설정
   useEffect(() => {
-    if (isAllDay) {
-      // 종일 이벤트일 경우 시간을 자정으로 설정
+    if (!event.id) {
       const newStartDate = new Date(startDate);
       const newEndDate = new Date(endDate);
 
-      if (newStartDate.getHours() !== 0 || newStartDate.getMinutes() !== 0) {
-        newStartDate.setHours(0, 0, 0, 0);
-        setStartDate(newStartDate);
-      }
-
-      if (
-        newEndDate.getHours() !== 23 ||
-        newEndDate.getMinutes() !== 59 ||
-        newEndDate.getSeconds() !== 59
-      ) {
-        newEndDate.setHours(23, 59, 59, 999);
-        setEndDate(newEndDate);
-      }
-    } else {
-      // 종일 이벤트가 아닌 경우 기본 시간 설정
-      const newStartDate = new Date(startDate);
-      const newEndDate = new Date(endDate);
-
-      if (newStartDate.getHours() === 0 && newStartDate.getMinutes() === 0) {
+      if (!isAllDay) {
+        // 종일 이벤트가 아닌 경우 기본 시작 및 종료 시간 설정
         newStartDate.setHours(9, 0, 0, 0); // 기본 시작 시간 09:00
-        setStartDate(newStartDate);
-      }
-
-      if (newEndDate.getHours() === 23 && newEndDate.getMinutes() === 59) {
         newEndDate.setHours(18, 0, 0, 0); // 기본 종료 시간 18:00
+
+        setStartDate(newStartDate);
         setEndDate(newEndDate);
       }
     }
-  }, [isAllDay, startDate, endDate]); // 의존성 배열에 startDate와 endDate를 추가
+  }, [isAllDay, startDate, endDate, event.id]);
 
   // 파일 선택 핸들러
   const handleFileChange = (event) => {
@@ -407,7 +388,7 @@ const EventModal = ({
     // 장소 입력란을 변경하지 않고, 메모 필드만 업데이트
     setMemoContent(memoContent);
     console.log("Chatbot에서 받아온 메모 내용: ", memoContent);
-};
+  };
 
   return ReactDOM.createPortal(
     <div className={styles.modal}>
@@ -418,17 +399,16 @@ const EventModal = ({
             <input
               className={styles.title}
               value={title || ""}
-              placeholder="제목"
+              placeholder='제목'
               onChange={handleTitleChange}
             />
           </div>
           {isDetailOpen && (
             <div className={styles.ai} onClick={openModal}>
-              <img src={ai} alt="AI 버튼" style={{ height: 48, width: 48 }} />
+              <img src={ai} alt='AI 버튼' style={{ height: 48, width: 48 }} />
               <div
                 className={styles.tooltip}
-                style={{ backgroundColor: selectedColor }}
-              >
+                style={{ backgroundColor: selectedColor }}>
                 AI 일정 추천
               </div>
             </div>
@@ -446,7 +426,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(startDate)}
               onChange={(date) => setStartDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
             {/* 시작 시간 */}
@@ -454,8 +434,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(startDate)} // 시작 시간 값
                 onChange={(e) => handleStartTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -470,8 +449,7 @@ const EventModal = ({
               <select
                 value={formatTimeForSelect(endDate)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
-                className={styles.timeInput}
-              >
+                className={styles.timeInput}>
                 {timeOptions.map((time, index) => (
                   <option key={index} value={time}>
                     {time}
@@ -483,7 +461,7 @@ const EventModal = ({
             <DatePicker
               selected={new Date(endDate)}
               onChange={(date) => setEndDate(date.toISOString())}
-              dateFormat="yyyy년 MM월 dd일"
+              dateFormat='yyyy년 MM월 dd일'
               className={styles.dateInput}
             />
           </div>
@@ -498,7 +476,7 @@ const EventModal = ({
             {/* 종일 이벤트 체크박스 */}
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isAllDay}
                 onChange={toggleAllDay}
                 toggle={selectedColor}
@@ -596,16 +574,14 @@ const EventModal = ({
                   <div
                     className={styles.memoText}
                     onClick={openMemoModal}
-                    style={{ color: textColor }}
-                  >
+                    style={{ color: textColor }}>
                     {memoContent || "메모를 입력하세요"}
                   </div>
                   {memoContent !== "" && (
                     <button
-                      type="button"
+                      type='button'
                       className={styles.removeButton}
-                      onClick={handelDeleteMemo}
-                    >
+                      onClick={handelDeleteMemo}>
                       &times;
                     </button>
                   )}
@@ -642,13 +618,13 @@ const EventModal = ({
                 className={styles.icon}
                 style={{ color: selectedColor }} // 선택된 색상이 없으면 기본값
               />
-              <label htmlFor="file-upload">
+              <label htmlFor='file-upload'>
                 <span className={styles.commonBox}>사진 추가</span>
               </label>
               <input
-                id="file-upload"
-                type="file"
-                accept="image/*"
+                id='file-upload'
+                type='file'
+                accept='image/*'
                 multiple
                 style={{ display: "none" }}
                 onChange={handleFileChange}
@@ -675,8 +651,7 @@ const EventModal = ({
                         if (preview) {
                           preview.style.display = "none";
                         }
-                      }}
-                    >
+                      }}>
                       <BsSearch />
                     </span>
                     <span className={styles.fileName}>
@@ -684,10 +659,9 @@ const EventModal = ({
                     </span>
 
                     <button
-                      type="button"
+                      type='button'
                       className={styles.removeButton}
-                      onClick={() => handleRemoveFile(index)}
-                    >
+                      onClick={() => handleRemoveFile(index)}>
                       &times;
                     </button>
                   </span>
@@ -697,7 +671,7 @@ const EventModal = ({
                         file.url ||
                         `data:image/${file.fileExtension};base64,${file.fileData}`
                       }
-                      alt="Selected file preview"
+                      alt='Selected file preview'
                     />
                   </div>
                 </div>

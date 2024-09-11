@@ -35,6 +35,13 @@ public class NotificationController {
 
         return emitter;
     }
+    
+    // 온라인 현황
+    @GetMapping("/online-users")
+    public List<String> getOnlineUsers() {
+        // 현재 구독된 사용자들의 ID를 리스트로 반환
+        return new ArrayList<>(clients.keySet());
+    }
 
 
 
