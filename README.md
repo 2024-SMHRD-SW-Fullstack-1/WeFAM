@@ -2,8 +2,8 @@
 
 ## 👀 서비스 소개
 ### 가족의 유대와 소통을 강화하는 GPT API 활용 커뮤니티 웹 서비스
-#### 가족의 일정 및 집안일 등을 효율적으로 관리하는 기능을 제공.<br>
-#### 피드, 달력, 집안일, 요리, 앨범 등을 공유하는 기능을 제공.
+가족의 일정 및 집안일 등을 효율적으로 관리하는 기능을 제공.<br>
+피드, 달력, 집안일, 요리, 앨범 등을 공유하는 기능을 제공.
 
 <br>
 
@@ -103,18 +103,31 @@
 </div></details>
 
 <details><summary>일정</summary><div align="center">
+    <img width=650 src="https://github.com/user-attachments/assets/e5117f21-ce6e-44b3-a010-9b167e60562f"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/f2e197cf-727a-4273-b923-4beab2a1ebd5"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/6ed3f948-ee6f-42fb-b40a-e88ed4aacd72"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/a1ef060f-74e3-4e34-8f88-966c33022a9c"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/a6076b12-4ddb-4a2f-8275-f8c5f75d33dc"/><br>
 </div></details>
 
 <details><summary>집안일</summary><div align="center">
+    <img width=650 src="https://github.com/user-attachments/assets/e4ee9e78-e7dd-465b-92b1-5449439987d7"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/e616ef92-e953-452d-87ec-ac9dc208da88"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/9c39d950-b7df-46ce-b62a-e25453ca2e1f"/><br>
 </div></details>
 
 <details><summary>가족 식사</summary><div align="center">
+    <img width=650 src="https://github.com/user-attachments/assets/0c42724b-ea29-4603-a476-c3274fc93fb1"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/f5fb8bc5-7379-4e6c-8522-2a5c5fb6656e"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/ea7aae7d-e81e-43e6-8da0-807dea38211a"/><br>
 </div></details>
 
 <details><summary>가족 앨범</summary><div align="center">
+    <img width=650 src="https://github.com/user-attachments/assets/c4267a85-a264-42f9-912b-a80d9e2306b2"/>
 </div></details>
 
 <details><summary>회원</summary><div align="center">
+    <img width=650 src="https://github.com/user-attachments/assets/b18cf784-7de6-4878-ba05-cc88693c5548"/><br>
 </div></details>
 <br>
 
