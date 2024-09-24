@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&text=WeFAM&animation=twinkling&fontSize=35&section=header&height=200)
+![header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&text=WeFAM&animation=twinkling&fontSize=35&section=header&height=150)
 
 
 ## 👀 서비스 소개
