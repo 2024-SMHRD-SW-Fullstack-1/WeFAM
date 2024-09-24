@@ -98,35 +98,23 @@
 <img width=650 src="https://github.com/user-attachments/assets/080ff714-59d6-4573-9a9c-414dc32d699b"/><br>
 <img width=650 src="https://github.com/user-attachments/assets/05d90a1c-be26-47ea-ab68-9ce8f4910c20"/><br>
 <img width=650 src="https://github.com/user-attachments/assets/74031ca0-8393-495b-8618-97448db462c7"/><br>
+<img width=650 src="https://github.com/user-attachments/assets/ed235b03-7e51-4e7b-9d72-85eef34cb129"/><br>
+<img width=650 src="https://github.com/user-attachments/assets/1c6b5faf-f770-4636-b8f8-111a9b27f9fe"/><br>
 </div></details>
 
 <details><summary>일정</summary><div align="center">
-<img height=400 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/646206df-9d8a-44e4-b5da-71d67c916cab"/>
 </div></details>
 
 <details><summary>집안일</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/ba740888-8afb-4826-965f-86c914c151b3"/>
 </div></details>
 
 <details><summary>가족 식사</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/82153c8d-3272-468a-b22e-55bf8246ef45"/>
 </div></details>
 
 <details><summary>가족 앨범</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/29b2ff5a-0682-498a-9623-28a2e5e0e64e"/>
 </div></details>
 
 <details><summary>회원</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/62409f97-7d2c-4f56-973e-5d5a83ef4259"/>
-</div></details>
-
-<details><summary>주문·결제 페이지</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/6fd10452-9a86-4dc1-9511-d3330fd0f7f1"/><br>
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/eb5ba2a0-9000-447b-8c1a-a7fc8676b5ee"/>
-</div></details>
-
-<details><summary>마이 페이지</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/7b1e4b40-4bfd-46f7-9ca6-320cd5b49fea"/>
 </div></details>
 <br>
 
