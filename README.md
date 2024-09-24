@@ -1,14 +1,9 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&text=WeFAM&animation=twinkling&fontSize=35&section=header&height=150)
 
-
-## 👀 서비스 소개
-#### QR 코드 기반 스마트 케이블 관리 웹 앱 플랫폼
-##### 케이블 설치 및 제거 과정에서 발생하는 수작업의 번거로움과 오류를 줄이고, 관리 효율성을 극대화하는 스마트 케이블 관리 서비스
-
 ## 👀 서비스 소개
 ### 가족의 유대와 소통을 강화하는 GPT API 활용 커뮤니티 웹 서비스
-상기 서비스는 가족의 일정 및 집안일 등을 효율적으로 관리하는 기능을 제공<br>
-피드, 달력, 집안일, 요리, 앨범 등을 공유하는 기능을 제공
+#### 가족의 일정 및 집안일 등을 효율적으로 관리하는 기능을 제공.<br>
+#### 피드, 달력, 집안일, 요리, 앨범 등을 공유하는 기능을 제공.
 
 <br>
 
