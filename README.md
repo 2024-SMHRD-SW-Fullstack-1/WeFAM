@@ -82,7 +82,7 @@
 <br>
 
 ## ⚙ 시스템 아키텍처
-![wefam-system-architecture](https://github.com/user-attachments/assets/a6ae844e-f199-4624-8a21-1b8067985c73)
+![wefam-system-architecture](https://github.com/user-attachments/assets/ddf469d2-bb5a-4909-8ed0-b21e876a3235)
 <br>
 
 ## 📌 SW유스케이스
