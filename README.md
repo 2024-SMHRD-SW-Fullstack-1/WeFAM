@@ -142,11 +142,10 @@
     <td align="center"><strong>홍제형</strong></td>
   </tr>
   <tr>
-    <td align="center"><b>Back-End</b></td>
-    <td align="center"><b>Back-End</b></td>
-    <td align="center"><b>Back-End</b></td>
-    <td align="center"><b>Back-End</b></td>
-    <td align="center"><b>Front-End</b></td>
+    <td align="center"><b>Front-End / Back-End</b></td>
+    <td align="center"><b>Front-End / Back-End</b></td>
+    <td align="center"><b>Front-End / Back-End</b></td>
+    <td align="center"><b>Front-End / Back-End</b></td>
   </tr>
   <tr>
     <td align="center">데이터베이스 설계<br>피드 CRUD & UI (게임 및 투표, Lazy loading)<br>가족 식사 CRUD & UI<br>Header & Sidebar UI<br>AWS S3 Bucket</td>
@@ -171,7 +170,6 @@ FamilyInfo CRUD & UI</td>
     <td align="center"><a href="https://github.com/hyoj1201" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/pppppjjjjj1" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/LeeSeungJi27" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/HongJiye0n" target='_blank'>github</a></td>
   </tr>
 </table>
 
