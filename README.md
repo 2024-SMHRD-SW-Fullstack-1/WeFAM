@@ -126,6 +126,7 @@
 <details><summary>마이 페이지</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/7b1e4b40-4bfd-46f7-9ca6-320cd5b49fea"/>
 </div></details>
+<br>
 
 ## 👨‍👩‍👦‍👦 팀원 역할
 <table align=center>
@@ -148,22 +149,10 @@
     <td align="center"><b>Front-End / Back-End</b></td>
   </tr>
   <tr>
-    <td align="center">데이터베이스 설계<br>피드 CRUD & UI (게임 및 투표, Lazy loading)<br>가족 식사 CRUD & UI<br>Header & Sidebar UI<br>AWS S3 Bucket</td>
-    <td align="center">집안일 CRUD & UI<br>보상 CRUD & UI<br>포인트 정보 UI<br>가족 앨범 CRUD<br>로그 CRUD</td>
-    <td align="center">일정 CRUD & UI
-풀캘린더 라이브러리
-Kakao MAP API를    활용한 위치 검색
-공휴일 API
-실시간 접속 정보/쪽지
-SSE를 활용한 쪽지
-실시간 online 정보
-공통 Modal&ToastUI</td>
-    <td align="center">데이터베이스 설계
-소셜 로그인
-AI 여행지 추천 기능
-ChatGPT API를              파인 튜닝으로 정확한 답변
-Album CRUD & UI
-FamilyInfo CRUD & UI</td>
+    <td align="center">데이터베이스 설계, 피드 CRUD & UI (게임 및 투표, Lazy loading), 가족 식사 CRUD & UI, Header & Sidebar UI, AWS S3 Bucket</td>
+    <td align="center">집안일 CRUD & UI, 보상 CRUD & UI, 포인트 정보 UI, 가족 앨범 CRUD, 로그 CRUD</td>
+    <td align="center">일정 CRUD & UI, 풀캘린더 라이브러리, Kakao MAP API를 활용한 위치 검색, 공휴일 API, 실시간 접속 정보/쪽지, SSE를 활용한 쪽지, 실시간 online 정보, 공통 Modal&ToastUI</td>
+    <td align="center">데이터베이스 설계, 소셜 로그인, AI 여행지 추천 기능, ChatGPT API를 파인 튜닝으로 정확한 답변, Album CRUD & UI, FamilyInfo CRUD & UI</td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/JaehyoDev" target='_blank'>github</a></td>
@@ -172,35 +161,3 @@ FamilyInfo CRUD & UI</td>
     <td align="center"><a href="https://github.com/LeeSeungJi27" target='_blank'>github</a></td>
   </tr>
 </table>
-
-## 🤾‍♂️ 트러블슈팅
-<details><summary>장바구니에 있는 상품을 결제했을 때 <b>보이는 금액과 결제 금액 오류</b></summary>
-<img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/bd431c8c-a3b9-4b11-aa2a-395b244596be"/><br>
-1. 자바 스크립트 숫자 포맷팅 시 콤마 뒤 숫자를 인식하지 못함<br>
-2. 해당 변수에 replace(/,/g,*)를 넣어 <b>원래 값을 넘겨</b> 해결
-</div></details>
-
-<details><summary>스타일 CSS를 분리하면서 <b>스타일 적용이 안되는 오류</b></summary>
-<img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/2ffb0a18-dbed-43bf-ba98-1cc629a7f885"/><br>
-1. 상대 경로로 설정되어서 이전 페이지의 경로가 누적됨<br>
-2. c:url 태그를 사용하여 상대 경로를 <b>절대 경로로 변환</b>하여 해결
-</div></details>
-
-<details><summary>회원 탈퇴 시 <b>외래키 제약 조건으로 인해</b> 실패 오류</summary>
-<img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/f8db2f44-23b4-4f7b-a274-0a3d304679af"/><br>
-1. 외래키 제약 조건으로 인해 외래키 테이블의 데이터 삭제 실패<br>
-2. 외래키 옵션을 <b>Cascade로 설정</b>하여 해결
-</div></details>
-
-<details><summary>여러 주문 내역 중 <b>1번째 주문 내역만</b> 주문 번호·상태·취소가 보임</summary>
-<img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/3ba8c499-1142-42cb-819b-c975ef733e0e"/><br>
-1. 중첩 반복문의 현재 반복 상태가 초기화되지 않음<br>
-2. <b>c:set 태그에 초기화 변수</b>를 설정하여 해결
-</div></details>
-
-<details><summary>바로가기 아이콘 <b>호버 시 색상 변하지 않음</b></summary>
-<img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/18215275-d3b4-432f-99e6-083e85c12348"/><br>
-1. i 태그가 아닌 svg 파일은 color 속성이 적용되지 않음<br>
-2. <b>fill 속성을 사용</b>해서 색상을 변경시킴
-</div></details>
-
