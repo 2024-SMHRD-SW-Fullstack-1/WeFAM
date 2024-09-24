@@ -79,7 +79,7 @@
 <br>
 
 ## ⚙ 시스템 아키텍처
-![image](https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/ec1dca93-4551-4bb4-a6cb-2b705c5bddcb)
+![wefam-system-architecture](https://github.com/user-attachments/assets/2b50577c-7021-40c4-8e17-fd38d1d6ff10)
 <br>
 
 ## 📌 SW유스케이스
