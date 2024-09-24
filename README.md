@@ -78,7 +78,6 @@
 </tr>
 </table>
 
-
 <br>
 
 ## ⚙ 시스템 아키텍처
@@ -156,8 +155,8 @@
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/JaehyoDev" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/hyoj1201" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/pppppjjjjj1" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/LeeSeungJi27" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/ksy2666" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/cheollll" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/hongjeeee" target='_blank'>github</a></td>
   </tr>
 </table>
