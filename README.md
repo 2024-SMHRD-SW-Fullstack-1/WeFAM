@@ -94,7 +94,7 @@
 <br>
 
 ## 📌 ER다이어그램
-![image](https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/8ea7a765-05cd-4a57-b1c7-da3f275e096a)
+![wefam-er-diagram](https://github.com/user-attachments/assets/f44880f2-03a9-4c23-90e4-d058cfc0a149)
 <br>
 
 ## 🖥 화면 구성
