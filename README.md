@@ -154,9 +154,9 @@
     <td align="center">데이터베이스 설계, 소셜 로그인, AI 여행지 추천 기능, ChatGPT API를 파인 튜닝으로 정확한 답변, Album CRUD & UI, FamilyInfo CRUD & UI</td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/JaehyoDev" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/ksy2666" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/cheollll" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/hongjeeee" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/JaehyoDev">github</a></td>
+    <td align="center"><a href="https://github.com/ksy2666">github</a></td>
+    <td align="center"><a href="https://github.com/cheollll">github</a></td>
+    <td align="center"><a href="https://github.com/hongjeeee">github</a></td>
   </tr>
 </table>
