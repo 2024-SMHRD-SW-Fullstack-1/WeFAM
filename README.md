@@ -93,27 +93,27 @@
 <br>
 
 ## 🖥 화면 구성
-<details><summary>메인화면</summary><div align="center">
+<details><summary>피드</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/ac20ab82-8886-4d1d-a5c8-5a3f6dde3adb"/>
 </div></details>
 
-<details><summary>챗봇 화면</summary><div align="center">
+<details><summary>일정</summary><div align="center">
 <img height=400 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/646206df-9d8a-44e4-b5da-71d67c916cab"/>
 </div></details>
 
-<details><summary>회원가입·로그인</summary><div align="center">
+<details><summary>집안일</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/ba740888-8afb-4826-965f-86c914c151b3"/>
 </div></details>
 
-<details><summary>레시피 화면</summary><div align="center">
+<details><summary>가족 식사</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/82153c8d-3272-468a-b22e-55bf8246ef45"/>
 </div></details>
 
-<details><summary>재료 상품 화면</summary><div align="center">
+<details><summary>가족 앨범</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/29b2ff5a-0682-498a-9623-28a2e5e0e64e"/>
 </div></details>
 
-<details><summary>장바구니</summary><div align="center">
+<details><summary>회원</summary><div align="center">
 <img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/62409f97-7d2c-4f56-973e-5d5a83ef4259"/>
 </div></details>
 
