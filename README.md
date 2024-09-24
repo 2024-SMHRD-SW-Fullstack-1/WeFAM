@@ -94,7 +94,7 @@
 
 ## 🖥 화면 구성
 <details><summary>피드</summary><div align="center">
-<img width=650 src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/ac20ab82-8886-4d1d-a5c8-5a3f6dde3adb"/>
+<img width=650 src="https://github.com/user-attachments/assets/11fd5dcb-4f06-4fbb-aab1-afca6d8aae96"/>
 </div></details>
 
 <details><summary>일정</summary><div align="center">
