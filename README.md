@@ -36,6 +36,7 @@
         <td>라이브러리</td>
         <td>
             <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=black">
+            <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=FullCalendar&logoColor=white"/>
         </td>
     </tr>
     <tr>
@@ -68,10 +69,8 @@
     <tr>
         <td>외부 API</td>
         <td>
-            <img src="https://img.shields.io/badge/Kakao_Address_API-FEE500?style=for-the-badge&logo=kakao&logoColor=black"/>
-            <img src="https://img.shields.io/badge/I'mport_Kakao_Pay_API-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"/>
-            <img src="https://img.shields.io/badge/ChatGPT_OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white"/>
-            <img src="https://img.shields.io/badge/Chatbase_API-005C9E?style=for-the-badge&logo=chatbase&logoColor=white"/>
+            <img src="https://img.shields.io/badge/Kakao_Login_API-FEE500?style=for-the-badge&logo=kakao&logoColor=black"/>
+            <img src="https://img.shields.io/badge/Kakao_Map_API-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"/>
         </td>
 </tr>
 </table>
