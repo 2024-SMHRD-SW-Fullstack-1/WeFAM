@@ -1,12 +1,13 @@
-<div align="center">![wefam-logo](https://github.com/user-attachments/assets/c40e89f1-6505-4268-82d1-fa49d10b0e25)</div>
+![wefam-logo](https://github.com/user-attachments/assets/c40e89f1-6505-4268-82d1-fa49d10b0e25)
 
-<br>
+<br><br>
 
 ## 👀 서비스 소개
 ### 가족의 유대와 소통을 강화하는 GPT API 활용 커뮤니티 웹 서비스
 상기 서비스는 가족의 일정 및 집안일 등을 효율적으로 관리하는 기능을 제공<br>
 피드, 달력, 집안일, 요리, 앨범 등을 공유하는 기능을 제공
-<br>
+
+<br><br>
 
 ## 📅 프로젝트 기간
 2024.08.02 ~ 2024.09.12 (6주)
