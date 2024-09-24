@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&text=WeFAM&animation=twinkling&fontSize=35&section=header&height=150)
+![header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&text=WeFAM&animation=twinkling&fontSize=35&section=header&height=200)
 
 ## 👀 서비스 소개
 ### 가족의 유대와 소통을 강화하는 GPT API 활용 커뮤니티 웹 서비스
@@ -82,7 +82,7 @@
 <br>
 
 ## ⚙ 시스템 아키텍처
-![wefam-system-architecture](https://github.com/user-attachments/assets/3ef50e99-ecd6-4265-9209-29df85a3db25)
+![wefam-system-architecture](https://github.com/user-attachments/assets/a6ae844e-f199-4624-8a21-1b8067985c73)
 <br>
 
 ## 📌 SW유스케이스
