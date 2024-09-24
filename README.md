@@ -85,12 +85,8 @@
 ![wefam-system-architecture](https://github.com/user-attachments/assets/ddf469d2-bb5a-4909-8ed0-b21e876a3235)
 <br>
 
-## 📌 SW유스케이스
-![image](https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/e6fa8edb-ad70-4b66-9896-83bee7def2a3)
-<br>
-
 ## 📌 서비스 흐름도
-![image](https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/5383e89d-3903-4a3c-bd5d-853992b8779a)
+![wefam-flowchart](https://github.com/user-attachments/assets/1c61aacb-f8e0-4eed-a86e-25efa296b466)
 <br>
 
 ## 📌 ER다이어그램
@@ -138,14 +134,12 @@
     <td align="center"><img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/0a959739-99b0-40e2-b1e8-a39549432a27" width="120" height="120"/></td>
     <td align="center"><img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/6cf691ff-10f5-4905-86a8-797683d8772b" width="120" height="120"/></td>
     <td align="center"><img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/3776bdbb-7e33-4b9a-be21-ec4c5b64c79a" width="120" height="120"/></td>
-    <td align="center"><img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/96157b81-d14f-4a9e-8e58-edaddeba1a82" width="120" height="120"/></td>
   </tr>
   <tr>
     <td align="center"><strong>김재효</strong></td>
-    <td align="center"><strong>곽효정</strong></td>
-    <td align="center"><strong>박준식</strong></td>
-    <td align="center"><strong>이승지</strong></td>
-    <td align="center"><strong>홍지연</strong></td>
+    <td align="center"><strong>김성용</strong></td>
+    <td align="center"><strong>오승철</strong></td>
+    <td align="center"><strong>홍제형</strong></td>
   </tr>
   <tr>
     <td align="center"><b>Back-End</b></td>
@@ -155,11 +149,22 @@
     <td align="center"><b>Front-End</b></td>
   </tr>
   <tr>
-    <td align="center">Crawling<br>ChatBot<br>DataBase</td>
-    <td align="center">레시피 화면<br>재료 상품 화면<br>필터링 기능</td>
-    <td align="center">회원가입·로그인<br>주소 API 연동<br>마이페이지</td>
-    <td align="center">장바구니<br>주문·결제 페이지<br>결제 API 연동</td>
-    <td align="center">메인 화면<br>통합 검색 기능<br>UI·UX</td>
+    <td align="center">데이터베이스 설계<br>피드 CRUD & UI (게임 및 투표, Lazy loading)<br>가족 식사 CRUD & UI<br>Header & Sidebar UI<br>AWS S3 Bucket</td>
+    <td align="center">집안일 CRUD & UI<br>보상 CRUD & UI<br>포인트 정보 UI<br>가족 앨범 CRUD<br>로그 CRUD</td>
+    <td align="center">일정 CRUD & UI
+풀캘린더 라이브러리
+Kakao MAP API를    활용한 위치 검색
+공휴일 API
+실시간 접속 정보/쪽지
+SSE를 활용한 쪽지
+실시간 online 정보
+공통 Modal&ToastUI</td>
+    <td align="center">데이터베이스 설계
+소셜 로그인
+AI 여행지 추천 기능
+ChatGPT API를              파인 튜닝으로 정확한 답변
+Album CRUD & UI
+FamilyInfo CRUD & UI</td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/JaehyoDev" target='_blank'>github</a></td>
