@@ -99,7 +99,7 @@
 <img width=650 src="https://github.com/user-attachments/assets/05d90a1c-be26-47ea-ab68-9ce8f4910c20"/><br>
 <img width=650 src="https://github.com/user-attachments/assets/74031ca0-8393-495b-8618-97448db462c7"/><br>
 <img width=650 src="https://github.com/user-attachments/assets/80adb5df-d139-48fb-9eea-a9219a52e5f6"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/1c6b5faf-f770-4636-b8f8-111a9b27f9fe"/><br>
+<img width=650 src="https://github.com/user-attachments/assets/6f098885-f01a-4b65-8154-5aa0c37ad813"/><br>
 </div></details>
 
 <details><summary>일정</summary><div align="center">
