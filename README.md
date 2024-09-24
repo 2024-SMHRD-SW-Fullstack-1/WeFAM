@@ -1,4 +1,6 @@
-<div align="center"><img src="https://github.com/2024-SMHRD-SW-Fullstack-1/Foodie/assets/162679970/d36c7826-e012-450d-ba08-d7a585b50cb7"/></div>
+<div align="center">![wefam-logo](https://github.com/user-attachments/assets/c40e89f1-6505-4268-82d1-fa49d10b0e25)</div>
+
+<br>
 
 ## 👀 서비스 소개
 ### 가족의 유대와 소통을 강화하는 GPT API 활용 커뮤니티 웹 서비스
@@ -79,7 +81,7 @@
 <br>
 
 ## ⚙ 시스템 아키텍처
-![wefam-system-architecture](https://github.com/user-attachments/assets/2b50577c-7021-40c4-8e17-fd38d1d6ff10)
+![wefam-system-architecture](https://github.com/user-attachments/assets/3ef50e99-ecd6-4265-9209-29df85a3db25)
 <br>
 
 ## 📌 SW유스케이스
