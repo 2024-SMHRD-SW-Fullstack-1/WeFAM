@@ -82,14 +82,17 @@
 
 ## ⚙ 시스템 아키텍처
 ![wefam-system-architecture](https://github.com/user-attachments/assets/ddf469d2-bb5a-4909-8ed0-b21e876a3235)
+
 <br>
 
 ## 📌 서비스 흐름도
 ![wefam-flowchart](https://github.com/user-attachments/assets/1c61aacb-f8e0-4eed-a86e-25efa296b466)
+
 <br>
 
 ## 📌 ER다이어그램
 ![wefam-er-diagram](https://github.com/user-attachments/assets/f44880f2-03a9-4c23-90e4-d058cfc0a149)
+
 <br>
 
 ## 🖥 화면 구성
@@ -129,6 +132,7 @@
 <details><summary>회원</summary><div align="center">
     <img width=650 src="https://github.com/user-attachments/assets/b18cf784-7de6-4878-ba05-cc88693c5548"/><br>
 </div></details>
+
 <br>
 
 ## 👨‍👩‍👦‍👦 팀원 역할
