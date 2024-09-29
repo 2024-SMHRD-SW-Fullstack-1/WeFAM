@@ -97,12 +97,13 @@
 
 ## 🖥 화면 구성
 <details><summary>피드</summary><div align="center">
-<img width=650 src="https://github.com/user-attachments/assets/6266ada3-f5b6-45ea-b5e4-ba5dbdf5f45b"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/080ff714-59d6-4573-9a9c-414dc32d699b"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/05d90a1c-be26-47ea-ab68-9ce8f4910c20"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/74031ca0-8393-495b-8618-97448db462c7"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/80adb5df-d139-48fb-9eea-a9219a52e5f6"/><br>
-<img width=650 src="https://github.com/user-attachments/assets/6f098885-f01a-4b65-8154-5aa0c37ad813"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/7a039690-bb1f-408a-9950-a55f164f4bf9"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/6266ada3-f5b6-45ea-b5e4-ba5dbdf5f45b"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/080ff714-59d6-4573-9a9c-414dc32d699b"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/05d90a1c-be26-47ea-ab68-9ce8f4910c20"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/74031ca0-8393-495b-8618-97448db462c7"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/80adb5df-d139-48fb-9eea-a9219a52e5f6"/><br>
+    <img width=650 src="https://github.com/user-attachments/assets/6f098885-f01a-4b65-8154-5aa0c37ad813"/><br>
 </div></details>
 
 <details><summary>일정</summary><div align="center">
